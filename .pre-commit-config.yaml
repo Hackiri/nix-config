@@ -1,0 +1,28 @@
+repos:
+  - repo: local
+    hooks:
+      - id: alejandra
+        name: Format Nix files with alejandra
+        entry: alejandra
+        language: system
+        files: \.nix$
+
+      - id: deadnix
+        name: Find dead Nix code
+        entry: deadnix
+        language: system
+        files: \.nix$
+
+      - id: statix
+        name: Lint Nix files
+        entry: sh
+        args: [-c, "cd $(git rev-parse --show-toplevel) && statix check"]
+        language: system
+        files: \.nix$
+        pass_filenames: false
+
+      - id: stylua
+        name: Format Lua files
+        entry: stylua
+        language: system
+        files: \.lua$
