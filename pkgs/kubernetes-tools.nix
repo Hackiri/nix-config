@@ -1,7 +1,6 @@
 {pkgs ? import <nixpkgs> {}}:
 # This package set contains Kubernetes and related infrastructure tools
-{
-  kubernetes-tools = with pkgs; [
+with pkgs; [
     #--------------------------------------------------
     # Kubernetes Core Tools
     #--------------------------------------------------
@@ -42,5 +41,4 @@
     # Helm Plugins
     #--------------------------------------------------
     kubernetes-helmPlugins.helm-diff  # Show diff between releases for helm
-  ];
-}
+]

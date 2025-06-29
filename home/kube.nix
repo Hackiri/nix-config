@@ -9,11 +9,9 @@
   };
 
   config = lib.mkIf config.programs.kube.enable {
-    home.packages = with pkgs; let
+    home.packages = with pkgs; 
       # Import the kubernetes-tools package set
-      k8s-pkgs = (import ../pkgs {inherit pkgs;}).kubernetes-tools;
-    in
-      k8s-pkgs;
+      (import ../pkgs {inherit pkgs;}).kubernetes-tools;
 
     # Kubernetes-specific shell configuration
     programs.zsh.initExtra = lib.mkIf config.programs.zsh.enable ''
