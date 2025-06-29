@@ -9,6 +9,8 @@
   imports = [
     # Import the Homebrew module
     ../darwin/homebrew.nix
+    # Import the fonts module
+    ../darwin/fonts.nix
   ];
   # System configuration
   system = {

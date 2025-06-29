@@ -62,6 +62,7 @@
       # Fonts
       "font-fira-code-nerd-font"
       "font-jetbrains-mono-nerd-font"
+      "font-blex-mono-nerd-font"
     ];
 
     # Mac App Store applications
