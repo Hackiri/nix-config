@@ -11,8 +11,6 @@
     ./starship
     ./yazi
     ./emacs
-    ./devshell
-    ./devshell-config.nix
     ./direnv
     ./neovim
     ./neovide
