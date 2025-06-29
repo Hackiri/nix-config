@@ -45,7 +45,7 @@
   ksysgpoyamll = "kubectl --namespace=kube-system get pods -o=yaml -l";
   kdaa = "kubectl delete all --all -n";
   krestartpo = "kubectl rollout restart deployment";
-  
+
   # Helm aliases
   h = "helm";
   hi = "helm install";
