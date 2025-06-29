@@ -6,6 +6,9 @@
   # Development shell environment
   devshell = import ./devshell {inherit pkgs;};
 
+  # Kubernetes and infrastructure tools
+  kubernetes-tools = import ./kubernetes-tools.nix {inherit pkgs;};
+
   # Add more packages here as needed
   # For example:
   # my-package = pkgs.callPackage ./my-package { };

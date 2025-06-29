@@ -6,17 +6,19 @@
 }: {
   # Import module configurations
   imports = [
-    ./tmux
-    ./terminal
+    ./btop
     ./starship
     ./yazi
     ./emacs
     ./direnv
     ./neovim
     ./neovide
-    ./btop
+    ./tmux
+    ./terminal
     ./common-pkg.nix
     ./python-pkg.nix
+    ./kube.nix
+    ./kube-config.nix
   ];
 
   # Common program configurations

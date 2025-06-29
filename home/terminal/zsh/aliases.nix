@@ -25,11 +25,22 @@
   nxclean = "nix-collect-garbage -d"; # Clean old generations
   nxdev = "nix develop .#"; # Enter dev shell
 
-  # Kubernetes-related commands
+  # Kubernetes aliases
   k = "kubectl";
+  kns = "kubectl config set-context --current --namespace";
+  kctx = "kubectl config use-context";
   kg = "kubectl get";
   kd = "kubectl describe";
-  kap = "kubectl apply -f";
+  kl = "kubectl logs";
+  ke = "kubectl edit";
+  kx = "kubectl exec -it";
+  ka = "kubectl apply -f";
+  kgp = "kubectl get pods";
+  kgs = "kubectl get services";
+  kgd = "kubectl get deployments";
+  kgn = "kubectl get nodes";
+  kgc = "kubectl get configmaps";
+  kgsec = "kubectl get secrets";
   kgaa = "kubectl get all -A";
   kgpsn = "kubectl get pods --namespace";
   ksysgpoyamll = "kubectl --namespace=kube-system get pods -o=yaml -l";
@@ -37,6 +48,16 @@
   kgctx = "kubectl config get-contexts";
   kuc = "kubectl config use-context";
   krestartpo = "kubectl rollout restart deployment";
+  
+  # Helm aliases
+  h = "helm";
+  hi = "helm install";
+  hu = "helm upgrade";
+  hl = "helm list";
+  hd = "helm delete";
+  hr = "helm repo";
+  hru = "helm repo update";
+  hs = "helm search";
 
   # Podman
   pps = "podman ps --format 'table {{ .Names }}\t{{ .Status }}' --sort names";
