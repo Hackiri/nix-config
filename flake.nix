@@ -130,7 +130,7 @@
       # Export devshell as a runnable app
       devshell = {
         type = "app";
-        program = "${pkgs.writeShellScriptBin "devshell" ''exec ${pkgs.custom.devshell}/bin/devshell "$@"''}/bin/devshell";
+        program = "${pkgs.custom.devshell}/bin/devshell";
       };
       # Add more apps here as needed
     });
