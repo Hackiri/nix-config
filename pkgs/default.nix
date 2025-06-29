@@ -3,6 +3,9 @@
   # Development tools package
   dev-tools = import ./dev-tools.nix {inherit pkgs;};
 
+  # Development shell environment
+  devshell = import ./devshell { inherit pkgs; };
+
   # Add more packages here as needed
   # For example:
   # my-package = pkgs.callPackage ./my-package { };

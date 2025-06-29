@@ -114,7 +114,7 @@
       pkgs = pkgsForSystem system;
     in {
       # Export all custom packages
-      inherit (pkgs.custom) dev-tools;
+      inherit (pkgs.custom) dev-tools devshell;
       # Add more packages here as needed
     });
 
@@ -126,6 +126,11 @@
       dev-tools = {
         type = "app";
         program = "${pkgs.custom.dev-tools}/bin/dev-tools";
+      };
+      # Export devshell as a runnable app
+      devshell = {
+        type = "app";
+        program = "${pkgs.custom.devshell}/bin/devshell";
       };
       # Add more apps here as needed
     });
