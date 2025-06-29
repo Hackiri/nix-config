@@ -82,29 +82,33 @@ This configuration was migrated from `/private/etc/nix-darwin` to `~/nix-config`
 nix-config/
 ├── flake.nix              # Main flake configuration
 ├── home/                  # Home Manager configurations
-│   ├── common.nix         # Shared home configuration
-│   ├── darwin.nix         # macOS-specific home configuration
-│   ├── nixos.nix          # NixOS configuration
-│   ├── secrets.nix        # Git secrets
-│   ├── btop/              # System monitor configuration
-│   ├── direnv/            # Directory environment manager
-│   ├── emacs/             # Emacs configuration
-│   ├── neovide/           # Neovide GUI for Neovim
-│   ├── neovim/            # Neovim configuration
-│   ├── starship/          # Shell prompt configuration
-│   ├── terminal/          # Terminal configurations
-│   ├── tmux/              # Tmux configuration
-│   └── yazi/              # File manager configuration
+    ├── common-pkg.nix     # Common packages for all systems
+    ├── devshell-config.nix # DevShell configuration
+    ├── devshell/          # DevShell configuration
+    ├── python-pkg.nix     # Python packages
+    ├── common.nix         # Shared home configuration
+    ├── darwin.nix         # macOS-specific home configuration
+    ├── nixos.nix          # NixOS configuration
+    ├── secrets.nix        # secrets
+    ├── btop/              # System monitor configuration
+    ├── direnv/            # Directory environment manager
+    ├── emacs/             # Emacs configuration
+    ├── neovide/           # Neovide GUI for Neovim
+    ├── neovim/            # Neovim configuration
+    ├── starship/          # Shell prompt configuration
+    ├── terminal/          # Terminal configurations
+    ├── tmux/              # Tmux configuration
+    └── yazi/              # File manager configuration
 ├── hosts/                 # Host-specific configurations
-│   └── nix-darwin/        # macOS configuration
-│       ├── configuration.nix  # System configuration
-│       └── home.nix       # User environment
+    └── nix-darwin/        # macOS configuration
+        ├── configuration.nix  # System configuration
+        └── home.nix       # User environment
 ├── modules/               # Configuration modules
-│   ├── common/            # Shared modules
-│   │   └── darwin-common.nix  # Common Darwin configuration
-│   ├── darwin/            # macOS-specific modules
-│   │   └── homebrew.nix   # Homebrew configuration
-│   └── nixos/             # NixOS modules (placeholder)
+    ├── common/            # Shared modules
+    │   └── darwin-common.nix  # Common Darwin configuration
+    ├── darwin/            # macOS-specific modules
+    │   └── homebrew.nix   # Homebrew configuration
+    └── nixos/             # NixOS modules (placeholder)
 └── shell.nix             # Development shell
 ```
 
