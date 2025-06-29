@@ -3,29 +3,29 @@
   lib,
   config,
   ...
-}: {
+}: let
+  # Import secrets if the file exists, otherwise use placeholder values
+  secrets =
+    if builtins.pathExists ./secrets.nix
+    then 
+      let 
+        imported = import ./secrets.nix;
+        # Debug output to verify the import
+        _ = builtins.trace "Imported GPG key: ${imported.git.signingKey}" null;
+      in imported
+    else {
+      git = {
+        userName = "user";
+        userEmail = "user@example.com";
+        signingKey = "";
+      };
+    };
+in {
   # Import git-hooks.nix functionality
   imports = [ ];
 
   # Git configuration
-  programs.git = let
-    # Import secrets if the file exists, otherwise use placeholder values
-    secrets =
-      if builtins.pathExists ./secrets.nix
-      then 
-        let 
-          imported = import ./secrets.nix;
-          # Debug output to verify the import
-          _ = builtins.trace "Imported GPG key: ${imported.git.signingKey}" null;
-        in imported
-      else {
-        git = {
-          userName = "user";
-          userEmail = "user@example.com";
-          signingKey = "";
-        };
-      };
-  in {
+  programs.git = {
     enable = true;
     inherit (secrets.git) userName userEmail;
     signing = {
