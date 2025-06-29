@@ -35,13 +35,6 @@
       };
     };
 
-    gpg = {
-      enable = true;
-      settings = {
-        trust-model = "tofu+pgp";
-      };
-    };
-    
-    # Git configuration has been moved to git-hooks.nix
+    # GPG and Git configuration have been moved to git-hooks.nix
   };
 }

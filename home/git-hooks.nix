@@ -40,6 +40,14 @@
   '';
 
 in {
+  # GPG configuration
+  programs.gpg = {
+    enable = true;
+    settings = {
+      trust-model = "tofu+pgp";
+    };
+  };
+
   # Git configuration
   programs.git = {
     enable = true;
