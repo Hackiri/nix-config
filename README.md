@@ -127,24 +127,6 @@ nix-config/
 - `home.nix`: User configuration
 - `homebrew.nix`: Homebrew package management for macOS applications
 
-### System Configuration Function
-The configuration uses a flexible `mkDarwin` function that parameterizes system creation:
-
-```nix
-# Function to create a Darwin system configuration
-mkDarwin = {
-  name,
-  system ? "x86_64-darwin",
-  username ? "wm",
-}:
-```
-
-This function allows for:
-- Consistent username usage throughout the configuration
-- Easy switching between different machines and users
-- Passing the username variable to all modules via `specialArgs`
-- Configuring home-manager with the same username
-
 ### Separation of Concerns
 This configuration follows a clear separation of concerns between system and user configurations:
 
@@ -220,6 +202,12 @@ darwinConfigurations = {
   };
 };
 ```
+
+This allows for:
+- Consistent username usage throughout the configuration
+- Easy switching between different machines and users
+- Passing the username variable to all modules via `specialArgs`
+- Configuring home-manager with the same username
 
 b. Configure Host Settings in `hosts/nix-darwin/configuration.nix`
 
