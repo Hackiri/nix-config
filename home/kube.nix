@@ -14,7 +14,7 @@
       (import ../pkgs {inherit pkgs;}).kubernetes-tools;
 
     # Kubernetes-specific shell configuration
-    programs.zsh.initExtra = lib.mkIf config.programs.zsh.enable ''
+    programs.zsh.initContent = lib.mkIf config.programs.zsh.enable ''
       # Kubernetes prompt info (if kube-ps1 is installed)
       if command -v kube-ps1 &> /dev/null; then
         source "$(which kube-ps1)"

@@ -28,7 +28,6 @@
   # Kubernetes aliases
   k = "kubectl";
   kns = "kubectl config set-context --current --namespace";
-  kctx = "kubectl config use-context";
   kg = "kubectl get";
   kd = "kubectl describe";
   kl = "kubectl logs";
@@ -45,8 +44,6 @@
   kgpsn = "kubectl get pods --namespace";
   ksysgpoyamll = "kubectl --namespace=kube-system get pods -o=yaml -l";
   kdaa = "kubectl delete all --all -n";
-  kgctx = "kubectl config get-contexts";
-  kuc = "kubectl config use-context";
   krestartpo = "kubectl rollout restart deployment";
   
   # Helm aliases
@@ -97,8 +94,8 @@
   kshell = "kubectl exec -it -- /bin/sh";
 
   # Manage contexts and namespaces
-  kctx = "kubectl config get-contexts";
   kusectx = "kubectl config use-context";
+  kgctx = "kubectl config get-contexts";
   knschange = "kubectl config set-context --current --namespace";
 
   # Deployment management
