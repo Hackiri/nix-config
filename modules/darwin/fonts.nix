@@ -5,17 +5,15 @@
   ...
 }: {
   fonts = {
-    # Enable font management
-    fontDir.enable = true;
-    
     # Install fonts through Nix packages
-    fonts = with pkgs; [
+    packages = with pkgs; [
       # Noto fonts
       noto-fonts
       noto-fonts-cjk
       noto-fonts-emoji
-      
-      # Additional fonts can be added here
+
+      # Nerd fonts
+      (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono" "IBMPlexMono"];})
     ];
   };
 }
