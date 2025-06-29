@@ -35,6 +35,27 @@
     homebrew-bundle,
     ...
   }: let
+    # Define system types for convenience
+    supportedSystems = [ "x86_64-darwin" "aarch64-darwin" ];
+    
+    # Helper function to generate an attrset for each supported system
+    forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+    
+    # Import the overlay from the overlays directory
+    overlay = import ./overlays;
+    
+    # Configure nixpkgs with overlays
+    nixpkgsConfig = {
+      overlays = [ overlay ];
+      config = { allowUnfree = true; };
+    };
+    
+    # Create a pkgs for each system with our overlays
+    pkgsForSystem = system: import nixpkgs {
+      inherit system;
+      overlays = [ overlay ];
+      config = { allowUnfree = true; };
+    };
     # Function to create a Darwin system configuration
     mkDarwin = {
       name,
@@ -43,6 +64,8 @@
     }:
       nix-darwin.lib.darwinSystem {
         inherit system;
+        # Use our custom nixpkgs with overlays
+        pkgs = pkgsForSystem system;
         modules = [
           # Base system configuration
           ./hosts/${name}/configuration.nix
@@ -84,5 +107,26 @@
         username = "wm";
       };
     };
+    
+    # Make custom packages available as flake outputs
+    packages = forAllSystems (system: let
+      pkgs = pkgsForSystem system;
+    in {
+      # Export all custom packages
+      inherit (pkgs.custom) dev-tools;
+      # Add more packages here as needed
+    });
+    
+    # Make custom packages available as apps
+    apps = forAllSystems (system: let
+      pkgs = pkgsForSystem system;
+    in {
+      # Export dev-tools as a runnable app
+      dev-tools = {
+        type = "app";
+        program = "${pkgs.custom.dev-tools}/bin/dev-tools";
+      };
+      # Add more apps here as needed
+    });
   };
 }
