@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  inputs ? {},
   ...
 }: let
   # Import secrets if the file exists, otherwise use placeholder values
@@ -20,10 +21,25 @@
         signingKey = "";
       };
     };
-in {
-  # Import git-hooks.nix functionality
-  imports = [ ];
 
+  # Create hook scripts
+  postCheckoutHook = pkgs.writeShellScript "post-checkout-hook" ''
+    echo "Setting up git configuration..."
+    git config user.name "${secrets.git.userName}"
+    git config user.email "${secrets.git.userEmail}"
+    git config user.signingkey "${secrets.git.signingKey}"
+    echo "Git configuration updated!"
+  '';
+
+  postMergeHook = pkgs.writeShellScript "post-merge-hook" ''
+    echo "Setting up git configuration..."
+    git config user.name "${secrets.git.userName}"
+    git config user.email "${secrets.git.userEmail}"
+    git config user.signingkey "${secrets.git.signingKey}"
+    echo "Git configuration updated!"
+  '';
+
+in {
   # Git configuration
   programs.git = {
     enable = true;
@@ -46,56 +62,15 @@ in {
       init.templateDir = "~/.git-template";
     };
   };
-
-  # Define your git hooks configuration
-  programs.git-hooks = {
-    enable = true;
-    hooks = {
-      pre-commit = {
-        # Use your existing pre-commit hooks from .pre-commit-config.yaml
-        enablePreCommitConfig = true;
-      };
-      post-checkout = {
-        text = ''
-          echo "Setting up git configuration..."
-          git config user.name "${secrets.git.userName}"
-          git config user.email "${secrets.git.userEmail}"
-          git config user.signingkey "${secrets.git.signingKey}"
-          echo "Git configuration updated!"
-        '';
-      };
-      post-merge = {
-        text = ''
-          echo "Setting up git configuration..."
-          git config user.name "${secrets.git.userName}"
-          git config user.email "${secrets.git.userEmail}"
-          git config user.signingkey "${secrets.git.signingKey}"
-          echo "Git configuration updated!"
-        '';
-      };
-    };
-  };
   
   # Create git template directory with hooks
   home.file = {
     ".git-template/hooks/post-checkout" = {
-      text = ''#!/bin/sh
-        echo "Setting up git configuration..."
-        git config user.name "${secrets.git.userName}"
-        git config user.email "${secrets.git.userEmail}"
-        git config user.signingkey "${secrets.git.signingKey}"
-        echo "Git configuration updated!"
-      '';
+      source = postCheckoutHook;
       executable = true;
     };
     ".git-template/hooks/post-merge" = {
-      text = ''#!/bin/sh
-        echo "Setting up git configuration..."
-        git config user.name "${secrets.git.userName}"
-        git config user.email "${secrets.git.userEmail}"
-        git config user.signingkey "${secrets.git.signingKey}"
-        echo "Git configuration updated!"
-      '';
+      source = postMergeHook;
       executable = true;
     };
   };
