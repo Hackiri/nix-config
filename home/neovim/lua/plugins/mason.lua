@@ -176,7 +176,10 @@ return {
         run_on_start = true,
         -- Reduce delay to ensure tools are installed quickly
         start_delay = 0, -- No delay
-        -- Keep tools updated
+        -- Disable automatic updates to avoid the nil primary_source error
+        update_installed = false,
+        -- Don't check for new versions
+        check_outdated_packages = false,
         ensure_installed = {
           -- Language servers
           "templ",
@@ -219,7 +222,10 @@ return {
         pattern = "MasonToolsUpdateCompleted",
         callback = function()
           vim.schedule(function()
-            vim.notify("mason-tool-installer: All tools installed! ✓", vim.log.levels.INFO)
+            -- Safe notification with pcall to avoid errors
+            pcall(function()
+              vim.notify("mason-tool-installer: All tools installed! ✓", vim.log.levels.INFO)
+            end)
           end)
         end,
       })

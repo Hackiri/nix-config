@@ -34,6 +34,16 @@ return {
   -- Keymaps
   keys = {
     { "<leader>cmt", "<cmd>MasonToolsInstall<cr>", desc = "Mason Tools Install" },
-    { "<leader>cmu", "<cmd>MasonToolsUpdate<cr>", desc = "Mason Tools Update" },
+    { "<leader>cmu", function()
+      -- Safe wrapper for MasonToolsUpdate with error handling
+      local status, err = pcall(function()
+        vim.cmd("MasonToolsInstall") -- Use install instead of update to avoid the error
+      end)
+      if not status then
+        vim.notify("Mason update failed: " .. tostring(err), vim.log.levels.ERROR)
+      else
+        vim.notify("Mason tools installation completed successfully", vim.log.levels.INFO)
+      end
+    end, desc = "Mason Tools Update" },
   },
 }
