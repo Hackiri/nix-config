@@ -21,14 +21,12 @@
 
     extraPackages = with pkgs; [
       tree-sitter
-      fzf # For telescope-fzf-native
-      # Build tools for telescope-fzf-native
-      gnumake
-      gcc
-      lldb_17
+      fzf
       vscode-js-debug
       # For LuaSnip transformations
-      luajitPackages.jsregexp
+      lua51Packages.lua
+      lua51Packages.luarocks
+      lua51Packages.jsregexp
 
       # Image and document rendering tools
       imagemagick # Provides magick/convert for image conversion

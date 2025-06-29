@@ -11,55 +11,16 @@
     ./starship
     ./yazi
     ./emacs
+    ./devshell
+    ./devshell-config.nix
     ./direnv
     ./neovim
     ./neovide
     ./btop
+    ./common-pkg.nix
+    ./python-pkg.nix
   ];
-  # Common packages for all systems
-  home.packages = with pkgs; [
-    # Version control
-    git
-    lazygit
-
-    # Network utilities
-    curl
-    wget
-
-    # GUI applications
-    neovide
-
-    # Shell enhancements
-    direnv # Directory environment manager
-    fzf # Fuzzy finder
-    zoxide # Smarter cd command
-    eza # Enhanced ls command
-    colordiff # diff with syntax highlighting
-
-    # Additional useful tools
-    bat # Better cat with syntax highlighting
-    ripgrep # Better grep
-    fd # Better find
-    jq # JSON processor
-    uv # Package manager for Node.js
-    yarn # Package manager for Node.js
-    pnpm # Package manager for Node.js
-
-    # Programming languages and tools
-    # Note: Language servers are now managed by Mason in Neovim
-    # Core language runtimes still provided by Nix for system-wide use
-    # Python packages moved to darwin.nix
-    nodejs # Node.js runtime
-    php84Packages.composer # PHP package manager
-    nixd # Nix language server
-
-    # Development tools
-    pre-commit # Git pre-commit hook framework
-    alejandra # Nix formatter
-    deadnix # Find dead Nix code
-    statix # Lint Nix files
-    stylua # Lua formatter
-  ];
+  # Common packages are now imported from common-pkg.nix
 
   # Common program configurations
   programs = {

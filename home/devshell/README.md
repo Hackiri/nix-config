@@ -159,6 +159,24 @@ Add to your Home Manager configuration:
 
 ### Entering the Environment
 
+#### Using the devshell Command
+
+The `devshell` command provides a flexible way to enter the development environment with specific language support:
+
+```bash
+# Enter development shell with all configured languages
+devshell
+
+# Enter with only specific languages
+devshell python rust       # Only Python and Rust
+devshell go node           # Only Go and Node.js
+devshell python            # Only Python
+```
+
+This allows you to create lightweight, focused development environments based on what you're working on.
+
+#### Using nix develop (Alternative)
+
 ```bash
 # Enter development shell
 nix develop

@@ -166,13 +166,11 @@ in {
     ];
 
     packages = with pkgs; [
-      # Core dependencies
-      git
+      # Note: Core dependencies like git, ripgrep, fd are now in common-pkg.nix
+      # Emacs needs ripgrep with PCRE2 support, so we override the common one
       (ripgrep.override {withPCRE2 = true;})
-      fd
-
+      
       # Development tools
-      shellcheck
       nixfmt-classic
 
       # Language servers and formatters
@@ -187,7 +185,7 @@ in {
 
       # Additional dependencies
       gnutls
-      imagemagick
+      # Note: imagemagick is now in common-pkg.nix
       zstd
       sqlite
       editorconfig-core-c
@@ -195,16 +193,12 @@ in {
       # Additional dependencies recommended for Doom Emacs
       coreutils # For GNU ls (gls)
       pandoc # For markdown processing
-      shellcheck # For shell script linting
+      # Note: shellcheck is now in common-pkg.nix
       aspell # For spell checking
       aspellDicts.en # English dictionary
       graphviz # For org-roam graph visualization
 
-      # Build tools
-      cmake
-      gnumake
-      gcc
-      libtool
+      # Note: Build tools (cmake, gnumake, gcc, libtool) are now in common-pkg.nix
     ];
   };
 }

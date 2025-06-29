@@ -43,6 +43,10 @@ This configuration was migrated from `/private/etc/nix-darwin` to `~/nix-config`
   - Git integration
 - **Emacs Configuration**
   - Custom Emacs setup
+- **DevShell Environment**
+  - [Flexible development shell](./home/devshell/README.md) with language-specific environments
+  - Selectable language support (Python, Rust, Go, Node.js)
+  - Consistent tooling across projects
 - **Terminal Environment**
   - Starship prompt customization
   - Zsh with extensive customization

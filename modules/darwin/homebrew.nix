@@ -23,6 +23,7 @@
       "webp" # WebP image format
       "podman-compose" # Podman Compose
       "podman" # Podman
+      "wordnet" # Wordnet dictionary
     ];
 
     # Homebrew taps (repositories)
