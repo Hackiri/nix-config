@@ -8,12 +8,12 @@
   # Import secrets if the file exists, otherwise use placeholder values
   secrets =
     if builtins.pathExists ./secrets.nix
-    then 
-      let 
-        imported = import ./secrets.nix;
-        # Debug output to verify the import
-        _ = builtins.trace "Imported GPG key: ${imported.git.signingKey}" null;
-      in imported
+    then let
+      imported = import ./secrets.nix;
+      # Debug output to verify the import
+      _ = builtins.trace "Imported GPG key: ${imported.git.signingKey}" null;
+    in
+      imported
     else {
       git = {
         userName = "user";
@@ -38,7 +38,6 @@
     git config user.signingkey "${secrets.git.signingKey}"
     echo "Git configuration updated!"
   '';
-
 in {
   # GPG configuration
   programs.gpg = {
@@ -70,7 +69,7 @@ in {
       init.templateDir = "~/.git-template";
     };
   };
-  
+
   # Create git template directory with hooks
   home.file = {
     ".git-template/hooks/post-checkout" = {

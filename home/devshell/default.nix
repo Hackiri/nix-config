@@ -78,10 +78,10 @@
         deadnix
         statix
         stylua
-        
+
         # Editor
         helix
-        
+
         # Utilities
         lazygit
         difftastic
@@ -139,13 +139,17 @@
         valgrind
       ];
     in
-      [ devshellScript ] # Add the devshell script to packages
+      [devshellScript] # Add the devshell script to packages
       ++ corePackages
       ++ rustPackages
       ++ goPackages
       ++ nodePackages
       ++ pythonPackages
-      ++ (if pkgs.stdenv.isDarwin then darwinPackages else linuxPackages);
+      ++ (
+        if pkgs.stdenv.isDarwin
+        then darwinPackages
+        else linuxPackages
+      );
 
     programs.zsh = {
       enable = true;
@@ -203,22 +207,22 @@
           if [ -f "/etc/profiles/per-user/wm/bin/pip3" ]; then
             ln -sf /etc/profiles/per-user/wm/bin/pip3 /etc/profiles/per-user/wm/bin/pip 2>/dev/null || true
           fi
-          ''}
-          
+        ''}
+
           ${lib.optionalString goEnabled ''
           export GOPATH="$HOME/go"
           export PATH="$GOPATH/bin:$PATH"
-          ''}
-          
+        ''}
+
           ${lib.optionalString nodeEnabled ''
           export NODE_PATH="$HOME/.npm-packages/lib/node_modules"
-          ''}
-          
+        ''}
+
           ${lib.optionalString rustEnabled ''
           export CARGO_HOME="$HOME/.cargo"
           export RUSTUP_HOME="$HOME/.rustup"
-          ''}
-          
+        ''}
+
           export EDITOR="hx"
           export VISUAL="hx"
           export PAGER="less -R"

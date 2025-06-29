@@ -169,7 +169,7 @@ in {
       # Note: Core dependencies like git, ripgrep, fd are now in common-pkg.nix
       # Emacs needs ripgrep with PCRE2 support, so we override the common one
       (ripgrep.override {withPCRE2 = true;})
-      
+
       # Development tools
       nixfmt-classic
 

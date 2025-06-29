@@ -5,30 +5,30 @@
     #--------------------------------------------------
     # Python Core
     #--------------------------------------------------
-    python312                  # Python programming language
-    python312Packages.pip      # Python package manager (needed for Mason)
-    
+    python312 # Python programming language
+    python312Packages.pip # Python package manager (needed for Mason)
+
     #--------------------------------------------------
     # Python Development Tools
     #--------------------------------------------------
-    uv                         # Modern Python package manager
-    
+    uv # Modern Python package manager
+
     #--------------------------------------------------
     # Python Libraries and Utilities
     #--------------------------------------------------
-    python3Packages.pygments   # Syntax highlighting (pygmentize)
-    python3Packages.pynvim     # Python client for Neovim
-    
+    python3Packages.pygments # Syntax highlighting (pygmentize)
+    python3Packages.pynvim # Python client for Neovim
+
     #--------------------------------------------------
     # Python Testing and Quality Tools
     #--------------------------------------------------
-    python3Packages.pytest_7   # Testing framework
-    python3Packages.pylint     # Linter
-    
+    python3Packages.pytest_7 # Testing framework
+    python3Packages.pylint # Linter
+
     #--------------------------------------------------
     # Python Documentation and Formatting
     #--------------------------------------------------
-    python3Packages.markdown   # Markdown processing
-    python3Packages.tabulate   # Pretty-print tabular data
+    python3Packages.markdown # Markdown processing
+    python3Packages.tabulate # Pretty-print tabular data
   ];
 }

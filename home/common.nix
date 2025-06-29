@@ -20,9 +20,6 @@
     ./common-pkg.nix
     ./python-pkg.nix
   ];
-  # Common packages are now imported from common-pkg.nix
-
-  # Git template hooks have been moved to git-hooks.nix
 
   # Common program configurations
   programs = {
@@ -34,7 +31,5 @@
         diff = "colordiff --color=always";
       };
     };
-
-    # GPG and Git configuration have been moved to git-hooks.nix
   };
 }
