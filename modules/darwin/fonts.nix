@@ -7,13 +7,12 @@
   fonts = {
     # Install fonts through Nix packages
     packages = with pkgs; [
-      # Noto fonts
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.fira-code
+      nerd-fonts.blex-mono
       noto-fonts
-      noto-fonts-cjk
+      noto-fonts-cjk-sans
       noto-fonts-emoji
-
-      # Nerd fonts
-      (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono" "IBMPlexMono"];})
     ];
   };
 }
