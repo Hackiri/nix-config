@@ -7,10 +7,10 @@
 }: let
   # Import secrets if the file exists, otherwise use placeholder values
   secrets =
-    if builtins.pathExists ./secrets.nix
+    if builtins.pathExists /Users/wm/nix-config/home/secrets.nix
     then 
       let 
-        imported = import ./secrets.nix;
+        imported = import /Users/wm/nix-config/home/secrets.nix;
         # Debug output to verify the import
         _ = builtins.trace "Imported GPG key: ${imported.git.signingKey}" null;
       in imported
