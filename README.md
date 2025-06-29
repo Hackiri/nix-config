@@ -1,6 +1,6 @@
 # Nix Configuration
 
-A comprehensive Nix configuration for macOS using nix-darwin and Home Manager, providing a declarative and reproducible system environment.
+A Nix configuration for macOS using nix-darwin and Home Manager, providing a declarative and reproducible system environment.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -11,9 +11,6 @@ A comprehensive Nix configuration for macOS using nix-darwin and Home Manager, p
 
 ## Overview
 This repository contains a complete Nix configuration that manages both system-level settings and user environments on macOS. It combines nix-darwin for system configuration with Home Manager for user environment management, creating a fully reproducible and declarative setup.
-
-## Migration Note
-This configuration was migrated from `/private/etc/nix-darwin` to `~/nix-config` on June 22, 2025. All paths have been updated to reference the new location.
 
 ## Features
 
@@ -44,9 +41,14 @@ This configuration was migrated from `/private/etc/nix-darwin` to `~/nix-config`
 - **Emacs Configuration**
   - Custom Emacs setup
 - **DevShell Environment**
-  - [Flexible development shell](./home/devshell/README.md) with language-specific environments
+  - Flexible development shell with language-specific environments
   - Selectable language support (Python, Rust, Go, Node.js)
   - Consistent tooling across projects
+- **Kubernetes Environment**
+  - Kubernetes toolset (kubectl, helm, k9s)
+  - Infrastructure as Code tools (terraform)
+  - Network management (cilium-cli)
+  - Convenient shell aliases and completions
 - **Terminal Environment**
   - Starship prompt customization
   - Zsh with extensive customization
@@ -83,8 +85,8 @@ nix-config/
 ├── flake.nix              # Main flake configuration
 ├── home/                  # Home Manager configurations
     ├── common-pkg.nix     # Common packages for all systems
-    ├── devshell-config.nix # DevShell configuration
-    ├── devshell/          # DevShell configuration
+    ├── kube.nix          # Kubernetes tools configuration
+    ├── kube-config.nix   # Kubernetes feature enablement
     ├── python-pkg.nix     # Python packages
     ├── common.nix         # Shared home configuration
     ├── darwin.nix         # macOS-specific home configuration
@@ -109,6 +111,10 @@ nix-config/
     ├── darwin/            # macOS-specific modules
     │   └── homebrew.nix   # Homebrew configuration
     └── nixos/             # NixOS modules (placeholder)
+├── pkgs/                 # Custom package definitions
+    ├── default.nix       # Package exports
+    ├── kubernetes-tools.nix # Kubernetes tools package
+    └── dev-tools.nix     # Development tools package
 └── shell.nix             # Development shell
 ```
 
