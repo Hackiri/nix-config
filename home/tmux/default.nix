@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  username,
   ...
 }: let
   tmux_config = builtins.readFile ./tmux.conf;
@@ -10,7 +11,7 @@
 
     path="$1"
     max_length="''${2:-50}"  # Default to 50 if not specified
-    user_home="/Users/wm"
+    user_home="/Users/${username}"
 
     # Exit if no path is provided
     if [ -z "$path" ]; then

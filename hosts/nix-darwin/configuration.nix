@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  username,
   ...
 }: {
   imports = [
@@ -9,10 +10,10 @@
   ];
 
   # Host-specific system configuration
-  system.primaryUser = "wm";
+  system.primaryUser = username;
 
   # Host-specific user configuration
-  users.users.wm.home = "/Users/wm";
+  users.users.${username}.home = "/Users/${username}";
 
   # Host-specific packages
   environment.systemPackages = with pkgs; [

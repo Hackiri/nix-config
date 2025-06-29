@@ -98,7 +98,7 @@
             };
           }
         ];
-        specialArgs = {inherit inputs system;};
+        specialArgs = {inherit inputs system username;};
       };
   in {
     # Define your systems here

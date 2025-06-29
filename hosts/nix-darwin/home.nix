@@ -2,6 +2,7 @@
   config,
   pkgs,
   inputs,
+  username,
   ...
 }: {
   imports = [
@@ -12,8 +13,8 @@
 
   # User identity
   home = {
-    username = "wm";
-    homeDirectory = "/Users/wm";
+    username = username;
+    homeDirectory = "/Users/${username}";
     stateVersion = "25.05";
 
     # User packages
