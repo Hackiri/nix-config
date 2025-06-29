@@ -7,6 +7,14 @@
     home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    
+    # Git hooks management
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
 
     # Homebrew inputs
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
@@ -33,6 +41,7 @@
     homebrew-core,
     homebrew-cask,
     homebrew-bundle,
+    git-hooks,
     ...
   }: let
     # Function to create a Darwin system configuration

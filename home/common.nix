@@ -22,6 +22,8 @@
   ];
   # Common packages are now imported from common-pkg.nix
 
+  # Git template hooks have been moved to git-hooks.nix
+
   # Common program configurations
   programs = {
     bash = {
@@ -39,30 +41,7 @@
         trust-model = "tofu+pgp";
       };
     };
-
-    git = let
-      # Import secrets if the file exists, otherwise use placeholder values
-      secrets =
-        if builtins.pathExists ./secrets.nix
-        then import ./secrets.nix
-        else {
-          git = {
-            userName = "user";
-            userEmail = "user@example.com";
-            signingKey = "";
-          };
-        };
-    in {
-      enable = true;
-      inherit (secrets.git) userName userEmail;
-      signing = {
-        signByDefault = true;
-        key = secrets.git.signingKey;
-      };
-      extraConfig = {
-        commit.gpgsign = true;
-        tag.gpgsign = true;
-      };
-    };
+    
+    # Git configuration has been moved to git-hooks.nix
   };
 }

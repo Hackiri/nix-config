@@ -7,6 +7,7 @@
   imports = [
     ../../home/common.nix
     ../../home/darwin.nix
+    ../../home/git-hooks.nix
   ];
 
   # User identity
