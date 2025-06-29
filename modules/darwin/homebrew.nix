@@ -24,6 +24,7 @@
       "podman-compose" # Podman Compose
       "podman" # Podman
       "wordnet" # Wordnet dictionary
+      "sketchybar" # Status bar replacement
     ];
 
     # Homebrew taps (repositories)
@@ -31,6 +32,9 @@
       "homebrew/bundle"
       "homebrew/cask"
       "homebrew/core"
+      "nikitabobko/tap" # AeroSpace tap
+      "FelixKratz/formulae" # SketchyBar tap
+      "homebrew/cask-fonts" # For fonts
       # Add more taps as needed
     ];
 
@@ -46,9 +50,11 @@
       "ghostty"
 
       # Utilities
+      "aerospace" # i3-like tiling window manager
       "rectangle" # Window manager
       "raycast" # Spotlight replacement
       "cleanshot" # Screenshot tool
+      "font-hack-nerd-font" # Font for SketchyBar
 
       # Communication
       "slack"
@@ -58,6 +64,10 @@
       "vlc"
       "spotify"
       "iina"
+
+      # Productivity
+      "obsidian"
+      "hammerspoon"
     ];
 
     # Mac App Store applications

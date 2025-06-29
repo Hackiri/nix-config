@@ -9,6 +9,8 @@
     ../../home/common.nix
     ../../home/darwin.nix
     ../../home/git-hooks.nix
+    ../../home/aerospace
+    ../../home/sketchybar
   ];
 
   # User identity
@@ -26,5 +28,7 @@
   # Enable some useful programs
   programs = {
     home-manager.enable = true;
+    aerospace.enable = true;
+    sketchybar.enable = true;
   };
 }
