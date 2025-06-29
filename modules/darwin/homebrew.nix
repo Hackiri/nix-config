@@ -14,7 +14,7 @@
     };
     global.autoUpdate = true;
 
-    # Homebrew packages (CLI tools)
+    # Homebrew brews (CLI tools)
     brews = [
       # CLI tools that work better with Homebrew than Nix on macOS
       "mas" # Mac App Store CLI
@@ -24,7 +24,6 @@
       "podman-compose" # Podman Compose
       "podman" # Podman
       "wordnet" # Wordnet dictionary
-      "sketchybar" # Status bar replacement
     ];
 
     # Homebrew taps (repositories)
@@ -32,9 +31,6 @@
       "homebrew/bundle"
       "homebrew/cask"
       "homebrew/core"
-      "nikitabobko/tap" # AeroSpace tap
-      "FelixKratz/formulae" # SketchyBar tap
-      "homebrew/cask-fonts" # For fonts
       # Add more taps as needed
     ];
 
@@ -50,12 +46,10 @@
       "ghostty"
 
       # Utilities
-      "aerospace" # i3-like tiling window manager
       "rectangle" # Window manager
       "raycast" # Spotlight replacement
       "cleanshot" # Screenshot tool
-      "font-hack-nerd-font" # Font for SketchyBar
-
+      
       # Communication
       "slack"
       "discord"

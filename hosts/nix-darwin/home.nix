@@ -28,7 +28,11 @@
   # Enable some useful programs
   programs = {
     home-manager.enable = true;
-    aerospace.enable = true;
     sketchybar.enable = true;
+  };
+
+  # Enable custom modules
+  my.programs = {
+    aerospace.enable = true;
   };
 }

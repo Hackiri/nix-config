@@ -45,6 +45,12 @@
     #--------------------------------------------------
     imagemagick # Image manipulation programs
     ghostscript # PostScript and PDF interpreter
+    
+    #--------------------------------------------------
+    # macOS specific tools
+    #--------------------------------------------------
+    sketchybar # Highly customizable macOS status bar replacement
+    aerospace # i3-like tiling window manager for macOS
 
     #--------------------------------------------------
     # Programming Languages and Runtimes
