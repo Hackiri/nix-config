@@ -9,8 +9,8 @@
   };
 
   config = lib.mkIf config.programs.kube.enable {
-    home.packages = with pkgs; 
-      # Import the kubernetes-tools package set
+    home.packages = with pkgs;
+    # Import the kubernetes-tools package set
       (import ../pkgs {inherit pkgs;}).kubernetes-tools;
 
     # Kubernetes-specific shell configuration

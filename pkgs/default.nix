@@ -8,7 +8,7 @@
 
   # Kubernetes and infrastructure tools
   kubernetes-tools = import ./kubernetes-tools.nix {inherit pkgs;};
-  
+
   # Convenience function to create a package set with all kubernetes tools
   kube-packages = pkgs.buildEnv {
     name = "kubernetes-packages";

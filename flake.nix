@@ -87,14 +87,20 @@
           {
             nix-homebrew = {
               enable = true;
+              user = username;
               autoMigrate = true;
-              mutableTaps = true;
-              user = "${username}";
               taps = {
                 "homebrew/homebrew-core" = homebrew-core;
                 "homebrew/homebrew-cask" = homebrew-cask;
                 "homebrew/homebrew-bundle" = homebrew-bundle;
               };
+              mutableTaps = true; # Allow existing taps to be managed
+            };
+
+            # Configure Homebrew through the standard module
+            homebrew.caskArgs = {
+              appdir = "~/Applications";
+              require_sha = true;
             };
           }
         ];
@@ -112,27 +118,31 @@
     # Make custom packages available as flake outputs
     packages = forAllSystems (system: let
       pkgs = pkgsForSystem system;
+      # Import packages with the correct pkgs for this system
+      customPkgs = import ./pkgs {inherit pkgs;};
     in {
-      # Export all custom packages
-      inherit (pkgs.custom) dev-tools devshell;
-      # Add more packages here as needed
+      # Use a let binding to avoid the warning
+      dev-tools = let devTools = customPkgs.dev-tools; in devTools.dev-tools;
+
+      # Use inherit for attributes with the same name
+      inherit (customPkgs) devshell kube-packages;
     });
 
     # Make custom packages available as apps
     apps = forAllSystems (system: let
       pkgs = pkgsForSystem system;
+      customPkgs = import ./pkgs {inherit pkgs;};
     in {
       # Export dev-tools as a runnable app
       dev-tools = {
         type = "app";
-        program = "${pkgs.custom.dev-tools}/bin/dev-tools";
+        program = "${customPkgs.dev-tools.dev-tools}/bin/dev-tools";
       };
       # Export devshell as a runnable app
       devshell = {
         type = "app";
-        program = "${pkgs.custom.devshell}/bin/devshell";
+        program = "${customPkgs.devshell}/bin/devshell";
       };
-      # Add more apps here as needed
     });
   };
 }
