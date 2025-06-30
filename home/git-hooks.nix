@@ -38,6 +38,16 @@
     git config user.signingkey "${secrets.git.signingKey}"
     echo "Git configuration updated!"
   '';
+  
+  preCommitHook = pkgs.writeShellScript "pre-commit-hook" ''
+    echo "Running pre-commit hooks..."
+    ${pkgs.pre-commit}/bin/pre-commit run --all-files
+    if [ $? -ne 0 ]; then
+      echo "Pre-commit hooks failed. Commit aborted."
+      exit 1
+    fi
+    echo "Pre-commit hooks passed!"
+  '';
 in {
   # GPG configuration
   programs.gpg = {
@@ -78,6 +88,10 @@ in {
     };
     ".git-template/hooks/post-merge" = {
       source = postMergeHook;
+      executable = true;
+    };
+    ".git-template/hooks/pre-commit" = {
+      source = preCommitHook;
       executable = true;
     };
   };
