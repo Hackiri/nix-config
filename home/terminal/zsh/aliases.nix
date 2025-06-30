@@ -1,28 +1,27 @@
 {
   # Darwin rebuild commands
-  drb = "sudo darwin-rebuild"; # Base command
+  nixb = "sudo darwin-rebuild"; # Base command
 
   # Build variants
-  drbuild = "sudo darwin-rebuild build --flake ~/nix-config#nix-darwin"; # Build only
-  drswitch = "sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin"; # Build and activate
-  drboot = "sudo darwin-rebuild boot --flake ~/nix-config#nix-darwin"; # Build but activate on next boot
-  drcheck = "sudo darwin-rebuild check --flake ~/nix-config#nix-darwin"; # Check configuration
-  drdry = "sudo darwin-rebuild dry-build --flake ~/nix-config#nix-darwin"; # Test build without making changes
-  dredit = "sudo darwin-rebuild edit --flake ~/nix-config#nix-darwin"; # Open configuration in $EDITOR
+  nixbuild = "sudo darwin-rebuild build --flake ~/nix-config#nix-darwin"; # Build only
+  nixswitch = "sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin"; # Build and activate
+  nixboot = "sudo darwin-rebuild boot --flake ~/nix-config#nix-darwin"; # Build but activate on next boot
+  nixcheck = "sudo darwin-rebuild check --flake ~/nix-config#nix-darwin"; # Check configuration
+  nixdry = "sudo darwin-rebuild dry-build --flake ~/nix-config#nix-darwin"; # Test build without making changes
+  nixedit = "sudo darwin-rebuild edit --flake ~/nix-config#nix-darwin"; # Open configuration in $EDITOR
 
   # System management
-  drlist = "sudo darwin-rebuild list-generations"; # List all generations
-  drrollback = "sudo darwin-rebuild switch --rollback"; # Rollback to previous generation
-  drclean = "sudo nix-collect-garbage -d"; # Clean old generations
+  nixlist = "sudo darwin-rebuild --list-generations"; # List all generations
+  nixrollback = "sudo darwin-rebuild switch --rollback"; # Rollback to previous generation
+  nixclean = "sudo nix-collect-garbage -d"; # Clean old generations
 
   # Debugging options
-  drtrace = "sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin --show-trace"; # Show trace for debugging
-  drverbose = "sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin --verbose"; # Verbose output
+  nixtrace = "sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin --show-trace"; # Show trace for debugging
+  nixverbose = "sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin --verbose"; # Verbose output
 
   # Nix utilities
   nxsearch = "nix search nixpkgs"; # Search packages
   nxrepl = "nix repl '<nixpkgs>'"; # Interactive nix REPL
-  nxclean = "nix-collect-garbage -d"; # Clean old generations
   nxdev = "nix develop .#"; # Enter dev shell
 
   # Kubernetes aliases
