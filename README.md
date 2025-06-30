@@ -157,6 +157,12 @@ This configuration follows a clear separation of concerns between system and use
 curl -sSf -L https://install.lix.systems/lix | sh -s -- install
 ```
 
+Alternatively, you can use the Determinate Systems installer:
+
+```bash
+curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+```
+
 2. Enable Nix Flakes
 
 ```bash
@@ -165,7 +171,20 @@ mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 ```
 
-3. Clone This Repository
+3. Install nix-darwin
+
+```bash
+# For Nixpkgs unstable
+sudo nix run nix-darwin/master#darwin-rebuild -- switch
+
+# For Nixpkgs 24.11
+sudo nix run nix-darwin/nix-darwin-24.11#darwin-rebuild -- switch
+
+# For Nixpkgs 25.05
+sudo nix run nix-darwin/nix-darwin-25.05#darwin-rebuild -- switch
+```
+
+4. Clone This Repository
 
 ```bash
 # Clone the repository
@@ -173,7 +192,7 @@ git clone https://github.com/yourusername/nix-config.git ~/nix-config
 cd ~/nix-config
 ```
 
-4. Configure Your System
+5. Configure Your System
    Before installing nix-darwin, customize the configuration files to match your system:
 
 a. Update System Configuration in `flake.nix`:
@@ -213,7 +232,7 @@ b. Configure Host Settings in `hosts/nix-darwin/configuration.nix`
 
 c. Set Up User Environment in `hosts/nix-darwin/home.nix`
 
-5. Install nix-darwin
+6. Install nix-darwin
 
 ```bash
 # Install nix-darwin with your customized configuration
