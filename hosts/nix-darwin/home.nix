@@ -8,9 +8,6 @@
   imports = [
     ../../home/common.nix
     ../../home/darwin.nix
-    ../../home/git-hooks.nix
-    ../../home/aerospace
-    ../../home/sketchybar
   ];
 
   # User identity

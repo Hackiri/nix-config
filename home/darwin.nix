@@ -4,6 +4,11 @@
   pkgs,
   ...
 }: {
+  # Import macOS-specific modules
+  imports = [
+    ./aerospace
+    ./sketchybar
+  ];
   # macOS-specific packages
   home.packages = with pkgs; [
     # macOS-specific utilities
@@ -12,7 +17,5 @@
     cachix # Nix binary cache client
     sketchybar # Highly customizable macOS status bar replacement
     aerospace # i3-like tiling window manager for macOS
-
-    # Note: Python packages have been moved to python-pkg.nix
   ];
 }

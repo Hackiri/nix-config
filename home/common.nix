@@ -18,6 +18,7 @@
     ./common-pkg.nix
     ./python-pkg.nix
     ./kube.nix
+    ./git-hooks.nix
     ./kube-config.nix
   ];
 
