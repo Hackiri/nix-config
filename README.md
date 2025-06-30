@@ -151,13 +151,7 @@ This configuration follows a clear separation of concerns between system and use
 - Basic knowledge of Nix/Nix Flakes
 
 ### Installation Steps
-1. Install Nix
-
-```bash
-curl -sSf -L https://install.lix.systems/lix | sh -s -- install
-```
-
-Alternatively, you can use the Determinate Systems installer:
+1. Install Nix (Determinate Systems) upstream channel
 
 ```bash
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
@@ -176,9 +170,6 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 ```bash
 # For Nixpkgs unstable
 sudo nix run nix-darwin/master#darwin-rebuild -- switch
-
-# For Nixpkgs 24.11
-sudo nix run nix-darwin/nix-darwin-24.11#darwin-rebuild -- switch
 
 # For Nixpkgs 25.05
 sudo nix run nix-darwin/nix-darwin-25.05#darwin-rebuild -- switch

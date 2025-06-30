@@ -49,7 +49,7 @@
       "rectangle" # Window manager
       "raycast" # Spotlight replacement
       "cleanshot" # Screenshot tool
-      
+
       # Communication
       "slack"
       "discord"

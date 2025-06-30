@@ -45,7 +45,7 @@
     #--------------------------------------------------
     imagemagick # Image manipulation programs
     ghostscript # PostScript and PDF interpreter
-    
+
     #--------------------------------------------------
     # macOS specific tools
     #--------------------------------------------------
