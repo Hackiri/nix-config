@@ -20,5 +20,6 @@
     ./kube.nix
     ./git-hooks.nix
     ./kube-config.nix
+    ./custom-pkgs.nix
   ];
 }

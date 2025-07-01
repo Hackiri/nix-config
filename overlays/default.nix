@@ -6,7 +6,7 @@ in {
   # Add all custom packages to the 'custom' namespace
   custom = customPkgs;
 
-  # You can also add individual packages directly to nixpkgs if needed
-  # For example:
-  # dev-tools = customPkgs.dev-tools;
+  # Use inherit syntax to avoid warnings
+  inherit (customPkgs) dev-tools devshell;
+  kube-tools = customPkgs.kubernetes-tools;
 }
