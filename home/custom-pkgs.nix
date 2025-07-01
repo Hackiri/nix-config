@@ -2,13 +2,24 @@
 {pkgs, ...}: {
   # Import custom packages from overlays
   home.packages = with pkgs; [
-    # Kubernetes tools (these are a list)
-    kube-tools
+    # Individual kubernetes tools - these are a list of packages
+    # so we need to include them individually
+    kubectl
+    kubernetes-helm
+    k9s
+    cilium-cli
+    kustomize
+    krew
+    talosctl
+    terraform
+    kubernetes-helmPlugins.helm-diff
     
-    # Development tools (these are attribute sets)
-    dev-tools
+    # Development tools - access the specific derivation
+    # dev-tools is an attribute set with a derivation inside
+    dev-tools.dev-tools
     
-    # Development shell
+    # Development shell - access the specific derivation if needed
+    # If devshell is a direct derivation, this would work
     devshell
   ];
 }
