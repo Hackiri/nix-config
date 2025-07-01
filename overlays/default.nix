@@ -8,5 +8,4 @@ in {
 
   # Use inherit syntax to avoid warnings
   inherit (customPkgs) dev-tools devshell;
-  kube-tools = customPkgs.kubernetes-tools;
 }
