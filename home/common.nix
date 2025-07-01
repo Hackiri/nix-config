@@ -21,16 +21,4 @@
     ./git-hooks.nix
     ./kube-config.nix
   ];
-
-  # Common program configurations
-  programs = {
-    bash = {
-      enable = true;
-      shellAliases = {
-        ll = "eza -l";
-        updatenix = "sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin";
-        diff = "colordiff --color=always";
-      };
-    };
-  };
 }
