@@ -38,7 +38,7 @@
     git config user.signingkey "${secrets.git.signingKey}"
     echo "Git configuration updated!"
   '';
-  
+
   preCommitHook = pkgs.writeShellScript "pre-commit-hook" ''
     echo "Running pre-commit hooks..."
     ${pkgs.pre-commit}/bin/pre-commit run --all-files
