@@ -157,9 +157,45 @@ return {
       },
     },
     opts = {
+      -- Add explicit explorer configuration to fix the nil table error
+      explorer = {
+        enabled = true,
+        replace_netrw = true,
+        layout = {
+          preset = "sidebar",
+          preview = true
+        },
+        follow_file = true,
+        tree = true,
+        focus = "list",
+        -- Disable features that might be causing the error
+        git_status = false,
+        diagnostics = false,
+        formatters = {
+          file = {
+            filename_only = true
+          },
+          severity = {
+            pos = "right"
+          }
+        }
+      },
       -- Documentation for the picker
       -- https://github.com/folke/snacks.nvim/blob/main/docs/picker.md
       picker = {
+        sources = {
+          explorer = {
+            -- Explicitly configure the explorer source for the picker
+            -- This should help fix the nil table error in update_titles
+            finder = "explorer",
+            format = "file",
+            show_empty = true,
+            tree = true,
+            git_status = false,
+            diagnostics = false,
+            follow_file = true
+          }
+        },
         -- My ~/github/dotfiles-latest/neovim/lazyvim/lua/config/keymaps.lua
         -- file was always showing at the top, I needed a way to decrease its
         -- score, in frecency you could use :FrecencyDelete to delete a file

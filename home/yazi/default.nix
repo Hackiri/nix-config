@@ -7,12 +7,12 @@
     enable = true;
     enableZshIntegration = true;
     settings = {
-      manager = {
+      mgr = {
         show_hidden = true;
         ratio = [1 2 5];
       };
       theme = {
-        manager = {
+        mgr = {
           tab_normal.bg = {hex = "#282a36";};
           tab_normal.fg = {hex = "#6272a4";};
           tab_select.bg = {hex = "#282a36";};

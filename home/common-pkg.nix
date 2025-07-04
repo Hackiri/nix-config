@@ -23,6 +23,10 @@
     colordiff # Wrapper for diff with colorized output
     jq # Lightweight JSON processor
 
+    # File and directory management
+    tree # List directory contents in a tree-like format
+    bat # Cat clone with syntax highlighting
+
     # Shell enhancements
     direnv # Environment switcher for the shell
 
@@ -79,6 +83,5 @@
     #--------------------------------------------------
     # Applications
     #--------------------------------------------------
-    neovide # Graphical user interface for Neovim
   ];
 }

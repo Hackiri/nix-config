@@ -1,5 +1,7 @@
 # version: 1.0.0
 
+"$schema" = 'https://starship.rs/config-schema.json'
+
 add_newline = true
 command_timeout = 2000
 continuation_prompt = "[▸▹ ](dimmed white)"
@@ -84,8 +86,7 @@ $azure\
 $crystal\
 $custom\
 $status\
-$battery\
-$time"""
+$battery"""
 
 [os]
 format = "[$symbol](bold fg:#7aa2f7)"
@@ -94,6 +95,24 @@ disabled = false
 
 [os.symbols]
 Macos = " "
+Windows = "󰍲"
+Ubuntu = "󰕈"
+SUSE = ""
+Raspbian = "󰐿"
+Mint = "󰣭"
+Manjaro = ""
+Linux = "󰌽"
+Gentoo = "󰣨"
+Fedora = "󰣛"
+Alpine = ""
+Amazon = ""
+Android = ""
+Arch = "󰣇"
+Artix = "󰣇"
+CentOS = ""
+Debian = "󰣚"
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
 
 [fill]
 symbol = ' '
@@ -143,6 +162,13 @@ format = '[$path]($style)[$read_only]($read_only_style)'
 repo_root_style = 'bold blue'
 repo_root_format = '[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) [△](bold bright-blue)'
 
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = "󰝚 "
+"Pictures" = " "
+"Developer" = "󰲋 "
+
 [cmd_duration]
 format = "[◄ $duration ](italic white)"
 
@@ -158,8 +184,8 @@ disabled = false
 
 [time]
 disabled = false
-format = "[  $time]($style)"
-time_format = "%R"
+format = '[[  $time ]($style)]($style)'
+time_format = "%I:%M %p"
 utc_time_offset = "local"
 style = "italic dimmed white"
 
