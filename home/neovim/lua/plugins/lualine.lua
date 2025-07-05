@@ -1,5 +1,6 @@
 -- Get colors from the colors module
 local colors = require("config.colors")
+local icons = LazyVim.config.icons
 
 return {
   "nvim-lualine/lualine.nvim",
@@ -289,7 +290,7 @@ return {
           end,
         },
       },
-      extensions = { "lazy" }, -- Removed neo-tree to maintain branch visibility in neo-tree
+      extensions = { "lazy", "fzf" }, -- Removed neo-tree to maintain branch visibility in neo-tree
     }
   end,
 }

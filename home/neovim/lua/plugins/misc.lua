@@ -17,6 +17,10 @@ return {
     "tpope/vim-rhubarb",
   },
   {
+    -- Bind9 DNS syntax highlighting
+    "egberts/vim-syntax-bind-named",
+  },
+  {
     -- Autoclose parentheses, brackets, quotes, etc.
     "windwp/nvim-autopairs",
     event = "InsertEnter",

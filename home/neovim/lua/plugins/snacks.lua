@@ -163,7 +163,7 @@ return {
         replace_netrw = true,
         layout = {
           preset = "sidebar",
-          preview = true
+          preview = true,
         },
         follow_file = true,
         tree = true,
@@ -173,12 +173,12 @@ return {
         diagnostics = false,
         formatters = {
           file = {
-            filename_only = true
+            filename_only = true,
           },
           severity = {
-            pos = "right"
-          }
-        }
+            pos = "right",
+          },
+        },
       },
       -- Documentation for the picker
       -- https://github.com/folke/snacks.nvim/blob/main/docs/picker.md
@@ -193,8 +193,8 @@ return {
             tree = true,
             git_status = false,
             diagnostics = false,
-            follow_file = true
-          }
+            follow_file = true,
+          },
         },
         -- My ~/github/dotfiles-latest/neovim/lazyvim/lua/config/keymaps.lua
         -- file was always showing at the top, I needed a way to decrease its

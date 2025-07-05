@@ -8,10 +8,10 @@ return {
       -- colorscheme = "Duskfox",
       -- colorscheme = "Nightfox",
       -- colorscheme = "Carbonfox",
-      colorscheme = "eldritch",
+      --colorscheme = "eldritch",
       -- colorscheme = "gruvbox",
       -- colorscheme = "kanagawa",
-      -- colorscheme = "tokyonight",
+      colorscheme = "tokyonight-night",
     },
   },
 }

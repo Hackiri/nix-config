@@ -48,7 +48,7 @@
       # Utilities
       "rectangle" # Window manager
       "raycast" # Spotlight replacement
-      "cleanshot" # Screenshot tool
+      "shottr" # Screenshot tool
 
       # Communication
       "slack"

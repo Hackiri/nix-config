@@ -168,10 +168,17 @@ return {
               return string.match(prefix, "^%u") ~= nil and match.label:match("^%l*$") ~= nil
             end,
 
-            -- Disable documentation to avoid wordnet dependency
-            get_documentation = function(_)
-              return nil
-            end,
+            documentation = {
+              enable = true, -- enable documentation to show the definition of the word
+              get_command = {
+                -- For the word definitions feature
+                -- make sure "wn" is available in your system
+                -- brew install wordnet
+                "wn",
+                "${word}", -- this will be replaced by the word to search
+                "-over",
+              },
+            },
 
             -- Use the default prefix extraction
             get_prefix = function(context)
