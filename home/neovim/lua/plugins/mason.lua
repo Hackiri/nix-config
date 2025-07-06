@@ -194,7 +194,7 @@ return {
           "yaml-language-server",
           "bash-language-server",
           "dockerfile-language-server",
-
+          
           -- DAP adapters
           "js-debug-adapter",
 

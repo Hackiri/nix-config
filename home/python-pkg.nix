@@ -30,5 +30,10 @@
     #--------------------------------------------------
     python3Packages.markdown # Markdown processing
     python3Packages.tabulate # Pretty-print tabular data
+
+    #--------------------------------------------------
+    # Python LaTeX Tools
+    #--------------------------------------------------
+    python3Packages.pylatexenc # LaTeX to text converter
   ];
 }

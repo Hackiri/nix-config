@@ -97,7 +97,7 @@ return {
       },
     },
     latex = {
-      enabled = false,
+      enabled = true,
     },
   },
 }
