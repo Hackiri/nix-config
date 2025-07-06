@@ -43,8 +43,6 @@ return {
         end)
         if not status then
           vim.notify("Mason update failed: " .. tostring(err), vim.log.levels.ERROR)
-        else
-          vim.notify("Mason tools installation completed successfully", vim.log.levels.INFO)
         end
       end,
       desc = "Mason Tools Update",

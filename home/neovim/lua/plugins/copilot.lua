@@ -27,7 +27,7 @@ return {
       -- help = true,
     },
   },
-  
+
   "CopilotC-Nvim/CopilotChat.nvim",
   enabled = vim.g.neovim_mode ~= "skitty", -- Disable for skitty mode
   opts = function(_, opts)
