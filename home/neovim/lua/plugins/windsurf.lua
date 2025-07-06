@@ -12,23 +12,23 @@ return {
       -- Define the language server path
       local cache_path = vim.fn.stdpath("cache")
       local ls_path = cache_path .. "/codeium/bin/language_server_macos_x64"
-      
+
       -- Ensure directory exists
       local ls_dir = vim.fn.fnamemodify(ls_path, ":h")
       if vim.fn.isdirectory(ls_dir) == 0 then
         vim.fn.mkdir(ls_dir, "p")
       end
-      
+
       -- Setup Codeium with error handling - only for completion
       local codeium_ok, codeium = pcall(require, "codeium")
       if codeium_ok then
         pcall(function()
           codeium.setup({
-            enable_cmp_source = true,  -- Enable as completion source
-            enable_chat = false,       -- Disable chat (using Avante for that)
-            tools = {                  -- Disable tools (using Avante for that)
+            enable_cmp_source = true, -- Enable as completion source
+            enable_chat = false, -- Disable chat (using Avante for that)
+            tools = { -- Disable tools (using Avante for that)
               enable = false,
-            }
+            },
           })
         end)
       else

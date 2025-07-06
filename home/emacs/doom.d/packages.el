@@ -23,6 +23,9 @@
 
 ;; Git integration
 (package! glab)
+(package! gtea :recipe (:host github :repo "emacsmirror/gtea"))
+(package! gogs :recipe (:host github :repo "emacsmirror/gogs"))
+(package! buck :recipe (:host github :repo "emacsmirror/buck"))
 
 ;; Language support
 (package! dts-mode)
