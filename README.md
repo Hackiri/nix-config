@@ -39,7 +39,7 @@ This repository contains a complete Nix configuration that manages both system-l
   - Syntax highlighting and colorization
   - Git integration
 - **Emacs Configuration**
-  - Custom Emacs setup
+  - Doom Emacs setup with custom configuration and plugins
 - **DevShell Environment**
   - Flexible development shell with language-specific environments
   - Selectable language support (Python, Rust, Go, Node.js)
@@ -94,7 +94,7 @@ nix-config/
     ├── secrets.nix        # secrets
     ├── btop/              # System monitor configuration
     ├── direnv/            # Directory environment manager
-    ├── emacs/             # Emacs configuration
+    ├── emacs/             # Doom Emacs configuration
     ├── neovide/           # Neovide GUI for Neovim
     ├── neovim/            # Neovim configuration
     ├── starship/          # Shell prompt configuration
