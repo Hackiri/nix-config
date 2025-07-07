@@ -34,11 +34,6 @@
 
     # Add bash completion if bash is enabled
     programs.bash.initExtra = lib.mkIf config.programs.bash.enable ''
-      # Kubernetes aliases
-      alias k='kubectl'
-      alias kns='kubectl config set-context --current --namespace'
-      alias kctx='kubectl config use-context'
-
       # Kubectl completion
       if command -v kubectl &> /dev/null; then
         source <(kubectl completion bash)

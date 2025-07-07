@@ -97,7 +97,7 @@ return {
       end,
       -- Ensure Avante doesn't interfere with Codeium completion
       completion = {
-        auto_trigger = true, -- Don't auto-trigger Avante completion
+        auto_trigger = false, -- Don't auto-trigger Avante completion
       },
     })
   end,
