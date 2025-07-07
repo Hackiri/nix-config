@@ -66,6 +66,12 @@ in {
       key = secrets.git.signingKey;
     };
     extraConfig = {
+      pull.rebase = "true";
+      diff.guitool = "meld";
+      difftool.meld.path = "${pkgs.meld}/bin/meld";
+      difftool.prompt = "false";
+      merge.tool = "meld";
+      mergetool.meld.path = "${pkgs.meld}/bin/meld";
       commit.gpgsign = true;
       tag.gpgsign = true;
       # Explicitly set user.name, user.email, and user.signingkey

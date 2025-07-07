@@ -7,10 +7,75 @@
   emacs-enabled = config.programs.emacs.enable;
 in {
   imports = [];
+  
+  # Emacs daemon service for macOS
+  services.emacs = {
+    enable = emacs-enabled;
+    package = pkgs.emacs30;
+    client = {
+      enable = true;
+      arguments = ["-c"];
+    };
+    extraOptions = ["--daemon"];
+  };
 
   programs.emacs = {
     enable = true;
     package = lib.mkForce pkgs.emacs30;
+    extraPackages = epkgs: [
+      # Nix support
+      epkgs.nix-mode
+      epkgs.nixpkgs-fmt
+
+      # Editing and linting
+      epkgs.flycheck
+      epkgs.json-mode
+      epkgs.python-mode
+      epkgs.auto-complete
+      epkgs.web-mode
+      epkgs.smart-tabs-mode
+      epkgs.whitespace-cleanup-mode
+      epkgs.flycheck-pyflakes
+      epkgs.pos-tip # required by flycheck pos-tip
+      epkgs.flycheck-pos-tip
+
+      # Themes
+      epkgs.nord-theme
+      epkgs.nordless-theme
+      epkgs.vscode-dark-plus-theme
+
+      # UI enhancements
+      epkgs.s # required by shrink-path
+      epkgs.f # required by shrink-path
+      epkgs.shrink-path # required by doom-modeline
+      epkgs.doom-modeline
+      epkgs.all-the-icons
+      epkgs.all-the-icons-dired
+      epkgs.nerd-icons
+
+      # Git integration (core packages)
+      epkgs.with-editor # required by magit
+      epkgs.llama # required by magit
+      epkgs.magit
+
+      # Markdown
+      epkgs.websocket # required by markdown-preview mode
+      epkgs.web-server # required by markdown-preview mode
+      epkgs.markdown-mode
+      epkgs.markdown-preview-mode
+
+      # AI/Chat
+      epkgs.gptel
+
+      # Language support
+      epkgs.yaml-mode
+      epkgs.multiple-cursors
+      epkgs.dts-mode
+      epkgs.rust-mode
+      epkgs.nickel-mode
+      epkgs.hcl-mode # required by terraform-mode
+      epkgs.terraform-mode
+    ];
   };
 
   home = lib.mkIf emacs-enabled {
@@ -62,10 +127,6 @@ in {
 
         # Use our custom Doom config files directly
         echo "Copying custom Doom Emacs configuration from nix-config..."
-
-        # Run doom sync to update packages and configuration
-        echo "Running doom sync to update packages..."
-        "$EMACSDIR/bin/doom" sync
 
         # Copy init.el
         cp -f "${config.home.homeDirectory}/nix-config/home/emacs/doom.d/init.el" "$DOOMDIR/init.el" && \
