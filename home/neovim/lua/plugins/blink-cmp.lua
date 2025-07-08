@@ -6,28 +6,14 @@ return {
   event = "VimEnter",
   version = "1.*",
   dependencies = {
-    -- Snippet Engine
-    {
-      "L3MON4D3/LuaSnip",
-      version = "2.*",
-      build = (function()
-        -- Build Step is needed for regex support in snippets
-        -- This step is not supported in many windows environments
-        if vim.fn.has("win32") == 1 or vim.fn.executable("make") == 0 then
-          return
-        end
-        return "make install_jsregexp"
-      end)(),
-    },
+    "L3MON4D3/LuaSnip",
     "moyiz/blink-emoji.nvim",
     "Kaiser-Yang/blink-cmp-dictionary",
   },
   ---@module 'blink.cmp'
   ---@type blink.cmp.Config
   opts = function(_, opts)
-    -- NOTE: The new way to enable LuaSnip
     -- Merge custom sources with the existing ones from lazyvim
-    -- NOTE: by default lazyvim already includes the lazydev source, so not adding it here again
     opts.sources = vim.tbl_deep_extend("force", opts.sources or {}, {
       default = { "lsp", "path", "snippets", "buffer", "dadbod", "emoji", "dictionary" },
       providers = {

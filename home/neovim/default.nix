@@ -9,6 +9,9 @@
 
   programs.neovim = {
     enable = true;
+    plugins = with pkgs.vimPlugins; [
+      luasnip
+    ];
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
@@ -26,7 +29,6 @@
       # For LuaSnip transformations
       lua51Packages.lua
       lua51Packages.luarocks
-      lua51Packages.jsregexp
 
       # Image and document rendering tools
       imagemagick # Provides magick/convert for image conversion

@@ -3,15 +3,15 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      -- colorscheme = "catppuccin-mocha",
+      colorscheme = "catppuccin",
       -- catppuccin catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
       -- colorscheme = "Duskfox",
       -- colorscheme = "Nightfox",
-      -- colorscheme = "Carbonfox",
+      -- colorscheme = "carbonfox",
       -- colorscheme = "eldritch",
       -- colorscheme = "gruvbox",
       -- colorscheme = "kanagawa",
-      colorscheme = "tokyonight-night",
+      -- colorscheme = "tokyonight-night",
     },
   },
 }
