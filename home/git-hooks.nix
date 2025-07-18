@@ -5,22 +5,18 @@
   inputs ? {},
   ...
 }: let
-  # Import secrets if the file exists, otherwise use placeholder values
-  secrets =
-    if builtins.pathExists /secrets/secrets.nix
+  # Import secrets if the file exists
+  secrets = let
+    secretsPath = ../secrets/secrets.nix;
+  in
+    if builtins.pathExists secretsPath
     then let
-      imported = import /secrets/secrets.nix;
+      imported = import secretsPath;
       # Debug output to verify the import
       _ = builtins.trace "Imported GPG key: ${imported.git.signingKey}" null;
     in
       imported
-    else {
-      git = {
-        userName = "user";
-        userEmail = "user@example.com";
-        signingKey = "";
-      };
-    };
+    else abort "secrets.nix file not found";
 
   # Create hook scripts
   postCheckoutHook = pkgs.writeShellScript "post-checkout-hook" ''
