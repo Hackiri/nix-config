@@ -1,0 +1,13 @@
+.DS_Store
+
+# Nix build output
+result*
+
+# Nix build logs
+*.log
+
+# direnv
+.direnv
+
+# Secrets
+home/secrets.nix
