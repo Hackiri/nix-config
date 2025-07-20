@@ -51,7 +51,7 @@ This repository contains a complete Nix configuration that manages both system-l
   - Convenient shell aliases and completions
 - **Terminal Environment**
   - Starship prompt customization
-  - Zsh with extensive customization
+  - Zsh with extensive customization (fzf, git)
   - Tmux integration
   - Modern CLI tools (bat, eza, ripgrep, fd, jq)
   - Directory jumping with zoxide
@@ -85,13 +85,13 @@ nix-config/
 ├── flake.nix              # Main flake configuration
 ├── home/                  # Home Manager configurations
     ├── common-pkg.nix     # Common packages for all systems
-    ├── kube.nix          # Kubernetes tools configuration
-    ├── kube-config.nix   # Kubernetes feature enablement
+    ├── kube.nix           # Kubernetes tools configuration
+    ├── kube-config.nix    # Kubernetes feature enablement
     ├── python-pkg.nix     # Python packages
     ├── common.nix         # Shared home configuration
     ├── darwin.nix         # macOS-specific home configuration
     ├── nixos.nix          # NixOS configuration
-    ├── secrets.nix        # secrets
+    ├── aerospace/         # Aerospace configuration
     ├── btop/              # System monitor configuration
     ├── direnv/            # Directory environment manager
     ├── emacs/             # Doom Emacs configuration
@@ -111,11 +111,15 @@ nix-config/
     ├── darwin/            # macOS-specific modules
     │   └── homebrew.nix   # Homebrew configuration
     └── nixos/             # NixOS modules (placeholder)
-├── pkgs/                 # Custom package definitions
-    ├── default.nix       # Package exports
+├── overlay/               # Overlay    
+├── pkgs/                  # Custom package definitions
+    ├── default.nix        # Package exports
     ├── kubernetes-tools.nix # Kubernetes tools package
-    └── dev-tools.nix     # Development tools package
-└── shell.nix             # Development shell
+    └── dev-tools.nix      # Development tools package
+├── secrets/               # Secrets
+├── .pre-commit-config.yaml # Pre-commit configuration
+├── shell.nix              # Development shell
+├── stylua.nix             # Stylua configuration
 ```
 
 ### Key Components

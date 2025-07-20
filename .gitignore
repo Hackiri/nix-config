@@ -8,6 +8,3 @@ result*
 
 # direnv
 .direnv
-
-# Secrets
-home/secrets.nix

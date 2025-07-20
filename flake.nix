@@ -12,6 +12,10 @@
     # Emacs overlay for native compilation support
     emacs-overlay.url = "github:nix-community/emacs-overlay";
 
+    # Secrets management
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     # Homebrew inputs
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     homebrew-core = {
@@ -39,6 +43,7 @@
     homebrew-cask,
     homebrew-bundle,
     emacs-overlay,
+    sops-nix,
     ...
   }: let
     # Define system types for convenience
@@ -85,6 +90,9 @@
           # Base system configuration
           ./hosts/${name}/configuration.nix
 
+          # Secrets management
+          sops-nix.darwinModules.sops
+
           # Home Manager integration
           home-manager.darwinModules.home-manager
           {
@@ -93,6 +101,9 @@
               useUserPackages = true;
               extraSpecialArgs = {inherit inputs username;};
               users.${username} = import ./hosts/${name}/home.nix;
+              sharedModules = [
+                sops-nix.homeManagerModules.sops
+              ];
             };
           }
 
@@ -154,11 +165,19 @@
       dev-tools = {
         type = "app";
         program = "${customPkgs.dev-tools.dev-tools}/bin/dev-tools";
+        meta = {
+          description = "Development tools helper script";
+          mainProgram = "dev-tools";
+        };
       };
       # Export devshell as a runnable app
       devshell = {
         type = "app";
         program = "${customPkgs.devshell}/bin/devshell";
+        meta = {
+          description = "Development shell environment";
+          mainProgram = "devshell";
+        };
       };
     });
   };

@@ -5,34 +5,21 @@
   inputs ? {},
   ...
 }: let
-  # Import secrets if the file exists
-  secrets = let
-    secretsPath = ../secrets/secrets.nix;
-  in
-    if builtins.pathExists secretsPath
-    then let
-      imported = import secretsPath;
-      # Debug output to verify the import
-      _ = builtins.trace "Imported GPG key: ${imported.git.signingKey}" null;
-    in
-      imported
-    else abort "secrets.nix file not found";
-
-  # Create hook scripts
+  # Create hook scripts that use sops secrets
   postCheckoutHook = pkgs.writeShellScript "post-checkout-hook" ''
     echo "Setting up git configuration..."
-    git config user.name "${secrets.git.userName}"
-    git config user.email "${secrets.git.userEmail}"
-    git config user.signingkey "${secrets.git.signingKey}"
-    echo "Git configuration updated!"
+    git config user.name "$(cat ${config.sops.secrets.git-userName.path})"
+    git config user.email "$(cat ${config.sops.secrets.git-userEmail.path})"
+    git config user.signingkey "$(cat ${config.sops.secrets.git-signingKey.path})"
+    echo "Git configuration updated from sops secrets!"
   '';
 
   postMergeHook = pkgs.writeShellScript "post-merge-hook" ''
     echo "Setting up git configuration..."
-    git config user.name "${secrets.git.userName}"
-    git config user.email "${secrets.git.userEmail}"
-    git config user.signingkey "${secrets.git.signingKey}"
-    echo "Git configuration updated!"
+    git config user.name "$(cat ${config.sops.secrets.git-userName.path})"
+    git config user.email "$(cat ${config.sops.secrets.git-userEmail.path})"
+    git config user.signingkey "$(cat ${config.sops.secrets.git-signingKey.path})"
+    echo "Git configuration updated from sops secrets!"
   '';
 
   preCommitHook = pkgs.writeShellScript "pre-commit-hook" ''
@@ -45,6 +32,23 @@
     echo "Pre-commit hooks passed!"
   '';
 in {
+  # Sops configuration
+  sops = {
+    defaultSopsFile = ../secrets/secrets.yaml;
+    age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+
+    secrets = {
+      git-userName = {
+        path = "${config.home.homeDirectory}/.config/git/username";
+      };
+      git-userEmail = {
+        path = "${config.home.homeDirectory}/.config/git/email";
+      };
+      git-signingKey = {
+        path = "${config.home.homeDirectory}/.config/git/signingkey";
+      };
+    };
+  };
   # GPG configuration
   programs.gpg = {
     enable = true;
@@ -53,18 +57,14 @@ in {
     };
   };
 
-  # Git configuration
+  # Git configuration using sops secrets
   programs.git = {
     enable = true;
-
-    # Git-crypt is installed as a package, not as a git setting
-    # We'll add it to the packages list below
-
-    inherit (secrets.git) userName userEmail;
-
+    # Git user info will be set by git hooks from SOPS secrets
+    # userName and userEmail are managed by the post-checkout/post-merge hooks
     signing = {
       signByDefault = true;
-      key = "${secrets.git.signingKey}"; # Explicitly use string interpolation to ensure value is set
+      # Signing key will be set by git hooks from SOPS secrets
     };
 
     extraConfig = {
