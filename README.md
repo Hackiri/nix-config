@@ -58,6 +58,7 @@ This repository contains a complete Nix configuration that manages both system-l
 - **Development Tools**
   - Code Quality
     - Pre-commit hooks
+    - Sops for encrypted secrets
     - Alejandra for Nix formatting
     - Deadnix for dead code detection
     - Statix for Nix static analysis
@@ -85,9 +86,6 @@ nix-config/
 ├── flake.nix              # Main flake configuration
 ├── home/                  # Home Manager configurations
     ├── common-pkg.nix     # Common packages for all systems
-    ├── kube.nix           # Kubernetes tools configuration
-    ├── kube-config.nix    # Kubernetes feature enablement
-    ├── python-pkg.nix     # Python packages
     ├── common.nix         # Shared home configuration
     ├── darwin.nix         # macOS-specific home configuration
     ├── nixos.nix          # NixOS configuration
@@ -95,12 +93,16 @@ nix-config/
     ├── btop/              # System monitor configuration
     ├── direnv/            # Directory environment manager
     ├── emacs/             # Doom Emacs configuration
+    ├── git/               # Git configuration
+    ├── kube/              # Kubernetes configuration
     ├── neovide/           # Neovide GUI for Neovim
     ├── neovim/            # Neovim configuration
+    ├── python/            # Python configuration
+    ├── sops-nix/          # Sops configuration
     ├── starship/          # Shell prompt configuration
     ├── terminal/          # Terminal configurations
     ├── tmux/              # Tmux configuration
-    └── yazi/              # File manager configuration
+    ├── yazi/              # File manager configuration
 ├── hosts/                 # Host-specific configurations
     └── nix-darwin/        # macOS configuration
         ├── configuration.nix  # System configuration
@@ -110,9 +112,11 @@ nix-config/
     │   └── darwin-common.nix  # Common Darwin configuration
     ├── darwin/            # macOS-specific modules
     │   └── homebrew.nix   # Homebrew configuration
+    │   └── font.nix       # Font configuration
     └── nixos/             # NixOS modules (placeholder)
 ├── overlay/               # Overlay    
 ├── pkgs/                  # Custom package definitions
+    ├── devshell/          # Devshell definitions
     ├── default.nix        # Package exports
     ├── kubernetes-tools.nix # Kubernetes tools package
     └── dev-tools.nix      # Development tools package
