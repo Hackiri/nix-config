@@ -11,7 +11,7 @@
   config = lib.mkIf config.programs.kube.enable {
     home.packages = with pkgs;
     # Import the kubernetes-tools package set
-      (import ../pkgs {inherit pkgs;}).kubernetes-tools;
+      (import ../../pkgs {inherit pkgs;}).kubernetes-tools;
 
     # Kubernetes-specific shell configuration
     programs.zsh.initContent = lib.mkIf config.programs.zsh.enable ''
