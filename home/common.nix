@@ -13,14 +13,14 @@
     ./emacs
     ./neovim
     ./neovide
+    ./python/python-pkg.nix
+    ./sops-nix/sops.nix
+    ./git/git-hooks.nix
+    ./kube/kube.nix
+    ./kube/kube-config.nix
     ./tmux
     ./terminal
     ./common-pkg.nix
-    ./python-pkg.nix
-    ./kube.nix
-    ./git-hooks.nix
-    ./kube-config.nix
     ./custom-pkgs.nix
-    # ./sops.nix
   ];
 }
