@@ -32,30 +32,32 @@ final: prev: {
   };
 
   # Custom Emacs packages set with additional packages
-  emacsPackagesFor-custom = emacsPackages: emacsPackages.overrideScope (efinal: eprev: {
-    # Add any custom Emacs package overrides here
-    # Example: treesit-grammars with additional languages
-    treesit-grammars = eprev.treesit-grammars.with-grammars (grammars: with grammars; [
-      tree-sitter-bash
-      tree-sitter-c
-      tree-sitter-cpp
-      tree-sitter-css
-      tree-sitter-dockerfile
-      tree-sitter-go
-      tree-sitter-html
-      tree-sitter-javascript
-      tree-sitter-json
-      tree-sitter-lua
-      tree-sitter-markdown
-      tree-sitter-nix
-      tree-sitter-python
-      tree-sitter-rust
-      tree-sitter-toml
-      tree-sitter-tsx
-      tree-sitter-typescript
-      tree-sitter-yaml
-    ]);
-  });
+  emacsPackagesFor-custom = emacsPackages:
+    emacsPackages.overrideScope (efinal: eprev: {
+      # Add any custom Emacs package overrides here
+      # Example: treesit-grammars with additional languages
+      treesit-grammars = eprev.treesit-grammars.with-grammars (grammars:
+        with grammars; [
+          tree-sitter-bash
+          tree-sitter-c
+          tree-sitter-cpp
+          tree-sitter-css
+          tree-sitter-dockerfile
+          tree-sitter-go
+          tree-sitter-html
+          tree-sitter-javascript
+          tree-sitter-json
+          tree-sitter-lua
+          tree-sitter-markdown
+          tree-sitter-nix
+          tree-sitter-python
+          tree-sitter-rust
+          tree-sitter-toml
+          tree-sitter-tsx
+          tree-sitter-typescript
+          tree-sitter-yaml
+        ]);
+    });
 
   # Emacs with custom package set
   emacs-with-packages = (prev.emacsPackagesFor final.emacs-custom).emacsWithPackages;
