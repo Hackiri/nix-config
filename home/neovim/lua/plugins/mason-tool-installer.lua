@@ -25,6 +25,7 @@ return {
 
       -- Linters
       "luacheck", -- Lua linter
+      "ruff", -- Python formatter and linter
       -- Don't include shellcheck as it's likely managed by Nix
 
       -- Command line tools

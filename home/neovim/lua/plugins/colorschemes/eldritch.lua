@@ -11,7 +11,7 @@ return {
   priority = 1000, -- Make sure it loads before other plugins
   name = "eldritch",
   opts = {
-    transparent = true,
+    transparent = false,
     styles = {
       -- Style to be applied to different syntax groups
       -- Value is any valid attr-list value for `:help nvim_set_hl`

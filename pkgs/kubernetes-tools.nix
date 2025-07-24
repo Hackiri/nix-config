@@ -8,9 +8,42 @@ with pkgs; [
   kubernetes-helm # Kubernetes package manager
 
   #--------------------------------------------------
+  # Context & Namespace Management
+  #--------------------------------------------------
+  kubectx # Fast context switching between clusters (includes kubens)
+
+  #--------------------------------------------------
+  # Log Management & Debugging
+  #--------------------------------------------------
+  stern # Multi-pod log tailing with color coding
+
+  #--------------------------------------------------
   # Kubernetes Management UIs
   #--------------------------------------------------
   k9s # Terminal-based Kubernetes dashboard
+
+  #--------------------------------------------------
+  # Security & Compliance
+  #--------------------------------------------------
+  kube-bench # CIS Kubernetes benchmark security scanner
+
+  #--------------------------------------------------
+  # GitOps & CI/CD
+  #--------------------------------------------------
+  argocd # GitOps continuous delivery CLI
+  flux # GitOps toolkit CLI
+  skaffold # Local development workflow automation
+
+  #--------------------------------------------------
+  # Service Mesh
+  #--------------------------------------------------
+  istioctl # Istio service mesh management
+
+  #--------------------------------------------------
+  # Local Development
+  #--------------------------------------------------
+  kind # Kubernetes in Docker
+  minikube # Local Kubernetes clusters
 
   #--------------------------------------------------
   # Kubernetes Networking

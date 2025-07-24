@@ -60,11 +60,9 @@ in {
   # Git configuration using sops secrets
   programs.git = {
     enable = true;
-    # Git user info will be set by git hooks from SOPS secrets
     # userName and userEmail are managed by the post-checkout/post-merge hooks
     signing = {
       signByDefault = true;
-      # Signing key will be set by git hooks from SOPS secrets
     };
 
     extraConfig = {
