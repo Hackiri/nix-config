@@ -56,6 +56,7 @@ require("lazy").setup({
     },
     { "nvim-treesitter/nvim-treesitter", opts = { ensure_installed = {} } },
     -- Import user plugins
+    { "MunifTanjim/nui.nvim" },
     -- import any extras modules here
     { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
     { import = "lazyvim.plugins.extras.ui.mini-animate" },
