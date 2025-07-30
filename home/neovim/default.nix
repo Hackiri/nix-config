@@ -5,8 +5,6 @@
   inputs,
   ...
 }: {
-  # No imports needed
-
   programs.neovim = {
     enable = true;
     plugins = with pkgs.vimPlugins; [
