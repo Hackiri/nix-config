@@ -8,7 +8,6 @@
 
     # Version control
     git # Distributed version control system
-    git-crypt # Transparent file encryption in git
     lazygit # Simple terminal UI for git commands
     gh # GitHub CLI for managing GitHub repos
 

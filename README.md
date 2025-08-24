@@ -162,28 +162,10 @@ This configuration follows a clear separation of concerns between system and use
 1. Install Nix (Determinate Systems) upstream channel
 
 ```bash
-curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 ```
 
-2. Enable Nix Flakes
-
-```bash
-# Enable flakes and nix-command in your Nix configuration
-mkdir -p ~/.config/nix
-echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-```
-
-3. Install nix-darwin
-
-```bash
-# For Nixpkgs unstable
-sudo nix run nix-darwin/master#darwin-rebuild -- switch
-
-# For Nixpkgs 25.05
-sudo nix run nix-darwin/nix-darwin-25.05#darwin-rebuild -- switch
-```
-
-4. Clone This Repository
+2. Clone This Repository
 
 ```bash
 # Clone the repository
@@ -191,7 +173,7 @@ git clone https://github.com/yourusername/nix-config.git ~/nix-config
 cd ~/nix-config
 ```
 
-5. Configure Your System
+3. Configure Your System
    Before installing nix-darwin, customize the configuration files to match your system:
 
 a. Update System Configuration in `flake.nix`:
@@ -231,7 +213,79 @@ b. Configure Host Settings in `hosts/nix-darwin/configuration.nix`
 
 c. Set Up User Environment in `hosts/nix-darwin/home.nix`
 
-6. Install nix-darwin
+4. Set Up Authentication and Secrets
+
+a. Generate SSH Key for GitHub
+
+```bash
+# Generate SSH key
+ssh-keygen -t ed25519 -C "your-email@example.com"
+
+# Add SSH key to GitHub
+cat ~/.ssh/id_ed25519.pub
+# Copy the output and add it to GitHub Settings > SSH and GPG keys > New SSH key
+```
+
+b. Generate GPG Key for Commit Signing
+
+```bash
+# Generate GPG key
+gpg --full-generate-key
+# Choose: (9) ECC (sign and encrypt)
+# Choose: (1) Curve 25519
+# Enter your name and email when prompted
+
+# Export public key for GitHub
+gpg --armor --export YOUR_KEY_ID
+# Copy the output and add it to GitHub Settings > SSH and GPG keys > New GPG key
+```
+
+c. Set Up SOPS for Secrets Management
+
+```bash
+# Generate age key for SOPS
+age-keygen > ~/.config/sops/age/keys.txt
+
+# Create age key directories
+mkdir -p ~/.config/sops/age
+mkdir -p ~/Library/Application\ Support/sops/age
+
+# Copy age key to both locations
+cp ~/.config/sops/age/keys.txt ~/Library/Application\ Support/sops/age/keys.txt
+
+# Get the public key from the generated file
+grep "public key:" ~/.config/sops/age/keys.txt
+```
+
+d. Update SOPS Configuration
+
+Update `.sops.yaml` with your new age public key:
+
+```yaml
+keys:
+  - &main-key age1your_public_key_here
+creation_rules:
+  - path_regex: secrets/.*\.yaml$
+    key_groups:
+      - age:
+          - *main-key
+```
+
+e. Create Encrypted Secrets File
+
+```bash
+# Create new secrets file with your information
+cat > secrets/secrets.yaml << EOF
+git-userName: your-username
+git-userEmail: your-email@example.com
+git-signingKey: YOUR_GPG_KEY_ID
+EOF
+
+# Encrypt the secrets file
+sops -e -i secrets/secrets.yaml
+```
+
+5. Install nix-darwin
 
 ```bash
 # Install nix-darwin with your customized configuration
