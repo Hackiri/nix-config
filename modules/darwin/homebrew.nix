@@ -38,7 +38,6 @@
     casks = [
       # Browsers
       "firefox"
-      "google-chrome"
       "brave-browser"
 
       # Development
@@ -58,7 +57,6 @@
 
       # Media
       "vlc"
-      "spotify"
       "iina"
 
       # Productivity
@@ -78,8 +76,6 @@
       "Numbers" = 409203825;
       "Pages" = 409201541;
 
-      # Apple developer tools
-      "xcode" = 497799835;
     };
   };
 }

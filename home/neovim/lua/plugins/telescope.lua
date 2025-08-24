@@ -8,17 +8,8 @@ return {
     "nvim-tree/nvim-web-devicons",
     {
       "nvim-telescope/telescope-fzf-native.nvim",
-      -- Use a conditional build command based on the environment
-      build = function()
-        -- Check if we're in a Nix environment
-        if vim.fn.executable("nix") == 1 then
-          -- Use the system's fzf instead of building
-          return ""
-        else
-          -- Fall back to standard build process
-          return "make"
-        end
-      end,
+      -- Build the native extension
+      build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
     },
   },
   config = function()

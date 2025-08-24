@@ -24,6 +24,8 @@ return {
           -- want to search for files in a specific path
           workspaces = {
             ["plugins"] = "$HOME/nix-config/home/neovim/lua/plugins",
+            ["nix"] = "$HOME/nix-config",
+            ["projects"] = "$HOME/projects",
           },
         },
       },
@@ -33,5 +35,7 @@ return {
     -- Add keybindings for frecency under <leader>f prefix
     vim.keymap.set("n", "<leader>fr", "<cmd>Telescope frecency<CR>", { desc = "Recent Files (Frecency)" })
     vim.keymap.set("n", "<leader>fR", "<cmd>Telescope frecency workspace=plugins<CR>", { desc = "Recent Plugin Files" })
+    vim.keymap.set("n", "<leader>fn", "<cmd>Telescope frecency workspace=nix<CR>", { desc = "Recent Nix Files" })
+    vim.keymap.set("n", "<leader>fp", "<cmd>Telescope frecency workspace=projects<CR>", { desc = "Recent Projects" })
   end,
 }

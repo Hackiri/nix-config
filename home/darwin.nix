@@ -6,7 +6,7 @@
 }: {
   # Import macOS-specific modules
   imports = [
-    ./aerospace
+    #./aerospace
   ];
 
   # macOS-specific packages that don't have dedicated modules

@@ -9,6 +9,7 @@
     enable = true;
     plugins = with pkgs.vimPlugins; [
       luasnip
+      telescope-fzf-native-nvim
     ];
     defaultEditor = true;
     viAlias = true;
@@ -27,6 +28,11 @@
       # For LuaSnip transformations
       lua51Packages.lua
       lua51Packages.luarocks
+
+      # Build tools for native extensions
+      cmake
+      gcc
+      gnumake
 
       # Image and document rendering tools
       imagemagick # Provides magick/convert for image conversion

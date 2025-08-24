@@ -2,12 +2,15 @@
   description = "Multi-system Nix flake (nix-darwin, NixOS, etc.)";
 
   inputs = {
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-25.05-darwin";
-    nix-darwin.url = "github:nix-darwin/nix-darwin/nix-darwin-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    
+    nix-darwin.url = "github:lnl7/nix-darwin/nix-darwin-25.05";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs-darwin";
+
     home-manager.url = "github:nix-community/home-manager/release-25.05";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs-darwin";    
 
     # Emacs overlay for native compilation support
     emacs-overlay.url = "github:nix-community/emacs-overlay";
@@ -36,6 +39,7 @@
     self,
     nixpkgs,
     nixpkgs-unstable,
+    nixpkgs-darwin,
     nix-darwin,
     home-manager,
     nix-homebrew,
@@ -99,6 +103,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
+              backupFileExtension = "backup";
               extraSpecialArgs = {inherit inputs username;};
               users.${username} = import ./hosts/${name}/home.nix;
               sharedModules = [
