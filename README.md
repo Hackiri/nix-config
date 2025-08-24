@@ -213,7 +213,14 @@ b. Configure Host Settings in `hosts/nix-darwin/configuration.nix`
 
 c. Set Up User Environment in `hosts/nix-darwin/home.nix`
 
-4. Set Up Authentication and Secrets
+4. Install nix-darwin
+
+```bash
+# Install nix-darwin with your customized configuration
+nix run nixpkgs#nix-darwin -- switch --flake .
+```
+
+5. Set Up Authentication and Secrets
 
 a. Generate SSH Key for GitHub
 
@@ -283,13 +290,6 @@ EOF
 
 # Encrypt the secrets file
 sops -e -i secrets/secrets.yaml
-```
-
-5. Install nix-darwin
-
-```bash
-# Install nix-darwin with your customized configuration
-nix run nixpkgs#nix-darwin -- switch --flake .
 ```
 
 ## Maintenance
