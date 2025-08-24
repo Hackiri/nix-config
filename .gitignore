@@ -8,3 +8,21 @@ result*
 
 # direnv
 .direnv
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+.#*
+
+# Backup files
+*.backup
+*.orig
+*.rej
+
+# macOS
+.Spotlight-V100
+.Trashes
+
+# Age keys (should not be committed)
+keys.txt
