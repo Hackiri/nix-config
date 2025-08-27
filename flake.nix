@@ -40,7 +40,7 @@
     let
       inherit (self) outputs;
     # Define system types for convenience
-    supportedSystems = ["x86_64-darwin" "aarch64-darwin"];
+    supportedSystems = ["x86_64-darwin" "aarch64-darwin" "x86_64-linux"];
 
     # Helper function to generate an attrset for each supported system
     forAllSystems = nixpkgs.lib.genAttrs supportedSystems;

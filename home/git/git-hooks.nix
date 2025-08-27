@@ -77,6 +77,7 @@ in {
 
       # Create an init template to set up git config
       init.templateDir = "~/.git-template";
+      # pre-commit hook
     };
   };
 
