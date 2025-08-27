@@ -141,17 +141,17 @@ M.setup = function()
   -- This requires the following tmux settings:
   --   set -g allow-rename on
   --   set -g automatic-rename off
-  vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter', 'BufFilePost', 'BufWritePost' }, {
+  vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "BufFilePost", "BufWritePost" }, {
     group = augroup("tmux_title"),
     callback = function()
-      local filename = vim.fn.expand('%:t') -- get filename only (no path)
-      if filename == '' then
+      local filename = vim.fn.expand("%:t") -- get filename only (no path)
+      if filename == "" then
         return
       end
       -- truncate to 15 characters
-      local shortname = #filename > 15 and filename:sub(1, 15) .. '…' or filename
+      local shortname = #filename > 15 and filename:sub(1, 15) .. "…" or filename
       -- Update tmux window name
-      io.write('\027kVI:' .. shortname .. '\027\\')
+      io.write("\027kVI:" .. shortname .. "\027\\")
     end,
   })
 
