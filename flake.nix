@@ -124,6 +124,41 @@
           ];
           specialArgs = {inherit inputs system username;};
         };
+
+      # Function to create a NixOS system configuration
+      mkNixOS = {
+        name,
+        system ? "x86_64-linux",
+        username ? "wm",
+      }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          # Use our custom nixpkgs with overlays
+          pkgs = pkgsForSystem system;
+          modules = [
+            # Base system configuration
+            ./hosts/${name}/configuration.nix
+
+            # Secrets management
+            sops-nix.nixosModules.sops
+
+            # Home Manager integration
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                backupFileExtension = "backup";
+                extraSpecialArgs = {inherit inputs username;};
+                users.${username} = import ./hosts/${name}/home.nix;
+                sharedModules = [
+                  sops-nix.homeManagerModules.sops
+                ];
+              };
+            }
+          ];
+          specialArgs = {inherit inputs system username;};
+        };
     in {
       # Define your systems here
       darwinConfigurations = {
@@ -131,6 +166,22 @@
           name = "nix-darwin/mbp";
           username = "wm";
         };
+      };
+
+      # Define your NixOS systems here
+      nixosConfigurations = {
+        # Example NixOS desktop configuration
+        "nixos-desktop" = mkNixOS {
+          name = "nixos/desktop";
+          system = "x86_64-linux";
+          username = "wm";
+        };
+        # Additional NixOS configurations can be added here
+        # "nixos-server" = mkNixOS {
+        #   name = "nixos/server";
+        #   system = "x86_64-linux";
+        #   username = "wm";
+        # };
       };
 
       # Make custom packages available as flake outputs

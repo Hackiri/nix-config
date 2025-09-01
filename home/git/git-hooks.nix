@@ -76,7 +76,7 @@ in {
       tag.gpgsign = true;
 
       # Create an init template to set up git config
-      init.templateDir = "~/.git-template";
+      init.templateDir = "${config.home.homeDirectory}/.git-template";
       # pre-commit hook
     };
   };
