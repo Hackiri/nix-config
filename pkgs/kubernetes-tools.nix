@@ -61,6 +61,17 @@ with pkgs; [
   krew # kubectl plugin manager
 
   #--------------------------------------------------
+  # Container Analysis & Debugging
+  #--------------------------------------------------
+  dive # Tool for exploring docker images layer by layer
+  popeye # Kubernetes cluster resource sanitizer
+
+  #--------------------------------------------------
+  # Enhanced CLI Experience
+  #--------------------------------------------------
+  kubecolor # Colorize kubectl output
+
+  #--------------------------------------------------
   # Kubernetes Distribution Tools
   #--------------------------------------------------
   talosctl # CLI for Talos Linux management
