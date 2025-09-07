@@ -1,6 +1,9 @@
-{ config, pkgs, lib, ... }:
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   # Import hardware configuration
   imports = [
     ./hardware-configuration.nix
@@ -9,12 +12,12 @@
   # Bootloader Configuration
   boot = {
     initrd = {
-      availableKernelModules = [ "ahci" "xhci_pci" "virtio_pci" "sr_mod" "virtio_blk" ];
-      supportedFilesystems = [ "nfs" ];
-      kernelModules = [ "nfs" ];
+      availableKernelModules = ["ahci" "xhci_pci" "virtio_pci" "sr_mod" "virtio_blk"];
+      supportedFilesystems = ["nfs"];
+      kernelModules = ["nfs"];
     };
-    kernelModules = [ "kvm-intel" ];
-    extraModulePackages = [ ];
+    kernelModules = ["kvm-intel"];
+    extraModulePackages = [];
     loader.timeout = 60;
     loader.grub = {
       enable = true;
@@ -41,7 +44,7 @@
     "/mnt/share4" = {
       device = "truenas.lab.internal:/mnt/ztank_M48A1DB/usenet";
       fsType = "nfs";
-    }; 
+    };
   };
 
   # Networking Configuration
@@ -50,19 +53,21 @@
     usePredictableInterfaceNames = false;
     interfaces.eth0 = {
       useDHCP = false;
-      ipv4.addresses = [{
-        address = "10.0.10.108";
-        prefixLength = 24;
-      }];
+      ipv4.addresses = [
+        {
+          address = "10.0.10.108";
+          prefixLength = 24;
+        }
+      ];
     };
     defaultGateway = "10.0.10.1";
-    nameservers = [ "10.0.254.3" ];
+    nameservers = ["10.0.254.3"];
     domain = "lab.internal";
-    search = [ "lab.internal" ];
+    search = ["lab.internal"];
 
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 22 8084 7878 8989 ];
+      allowedTCPPorts = [22 8084 7878 8989];
       allowedUDPPorts = [];
     };
   };
@@ -108,19 +113,20 @@
 
   # System Packages and Configuration
   environment = {
-    systemPackages = import ../apps/default.nix { inherit pkgs; };
+    systemPackages = import ../apps/default.nix {inherit pkgs;};
     shells = with pkgs; [zsh]; # Shells
     etc."current-system-packages".text = let
       packages = builtins.map (p: "${p.name}") config.environment.systemPackages;
       sortedUnique = builtins.sort builtins.lessThan (lib.unique packages);
       formatted = builtins.concatStringsSep "\n" sortedUnique;
-    in formatted;
+    in
+      formatted;
   };
 
   # Fonts Configuration
   fonts.packages = with pkgs; [
     ibm-plex
-    (nerdfonts.override { fonts = ["JetBrainsMono" "IBMPlexMono" "Iosevka"]; })
+    (nerdfonts.override {fonts = ["JetBrainsMono" "IBMPlexMono" "Iosevka"];})
   ];
 
   environment.shellAliases = {
@@ -186,7 +192,7 @@
   nixpkgs.config.allowUnfree = true;
 
   # Experimental Features
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # System State Version
   system.stateVersion = "24.05";

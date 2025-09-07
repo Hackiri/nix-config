@@ -1,18 +1,21 @@
-{ config, pkgs, lib, inputs, ... }:
-
 {
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}: {
   # Import hardware configuration
   imports = [
     ./hardware-configuration.nix
   ];
 
   # Bootloader configuration
-  boot.initrd.availableKernelModules =
-    [ "ahci" "xhci_pci" "virtio_pci" "sr_mod" "virtio_blk" ];
-  boot.initrd.supportedFilesystems = [ "nfs" ];
-  boot.initrd.kernelModules = ["nfs" ];
-  boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
+  boot.initrd.availableKernelModules = ["ahci" "xhci_pci" "virtio_pci" "sr_mod" "virtio_blk"];
+  boot.initrd.supportedFilesystems = ["nfs"];
+  boot.initrd.kernelModules = ["nfs"];
+  boot.kernelModules = ["kvm-intel"];
+  boot.extraModulePackages = [];
   boot.loader.grub = {
     enable = true;
     device = "/dev/sda";
@@ -40,18 +43,20 @@
     hostName = "alpha-nix";
     usePredictableInterfaceNames = false;
     interfaces.eth0.useDHCP = false;
-    interfaces.eth0.ipv4.addresses = [{
-      address = "10.0.10.102";
-      prefixLength = 24;
-    }];
+    interfaces.eth0.ipv4.addresses = [
+      {
+        address = "10.0.10.102";
+        prefixLength = 24;
+      }
+    ];
     defaultGateway = "10.0.10.1";
-    nameservers = [ "10.0.254.3" ];
+    nameservers = ["10.0.254.3"];
     domain = "lab.internal";
-    search = [ "lab.internal" ];
+    search = ["lab.internal"];
 
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 22 32400 ];  # Allow SSH and Plex
+      allowedTCPPorts = [22 32400]; # Allow SSH and Plex
       allowedUDPPorts = [];
     };
   };
@@ -77,7 +82,7 @@
     enable = true;
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
-  }
+  };
 
   # X11 keyboard configuration
   services.xserver.xkb = {
@@ -89,17 +94,17 @@
   users.users.hackiri = {
     isNormalUser = true;
     description = "hackiri";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = ["networkmanager" "wheel"];
     packages = with pkgs; [];
   };
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
-  
+
   # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;  
+  nixpkgs.config.allowUnfree = true;
 
   # Enable the Flakes feature and the accompanying new nix command-line tool
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # System packages
   environment.systemPackages = import ../apps/default.nix {inherit pkgs;};
@@ -111,12 +116,13 @@
     packages = builtins.map (p: "${p.name}") config.environment.systemPackages;
     sortedUnique = builtins.sort builtins.lessThan (lib.unique packages);
     formatted = builtins.concatStringsSep "\n" sortedUnique;
-  in formatted;
-  
-  # Enable Spice 
+  in
+    formatted;
+
+  # Enable Spice
   services.spice-vdagentd.enable = true;
   services.spice-autorandr.enable = true;
-  
+
   # Enable QEMU guest agent for Proxmox
   services.qemuGuest.enable = true;
 
@@ -125,14 +131,14 @@
 
   # mysql(mariadb)
   services.mysql = {
-      enable = true;
-      package = pkgs.mariadb;
+    enable = true;
+    package = pkgs.mariadb;
   };
 
   services.gvfs.enable = true;
 
   fonts.packages = with pkgs; [
-    (ibm-plex)
+    ibm-plex
     (nerdfonts.override {fonts = ["JetBrainsMono" "IBMPlexMono" "Iosevka"];})
   ];
 
@@ -178,7 +184,7 @@
       enableSSHSupport = true;
     };
   };
-  
+
   # Set the system state version
   system.stateVersion = "24.05";
 }
