@@ -164,6 +164,7 @@
       darwinConfigurations = {
         "nix-darwin" = mkDarwin {
           name = "nix-darwin/mbp";
+          system = "x86_64-darwin";
           username = "wm";
         };
       };
