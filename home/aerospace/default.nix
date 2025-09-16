@@ -72,7 +72,6 @@
       alt-q = "close"
       alt-slash = 'layout tiles horizontal vertical'
       alt-comma = 'layout accordion horizontal vertical'
-      alt-m = 'fullscreen'
 
       # Focus movement - using cmd-shift for better ergonomics
       cmd-shift-h = 'focus left'
@@ -103,6 +102,14 @@
       alt-7 = 'workspace 7'
       alt-8 = 'workspace 8'
       alt-9 = 'workspace 9'
+      alt-b = 'workspace B' # for browser
+      alt-e = 'workspace E' # 
+      alt-f = 'workspace F' # for finder
+      alt-m = 'workspace M' #
+      alt-n = 'workspace N' # for notes
+      alt-p = 'workspace P'
+      alt-t = 'workspace T' # for terminal shell
+      alt-v = 'workspace V'
 
       # Named workspaces for common use cases (optional alternative)
       # alt-p = 'workspace P'  # Personal/Projects
@@ -133,16 +140,16 @@
       [mode.service.binding]
       # Reload config and exit service mode
       esc = ['reload-config', 'mode main']
-
+      
       # Reset layout
       r = ['flatten-workspace-tree', 'mode main']
-
+      
       # Toggle floating/tiling layout
       f = ['layout floating tiling', 'mode main']
-
+      
       # Close all windows but current
       backspace = ['close-all-windows-but-current', 'mode main']
-
+      
       # Join with adjacent windows
       alt-shift-h = ['join-with left', 'mode main']
       alt-shift-j = ['join-with down', 'mode main']
@@ -169,6 +176,38 @@
       [[on-window-detected]]
       if.app-id = 'us.zoom.xos'
       run = 'move-node-to-workspace 5'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = 'finder'
+      run = 'layout floating'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = 'Shottr'
+      run = 'layout floating'
+
+      [[on-window-detected]]
+      if.app-id = 'com.mitchellh.ghostty'
+      run = "move-node-to-workspace T"
+
+      [[on-window-detected]]
+      if.app-id = 'com.google.Chrome'
+      run = "move-node-to-workspace B"
+
+      [[on-window-detected]]
+      if.app-id = 'app.zen-browser.zen'
+      run = "move-node-to-workspace B"
+
+      [[on-window-detected]]
+      if.app-id = 'com.apple.finder'
+      run = "move-node-to-workspace F"
+
+      [[on-window-detected]]
+      if.app-id = 'notion.id'
+      run = "move-node-to-workspace N"
+
+      [[on-window-detected]]
+      if.app-id = 'md.obsidian'
+      run = "move-node-to-workspace N"
     '';
   };
 }
