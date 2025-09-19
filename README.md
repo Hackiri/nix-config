@@ -1,16 +1,24 @@
-# Nix Configuration
+# Multi-System Nix Configuration
 
-A Nix configuration for macOS using nix-darwin and Home Manager, providing a declarative and reproducible system environment.
+A comprehensive, well-architected Nix configuration supporting both macOS (nix-darwin) and NixOS systems with Home Manager integration. This configuration follows modern Nix best practices with a modular, maintainable structure.
 
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
 - [System Architecture](#system-architecture)
 - [Installation and Setup Guide](#installation-and-setup-guide)
+- [Benefits of the Architecture](#benefits-of-the-architecture)
 - [Maintenance](#maintenance)
 
 ## Overview
-This repository contains a complete Nix configuration that manages both system-level settings and user environments on macOS. It combines nix-darwin for system configuration with Home Manager for user environment management, creating a fully reproducible and declarative setup.
+This repository contains a complete Nix configuration that manages both system-level settings and user environments across macOS and NixOS platforms. It features a **three-layer modular architecture** with proper separation of concerns, making it highly maintainable and extensible.
+
+### 🏗️ Architecture Highlights
+- **🧩 Modular Design**: Organized modules with clear separation of concerns
+- **🔄 Cross-Platform**: Unified configuration for macOS and NixOS
+- **📋 Profile-Based**: Different user profiles (development, minimal, desktop)
+- **⚙️ Options System**: Configurable modules with proper type checking
+- **🎯 Feature Flags**: Optional modules that can be enabled/disabled
 
 ## Features
 
