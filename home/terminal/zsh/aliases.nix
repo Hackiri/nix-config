@@ -3,12 +3,12 @@
   nixb = "sudo darwin-rebuild"; # Base command
 
   # Build variants
-  nixbuild = "sudo darwin-rebuild build --flake ~/nix-config#nix-darwin"; # Build only
-  nixswitch = "sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin"; # Build and activate
-  nixboot = "sudo darwin-rebuild boot --flake ~/nix-config#nix-darwin"; # Build but activate on next boot
-  nixcheck = "sudo darwin-rebuild check --flake ~/nix-config#nix-darwin"; # Check configuration
-  nixdry = "sudo darwin-rebuild dry-build --flake ~/nix-config#nix-darwin"; # Test build without making changes
-  nixedit = "sudo darwin-rebuild edit --flake ~/nix-config#nix-darwin"; # Open configuration in $EDITOR
+  nixbuild = "sudo darwin-rebuild build --flake ~/nix-config#mbp"; # Build only
+  nixswitch = "sudo darwin-rebuild switch --flake ~/nix-config#mbp"; # Build and activate
+  nixboot = "sudo darwin-rebuild boot --flake ~/nix-config#mbp"; # Build but activate on next boot
+  nixcheck = "sudo darwin-rebuild check --flake ~/nix-config#mbp"; # Check configuration
+  nixdry = "sudo darwin-rebuild dry-build --flake ~/nix-config#mbp"; # Test build without making changes
+  nixedit = "sudo darwin-rebuild edit --flake ~/nix-config#mbp"; # Open configuration in $EDITOR
 
   # System management
   nixlist = "sudo darwin-rebuild --list-generations"; # List all generations
@@ -16,8 +16,8 @@
   nixclean = "sudo nix-collect-garbage -d"; # Clean old generations
 
   # Debugging options
-  nixtrace = "sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin --show-trace"; # Show trace for debugging
-  nixverbose = "sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin --verbose"; # Verbose output
+  nixtrace = "sudo darwin-rebuild switch --flake ~/nix-config#mbp --show-trace"; # Show trace for debugging
+  nixverbose = "sudo darwin-rebuild switch --flake ~/nix-config#mbp --verbose"; # Verbose output
 
   # Nix utilities
   nxsearch = "nix search nixpkgs"; # Search packages

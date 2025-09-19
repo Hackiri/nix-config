@@ -309,7 +309,7 @@ nix flake lock --update-input nixpkgs  # Update specific input
 nixswitch
 
 # Or directly
-sudo darwin-rebuild switch --flake ~/nix-config#nix-darwin
+sudo darwin-rebuild switch --flake ~/nix-config#mbp
 ```
 
 ### System Cleanup
