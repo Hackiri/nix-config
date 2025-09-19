@@ -12,7 +12,7 @@
     home = {
       packages = with pkgs;
       # Import the kubernetes-tools package set
-        (import ../../pkgs {inherit pkgs;}).kubernetes-tools;
+        (import ../../../../pkgs {inherit pkgs;}).kubernetes-tools;
 
       # Create k9s configuration directory and basic config
       file.".config/k9s/config.yml".text = ''

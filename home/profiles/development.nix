@@ -20,7 +20,7 @@
 
     # Terminal and shell enhancements
     ../programs/terminals/tmux
-    ../programs/terminals/terminal
+    ../programs/terminals/default.nix
     ../programs/shells/starship
 
     # Utilities

@@ -6,7 +6,7 @@
 }: {
   # Import macOS-specific modules
   imports = [
-    ./aerospace
+    ./programs/utilities/aerospace
   ];
 
   # macOS-specific packages that don't have dedicated modules
@@ -15,6 +15,5 @@
     mkalias # Tool for creating macOS aliases
     pam-reattach # Enables Touch ID support in tmux
     cachix # Nix binary cache client
-    neovide
   ];
 }
