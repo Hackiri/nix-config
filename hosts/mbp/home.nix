@@ -6,8 +6,8 @@
   ...
 }: {
   imports = [
-    ../../../home/common.nix
-    ../../../home/darwin.nix
+    ../../home/common.nix
+    ../../home/darwin.nix
   ];
 
   # User identity
