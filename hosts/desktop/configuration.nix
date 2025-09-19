@@ -11,6 +11,9 @@
     # Include the results of the hardware scan
     ./hardware-configuration.nix
 
+    # Import shared configurations
+    ../shared/base.nix
+
     # Common NixOS modules (currently empty)
     # ../../modules/nixos
   ];
@@ -66,34 +69,19 @@
     pulse.enable = true;
   };
 
-  # Define a user account
+  # Define a user account (extending shared base configuration)
   users.users.${username} = {
     isNormalUser = true;
-    description = username;
     extraGroups = ["networkmanager" "wheel"];
-    shell = pkgs.zsh;
   };
 
-  # Enable zsh system-wide
-  programs.zsh.enable = true;
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile
+  # Additional desktop-specific packages
   environment.systemPackages = with pkgs; [
-    vim
-    wget
-    curl
-    git
     firefox
   ];
 
   # Enable the OpenSSH daemon
   services.openssh.enable = true;
-
-  # Enable flakes and new command
-  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

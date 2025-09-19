@@ -6,24 +6,16 @@
   ...
 }: {
   imports = [
+    ../../home/shared/base.nix
     ../../home/common.nix
     ../../home/darwin.nix
   ];
 
-  # User identity
-  home = {
-    inherit username;
-    homeDirectory = "/Users/${username}";
-    stateVersion = "25.05";
+  # Platform-specific home directory
+  home.homeDirectory = "/Users/${username}";
 
-    # User packages
-    packages = with pkgs; [
-      # Add your personal packages here
-    ];
-  };
-
-  # Enable some useful programs
-  programs = {
-    home-manager.enable = true;
-  };
+  # Host-specific packages
+  home.packages = with pkgs; [
+    # Add mbp-specific packages here
+  ];
 }
