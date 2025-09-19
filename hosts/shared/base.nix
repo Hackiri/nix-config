@@ -1,4 +1,5 @@
 # Shared base configuration for all hosts
+# This file is now mostly empty as functionality has been moved to modules
 {
   config,
   lib,
@@ -6,26 +7,6 @@
   username,
   ...
 }: {
-  # Common user configuration
-  users.users.${username} = {
-    description = username;
-    shell = pkgs.zsh;
-  };
-
-  # Enable zsh system-wide
-  programs.zsh.enable = true;
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # Common system packages
-  environment.systemPackages = with pkgs; [
-    vim
-    wget
-    curl
-    git
-  ];
-
-  # Enable flakes and new command
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  # Host-level shared configuration can go here
+  # Most functionality has been moved to modules/system/shared/
 }

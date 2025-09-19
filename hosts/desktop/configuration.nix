@@ -14,8 +14,8 @@
     # Import shared configurations
     ../shared/base.nix
 
-    # Common NixOS modules (currently empty)
-    # ../../modules/nixos
+    # Import improved NixOS modules
+    ../../modules/system/nixos
   ];
 
   # Bootloader
@@ -24,7 +24,6 @@
 
   # Networking
   networking.hostName = "nixos-desktop";
-  networking.networkmanager.enable = true;
 
   # Set your time zone
   time.timeZone = "America/New_York";
@@ -69,10 +68,9 @@
     pulse.enable = true;
   };
 
-  # Define a user account (extending shared base configuration)
+  # Additional user groups for desktop
   users.users.${username} = {
-    isNormalUser = true;
-    extraGroups = ["networkmanager" "wheel"];
+    extraGroups = ["audio" "video"];
   };
 
   # Additional desktop-specific packages
@@ -80,8 +78,6 @@
     firefox
   ];
 
-  # Enable the OpenSSH daemon
-  services.openssh.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
