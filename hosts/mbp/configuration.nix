@@ -6,7 +6,7 @@
 }: {
   imports = [
     # Import common modules
-    ../../../modules/common/darwin-common.nix
+    ../../modules/common/darwin-common.nix
   ];
 
   # Host-specific system configuration

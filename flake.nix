@@ -162,8 +162,8 @@
     in {
       # Define your systems here
       darwinConfigurations = {
-        "nix-darwin" = mkDarwin {
-          name = "nix-darwin/mbp";
+        "mbp" = mkDarwin {
+          name = "mbp";
           system = "x86_64-darwin";
           username = "wm";
         };
@@ -172,14 +172,14 @@
       # Define your NixOS systems here
       nixosConfigurations = {
         # Example NixOS desktop configuration
-        "nixos-desktop" = mkNixOS {
-          name = "nixos/desktop";
+        "desktop" = mkNixOS {
+          name = "desktop";
           system = "x86_64-linux";
           username = "wm";
         };
         # Additional NixOS configurations can be added here
-        # "nixos-server" = mkNixOS {
-        #   name = "nixos/server";
+        # "server" = mkNixOS {
+        #   name = "server";
         #   system = "x86_64-linux";
         #   username = "wm";
         # };
