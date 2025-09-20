@@ -19,9 +19,8 @@
     ../programs/development/python/python-pkg.nix
 
     # Terminal and shell enhancements
-    ../programs/terminals/tmux
     ../programs/terminals/default.nix
-    ../programs/shells/starship
+    ../programs/shells/default.nix
 
     # Utilities
     ../programs/utilities/btop

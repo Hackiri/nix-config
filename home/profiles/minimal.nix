@@ -7,7 +7,7 @@
 }: {
   imports = [
     # Basic shell enhancements
-    ../programs/shells/starship
+    ../programs/shells/default.nix
 
     # Essential utilities
     ../programs/utilities/btop
