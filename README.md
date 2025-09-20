@@ -35,6 +35,7 @@ nix-config/
 ├── secrets/                    # Encrypted secrets (sops-nix)
 ├── shell.nix                   # Development shell
 └── stylua.toml                 # Stylua configuration
+```
 
 ## Installation
 
@@ -43,7 +44,6 @@ nix-config/
 - Nix with flakes enabled
 
 ### Setup
-
 1. **Install Nix**
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
