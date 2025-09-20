@@ -10,7 +10,7 @@ local function load_colors()
   -- First try to find the file in the current config directory
   local config_paths = {
     vim.fn.stdpath("config") .. "/lua/config/active-colorscheme.sh",
-    vim.fn.expand("~/nix-config/home/neovim/lua/config/active-colorscheme/active-colorscheme.sh"),
+    vim.fn.expand("~/nix-config/home/programs/editors/neovim/lua/config/active-colorscheme/active-colorscheme.sh"),
   }
 
   local file
