@@ -29,8 +29,7 @@
     ../programs/utilities/sops-nix/sops.nix
 
     # Package collections
-    ../packages/common.nix
-    ../packages/custom.nix
+    ../packages
   ];
 
   # Development-specific home configuration
