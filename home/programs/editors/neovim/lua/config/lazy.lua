@@ -74,6 +74,52 @@ package.preload["nvim-treesitter.query"] = function()
     if q.get_files then return q.get_files(lang, name, is_included) end
     return {}
   end
+  -- Provide recursive capture fetcher expected by some plugins (e.g. textsubjects)
+  function M.get_capture_matches_recursively(bufnr, capture_string, query_group)
+    if type(capture_string) ~= "string" then
+      return {}
+    end
+    local capture = capture_string
+    if type(capture) == "string" and capture:sub(1, 1) == "@" then
+      capture = capture:sub(2)
+    end
+
+    local ts = vim.treesitter
+    if not (ts and ts.get_parser) then
+      return {}
+    end
+    local parser = ts.get_parser(bufnr)
+    if not parser then
+      return {}
+    end
+
+    local results = {}
+    parser:for_each_tree(function(tree, lang_tree)
+      local root = tree:root()
+      local lang = lang_tree:lang()
+      local qry
+      if q.get then
+        qry = q.get(lang, query_group)
+      elseif q.get_query then
+        qry = q.get_query(lang, query_group)
+      end
+      if not qry then
+        return
+      end
+      local start_row, _, end_row, _ = root:range()
+      for _, match, _ in qry:iter_matches(root, bufnr, start_row, end_row + 1) do
+        for id, nodes in pairs(match) do
+          local name = qry.captures and qry.captures[id]
+          if name == capture and nodes and nodes[1] then
+            local node = nodes[#nodes]
+            local srow, scol, erow, ecol = node:range()
+            table.insert(results, { node = { start_pos = { srow, scol }, end_pos = { erow, ecol } } })
+          end
+        end
+      end
+    end)
+    return results
+  end
   function M.has_query_files(lang, name)
     local files = {}
     if q.get_files then
@@ -98,6 +144,46 @@ package.preload["nvim-treesitter.query"] = function()
     end
     return ""
   end
+  return M
+end
+
+-- Provide minimal compat for `nvim-treesitter.ts_utils` used by some plugins (e.g., textsubjects)
+package.preload["nvim-treesitter.ts_utils"] = function()
+  local M = {}
+  -- Update the current visual selection to the given Range4
+  -- range = { start_row, start_col, end_row, end_col }
+  function M.update_selection(bufnr, range, selection_mode)
+    local api = vim.api
+    local start_row, start_col, end_row, end_col = unpack(range)
+    selection_mode = selection_mode or 'v'
+
+    -- enter visual mode if normal or operator-pending (no) mode
+    local mode = api.nvim_get_mode()
+    if mode.mode ~= selection_mode then
+      local sm = api.nvim_replace_termcodes(selection_mode, true, true, true)
+      vim.cmd.normal({ sm, bang = true })
+    end
+
+    local end_col_offset = 1
+    if selection_mode == 'v' and vim.o.selection == 'exclusive' then
+      end_col_offset = 0
+    end
+
+    api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+    vim.cmd('normal! o')
+    api.nvim_win_set_cursor(0, { end_row + 1, math.max(end_col - end_col_offset, 0) })
+  end
+
+  function M.get_node_text(node, bufnr)
+    if vim.treesitter and vim.treesitter.get_node_text then
+      return vim.treesitter.get_node_text(node, bufnr)
+    end
+    -- Fallback: manual buffer slice
+    local srow, scol, erow, ecol = node:range()
+    local lines = vim.api.nvim_buf_get_text(bufnr, srow, scol, erow, ecol, {})
+    return table.concat(lines, '\n')
+  end
+
   return M
 end
 
