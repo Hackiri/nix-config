@@ -15,6 +15,14 @@ return {
       local capabilities = require("blink.cmp").get_lsp_capabilities()
       local lspconfig = require("lspconfig")
 
+      -- Stylua LSP currently fails (`stylua --lsp` not supported by system Stylua).
+      -- We format Lua via conform.nvim instead. Ensure Stylua LSP does not auto-start.
+      pcall(function()
+        if vim.lsp and vim.lsp.disable then
+          vim.lsp.disable("stylua")
+        end
+      end)
+
       -- Setup servers with enhanced capabilities
       local servers = {
         lua_ls = {
@@ -177,7 +185,7 @@ return {
           end, "[L]SP [W]orkspace [L]ist Folders")
 
           -- Format on save if the client supports it
-          if client.supports_method("textDocument/formatting") then
+          if client.name ~= "stylua" and client.supports_method("textDocument/formatting") then
             vim.api.nvim_create_autocmd("BufWritePre", {
               group = vim.api.nvim_create_augroup("format_on_save" .. event.buf, { clear = true }),
               buffer = event.buf,
