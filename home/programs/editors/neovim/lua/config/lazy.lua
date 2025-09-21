@@ -187,6 +187,109 @@ package.preload["nvim-treesitter.ts_utils"] = function()
   return M
 end
 
+-- Shim loader for `nvim-treesitter.parsers` that adds missing helpers when first required
+package.preload["nvim-treesitter.parsers"] = function()
+  -- Temporarily remove this preload to avoid recursion
+  local loader = package.preload["nvim-treesitter.parsers"]
+  package.preload["nvim-treesitter.parsers"] = nil
+
+  local ok_real, real = pcall(require, "nvim-treesitter.parsers")
+  if not ok_real or type(real) ~= "table" then
+    real = {}
+  end
+
+  -- Restore is unnecessary since package.loaded will now cache `real`.
+  -- Add helpers expected by legacy plugins
+  local cfg_ok, cfg = pcall(require, "nvim-treesitter.config")
+
+  local function list_contains(t, v)
+    if vim.list_contains then
+      return vim.list_contains(t, v)
+    end
+    for _, x in ipairs(t) do
+      if x == v then return true end
+    end
+    return false
+  end
+
+  local methods = {}
+  methods.has_parser = function(lang)
+    if not lang or lang == "" then return false end
+    if cfg_ok and cfg.get_installed then
+      local ok, installed = pcall(cfg.get_installed, 'parsers')
+      if ok and type(installed) == "table" and list_contains(installed, lang) then
+        return true
+      end
+    end
+    return false
+  end
+
+  methods.get_buf_lang = function(bufnr)
+    bufnr = bufnr or 0
+    local ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+    if vim.treesitter and vim.treesitter.language and vim.treesitter.language.get_lang then
+      return vim.treesitter.language.get_lang(ft)
+    end
+    return ft
+  end
+
+  local mt = getmetatable(real) or {}
+  local old_index = mt.__index
+  mt.__index = function(t, k)
+    local v = methods[k]
+    if v ~= nil then return v end
+    if type(old_index) == "function" then return old_index(t, k) end
+    if type(old_index) == "table" then return old_index[k] end
+    return rawget(t, k)
+  end
+  setmetatable(real, mt)
+  
+  package.loaded["nvim-treesitter.parsers"] = real
+  return real
+end
+
+-- If parsers was already loaded before this file ran, augment it in-place
+do
+  local parsers = package.loaded["nvim-treesitter.parsers"]
+  if type(parsers) == "table" then
+    local cfg_ok, cfg = pcall(require, "nvim-treesitter.config")
+    local function list_contains(t, v)
+      if vim.list_contains then return vim.list_contains(t, v) end
+      for _, x in ipairs(t or {}) do if x == v then return true end end
+      return false
+    end
+    local methods = {}
+    methods.has_parser = function(lang)
+      if not lang or lang == "" then return false end
+      if cfg_ok and cfg.get_installed then
+        local ok, installed = pcall(cfg.get_installed, 'parsers')
+        if ok and type(installed) == "table" and list_contains(installed, lang) then
+          return true
+        end
+      end
+      return false
+    end
+    methods.get_buf_lang = function(bufnr)
+      bufnr = bufnr or 0
+      local ft = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+      if vim.treesitter and vim.treesitter.language and vim.treesitter.language.get_lang then
+        return vim.treesitter.language.get_lang(ft)
+      end
+      return ft
+    end
+    local mt = getmetatable(parsers) or {}
+    local old_index = mt.__index
+    mt.__index = function(t, k)
+      local v = methods[k]
+      if v ~= nil then return v end
+      if type(old_index) == "function" then return old_index(t, k) end
+      if type(old_index) == "table" then return old_index[k] end
+      return rawget(t, k)
+    end
+    setmetatable(parsers, mt)
+  end
+end
+
 -- Make sure the parser install dir is on the runtimepath for nvim-treesitter
 do
   local site = vim.fn.stdpath("data") .. "/site"
