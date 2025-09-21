@@ -6,7 +6,7 @@ vim.g.maplocalleader = " "
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
     "git",
     "clone",
@@ -20,6 +20,66 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Set the python3_host_prog variable
 vim.g.python3_host_prog = vim.fn.expand("~/.venvs/neovim/bin/python")
+
+-- Compatibility aliases for legacy modules before plugin load
+-- Some plugins still `require("nvim-treesitter.query")` on Neovim 0.11+.
+-- Route that to our compat shim in lua/compat/treesitter_query.lua.
+package.preload["nvim-treesitter.query"] = function()
+  -- Inline compat shim so we don't depend on package.path
+  local q
+  local ok = pcall(function()
+    q = vim.treesitter and vim.treesitter.query or nil
+  end)
+  if not ok or type(q) ~= "table" then
+    local ok_tsq, tsq = pcall(require, "nvim-treesitter.ts_query")
+    if ok_tsq then
+      q = tsq
+    else
+      q = {}
+    end
+  end
+
+  local M = {}
+  function M.get_query(lang, name)
+    if q.get_query then return q.get_query(lang, name) end
+    if q.get then return q.get(lang, name) end
+    return nil
+  end
+  function M.get(lang, name)
+    if q.get then return q.get(lang, name) end
+    if q.get_query then return q.get_query(lang, name) end
+    return nil
+  end
+  function M.get_files(lang, name, is_included)
+    if q.get_files then return q.get_files(lang, name, is_included) end
+    return {}
+  end
+  function M.parse(lang, query_string)
+    if q.parse then return q.parse(lang, query_string) end
+    return nil
+  end
+  function M.get_node_text(node, bufnr)
+    if vim.treesitter and vim.treesitter.get_node_text then
+      return vim.treesitter.get_node_text(node, bufnr)
+    end
+    local ok_ts_utils, ts_utils = pcall(require, "nvim-treesitter.ts_utils")
+    if ok_ts_utils and ts_utils.get_node_text then
+      return ts_utils.get_node_text(node, bufnr)
+    end
+    return ""
+  end
+  return M
+end
+
+-- Make sure the parser install dir is on the runtimepath for nvim-treesitter
+do
+  local site = vim.fn.stdpath("data") .. "/site"
+  local rtp = vim.o.runtimepath or ""
+  -- Compare as comma-delimited list to avoid partial matches
+  if not string.find("," .. rtp .. ",", "," .. site .. ",", 1, true) then
+    vim.opt.runtimepath:append(site)
+  end
+end
 
 -- Safe require function to handle missing modules
 local function safe_require(module)
@@ -44,7 +104,7 @@ require("lazy").setup({
   },
   spec = {
     -- Import LazyVim plugins
-    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    { "LazyVim/LazyVim", version = "*", import = "lazyvim.plugins" },
     -- Explicitly enable specific plugins
 
     -- Other plugin configurations
@@ -54,15 +114,12 @@ require("lazy").setup({
       version = "1.*", -- Use stable version tag instead of requiring Rust nightly
       build = "mkdir -p build && cc -O3 -Wall -fpic -std=gnu99 -shared src/fzf.c -o build/libfzf.so",
     },
-    { "nvim-treesitter/nvim-treesitter", opts = { ensure_installed = {} } },
     -- Import user plugins
-    { "MunifTanjim/nui.nvim" },
     -- import any extras modules here
     { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
     { import = "lazyvim.plugins.extras.ui.mini-animate" },
     -- { import = "lazyvim.plugins.extras.ai.codeium" }, -- Replaced with windsurf.vim plugin
-    { import = "lazyvim.plugins.extras.ai.copilot" },
-    { import = "lazyvim.plugins.extras.ai.copilot-chat" },
+    -- Copilot is configured in plugins/copilot.lua
     { import = "plugins" },
     -- Import colorschemes from the colorschemes directory
     { import = "plugins.colorschemes" },

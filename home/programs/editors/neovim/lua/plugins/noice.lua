@@ -1,9 +1,10 @@
 return {
   "folke/noice.nvim",
   event = "VeryLazy",
+  version = "*",
   dependencies = {
-    "MunifTanjim/nui.nvim",
-    "rcarriga/nvim-notify",
+    { "MunifTanjim/nui.nvim", version = "*" },
+    { "rcarriga/nvim-notify", version = "*" },
   },
   opts = function()
     local focused = true

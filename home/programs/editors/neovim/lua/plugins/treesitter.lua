@@ -1,17 +1,18 @@
 return {
   "nvim-treesitter/nvim-treesitter",
+  version = false, -- track main branch; queries/parsers evolve together
   build = ":TSUpdate",
   event = { "BufReadPost", "BufNewFile" }, -- Load on buffer read/new
   priority = 1000, -- Give it high priority to load early
   dependencies = {
-    "nvim-treesitter/nvim-treesitter-textobjects",
-    "nvim-treesitter/nvim-treesitter-refactor",
-    "nvim-treesitter/nvim-treesitter-context",
-    "windwp/nvim-ts-autotag",
-    "JoosepAlviste/nvim-ts-context-commentstring",
-    "nvim-treesitter/playground",
-    "RRethy/nvim-treesitter-endwise", -- Auto-add end in Ruby, Lua, etc.
-    "RRethy/nvim-treesitter-textsubjects", -- Text objects for text
+    { "nvim-treesitter/nvim-treesitter-textobjects", version = false },
+    { "nvim-treesitter/nvim-treesitter-refactor", version = false },
+    { "nvim-treesitter/nvim-treesitter-context", version = false },
+    { "windwp/nvim-ts-autotag", version = "*" },
+    { "JoosepAlviste/nvim-ts-context-commentstring", version = "*" },
+    { "nvim-treesitter/playground", version = false },
+    { "RRethy/nvim-treesitter-endwise", version = "*" }, -- Auto-add end in Ruby, Lua, etc.
+    { "RRethy/nvim-treesitter-textsubjects", version = false }, -- Text objects for text
   },
   config = function()
     -- Skip ts_context_commentstring module
@@ -137,14 +138,14 @@ return {
         disable = { "python", "c", "cpp" }, -- Languages where treesitter indent might be problematic
       },
 
-      -- Incremental selection
+      -- Incremental selection (disabled in favor of flash.nvim Treesitter mode)
       incremental_selection = {
-        enable = true,
+        enable = false,
         keymaps = {
-          init_selection = "<Leader>ts", -- treesitter start selection
-          node_incremental = "<Leader>ti", -- treesitter increment
-          node_decremental = "<Leader>td", -- treesitter decrement
-          scope_incremental = "<Leader>tc", -- treesitter container/scope
+          init_selection = "<Leader>ts",
+          node_incremental = "<Leader>ti",
+          node_decremental = "<Leader>td",
+          scope_incremental = "<Leader>tc",
         },
       },
 
@@ -335,11 +336,7 @@ return {
       end
     end
 
-    -- Folding configuration
-    vim.opt.foldmethod = "expr"
-    vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-    vim.opt.foldenable = false
-    vim.opt.foldlevel = 99
+    -- Folding configuration is handled in `config/folding.lua` (LSP-based by default)
 
     -- Performance optimization
     vim.opt.maxmempattern = 10000 -- Increase max memory for pattern matching

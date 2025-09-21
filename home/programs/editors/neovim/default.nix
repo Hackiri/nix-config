@@ -7,10 +7,7 @@
 }: {
   programs.neovim = {
     enable = true;
-    plugins = with pkgs.vimPlugins; [
-      luasnip
-      telescope-fzf-native-nvim
-    ];
+    plugins = with pkgs.vimPlugins; [ ];
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;

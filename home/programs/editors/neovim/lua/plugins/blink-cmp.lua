@@ -6,7 +6,6 @@ return {
   event = "VimEnter",
   version = "1.*",
   dependencies = {
-    "L3MON4D3/LuaSnip",
     "moyiz/blink-emoji.nvim",
     "Kaiser-Yang/blink-cmp-dictionary",
     {
@@ -139,7 +138,7 @@ return {
 
             get_command_args = function(prefix)
               -- Use the dictionary file in your Neovim config
-              local dict_path = vim.fn.expand("~/nix-config/home/neovim/dictionaries/words.txt")
+              local dict_path = vim.fn.expand("~/nix-config/home/programs/editors/neovim/dictionaries/words.txt")
 
               return {
                 "--color=never",

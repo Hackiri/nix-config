@@ -1,6 +1,6 @@
 return {
-  "echasnovski/mini.indentscope",
-  version = false,
+  "nvim-mini/mini.indentscope",
+  version = "*",
   event = "VeryLazy",
   opts = {
     symbol = "│",

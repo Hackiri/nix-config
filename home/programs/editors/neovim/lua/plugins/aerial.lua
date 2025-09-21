@@ -1,5 +1,6 @@
 return {
   "stevearc/aerial.nvim",
+  version = "*",
   lazy_load = true,
   keys = {
     { "<leader>o", "<cmd>AerialToggle!<CR>", desc = "Toggle outline" },
@@ -9,8 +10,7 @@ return {
   },
   opts = {},
   dependencies = {
-    "nvim-treesitter/nvim-treesitter",
-    "nvim-tree/nvim-web-devicons",
+    { "nvim-tree/nvim-web-devicons", version = "*" },
   },
   config = function()
     require("aerial").setup({

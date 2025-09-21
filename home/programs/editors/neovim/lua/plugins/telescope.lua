@@ -3,14 +3,9 @@ return {
   "nvim-telescope/telescope.nvim",
   branch = "0.1.x",
   dependencies = {
-    "nvim-lua/plenary.nvim",
-    "nvim-telescope/telescope-ui-select.nvim",
-    "nvim-tree/nvim-web-devicons",
-    {
-      "nvim-telescope/telescope-fzf-native.nvim",
-      -- Build the native extension
-      build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
-    },
+    { "nvim-lua/plenary.nvim", version = "*" },
+    { "nvim-telescope/telescope-ui-select.nvim", version = "*" },
+    { "nvim-tree/nvim-web-devicons", version = "*" },
   },
   config = function()
     local telescope = require("telescope")

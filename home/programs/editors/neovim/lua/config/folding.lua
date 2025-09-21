@@ -5,19 +5,39 @@ local current_method = {}
 
 -- Check if treesitter is available for the current buffer
 function M.has_treesitter()
-  local ok, ts = pcall(require, "nvim-treesitter.parsers")
-  if not ok then
+  local ok, parsers = pcall(require, "nvim-treesitter.parsers")
+  if not ok or type(parsers) ~= "table" then
     return false
   end
 
-  -- Get the language for the current buffer
-  local lang = ts.get_buf_lang(0)
-  if not lang then
+  -- Determine the buffer language safely across versions
+  local lang
+  local ok_lang, res = pcall(function()
+    if type(parsers.get_buf_lang) == "function" then
+      return parsers.get_buf_lang(0)
+    end
+    -- Fallback: derive from filetype
+    local ft = vim.bo.filetype
+    if type(parsers.ft_to_lang) == "function" then
+      return parsers.ft_to_lang(ft)
+    end
+    return ft
+  end)
+  lang = ok_lang and res or nil
+  if not lang or lang == "" then
     return false
   end
 
-  -- Check if we have a parser for this language
-  return ts.has_parser(lang)
+  -- Check parser availability guards
+  if type(parsers.has_parser) == "function" then
+    local ok_has, has = pcall(parsers.has_parser, lang)
+    return ok_has and has or false
+  end
+  if type(parsers.get_parser) == "function" then
+    local ok_get = pcall(parsers.get_parser, 0, lang)
+    return ok_get
+  end
+  return false
 end
 
 -- Function to enable LSP folding for a buffer
@@ -68,7 +88,13 @@ function M.setup_folding(bufnr)
   -- Try to use treesitter if available
   if M.has_treesitter() then
     vim.opt_local.foldmethod = "expr"
-    vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
+    -- Prefer the new API available on modern Neovim
+    if vim.treesitter and type(vim.treesitter.foldexpr) == "function" then
+      vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+    else
+      -- Fallback to legacy expr if present
+      vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
+    end
     current_method[bufnr] = "treesitter"
     return
   end

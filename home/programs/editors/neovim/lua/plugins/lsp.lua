@@ -1,14 +1,14 @@
 return {
   {
     "neovim/nvim-lspconfig",
+    version = "*",
     dependencies = {
       "saghen/blink.cmp",
       -- Useful status updates for LSP
-      { "j-hui/fidget.nvim", opts = {} },
+      { "j-hui/fidget.nvim", version = "*", opts = {} },
       -- Automatically install LSPs and related tools to stdpath for neovim
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      "WhoIsSethDaniel/mason-tool-installer.nvim",
+      { "mason-org/mason-lspconfig.nvim", version = "*" },
+      { "WhoIsSethDaniel/mason-tool-installer.nvim", version = "*" },
     },
     config = function()
       -- Get enhanced LSP capabilities from blink.cmp
@@ -105,52 +105,55 @@ return {
         end
       end
 
-      -- Setup mason-lspconfig
+      -- Setup mason-lspconfig: ensure servers are installed. We'll configure via vim.lsp.config
       require("mason-lspconfig").setup({
         ensure_installed = vim.tbl_keys(mason_servers),
         automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-            require("lspconfig")[server_name].setup(server)
-          end,
-        },
       })
 
-      -- Setup Nix-installed servers manually
-      for server_name, _ in pairs(nix_installed_servers) do
-        if servers[server_name] then
-          local server = servers[server_name]
-          server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-          require("lspconfig")[server_name].setup(server)
-        end
+      -- Configure all servers using native Neovim API
+      for server_name, server in pairs(servers) do
+        server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+        vim.lsp.config(server_name, server)
       end
 
-      -- Ensure the tools are installed
+      -- Enable all configured servers
+      for server_name, _ in pairs(servers) do
+        vim.lsp.enable(server_name)
+      end
+
+      -- Ensure non-LSP tools are installed (LSP servers handled by mason-lspconfig)
       local ensure_installed = {
-        "stylua", -- Used to format Lua code
-        -- Don't include nixpkgs-fmt as it's managed by Nix
+        "stylua",         -- Lua formatter
+        "shfmt",          -- Shell formatter
+        "shellcheck",     -- Shell linter
+        "prettier",       -- JS/TS formatter
+        "ruff",           -- Python linter/formatter CLI
+        "js-debug-adapter" -- DAP adapter for JS/TS
       }
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-      -- LSP handlers
-      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-        border = "rounded",
-      })
-
-      vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-        border = "rounded",
-      })
+      -- Provide keymaps for Mason Tools commands
+      vim.keymap.set("n", "<leader>cmt", "<cmd>MasonToolsInstall<cr>", { desc = "Mason Tools Install" })
+      vim.keymap.set("n", "<leader>cmu", function()
+        local ok, err = pcall(function()
+          vim.cmd("MasonToolsInstall")
+        end)
+        if not ok then
+          vim.notify("Mason tools update failed: " .. tostring(err), vim.log.levels.ERROR)
+        end
+      end, { desc = "Mason Tools Update" })
 
       -- LSP Attach Keybindings
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
         callback = function(event)
           local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+          -- Enable LSP-based folding for this buffer
+          pcall(function()
+            require("config.folding").enable_lsp_folding(event.buf)
+          end)
 
           local map = function(keys, func, desc)
             vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })

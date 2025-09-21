@@ -123,14 +123,13 @@ local border = {
   { "│", "FloatBorder" },
 }
 
--- Set default border for floating windows
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-  border = border,
-})
-
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-  border = border,
-})
+-- Set default border for LSP floating windows (Neovim 0.11+)
+local _ofp = vim.lsp.util.open_floating_preview
+vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
+  opts = opts or {}
+  opts.border = opts.border or border
+  return _ofp(contents, syntax, opts, ...)
+end
 
 -- Set border for diagnostic floating windows
 vim.diagnostic.config({

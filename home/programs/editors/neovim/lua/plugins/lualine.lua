@@ -5,9 +5,10 @@ local icons = LazyVim.config.icons
 return {
   "nvim-lualine/lualine.nvim",
   event = "VeryLazy",
+  version = "*",
   dependencies = {
-    "nvim-tree/nvim-web-devicons",
-    "nvim-lua/lsp-status.nvim",
+    { "nvim-tree/nvim-web-devicons", version = "*" },
+    { "nvim-lua/lsp-status.nvim", version = "*" },
   },
   opts = function()
     local icons = {

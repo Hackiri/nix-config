@@ -4,10 +4,9 @@ return {
   cmd = "Neotree",
   branch = "v3.x",
   dependencies = {
-    "nvim-lua/plenary.nvim",
-    "nvim-tree/nvim-web-devicons",
-    "MunifTanjim/nui.nvim",
-    "3rd/image.nvim",
+    { "nvim-lua/plenary.nvim", version = "*" },
+    { "nvim-tree/nvim-web-devicons", version = "*" },
+    { "MunifTanjim/nui.nvim", version = "*" },
     {
       "s1n7ax/nvim-window-picker",
       version = "2.*",
@@ -308,7 +307,7 @@ return {
               end
 
               -- Perform the rename
-              local success = vim.loop.fs_rename(path, new_path)
+              local success = vim.uv.fs_rename(path, new_path)
               if success then
                 vim.schedule(function()
                   require("neo-tree.sources.manager").refresh(state.name)

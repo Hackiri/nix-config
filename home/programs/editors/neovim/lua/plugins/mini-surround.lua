@@ -1,6 +1,6 @@
 return {
-  "echasnovski/mini.surround",
-  version = false,
+  "nvim-mini/mini.surround",
+  version = "*",
   event = "VeryLazy",
   opts = {
     mappings = {

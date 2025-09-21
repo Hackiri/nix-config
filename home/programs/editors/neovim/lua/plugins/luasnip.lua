@@ -3,7 +3,6 @@ return {
   version = "v2.*",
   dependencies = {
     "rafamadriz/friendly-snippets",
-    "nvim-treesitter/nvim-treesitter",
   },
   enabled = true,
   lazy = true,
