@@ -180,6 +180,19 @@ M.setup = function()
       end
     end,
   })
+
+  -- Ensure Tree-sitter highlighting starts on filetype (Neovim 0.11+)
+  vim.api.nvim_create_autocmd("FileType", {
+    group = augroup("treesitter_start"),
+    callback = function(ev)
+      -- Start only if not already active; ignore failures
+      pcall(function()
+        if not vim.treesitter.highlighter.active[ev.buf] then
+          vim.treesitter.start(ev.buf)
+        end
+      end)
+    end,
+  })
 end
 
 return M

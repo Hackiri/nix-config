@@ -40,19 +40,49 @@ package.preload["nvim-treesitter.query"] = function()
   end
 
   local M = {}
+  local function wrap_query(obj)
+    if type(obj) ~= "table" then
+      return obj
+    end
+    -- Provide an `info` table like nvim-treesitter.ts_query returned
+    local info = { captures = obj.captures or {}, patterns = obj.patterns or {} }
+    local wrapper = { captures = obj.captures, info = info }
+    setmetatable(wrapper, {
+      __index = function(_, k)
+        local v = obj[k]
+        if type(v) == "function" then
+          return function(_, ...)
+            return v(obj, ...)
+          end
+        end
+        return v
+      end,
+    })
+    return wrapper
+  end
   function M.get_query(lang, name)
-    if q.get_query then return q.get_query(lang, name) end
-    if q.get then return q.get(lang, name) end
+    if q.get_query then return wrap_query(q.get_query(lang, name)) end
+    if q.get then return wrap_query(q.get(lang, name)) end
     return nil
   end
   function M.get(lang, name)
-    if q.get then return q.get(lang, name) end
-    if q.get_query then return q.get_query(lang, name) end
+    if q.get then return wrap_query(q.get(lang, name)) end
+    if q.get_query then return wrap_query(q.get_query(lang, name)) end
     return nil
   end
   function M.get_files(lang, name, is_included)
     if q.get_files then return q.get_files(lang, name, is_included) end
     return {}
+  end
+  function M.has_query_files(lang, name)
+    local files = {}
+    if q.get_files then
+      local ok_files, res = pcall(q.get_files, lang, name, true)
+      if ok_files and type(res) == "table" then
+        files = res
+      end
+    end
+    return #files > 0
   end
   function M.parse(lang, query_string)
     if q.parse then return q.parse(lang, query_string) end

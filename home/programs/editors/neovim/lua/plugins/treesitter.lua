@@ -6,11 +6,9 @@ return {
   priority = 1000, -- Give it high priority to load early
   dependencies = {
     { "nvim-treesitter/nvim-treesitter-textobjects", version = false },
-    { "nvim-treesitter/nvim-treesitter-refactor", version = false },
     { "nvim-treesitter/nvim-treesitter-context", version = false },
     { "windwp/nvim-ts-autotag", version = "*" },
     { "JoosepAlviste/nvim-ts-context-commentstring", version = "*" },
-    { "nvim-treesitter/playground", version = false },
     { "RRethy/nvim-treesitter-endwise", version = "*" }, -- Auto-add end in Ruby, Lua, etc.
     { "RRethy/nvim-treesitter-textsubjects", version = false }, -- Text objects for text
   },
@@ -115,204 +113,239 @@ return {
       end
     end
 
-    require("nvim-treesitter.configs").setup({
-      -- Basic Setup
-      ensure_installed = ensure_installed,
-      auto_install = true,
-      sync_install = false,
-      ignore_install = {},
+    -- Configure the core nvim-treesitter plugin (install dir/runtimepath management)
+    -- Neovim 0.11 switched to vim.treesitter for highlighting; nvim-treesitter now
+    -- focuses on parser management and utilities. No per-module setup here.
+    require("nvim-treesitter").setup({})
 
-      -- Required modules field
-      modules = {},
+    -- Ensure parsers for our language list are installed (non-blocking)
+    vim.schedule(function()
+      local ok, installer = pcall(require, "nvim-treesitter.install")
+      if ok then
+        pcall(installer.install, ensure_installed, { summary = false })
+      end
+    end)
 
-      -- Highlighting
-      highlight = {
-        enable = true,
-        disable = {},
-        additional_vim_regex_highlighting = false,
-      },
-
-      -- Indentation
-      indent = {
-        enable = true,
-        disable = { "python", "c", "cpp" }, -- Languages where treesitter indent might be problematic
-      },
-
-      -- Incremental selection (disabled in favor of flash.nvim Treesitter mode)
-      incremental_selection = {
-        enable = false,
+    -- Configure textobjects via its own plugin API (new style)
+    require("nvim-treesitter-textobjects").setup({
+      select = {
+        lookahead = true,
+        selection_modes = {},
+        include_surrounding_whitespace = false,
         keymaps = {
-          init_selection = "<Leader>ts",
-          node_incremental = "<Leader>ti",
-          node_decremental = "<Leader>td",
-          scope_incremental = "<Leader>tc",
+          -- Parameter/Argument text objects
+          ["aa"] = "@parameter.outer",
+          ["ia"] = "@parameter.inner",
+          -- Function text objects
+          ["af"] = "@function.outer",
+          ["if"] = "@function.inner",
+          -- Class text objects
+          ["ac"] = "@class.outer",
+          ["ic"] = "@class.inner",
+          -- Conditional text objects
+          ["ai"] = "@conditional.outer",
+          ["ii"] = "@conditional.inner",
+          -- Loop text objects
+          ["al"] = "@loop.outer",
+          ["il"] = "@loop.inner",
+          -- Block text objects
+          ["ab"] = "@block.outer",
+          ["ib"] = "@block.inner",
+          -- Call text objects
+          ["a/"] = "@call.outer",
+          ["i/"] = "@call.inner",
+          -- Comment text objects (use capital C to avoid clash with class)
+          ["aC"] = "@comment.outer",
+          ["iC"] = "@comment.inner",
         },
       },
-
-      textsubjects = {
-        enable = true,
-        keymaps = {
-          ["."] = "textsubjects-smart",
-          [";"] = "textsubjects-container-outer",
+      move = {
+        set_jumps = true,
+        goto_next_start = {
+          ["]m"] = "@function.outer",
+          ["]]"] = "@class.outer",
+          ["]i"] = "@conditional.outer",
+          ["]l"] = "@loop.outer",
+          ["]s"] = "@statement.outer",
+          ["]z"] = "@fold.outer",
+        },
+        goto_next_end = {
+          ["]M"] = "@function.outer",
+          ["]["] = "@class.outer",
+          ["]Z"] = "@fold.outer",
+        },
+        goto_previous_start = {
+          ["[m"] = "@function.outer",
+          ["[["] = "@class.outer",
+          ["[i"] = "@conditional.outer",
+          ["[l"] = "@loop.outer",
+          ["[s"] = "@statement.outer",
+          ["[z"] = "@fold.outer",
+        },
+        goto_previous_end = {
+          ["[M"] = "@function.outer",
+          ["[]"] = "@class.outer",
+          ["[Z"] = "@fold.outer",
         },
       },
-
-      -- Text objects
-      textobjects = {
-        select = {
-          enable = true,
-          lookahead = true,
-          keymaps = {
-            -- Parameter/Argument text objects
-            ["aa"] = "@parameter.outer",
-            ["ia"] = "@parameter.inner",
-
-            -- Function text objects
-            ["af"] = "@function.outer",
-            ["if"] = "@function.inner",
-
-            -- Class text objects
-            ["ac"] = "@class.outer",
-            ["ic"] = "@class.inner",
-
-            -- Conditional text objects
-            ["ai"] = "@conditional.outer",
-            ["ii"] = "@conditional.inner",
-
-            -- Loop text objects
-            ["al"] = "@loop.outer",
-            ["il"] = "@loop.inner",
-
-            -- Block text objects
-            ["ab"] = "@block.outer",
-            ["ib"] = "@block.inner",
-
-            -- Call text objects
-            ["a/"] = "@call.outer",
-            ["i/"] = "@call.inner",
-
-            -- Comment text objects
-            ["ac"] = "@comment.outer",
-            ["ic"] = "@comment.inner",
-          },
+      swap = {
+        swap_next = {
+          ["<leader>a"] = "@parameter.inner",
+          ["<leader>f"] = "@function.outer",
+          ["<leader>e"] = "@element",
         },
-
-        -- Moving between text objects
-        move = {
-          enable = true,
-          set_jumps = true,
-          goto_next_start = {
-            ["]m"] = "@function.outer",
-            ["]]"] = "@class.outer",
-            ["]i"] = "@conditional.outer",
-            ["]l"] = "@loop.outer",
-            ["]s"] = "@statement.outer",
-            ["]z"] = "@fold.outer",
-          },
-          goto_next_end = {
-            ["]M"] = "@function.outer",
-            ["]["] = "@class.outer",
-            ["]Z"] = "@fold.outer",
-          },
-          goto_previous_start = {
-            ["[m"] = "@function.outer",
-            ["[["] = "@class.outer",
-            ["[i"] = "@conditional.outer",
-            ["[l"] = "@loop.outer",
-            ["[s"] = "@statement.outer",
-            ["[z"] = "@fold.outer",
-          },
-          goto_previous_end = {
-            ["[M"] = "@function.outer",
-            ["[]"] = "@class.outer",
-            ["[Z"] = "@fold.outer",
-          },
-        },
-
-        -- Swapping elements
-        swap = {
-          enable = true,
-          swap_next = {
-            ["<leader>a"] = "@parameter.inner",
-            ["<leader>f"] = "@function.outer",
-            ["<leader>e"] = "@element",
-          },
-          swap_previous = {
-            ["<leader>A"] = "@parameter.inner",
-            ["<leader>F"] = "@function.outer",
-            ["<leader>E"] = "@element",
-          },
-        },
-
-        -- LSP interop
-        lsp_interop = {
-          enable = true,
-          border = "rounded",
-          floating_preview_opts = {},
-          peek_definition_code = {
-            ["<leader>df"] = "@function.outer",
-            ["<leader>dF"] = "@class.outer",
-          },
+        swap_previous = {
+          ["<leader>A"] = "@parameter.inner",
+          ["<leader>F"] = "@function.outer",
+          ["<leader>E"] = "@element",
         },
       },
+    })
 
-      -- Additional modules
-      matchup = {
-        enable = true, -- mandatory, false will disable the whole extension
-        disable = {}, -- optional, list of language that will be disabled
-        disable_virtual_text = false,
-        include_match_words = true,
+    -- Configure textsubjects via its own API
+    require("nvim-treesitter-textsubjects").configure({
+      prev_selection = ",",
+      keymaps = {
+        ["."] = "textsubjects-smart",
+        [";"] = "textsubjects-container-outer",
+        ["i;"] = "textsubjects-container-inner",
       },
+    })
 
-      autotag = {
-        enable = true,
-        filetypes = {
-          "html",
-          "javascript",
-          "typescript",
-          "javascriptreact",
-          "typescriptreact",
-          "svelte",
-          "vue",
-          "tsx",
-          "jsx",
-          "rescript",
-          "xml",
-          "php",
-          "markdown",
-          "astro",
-          "glimmer",
-          "handlebars",
-          "hbs",
-        },
-      },
+    -- Keymaps for textobjects (select)
+    local map = vim.keymap.set
+    for _, mode in ipairs({ "x", "o" }) do
+      map(mode, "aa", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@parameter.outer", "textobjects")
+      end, { desc = "TS: parameter.outer" })
+      map(mode, "ia", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@parameter.inner", "textobjects")
+      end, { desc = "TS: parameter.inner" })
+      map(mode, "af", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@function.outer", "textobjects")
+      end, { desc = "TS: function.outer" })
+      map(mode, "if", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@function.inner", "textobjects")
+      end, { desc = "TS: function.inner" })
+      map(mode, "ac", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@class.outer", "textobjects")
+      end, { desc = "TS: class.outer" })
+      map(mode, "ic", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@class.inner", "textobjects")
+      end, { desc = "TS: class.inner" })
+      map(mode, "ai", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@conditional.outer", "textobjects")
+      end, { desc = "TS: conditional.outer" })
+      map(mode, "ii", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@conditional.inner", "textobjects")
+      end, { desc = "TS: conditional.inner" })
+      map(mode, "al", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@loop.outer", "textobjects")
+      end, { desc = "TS: loop.outer" })
+      map(mode, "il", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@loop.inner", "textobjects")
+      end, { desc = "TS: loop.inner" })
+      map(mode, "ab", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@block.outer", "textobjects")
+      end, { desc = "TS: block.outer" })
+      map(mode, "ib", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@block.inner", "textobjects")
+      end, { desc = "TS: block.inner" })
+      map(mode, "a/", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@call.outer", "textobjects")
+      end, { desc = "TS: call.outer" })
+      map(mode, "i/", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@call.inner", "textobjects")
+      end, { desc = "TS: call.inner" })
+      map(mode, "aC", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@comment.outer", "textobjects")
+      end, { desc = "TS: comment.outer" })
+      map(mode, "iC", function()
+        require("nvim-treesitter-textobjects.select").select_textobject("@comment.inner", "textobjects")
+      end, { desc = "TS: comment.inner" })
+    end
 
-      context_commentstring = {
-        enable = false,
-      },
+    -- Keymaps for textobjects (move)
+    map({ "n", "x", "o" }, "]m", function()
+      require("nvim-treesitter-textobjects.move").goto_next_start("@function.outer", "textobjects")
+    end, { desc = "TS: next function start" })
+    map({ "n", "x", "o" }, "]]", function()
+      require("nvim-treesitter-textobjects.move").goto_next_start("@class.outer", "textobjects")
+    end, { desc = "TS: next class start" })
+    map({ "n", "x", "o" }, "]i", function()
+      require("nvim-treesitter-textobjects.move").goto_next_start("@conditional.outer", "textobjects")
+    end, { desc = "TS: next conditional start" })
+    map({ "n", "x", "o" }, "]l", function()
+      require("nvim-treesitter-textobjects.move").goto_next_start("@loop.outer", "textobjects")
+    end, { desc = "TS: next loop start" })
+    map({ "n", "x", "o" }, "]s", function()
+      require("nvim-treesitter-textobjects.move").goto_next_start("@statement.outer", "textobjects")
+    end, { desc = "TS: next statement start" })
+    map({ "n", "x", "o" }, "]z", function()
+      require("nvim-treesitter-textobjects.move").goto_next_start("@fold", "folds")
+    end, { desc = "TS: next fold" })
 
-      endwise = {
-        enable = true,
-      },
+    map({ "n", "x", "o" }, "]M", function()
+      require("nvim-treesitter-textobjects.move").goto_next_end("@function.outer", "textobjects")
+    end, { desc = "TS: next function end" })
+    map({ "n", "x", "o" }, "][", function()
+      require("nvim-treesitter-textobjects.move").goto_next_end("@class.outer", "textobjects")
+    end, { desc = "TS: next class end" })
 
-      -- Playground configuration
-      playground = {
-        enable = true,
-        disable = {},
-        updatetime = 25,
-        persist_queries = true,
-        keybindings = {
-          toggle_query_editor = "o",
-          toggle_hl_groups = "i",
-          toggle_injected_languages = "t",
-          toggle_anonymous_nodes = "a",
-          toggle_language_display = "I",
-          focus_language = "f",
-          unfocus_language = "F",
-          update = "R",
-          goto_node = "<cr>",
-          show_help = "?",
-        },
+    map({ "n", "x", "o" }, "[m", function()
+      require("nvim-treesitter-textobjects.move").goto_previous_start("@function.outer", "textobjects")
+    end, { desc = "TS: prev function start" })
+    map({ "n", "x", "o" }, "[[", function()
+      require("nvim-treesitter-textobjects.move").goto_previous_start("@class.outer", "textobjects")
+    end, { desc = "TS: prev class start" })
+    map({ "n", "x", "o" }, "[i", function()
+      require("nvim-treesitter-textobjects.move").goto_previous_start("@conditional.outer", "textobjects")
+    end, { desc = "TS: prev conditional start" })
+    map({ "n", "x", "o" }, "[l", function()
+      require("nvim-treesitter-textobjects.move").goto_previous_start("@loop.outer", "textobjects")
+    end, { desc = "TS: prev loop start" })
+    map({ "n", "x", "o" }, "[s", function()
+      require("nvim-treesitter-textobjects.move").goto_previous_start("@statement.outer", "textobjects")
+    end, { desc = "TS: prev statement start" })
+    map({ "n", "x", "o" }, "[z", function()
+      require("nvim-treesitter-textobjects.move").goto_previous_start("@fold", "folds")
+    end, { desc = "TS: prev fold" })
+
+    map({ "n", "x", "o" }, "[M", function()
+      require("nvim-treesitter-textobjects.move").goto_previous_end("@function.outer", "textobjects")
+    end, { desc = "TS: prev function end" })
+    map({ "n", "x", "o" }, "[]", function()
+      require("nvim-treesitter-textobjects.move").goto_previous_end("@class.outer", "textobjects")
+    end, { desc = "TS: prev class end" })
+
+    -- Keymaps for textobjects (swap)
+    map("n", "<leader>a", function()
+      require("nvim-treesitter-textobjects.swap").swap_next("@parameter.inner", "textobjects")
+    end, { desc = "TS: swap next param" })
+    map("n", "<leader>A", function()
+      require("nvim-treesitter-textobjects.swap").swap_previous("@parameter.inner", "textobjects")
+    end, { desc = "TS: swap prev param" })
+
+    -- Configure autotag explicitly with supported filetypes
+    require("nvim-ts-autotag").setup({
+      filetypes = {
+        "html",
+        "javascript",
+        "typescript",
+        "javascriptreact",
+        "typescriptreact",
+        "svelte",
+        "vue",
+        "tsx",
+        "jsx",
+        "rescript",
+        "xml",
+        "php",
+        "markdown",
+        "astro",
+        "glimmer",
+        "handlebars",
+        "hbs",
       },
     })
 
