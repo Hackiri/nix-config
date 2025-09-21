@@ -12,6 +12,28 @@ return {
     { "RRethy/nvim-treesitter-endwise", version = "*" }, -- Auto-add end in Ruby, Lua, etc.
     { "RRethy/nvim-treesitter-textsubjects", version = false }, -- Text objects for text
   },
+  -- Define filetype associations as early as possible so detection works for any file open method
+  init = function()
+    -- File type associations
+    local filetypes = {
+      terraform = { "tf", "tfvars", "terraform" },
+      groovy = { "pipeline", "Jenkinsfile", "groovy" },
+      python = { "py", "pyi", "pyx", "pxd" },
+      yaml = { "yaml", "yml" },
+      dockerfile = { "Dockerfile", "dockerfile" },
+      ruby = { "rb", "rake", "gemspec" },
+      javascript = { "js", "jsx", "mjs" },
+      typescript = { "ts", "tsx" },
+      rust = { "rs", "rust" },
+      nix = { "nix" },
+    }
+
+    for filetype, extensions in pairs(filetypes) do
+      for _, ext in ipairs(extensions) do
+        vim.filetype.add({ extension = { [ext] = filetype } })
+      end
+    end
+  end,
   config = function()
     -- Skip ts_context_commentstring module
     vim.g.skip_ts_context_commentstring_module = true
@@ -348,26 +370,6 @@ return {
         "hbs",
       },
     })
-
-    -- File type associations
-    local filetypes = {
-      terraform = { "tf", "tfvars", "terraform" },
-      groovy = { "pipeline", "Jenkinsfile", "groovy" },
-      python = { "py", "pyi", "pyx", "pxd" },
-      yaml = { "yaml", "yml" },
-      dockerfile = { "Dockerfile", "dockerfile" },
-      ruby = { "rb", "rake", "gemspec" },
-      javascript = { "js", "jsx", "mjs" },
-      typescript = { "ts", "tsx" },
-      rust = { "rs", "rust" },
-      nix = { "nix" },
-    }
-
-    for filetype, extensions in pairs(filetypes) do
-      for _, ext in ipairs(extensions) do
-        vim.filetype.add({ extension = { [ext] = filetype } })
-      end
-    end
 
     -- Folding configuration is handled in `config/folding.lua` (LSP-based by default)
 
