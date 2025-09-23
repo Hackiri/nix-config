@@ -1,13 +1,11 @@
 # Core development tools and utilities
 {pkgs, ...}: {
   home.packages = with pkgs; [
-    # Version control
-    git # Distributed version control system
+    # Version control (git managed via programs.git)
     lazygit # Simple terminal UI for git commands
     gh # GitHub CLI for managing GitHub repos
 
-    # Search and navigation tools
-    ripgrep # Fast grep alternative with better syntax
+    # Search and navigation tools (ripgrep installed system-wide)
     fd # Simple, fast and user-friendly alternative to find
     fzf # Command-line fuzzy finder
     zoxide # Smarter cd command that learns your habits
@@ -21,7 +19,6 @@
     # File and directory management
     tree # List directory contents in a tree-like format
 
-    # Shell enhancements
-    direnv # Environment switcher for the shell
+    # Shell enhancements (direnv managed via programs.direnv)
   ];
 }

@@ -4,10 +4,7 @@
   ...
 }: {
   config = lib.mkIf pkgs.stdenv.isDarwin {
-    # Ensure aerospace package installed
-    home.packages = with pkgs; [
-      aerospace
-    ];
+    # Note: aerospace package is now installed via home/packages/desktop.nix
 
     # Source aerospace config from the home-manager store
     home.file.".aerospace.toml".text = ''

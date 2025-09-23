@@ -1,12 +1,18 @@
 # General system utilities and tools
 {pkgs, ...}: {
   home.packages = with pkgs; [
-    # Network utilities
-    curl # Command line tool for transferring data with URLs
-    wget # Non-interactive network downloader
-
+    # Note: Network utilities (curl, wget, cachix) moved to network.nix
+    
     # Media and document processing
     imagemagick # Image manipulation programs
     ghostscript # PostScript and PDF interpreter
+    
+    #--------------------------------------------------
+    # Additional Utilities (add as needed)
+    #--------------------------------------------------
+    # ffmpeg # Multimedia framework
+    # pandoc # Universal document converter
+    # zip # Archive utility
+    # unzip # Archive extraction utility
   ];
 }

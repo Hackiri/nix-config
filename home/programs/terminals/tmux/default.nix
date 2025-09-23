@@ -91,14 +91,7 @@
 in {
   imports = [];
 
-  home.packages = with pkgs; [
-    tmuxinator # For managing complex tmux sessions
-    truncate_path
-    tmux-sessionizer
-    fzf # Required for tmux-sessionizer
-    moreutils # For sponge command used in tmux-resurrect
-    reattach-to-user-namespace
-  ];
+  # Note: tmux-related packages are now installed via home/packages/terminals.nix
 
   programs.tmux = {
     enable = true;

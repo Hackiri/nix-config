@@ -1,4 +1,6 @@
-# Development profile - includes all development tools and editors
+# Development profile - comprehensive development environment
+# This profile includes all tools and configurations needed for software development,
+# including editors, development tools, terminals, and package collections.
 {
   config,
   lib,
@@ -6,33 +8,26 @@
   ...
 }: {
   imports = [
-    # Editors
-    ../programs/editors/neovim
-    ../programs/editors/emacs
-    ../programs/editors/neovide
+    # Text editors and IDEs
+    ../programs/editors        # Neovim, Emacs, Neovide
 
-    # Development tools
-    ../programs/development/git/git-hooks.nix
-    ../programs/development/direnv
-    ../programs/development/kube/kube.nix
-    ../programs/development/kube/kube-config.nix
-    ../programs/development/python/python-pkg.nix
+    # Development tools and configurations
+    ../programs/development    # Git, direnv, Kubernetes tools
 
     # Terminal and shell enhancements
-    ../programs/terminals/default.nix
-    ../programs/shells/default.nix
+    ../programs/terminals      # Tmux, Alacritty, Ghostty
+    ../programs/shells         # Zsh, Bash, Starship
 
-    # Utilities
-    ../programs/utilities/btop
-    ../programs/utilities/yazi
-    ../programs/utilities/sops-nix/sops.nix
+    # Utility programs
+    ../programs/utilities      # btop, yazi, sops, aerospace
 
-    # Package collections
-    ../packages
+    # All package collections
+    ../packages               # CLI tools, languages, security, etc.
   ];
 
   # Development-specific home configuration
   home.packages = with pkgs; [
     # Additional development packages can be added here
+    # These are for packages that don't fit into the organized categories
   ];
 }

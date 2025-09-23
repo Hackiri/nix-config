@@ -13,12 +13,6 @@
     ../programs/utilities/btop
   ];
 
-  # Minimal package set
-  home.packages = with pkgs; [
-    # Only essential packages
-    curl
-    wget
-    git
-    vim
-  ];
+  # Note: Essential packages are now provided by home/packages/system.nix
+  # This keeps the minimal profile focused on importing essential modules
 }
