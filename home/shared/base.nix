@@ -14,6 +14,7 @@
     # Common packages for all systems
     packages = with pkgs; [
       # Add common packages here that should be available on all systems
+      neovide
     ];
   };
 

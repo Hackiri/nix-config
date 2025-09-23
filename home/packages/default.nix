@@ -1,7 +1,7 @@
 # Main package collection - imports all package categories
 {pkgs, ...}: {
   imports = [
-    ./development.nix
+    ./cli-tools.nix
     ./build-tools.nix
     ./languages.nix
     ./code-quality.nix
