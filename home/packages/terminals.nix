@@ -7,11 +7,11 @@
     tmuxinator # For managing complex tmux sessions
     
     #--------------------------------------------------
-    # Terminal Dependencies
+    # Terminal Dependencies (cross-platform)
     #--------------------------------------------------
     fzf # Required for tmux-sessionizer (fuzzy finder)
     moreutils # For sponge command used in tmux-resurrect
-    reattach-to-user-namespace # macOS clipboard integration for tmux
+    # Note: reattach-to-user-namespace moved to home/darwin.nix (macOS-specific)
     
     #--------------------------------------------------
     # Additional Terminal Tools (add as needed)

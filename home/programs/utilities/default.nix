@@ -4,6 +4,6 @@
     ./btop
     ./yazi
     ./sops-nix/sops.nix
-    ./aerospace  # macOS window manager (conditionally enabled)
+    # Note: aerospace moved to home/darwin.nix for proper platform separation
   ];
 }

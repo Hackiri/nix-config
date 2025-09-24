@@ -1,10 +1,7 @@
-# Desktop applications and GUI tools
+# Desktop applications and GUI tools (cross-platform)
 {pkgs, ...}: {
   home.packages = with pkgs; [
-    #--------------------------------------------------
-    # Window Management (macOS)
-    #--------------------------------------------------
-    aerospace # AeroSpace tiling window manager for macOS
+    # Note: aerospace moved to home/darwin.nix (macOS-specific window manager)
     
     #--------------------------------------------------
     # Additional Desktop Applications (add as needed)
