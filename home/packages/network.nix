@@ -15,10 +15,5 @@
     #--------------------------------------------------
     # Additional Network Tools (add as needed)
     #--------------------------------------------------
-    # httpie # Better curl alternative
-    # postman # API testing tool
-    # wrk # HTTP benchmarking tool
-    # nmap # Network discovery and security auditing
-    # wireshark # Network protocol analyzer
   ];
 }

@@ -5,8 +5,6 @@
     # Tmux Session Management
     #--------------------------------------------------
     tmuxinator # For managing complex tmux sessions
-    truncate_path # Path truncation utility for tmux
-    tmux-sessionizer # Fuzzy finder for tmux sessions
     
     #--------------------------------------------------
     # Terminal Dependencies
@@ -18,7 +16,5 @@
     #--------------------------------------------------
     # Additional Terminal Tools (add as needed)
     #--------------------------------------------------
-    # screen # Alternative terminal multiplexer
-    # byobu # Enhanced terminal multiplexer
   ];
 }

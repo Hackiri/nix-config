@@ -15,9 +15,6 @@
     #--------------------------------------------------
     # Additional System Tools (add as needed)
     #--------------------------------------------------
-    # htop # Interactive process viewer
-    # neofetch # System information tool
-    # lsof # List open files
-    # ps # Process status
+    neofetch # System information tool
   ];
 }
