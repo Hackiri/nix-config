@@ -4,10 +4,7 @@
   pkgs,
   ...
 }: {
-  imports = [
-    # macOS-specific program configurations
-    ./programs/utilities/aerospace  # Window manager (macOS only)
-  ];
+  # Note: Program imports moved to home/profiles/macos.nix for better organization
 
   # macOS-specific packages
   home.packages = with pkgs; [

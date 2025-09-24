@@ -11,6 +11,9 @@
     
     # macOS-specific configurations
     ../darwin.nix
+    
+    # macOS-specific program configurations
+    ../programs/utilities/aerospace  # Window manager (macOS only)
   ];
 
   # macOS-specific profile configurations
