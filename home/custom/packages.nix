@@ -9,7 +9,7 @@
     devshell
 
     # Kubernetes tools (if needed)
-    # kube-packages
+    kube-packages
     
     # Add more custom packages here as they're created
     # my-custom-tool

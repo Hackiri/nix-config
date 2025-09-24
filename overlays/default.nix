@@ -11,7 +11,7 @@ in
     custom = customPkgs;
 
     # Use inherit syntax to avoid warnings
-    inherit (customPkgs) dev-tools devshell;
+    inherit (customPkgs) dev-tools devshell kube-packages;
   }
   // (emacsOverlay final prev)
 # Merge emacs overlay
