@@ -14,6 +14,7 @@
     reattach-to-user-namespace # macOS clipboard integration for tmux
     
     # macOS-specific applications
+    aerospace                  # AeroSpace tiling window manager for macOS
     # mas                       # Mac App Store CLI (if needed)
     # dockutil                  # Dock management utility
   ];
