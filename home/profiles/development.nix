@@ -21,8 +21,9 @@
     # Utility programs
     ../programs/utilities      # btop, yazi, sops, aerospace
 
-    # All package collections
-    ../packages               # CLI tools, languages, security, etc.
+    # Package collections
+    ../packages               # Standard nixpkgs packages
+    ../custom                 # Custom overlay packages
   ];
 
   # Development-specific home configuration

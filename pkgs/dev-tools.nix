@@ -1,12 +1,8 @@
+# Development tools helper script
 {pkgs ? import <nixpkgs> {}}:
-# This is the main package set for custom packages
-# Each attribute in this set is a package
-{
-  # Development helper scripts
-  dev-tools =
-    pkgs.callPackage
-    (
-      {pkgs}: let
+pkgs.callPackage
+(
+  {pkgs}: let
         name = "dev-tools";
         script = ''
           #!${pkgs.bash}/bin/bash
@@ -150,8 +146,5 @@
             jpegoptim
           ];
         }
-    )
-    {};
-
-  # Add other custom packages here as needed
-}
+)
+{}

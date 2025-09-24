@@ -1,6 +1,6 @@
 # This file exports all custom packages
 {pkgs ? import <nixpkgs> {}}: rec {
-  # Development tools package
+  # Development tools package - now returns the package directly
   dev-tools = import ./dev-tools.nix {inherit pkgs;};
 
   # Development shell environment

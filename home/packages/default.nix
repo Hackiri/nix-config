@@ -19,8 +19,5 @@
     ./security.nix       # Security and encryption tools
     ./desktop.nix        # Desktop applications and GUI tools
     ./terminals.nix      # Terminal applications and tools
-    
-    # Custom packages
-    ./custom.nix         # Custom overlay packages
   ];
 }

@@ -191,14 +191,8 @@
         # Import packages with the correct pkgs for this system
         customPkgs = import ./pkgs {inherit pkgs;};
       in {
-        # Use a let binding to avoid the warning
-        dev-tools = let
-          devTools = customPkgs.dev-tools;
-        in
-          devTools.dev-tools;
-
-        # Use inherit for attributes with the same name
-        inherit (customPkgs) devshell kube-packages;
+        # Export custom packages directly
+        inherit (customPkgs) dev-tools devshell kube-packages;
       });
 
       # Make custom packages available as apps
@@ -209,7 +203,7 @@
         # Export dev-tools as a runnable app
         dev-tools = {
           type = "app";
-          program = "${customPkgs.dev-tools.dev-tools}/bin/dev-tools";
+          program = "${customPkgs.dev-tools}/bin/dev-tools";
           meta = {
             description = "Development tools helper script";
             mainProgram = "dev-tools";

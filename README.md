@@ -58,8 +58,8 @@ nix-config/
 
 3. **Apply configuration**
    ```bash
-   # macOS
-   nix run nixpkgs#nix-darwin -- switch --flake .#mbp
+   # macOS (requires sudo for system-level changes)
+   sudo nix run nix-darwin -- switch --flake .#mbp
    
    # NixOS
    sudo nixos-rebuild switch --flake .#desktop
@@ -67,14 +67,61 @@ nix-config/
 
 ## Usage
 
+### System Updates
+
 ```bash
-# Update system
-nixswitch
+# macOS system-level changes (nix-darwin + home-manager)
+nixswitch  # Custom alias: sudo darwin-rebuild switch --flake ~/nix-config#mbp
+# OR manually:
+sudo darwin-rebuild switch --flake .#mbp
 
-# Check configuration
-nixcheck
+# Alternative using nix run (if darwin-rebuild not available)
+sudo nix run nix-darwin -- switch --flake .#mbp
 
-# Update flake inputs
-nix flake update
+# NixOS system-level changes
+sudo nixos-rebuild switch --flake .#desktop
+```
 
+**Note:** This configuration integrates home-manager through nix-darwin/NixOS modules, so there's no separate home-manager-only command. User configurations are applied together with system configurations.
+
+### Available Commands
+
+This configuration provides many convenient aliases for system management:
+
+#### **System Management**
+```bash
+# Build and switch
+nixswitch    # Build and activate configuration
+nixbuild     # Build only (no activation)
+nixboot      # Build but activate on next boot
+nixcheck     # Check configuration validity
+nixdry       # Dry run (test build without changes)
+
+# System maintenance
+nixlist      # List all generations
+nixrollback  # Rollback to previous generation
+nixclean     # Clean old generations and garbage collect
+
+# Debugging
+nixtrace     # Show trace for debugging
+nixverbose   # Verbose output
+nixedit      # Open configuration in $EDITOR
+```
+
+#### **Nix Utilities**
+```bash
+nxsearch     # Search packages (nix search nixpkgs)
+nxrepl       # Interactive nix REPL
+nxdev        # Enter development shell
+
+# Update workflow
+nix flake update  # Update flake inputs
+nixswitch         # Apply updates
+```
+
+#### **Quick Navigation**
+```bash
+dots         # cd ~/nix-config
+files        # Open yazi file manager
+vi           # nvim (Neovim)
 ```
