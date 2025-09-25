@@ -19,12 +19,7 @@
     # dockutil                  # Dock management utility
   ];
 
-  # macOS-specific configurations
-  targets.darwin.defaults = {
-    # Add macOS system defaults here if needed
-    # "com.apple.dock" = {
-    #   autohide = true;
-    #   orientation = "bottom";
-    # };
-  };
+  # Note: macOS system defaults are configured at system level in:
+  # modules/system/darwin/defaults.nix (via nix-darwin)
+  # This provides better integration and avoids conflicts
 }
