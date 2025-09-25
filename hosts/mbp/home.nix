@@ -7,7 +7,7 @@
 }: {
   imports = [
     ../../home/shared/base.nix
-    ../../home/profiles/macos.nix  # Use macOS-specific profile instead of common.nix + darwin.nix
+    ../../home/profiles/macos.nix  # macOS-specific profile (includes development + darwin configs)
   ];
 
   # Platform-specific home directory

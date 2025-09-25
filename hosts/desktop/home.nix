@@ -9,7 +9,7 @@
   # Import shared home-manager modules
   imports = [
     ../../home/shared/base.nix
-    ../../home/profiles/nixos.nix  # Use NixOS-specific profile instead of common.nix + nixos.nix
+    ../../home/profiles/nixos.nix  # NixOS-specific profile (includes development + nixos configs)
   ];
 
   # Platform-specific home directory

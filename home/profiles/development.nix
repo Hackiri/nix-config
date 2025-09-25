@@ -19,7 +19,7 @@
     ../programs/shells         # Zsh, Bash, Starship
 
     # Utility programs
-    ../programs/utilities      # btop, yazi, sops, aerospace
+    ../programs/utilities      # btop, yazi, sops
 
     # Package collections
     ../packages               # Standard nixpkgs packages
