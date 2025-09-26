@@ -13,11 +13,12 @@ if [ ${#LANGUAGES[@]} -eq 0 ]; then
   LANGUAGES=("python" "rust" "go" "node")
 fi
 
-# Detect shell type
+# Detect shell type (for future use)
 SHELL_TYPE="bash"
 if [ -n "$ZSH_VERSION" ]; then
   SHELL_TYPE="zsh"
 fi
+export SHELL_TYPE
 
 # Function to show welcome message
 show_welcome() {
@@ -79,6 +80,7 @@ show_welcome() {
 # Instead, set up a minimal environment
 
 # Source Nix profile directly
+# shellcheck source=/dev/null
 [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ] && source "$HOME/.nix-profile/etc/profile.d/nix.sh"
 
 # Set up language-specific environments

@@ -3,7 +3,7 @@
   # Development tools package - now returns the package directly
   dev-tools = import ./dev-tools.nix {inherit pkgs;};
 
-  # Development shell environment
+  # Development shell environment (returns an attribute set with script, environment, etc.)
   devshell = import ./devshell {inherit pkgs;};
 
   # Kubernetes and infrastructure tools
