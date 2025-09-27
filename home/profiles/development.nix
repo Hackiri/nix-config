@@ -9,21 +9,21 @@
 }: {
   imports = [
     # Text editors and IDEs
-    ../programs/editors        # Neovim, Emacs, Neovide
+    ../programs/editors # Neovim, Emacs, Neovide
 
     # Development tools and configurations
-    ../programs/development    # Git, direnv, Kubernetes tools
+    ../programs/development # Git, direnv, Kubernetes tools
 
     # Terminal and shell enhancements
-    ../programs/terminals      # Tmux, Alacritty, Ghostty
-    ../programs/shells         # Zsh, Bash, Starship
+    ../programs/terminals # Tmux, Alacritty, Ghostty
+    ../programs/shells # Zsh, Bash, Starship
 
     # Utility programs
-    ../programs/utilities      # btop, yazi, sops
+    ../programs/utilities # btop, yazi, sops
 
     # Package collections
-    ../packages               # Standard nixpkgs packages
-    ../custom                 # Custom overlay packages
+    ../packages # Standard nixpkgs packages
+    ../custom # Custom overlay packages
   ];
 
   # Development-specific home configuration

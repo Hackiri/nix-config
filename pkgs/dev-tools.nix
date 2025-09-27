@@ -1,8 +1,7 @@
 # Enhanced development tools helper script with modular architecture
-{pkgs ? import <nixpkgs> {}}:
-let
+{pkgs ? import <nixpkgs> {}}: let
   inherit (pkgs) lib;
-  
+
   # Define tool categories and their dependencies
   toolCategories = {
     # Core utilities always included
@@ -15,86 +14,98 @@ let
     ];
 
     # Language-specific formatters
-    formatters = with pkgs; [
-      # Python
-      black
-      isort
-      
-      # JavaScript/TypeScript
-      nodePackages.prettier
-      
-      # Rust
-      rustfmt
-      
-      # Lua
-      stylua
-      
-      # Nix
-      alejandra
-      
-      # Shell
-      shfmt
-      
-      # YAML/JSON
-      yq-go
-    ] ++ lib.optionals (lib.hasAttr "autopep8" pkgs) [
-      autopep8           # Python code formatter (if available)
-    ] ++ lib.optionals (lib.hasAttr "go" pkgs) [
-      go                 # Go toolchain (includes gofmt)
-    ] ++ lib.optionals (lib.hasAttr "nixfmt-rfc-style" pkgs) [
-      nixfmt-rfc-style   # RFC-style Nix formatter
-    ];
+    formatters = with pkgs;
+      [
+        # Python
+        black
+        isort
+
+        # JavaScript/TypeScript
+        nodePackages.prettier
+
+        # Rust
+        rustfmt
+
+        # Lua
+        stylua
+
+        # Nix
+        alejandra
+
+        # Shell
+        shfmt
+
+        # YAML/JSON
+        yq-go
+      ]
+      ++ lib.optionals (lib.hasAttr "autopep8" pkgs) [
+        autopep8 # Python code formatter (if available)
+      ]
+      ++ lib.optionals (lib.hasAttr "go" pkgs) [
+        go # Go toolchain (includes gofmt)
+      ]
+      ++ lib.optionals (lib.hasAttr "nixfmt-rfc-style" pkgs) [
+        nixfmt-rfc-style # RFC-style Nix formatter
+      ];
 
     # Language-specific linters
-    linters = with pkgs; [
-      # Python
-      ruff
-      mypy
-      
-      # JavaScript/TypeScript
-      nodePackages.eslint
-      nodePackages.typescript
-      
-      # Rust
-      clippy
-      
-      # Go
-      golangci-lint
-      
-      # Nix
-      statix
-      deadnix
-      
-      # Shell
-      shellcheck
-      
-      # CSS
-      nodePackages.stylelint
-    ] ++ lib.optionals (lib.hasAttr "pylint" pkgs) [
-      pylint             # Python linter (if available)
-    ] ++ lib.optionals (lib.hasAttr "markdownlint-cli" pkgs) [
-      markdownlint-cli   # Markdown linter (if available)
-    ];
+    linters = with pkgs;
+      [
+        # Python
+        ruff
+        mypy
+
+        # JavaScript/TypeScript
+        nodePackages.eslint
+        nodePackages.typescript
+
+        # Rust
+        clippy
+
+        # Go
+        golangci-lint
+
+        # Nix
+        statix
+        deadnix
+
+        # Shell
+        shellcheck
+
+        # CSS
+        nodePackages.stylelint
+      ]
+      ++ lib.optionals (lib.hasAttr "pylint" pkgs) [
+        pylint # Python linter (if available)
+      ]
+      ++ lib.optionals (lib.hasAttr "markdownlint-cli" pkgs) [
+        markdownlint-cli # Markdown linter (if available)
+      ];
 
     # Web development tools
-    web = with pkgs; [
-      python3
-      caddy
-    ] ++ lib.optionals (lib.hasAttr "http-server" pkgs.nodePackages) [
-      nodePackages.http-server    # Simple HTTP server
-    ] ++ lib.optionals (lib.hasAttr "live-server" pkgs.nodePackages) [
-      nodePackages.live-server    # Live-reloading HTTP server
-    ];
+    web = with pkgs;
+      [
+        python3
+        caddy
+      ]
+      ++ lib.optionals (lib.hasAttr "http-server" pkgs.nodePackages) [
+        nodePackages.http-server # Simple HTTP server
+      ]
+      ++ lib.optionals (lib.hasAttr "live-server" pkgs.nodePackages) [
+        nodePackages.live-server # Live-reloading HTTP server
+      ];
 
     # Image and media tools
-    media = with pkgs; [
-      imagemagick
-      optipng
-      jpegoptim
-      ffmpeg-headless
-    ] ++ lib.optionals (lib.hasAttr "libwebp" pkgs) [
-      libwebp            # WebP image format support
-    ];
+    media = with pkgs;
+      [
+        imagemagick
+        optipng
+        jpegoptim
+        ffmpeg-headless
+      ]
+      ++ lib.optionals (lib.hasAttr "libwebp" pkgs) [
+        libwebp # WebP image format support
+      ];
 
     # Database tools
     database = with pkgs; [
@@ -104,13 +115,16 @@ let
     ];
 
     # Documentation tools
-    docs = with pkgs; [
-      pandoc
-    ] ++ lib.optionals (lib.hasAttr "mdbook" pkgs) [
-      mdbook             # Rust-based documentation generator
-    ] ++ lib.optionals (lib.hasAttr "hugo" pkgs) [
-      hugo               # Static site generator
-    ];
+    docs = with pkgs;
+      [
+        pandoc
+      ]
+      ++ lib.optionals (lib.hasAttr "mdbook" pkgs) [
+        mdbook # Rust-based documentation generator
+      ]
+      ++ lib.optionals (lib.hasAttr "hugo" pkgs) [
+        hugo # Static site generator
+      ];
   };
 
   # Helper function to detect file types in current directory
@@ -123,7 +137,7 @@ let
 
     detect_project_type() {
       local project_types=()
-      
+
       # Language detection
       has_files "*.py" && project_types+=("python")
       has_files "*.js" && project_types+=("javascript")
@@ -138,7 +152,7 @@ let
       has_files "*.css" && project_types+=("css")
       has_files "*.scss" && project_types+=("scss")
       has_files "*.md" && project_types+=("markdown")
-      
+
       # Framework detection
       has_files "package.json" && project_types+=("node")
       has_files "Cargo.toml" && project_types+=("cargo")
@@ -146,7 +160,7 @@ let
       has_files "pyproject.toml" && project_types+=("poetry")
       has_files "requirements.txt" && project_types+=("pip")
       has_files "flake.nix" && project_types+=("flake")
-      
+
       printf "%s\n" "''${project_types[@]}"
     }
   '';
@@ -154,10 +168,10 @@ let
   # Main script with enhanced functionality
   mainScript = ''
     #!${pkgs.bash}/bin/bash
-    
+
     # Set strict bash options
     set -euo pipefail
-    
+
     # Color definitions for better output
     RED='\033[0;31m'
     GREEN='\033[0;32m'
@@ -166,7 +180,7 @@ let
     PURPLE='\033[0;35m'
     CYAN='\033[0;36m'
     NC='\033[0m' # No Color
-    
+
     # Logging functions
     log_info() { echo -e "''${BLUE}ℹ️  $1''${NC}"; }
     log_success() { echo -e "''${GREEN}✅ $1''${NC}"; }
@@ -181,7 +195,7 @@ let
       echo -e "''${CYAN}🛠️  Development Tools Helper''${NC}"
       echo "Usage: dev-tools <command> [args]"
       echo ""
-      
+
       # Detect current project type
       local project_types
       mapfile -t project_types < <(detect_project_type)
@@ -189,7 +203,7 @@ let
         echo -e "''${GREEN}📁 Detected project types:''${NC} ''${project_types[*]}"
         echo ""
       fi
-      
+
       echo "Commands:"
       echo "  clean       - Clean development artifacts"
       echo "  format      - Format code (auto-detects languages)"
@@ -214,17 +228,17 @@ let
     # Enhanced clean function with project-specific artifacts
     clean_artifacts() {
       log_step "Cleaning development artifacts..."
-      
+
       local project_types
       mapfile -t project_types < <(detect_project_type)
       local cleaned=0
-      
+
       # Common artifacts
       find . -name ".DS_Store" -type f -delete 2>/dev/null && cleaned=1
       find . -name "Thumbs.db" -type f -delete 2>/dev/null && cleaned=1
       find . -name "*.tmp" -type f -delete 2>/dev/null && cleaned=1
       find . -name "*.temp" -type f -delete 2>/dev/null && cleaned=1
-      
+
       # Language-specific cleanup
       for project_type in "''${project_types[@]}"; do
         case "$project_type" in
@@ -247,7 +261,7 @@ let
             ;;
         esac
       done
-      
+
       if [ $cleaned -eq 1 ]; then
         log_success "Cleanup complete!"
       else
@@ -258,11 +272,11 @@ let
     # Smart formatting based on detected languages
     format_code() {
       log_step "Formatting code..."
-      
+
       local project_types
       mapfile -t project_types < <(detect_project_type)
       local formatted=0
-      
+
       for project_type in "''${project_types[@]}"; do
         case "$project_type" in
           python)
@@ -314,7 +328,7 @@ let
             ;;
         esac
       done
-      
+
       if [ $formatted -eq 1 ]; then
         log_success "Formatting complete!"
       else
@@ -325,12 +339,12 @@ let
     # Smart linting based on detected languages
     lint_code() {
       log_step "Linting code..."
-      
+
       local project_types
       mapfile -t project_types < <(detect_project_type)
       local linted=0
       local errors=0
-      
+
       for project_type in "''${project_types[@]}"; do
         case "$project_type" in
           python)
@@ -378,7 +392,7 @@ let
             ;;
         esac
       done
-      
+
       if [ $linted -eq 1 ]; then
         if [ $errors -eq 0 ]; then
           log_success "Linting complete - no issues found!"
@@ -388,7 +402,7 @@ let
       else
         log_info "No files found to lint"
       fi
-      
+
       return $errors
     }
 
@@ -396,9 +410,9 @@ let
     web_serve() {
       local port="''${1:-8000}"
       local server_type="''${2:-auto}"
-      
+
       log_step "Starting web server on port $port..."
-      
+
       case "$server_type" in
         auto)
           if command -v ${pkgs.nodePackages.live-server}/bin/live-server >/dev/null 2>&1 && has_files "*.html"; then
@@ -431,21 +445,21 @@ let
     # Enhanced image optimization
     optimize_images() {
       log_step "Optimizing images..."
-      
+
       local optimized=0
-      
+
       # JPEG optimization
       find . -type f \( -name "*.jpg" -o -name "*.jpeg" \) | while read -r img; do
         log_info "Optimizing JPEG: $img"
         ${pkgs.jpegoptim}/bin/jpegoptim --strip-all --max=85 "$img" && optimized=1
       done
-      
+
       # PNG optimization
       find . -type f -name "*.png" | while read -r img; do
         log_info "Optimizing PNG: $img"
         ${pkgs.optipng}/bin/optipng -o2 "$img" && optimized=1
       done
-      
+
       # WebP conversion for large images
       find . -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" \) | while read -r img; do
         local size
@@ -458,7 +472,7 @@ let
           fi
         fi
       done
-      
+
       if [ $optimized -eq 1 ]; then
         log_success "Image optimization complete!"
       else
@@ -469,15 +483,15 @@ let
     # Project information and statistics
     show_info() {
       log_step "Gathering project information..."
-      
+
       echo ""
       echo -e "''${CYAN}📊 Project Statistics''${NC}"
       echo "===================="
-      
+
       # Basic file counts
       echo "📁 Total files: $(find . -type f | wc -l)"
       echo "📂 Total directories: $(find . -type d | wc -l)"
-      
+
       # Language breakdown
       local project_types
       mapfile -t project_types < <(detect_project_type)
@@ -495,7 +509,7 @@ let
           esac
         done
       fi
-      
+
       # Git information if available
       if [ -d ".git" ]; then
         echo ""
@@ -504,13 +518,13 @@ let
         echo "  Commits: $(git rev-list --count HEAD 2>/dev/null || echo 'unknown')"
         echo "  Last commit: $(git log -1 --format='%cr' 2>/dev/null || echo 'unknown')"
       fi
-      
+
       echo ""
     }
 
     # Main command handler with better argument parsing
     VERBOSE=false
-    
+
     # Parse global options
     while [[ $# -gt 0 ]]; do
       case $1 in
@@ -533,12 +547,12 @@ let
           ;;
       esac
     done
-    
+
     # Set verbose mode
     if [ "$VERBOSE" = true ]; then
       set -x
     fi
-    
+
     # Main command dispatch
     case "''${1:-help}" in
       "clean")
@@ -571,14 +585,14 @@ let
     esac
   '';
 in
-pkgs.writeShellApplication {
-  name = "dev-tools";
-  text = mainScript;
-  runtimeInputs = with pkgs; 
-    toolCategories.core ++ 
-    toolCategories.formatters ++ 
-    toolCategories.linters ++ 
-    toolCategories.web ++ 
-    toolCategories.media ++ 
-    toolCategories.docs;
-}
+  pkgs.writeShellApplication {
+    name = "dev-tools";
+    text = mainScript;
+    runtimeInputs = with pkgs;
+      toolCategories.core
+      ++ toolCategories.formatters
+      ++ toolCategories.linters
+      ++ toolCategories.web
+      ++ toolCategories.media
+      ++ toolCategories.docs;
+  }

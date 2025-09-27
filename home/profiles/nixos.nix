@@ -8,14 +8,14 @@
   imports = [
     # Base development profile (cross-platform)
     ./development.nix
-    
+
     # NixOS-specific configurations
     ../nixos.nix
   ];
 
   # NixOS-specific profile configurations
   # Add any NixOS-specific profile settings here
-  
+
   # This profile is designed for NixOS systems and includes:
   # - All development tools (from development.nix)
   # - Linux-specific packages and configurations (from nixos.nix)

@@ -10,7 +10,7 @@
     # Shared system modules
     ../shared/nix.nix
     ../shared/users.nix
-    
+
     # Feature modules
     ../../features/fonts.nix
   ];
@@ -26,7 +26,7 @@
 
   # Enable common services
   services.openssh.enable = true;
-  
+
   # Enable networking
   networking.networkmanager.enable = true;
 

@@ -9,7 +9,7 @@
   imports = [
     # Include development profile as base
     ./development.nix
-    
+
     # Note: Platform-specific desktop tools (like aerospace) are now in:
     # - home/profiles/macos.nix for macOS-specific desktop setup
     # - home/profiles/nixos.nix for NixOS-specific desktop setup

@@ -6,7 +6,7 @@
     #--------------------------------------------------
     sops # Secrets OPerationS - encrypted secrets management
     age # Simple, modern encryption tool
-    
+
     #--------------------------------------------------
     # Additional Security Tools (add as needed)
     #--------------------------------------------------

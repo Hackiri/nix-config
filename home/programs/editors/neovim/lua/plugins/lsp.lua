@@ -132,12 +132,12 @@ return {
 
       -- Ensure non-LSP tools are installed (LSP servers handled by mason-lspconfig)
       local ensure_installed = {
-        "stylua",         -- Lua formatter
-        "shfmt",          -- Shell formatter
-        "shellcheck",     -- Shell linter
-        "prettier",       -- JS/TS formatter
-        "ruff",           -- Python linter/formatter CLI
-        "js-debug-adapter" -- DAP adapter for JS/TS
+        "stylua", -- Lua formatter
+        "shfmt", -- Shell formatter
+        "shellcheck", -- Shell linter
+        "prettier", -- JS/TS formatter
+        "ruff", -- Python linter/formatter CLI
+        "js-debug-adapter", -- DAP adapter for JS/TS
       }
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 

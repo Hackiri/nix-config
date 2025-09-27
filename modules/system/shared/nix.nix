@@ -22,17 +22,19 @@
       ];
     };
     # Garbage collection settings
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 30d"; # Keep generations for 30 days
-    } // lib.optionalAttrs pkgs.stdenv.isDarwin {
-      # Darwin-specific GC interval
-      interval = {
-        Weekday = 0;
-        Hour = 3;
-        Minute = 0;
-      }; # Run GC weekly on Sundays at 3am
-    };
+    gc =
+      {
+        automatic = true;
+        options = "--delete-older-than 30d"; # Keep generations for 30 days
+      }
+      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+        # Darwin-specific GC interval
+        interval = {
+          Weekday = 0;
+          Hour = 3;
+          Minute = 0;
+        }; # Run GC weekly on Sundays at 3am
+      };
     # Use optimise instead of auto-optimise-store
     optimise = {
       automatic = true;

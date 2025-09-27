@@ -9,7 +9,7 @@
       warn_timeout = "10s"; # Increased timeout for complex environments
       strict_env = true; # More secure environment handling
       load_dotenv = true; # Load .env files automatically
-      
+
       # Global configuration
       global = {
         hide_env_diff = false; # Show environment changes for debugging
@@ -31,7 +31,7 @@
         # Parse arguments more robustly
         local impure=""
         local extra_args=()
-        
+
         while [[ $# -gt 0 ]]; do
           case $1 in
             --impure)
@@ -55,7 +55,7 @@
         local cache_file="$layout_dir/flake-env"
         local flake_hash_file="$layout_dir/flake-hash"
         local current_hash
-        
+
         # Generate hash of flake files for cache invalidation
         if command -v sha256sum >/dev/null 2>&1; then
           current_hash=$(cat flake.nix flake.lock 2>/dev/null | sha256sum | cut -d' ' -f1)
@@ -83,7 +83,7 @@
             log_error "Failed to build flake environment. Check $layout_dir/build.log for details."
             return 1
           fi
-          
+
           # Save hash for cache validation
           echo "$current_hash" > "$flake_hash_file"
           log_status "Environment cached successfully"
@@ -122,7 +122,7 @@
         # Get or create virtual environment
         local VENV
         VENV=$(poetry env info --path 2>/dev/null)
-        
+
         if [[ -z "$VENV" || ! -d "$VENV/bin" ]]; then
           log_status "Creating new Poetry virtual environment..."
           if ! poetry install; then
@@ -141,7 +141,7 @@
         export VIRTUAL_ENV="$VENV"
         export POETRY_ACTIVE=1
         PATH_add "$VENV/bin"
-        
+
         log_status "Poetry environment activated: $VENV"
       }
 
@@ -231,7 +231,7 @@
         # Set Rust environment variables
         export CARGO_TARGET_DIR="''${CARGO_TARGET_DIR:-$layout_dir/target}"
         export RUST_BACKTRACE="''${RUST_BACKTRACE:-1}"
-        
+
         # Add cargo bin to PATH if it exists
         if [[ -d "$HOME/.cargo/bin" ]]; then
           PATH_add "$HOME/.cargo/bin"
@@ -257,13 +257,13 @@
         export GOPATH="$layout_dir/go"
         export GOCACHE="$layout_dir/gocache"
         export GOMODCACHE="$layout_dir/gomodcache"
-        
+
         # Create Go directories
         mkdir -p "$GOPATH/bin" "$GOCACHE" "$GOMODCACHE"
-        
+
         # Add Go bin to PATH
         PATH_add "$GOPATH/bin"
-        
+
         log_status "Go environment configured with GOPATH: $GOPATH"
       }
     '';

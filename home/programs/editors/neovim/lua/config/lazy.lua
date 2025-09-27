@@ -61,17 +61,27 @@ package.preload["nvim-treesitter.query"] = function()
     return wrapper
   end
   function M.get_query(lang, name)
-    if q.get_query then return wrap_query(q.get_query(lang, name)) end
-    if q.get then return wrap_query(q.get(lang, name)) end
+    if q.get_query then
+      return wrap_query(q.get_query(lang, name))
+    end
+    if q.get then
+      return wrap_query(q.get(lang, name))
+    end
     return nil
   end
   function M.get(lang, name)
-    if q.get then return wrap_query(q.get(lang, name)) end
-    if q.get_query then return wrap_query(q.get_query(lang, name)) end
+    if q.get then
+      return wrap_query(q.get(lang, name))
+    end
+    if q.get_query then
+      return wrap_query(q.get_query(lang, name))
+    end
     return nil
   end
   function M.get_files(lang, name, is_included)
-    if q.get_files then return q.get_files(lang, name, is_included) end
+    if q.get_files then
+      return q.get_files(lang, name, is_included)
+    end
     return {}
   end
   -- Provide recursive capture fetcher expected by some plugins (e.g. textsubjects)
@@ -131,7 +141,9 @@ package.preload["nvim-treesitter.query"] = function()
     return #files > 0
   end
   function M.parse(lang, query_string)
-    if q.parse then return q.parse(lang, query_string) end
+    if q.parse then
+      return q.parse(lang, query_string)
+    end
     return nil
   end
   function M.get_node_text(node, bufnr)
@@ -155,7 +167,7 @@ package.preload["nvim-treesitter.ts_utils"] = function()
   function M.update_selection(bufnr, range, selection_mode)
     local api = vim.api
     local start_row, start_col, end_row, end_col = unpack(range)
-    selection_mode = selection_mode or 'v'
+    selection_mode = selection_mode or "v"
 
     -- enter visual mode if normal or operator-pending (no) mode
     local mode = api.nvim_get_mode()
@@ -165,12 +177,12 @@ package.preload["nvim-treesitter.ts_utils"] = function()
     end
 
     local end_col_offset = 1
-    if selection_mode == 'v' and vim.o.selection == 'exclusive' then
+    if selection_mode == "v" and vim.o.selection == "exclusive" then
       end_col_offset = 0
     end
 
     api.nvim_win_set_cursor(0, { start_row + 1, start_col })
-    vim.cmd('normal! o')
+    vim.cmd("normal! o")
     api.nvim_win_set_cursor(0, { end_row + 1, math.max(end_col - end_col_offset, 0) })
   end
 
@@ -181,7 +193,7 @@ package.preload["nvim-treesitter.ts_utils"] = function()
     -- Fallback: manual buffer slice
     local srow, scol, erow, ecol = node:range()
     local lines = vim.api.nvim_buf_get_text(bufnr, srow, scol, erow, ecol, {})
-    return table.concat(lines, '\n')
+    return table.concat(lines, "\n")
   end
 
   return M
@@ -207,16 +219,20 @@ package.preload["nvim-treesitter.parsers"] = function()
       return vim.list_contains(t, v)
     end
     for _, x in ipairs(t) do
-      if x == v then return true end
+      if x == v then
+        return true
+      end
     end
     return false
   end
 
   local methods = {}
   methods.has_parser = function(lang)
-    if not lang or lang == "" then return false end
+    if not lang or lang == "" then
+      return false
+    end
     if cfg_ok and cfg.get_installed then
-      local ok, installed = pcall(cfg.get_installed, 'parsers')
+      local ok, installed = pcall(cfg.get_installed, "parsers")
       if ok and type(installed) == "table" and list_contains(installed, lang) then
         return true
       end
@@ -237,13 +253,19 @@ package.preload["nvim-treesitter.parsers"] = function()
   local old_index = mt.__index
   mt.__index = function(t, k)
     local v = methods[k]
-    if v ~= nil then return v end
-    if type(old_index) == "function" then return old_index(t, k) end
-    if type(old_index) == "table" then return old_index[k] end
+    if v ~= nil then
+      return v
+    end
+    if type(old_index) == "function" then
+      return old_index(t, k)
+    end
+    if type(old_index) == "table" then
+      return old_index[k]
+    end
     return rawget(t, k)
   end
   setmetatable(real, mt)
-  
+
   package.loaded["nvim-treesitter.parsers"] = real
   return real
 end
@@ -254,15 +276,23 @@ do
   if type(parsers) == "table" then
     local cfg_ok, cfg = pcall(require, "nvim-treesitter.config")
     local function list_contains(t, v)
-      if vim.list_contains then return vim.list_contains(t, v) end
-      for _, x in ipairs(t or {}) do if x == v then return true end end
+      if vim.list_contains then
+        return vim.list_contains(t, v)
+      end
+      for _, x in ipairs(t or {}) do
+        if x == v then
+          return true
+        end
+      end
       return false
     end
     local methods = {}
     methods.has_parser = function(lang)
-      if not lang or lang == "" then return false end
+      if not lang or lang == "" then
+        return false
+      end
       if cfg_ok and cfg.get_installed then
-        local ok, installed = pcall(cfg.get_installed, 'parsers')
+        local ok, installed = pcall(cfg.get_installed, "parsers")
         if ok and type(installed) == "table" and list_contains(installed, lang) then
           return true
         end
@@ -281,9 +311,15 @@ do
     local old_index = mt.__index
     mt.__index = function(t, k)
       local v = methods[k]
-      if v ~= nil then return v end
-      if type(old_index) == "function" then return old_index(t, k) end
-      if type(old_index) == "table" then return old_index[k] end
+      if v ~= nil then
+        return v
+      end
+      if type(old_index) == "function" then
+        return old_index(t, k)
+      end
+      if type(old_index) == "table" then
+        return old_index[k]
+      end
       return rawget(t, k)
     end
     setmetatable(parsers, mt)

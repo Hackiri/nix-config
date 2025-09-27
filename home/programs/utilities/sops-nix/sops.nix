@@ -5,7 +5,7 @@
   ...
 }: {
   # Note: sops and age packages are now installed via home/packages/security.nix
-  
+
   # Create the sops age directory
   home.file.".config/sops/.keep".text = "";
 

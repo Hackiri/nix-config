@@ -93,8 +93,8 @@ in {
 
   # Install custom tmux scripts and standard packages
   home.packages = [
-    truncate_path      # Custom path truncation script
-    tmux-sessionizer   # Custom tmux session finder
+    truncate_path # Custom path truncation script
+    tmux-sessionizer # Custom tmux session finder
   ];
   # Note: Standard tmux packages (tmuxinator, fzf, etc.) are in home/packages/terminals.nix
 

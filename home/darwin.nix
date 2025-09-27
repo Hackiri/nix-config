@@ -9,12 +9,12 @@
   # macOS-specific packages
   home.packages = with pkgs; [
     # macOS-specific utilities
-    mkalias                    # Tool for creating macOS aliases
-    pam-reattach              # Enables Touch ID support in tmux
+    mkalias # Tool for creating macOS aliases
+    pam-reattach # Enables Touch ID support in tmux
     reattach-to-user-namespace # macOS clipboard integration for tmux
-    
+
     # macOS-specific applications
-    aerospace                  # AeroSpace tiling window manager for macOS
+    aerospace # AeroSpace tiling window manager for macOS
     # mas                       # Mac App Store CLI (if needed)
     # dockutil                  # Dock management utility
   ];

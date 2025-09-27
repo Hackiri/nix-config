@@ -7,13 +7,13 @@
   # NixOS-specific packages
   home.packages = with pkgs; [
     # Linux-specific utilities
-    xclip             # X11 clipboard utility
-    xsel              # X11 selection utility
-    
+    xclip # X11 clipboard utility
+    xsel # X11 selection utility
+
     # Linux desktop applications
     # firefox           # Web browser (if not using system-wide)
     # thunderbird       # Email client
-    
+
     # Linux development tools
     # gdb               # GNU debugger
     # valgrind          # Memory debugging tool

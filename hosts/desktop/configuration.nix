@@ -42,30 +42,35 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Enable the X11 windowing system
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Enable CUPS to print documents
-  services.printing.enable = true;
-
   # Enable sound with pipewire
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
+
+  # Services configuration
+  services = {
+    # Enable the X11 windowing system
+    xserver = {
+      enable = true;
+      # Enable the GNOME Desktop Environment
+      displayManager.gdm.enable = true;
+      desktopManager.gnome.enable = true;
+      # Configure keymap in X11
+      xkb = {
+        layout = "us";
+        variant = "";
+      };
+    };
+
+    # Enable CUPS to print documents
+    printing.enable = true;
+
+    # Enable sound with pipewire
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+    };
   };
 
   # Additional user groups for desktop
@@ -77,7 +82,6 @@
   environment.systemPackages = with pkgs; [
     firefox
   ];
-
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

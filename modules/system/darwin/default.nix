@@ -11,13 +11,13 @@
     # Shared system modules
     ../shared/nix.nix
     ../shared/users.nix
-    
+
     # Darwin-specific modules
     ./defaults.nix
-    
+
     # Feature modules
     ../../features/fonts.nix
-    
+
     # Service modules
     ../../services/homebrew.nix
   ];

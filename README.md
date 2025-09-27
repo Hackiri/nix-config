@@ -41,28 +41,141 @@ nix-config/
 
 ### Prerequisites
 - macOS or NixOS
-- Nix with flakes enabled
+- Git for cloning the repository
 
-### Setup
-1. **Install Nix**
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+### Complete Setup Guide
+
+1. **Install Nix (Determinate Systems) upstream channel**
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+```
+
+2. **Clone This Repository**
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/nix-config.git ~/nix-config
+cd ~/nix-config
+```
+
+3. **Configure Your System**
+   Before installing nix-darwin, customize the configuration files to match your system:
+
+   a. **Update System Configuration in `flake.nix`:**
+
+   ### System Configuration Function
+   The configuration uses a flexible `mkDarwin` function that parameterizes system creation:
+
+   ```nix
+   # Function to create a Darwin system configuration
+   mkDarwin = {
+     name,
+     system ? "x86_64-darwin",
+     username ? "wm",
+   }:
    ```
 
-2. **Clone and configure**
-   ```bash
-   git clone https://github.com/yourusername/nix-config.git ~/nix-config
-   cd ~/nix-config
-   # Edit flake.nix to update username and system architecture
+   ```nix
+   # Set correct system architecture
+   system = "x86_64-darwin"; # or "aarch64-darwin" for Apple Silicon
+
+   # Update hostname and user configuration
+   darwinConfigurations = {
+     "your-hostname" = mkDarwin {
+       name = "nix-darwin";
+       username = "your-username";
+     };
+   };
    ```
 
-3. **Apply configuration**
+   This allows for:
+   - Consistent username usage throughout the configuration
+   - Easy switching between different machines and users
+   - Passing the username variable to all modules via `specialArgs` 
+   - Configuring home-manager with the same username
+
+   b. **Configure Host Settings in `hosts/nix-darwin/configuration.nix`**
+
+   c. **Set Up User Environment in `hosts/nix-darwin/home.nix`**
+
+4. **Install nix-darwin**
+
+```bash
+# Install nix-darwin with your customized configuration
+nix run nixpkgs#nix-darwin -- switch --flake .
+```
+
+5. **Set Up Authentication and Secrets**
+
+   a. **Generate SSH Key for GitHub**
+
    ```bash
-   # macOS (requires sudo for system-level changes)
-   sudo nix run nix-darwin -- switch --flake .#mbp
-   
-   # NixOS
-   sudo nixos-rebuild switch --flake .#desktop
+   # Generate SSH key
+   ssh-keygen -t ed25519 -C "your-email@example.com"
+
+   # Add SSH key to GitHub
+   cat ~/.ssh/id_ed25519.pub
+   # Copy the output and add it to GitHub Settings > SSH and GPG keys > New SSH key
+   ```
+
+   b. **Generate GPG Key for Commit Signing**
+
+   ```bash
+   # Generate GPG key
+   gpg --full-generate-key
+   # Choose: (9) ECC (sign and encrypt)
+   # Choose: (1) Curve 25519
+   # Enter your name and email when prompted
+
+   # Export public key for GitHub
+   gpg --armor --export YOUR_KEY_ID
+   # Copy the output and add it to GitHub Settings > SSH and GPG keys > New GPG key
+   ```
+
+   c. **Set Up SOPS for Secrets Management**
+
+   ```bash
+   # Generate age key for SOPS
+   age-keygen > ~/.config/sops/age/keys.txt
+
+   # Create age key directories
+   mkdir -p ~/.config/sops/age
+   mkdir -p ~/Library/Application\ Support/sops/age
+
+   # Copy age key to both locations
+   cp ~/.config/sops/age/keys.txt ~/Library/Application\ Support/sops/age/keys.txt
+
+   # Get the public key from the generated file
+   grep "public key:" ~/.config/sops/age/keys.txt
+   ```
+
+   d. **Update SOPS Configuration**
+
+   Update `.sops.yaml` with your new age public key:
+
+   ```yaml
+   keys:
+     - &main-key age1your_public_key_here
+   creation_rules:
+     - path_regex: secrets/.*\.yaml$
+       key_groups:
+         - age:
+             - *main-key
+   ```
+
+   e. **Create Encrypted Secrets File**
+
+   ```bash
+   # Create new secrets file with your information
+   cat > secrets/secrets.yaml << EOF
+   git-userName: your-username
+   git-userEmail: your-email@example.com
+   git-signingKey: YOUR_GPG_KEY_ID
+   EOF
+
+   # Encrypt the secrets file
+   sops -e -i secrets/secrets.yaml
    ```
 
 ## Usage

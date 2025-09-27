@@ -100,7 +100,7 @@
       alt-8 = 'workspace 8'
       alt-9 = 'workspace 9'
       alt-b = 'workspace B' # for browser
-      alt-e = 'workspace E' # 
+      alt-e = 'workspace E' #
       alt-f = 'workspace F' # for finder
       alt-m = 'workspace M' #
       alt-n = 'workspace N' # for notes
@@ -137,16 +137,16 @@
       [mode.service.binding]
       # Reload config and exit service mode
       esc = ['reload-config', 'mode main']
-      
+
       # Reset layout
       r = ['flatten-workspace-tree', 'mode main']
-      
+
       # Toggle floating/tiling layout
       f = ['layout floating tiling', 'mode main']
-      
+
       # Close all windows but current
       backspace = ['close-all-windows-but-current', 'mode main']
-      
+
       # Join with adjacent windows
       alt-shift-h = ['join-with left', 'mode main']
       alt-shift-j = ['join-with down', 'mode main']
