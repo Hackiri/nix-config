@@ -38,7 +38,6 @@
           # CLI tools that work better with Homebrew than Nix on macOS
           "mas" # Mac App Store CLI
           "bitwarden-cli" # Password manager CLI
-          "coreutils" # Core utilities
           "webp" # WebP image format
           "podman-compose" # Podman Compose
           "podman" # Podman

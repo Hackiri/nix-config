@@ -10,7 +10,6 @@
     # Shared system modules
     ../shared/nix.nix
     ../shared/users.nix
-    ../shared/security.nix
 
     # Feature modules
     ../../features/fonts.nix
@@ -18,6 +17,9 @@
 
   # Enable features
   features.fonts.enable = true;
+
+  # Disable command-not-found to avoid conflicts with nix-index (from shared/nix.nix)
+  programs.command-not-found.enable = lib.mkForce false;
 
   # NixOS-specific user configuration
   users.users.${username} = {
@@ -31,6 +33,11 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
-  # Security
-  security.sudo.wheelNeedsPassword = false;
+  # Security configuration
+  security = {
+    sudo = {
+      wheelNeedsPassword = false;
+      execWheelOnly = true;  # Only allow wheel group to use sudo
+    };
+  };
 }

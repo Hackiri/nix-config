@@ -55,9 +55,5 @@
   # Enable nix-index for command-not-found functionality
   programs.nix-index.enable = true;
   
-  # Disable command-not-found to avoid conflicts with nix-index
-  # This is only needed on NixOS where command-not-found exists and is enabled by default
-  programs.command-not-found.enable = lib.mkIf pkgs.stdenv.isLinux (lib.mkForce false);
-  
   # Note: nixpkgs.config.allowUnfree is handled in flake.nix
 }
