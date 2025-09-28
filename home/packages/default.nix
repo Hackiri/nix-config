@@ -4,8 +4,7 @@
 {pkgs, ...}: {
   imports = [
     # Core development tools
-    ./cli-tools.nix # Command-line utilities
-    ./build-tools.nix # Build and compilation tools
+    ./dev-tools.nix # Development tools and utilities (combines cli-tools + build-tools)
     ./languages.nix # Programming language runtimes
     ./python.nix # Python-specific packages
 
