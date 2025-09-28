@@ -17,6 +17,9 @@
     coreutils    # Basic file, shell and text manipulation utilities
     findutils    # find, locate, updatedb, xargs
     
+    # System activation dependencies
+    python3Packages.pygments  # Provides pygmentize (needed during activation)
+    
     # Note: ripgrep moved to home-manager profiles (minimal.nix)
     # Note: Other development tools are in home-manager profiles
   ];
