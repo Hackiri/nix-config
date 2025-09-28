@@ -25,10 +25,9 @@
     ../programs/utilities # btop, yazi, sops
 
     # Development-specific package collections
-    ../packages/build-tools.nix    # gcc, cmake, make, etc.
+    ../packages/dev-tools.nix    # gcc, cmake, make, etc.
     ../packages/code-quality.nix   # linters, formatters
     ../packages/languages.nix     # nodejs, python, php
-    ../packages/cli-tools.nix      # lazygit, gh (Git ecosystem)
     ../packages/terminals.nix     # tmuxinator, moreutils
     ../packages/security.nix      # sops, age
     ../packages/network.nix       # cachix (nix-specific)
