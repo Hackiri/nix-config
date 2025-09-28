@@ -146,7 +146,7 @@ in {
         echo "Copying custom Doom Emacs configuration from nix-config to ~/.doom.d..."
 
         # Copy configuration files
-        CONFIG_SOURCE="${config.home.homeDirectory}/nix-config/home/emacs/doom.d"
+        CONFIG_SOURCE="${config.home.homeDirectory}/nix-config/home/programs/editors/emacs/doom.d"
 
         # Copy init.el
         if [ -f "$CONFIG_SOURCE/init.el" ]; then
