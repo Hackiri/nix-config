@@ -112,7 +112,11 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.packages = [cfg.package];
+    home = {
+      packages = with pkgs; [
+        neovide
+      ];
+    };
 
     # Enable neovide in home-manager
     programs.neovide = {

@@ -11,9 +11,6 @@
     # Include the results of the hardware scan
     ./hardware-configuration.nix
 
-    # Import shared configurations
-    ../shared/base.nix
-
     # Import improved NixOS modules
     ../../modules/system/nixos
   ];
@@ -43,7 +40,7 @@
   };
 
   # Enable sound with pipewire
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
 
   # Services configuration

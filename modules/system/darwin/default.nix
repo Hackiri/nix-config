@@ -11,6 +11,7 @@
     # Shared system modules
     ../shared/nix.nix
     ../shared/users.nix
+    ../shared/security.nix
 
     # Darwin-specific modules
     ./defaults.nix

@@ -10,6 +10,7 @@
     # Shared system modules
     ../shared/nix.nix
     ../shared/users.nix
+    ../shared/security.nix
 
     # Feature modules
     ../../features/fonts.nix

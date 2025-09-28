@@ -5,8 +5,6 @@
   ...
 }: {
   imports = [
-    # Import shared configurations
-    ../shared/base.nix
     # Import improved Darwin modules
     ../../modules/system/darwin
   ];

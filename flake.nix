@@ -192,7 +192,9 @@
         customPkgs = import ./pkgs {inherit pkgs;};
       in {
         # Export custom packages directly
-        inherit (customPkgs) dev-tools devshell kube-packages;
+        inherit (customPkgs) dev-tools kube-packages;
+        # Export the devshell script as the main devshell package
+        devshell = customPkgs.devshell.script;
       });
 
       # Make custom packages available as apps
@@ -212,7 +214,7 @@
         # Export devshell as a runnable app
         devshell = {
           type = "app";
-          program = "${customPkgs.devshell}/bin/devshell";
+          program = "${customPkgs.devshell.script}/bin/devshell";
           meta = {
             description = "Development shell environment";
             mainProgram = "devshell";

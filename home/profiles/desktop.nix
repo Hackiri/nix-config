@@ -1,5 +1,6 @@
-# Desktop profile - cross-platform GUI applications and desktop utilities
-# Note: This profile is platform-agnostic. Use macos.nix or nixos.nix for platform-specific desktop setups.
+# Desktop profile - GUI applications and desktop environment tools
+# Inherits from development.nix which includes minimal.nix foundation.
+# Adds desktop applications, media tools, and GUI utilities.
 {
   config,
   lib,
@@ -7,20 +8,18 @@
   ...
 }: {
   imports = [
-    # Include development profile as base
+    # Foundation: Development environment (includes minimal.nix)
     ./development.nix
 
-    # Note: Platform-specific desktop tools (like aerospace) are now in:
-    # - home/profiles/macos.nix for macOS-specific desktop setup
-    # - home/profiles/nixos.nix for NixOS-specific desktop setup
+    # Desktop-specific package collections
+    ../packages/desktop.nix      # GUI applications (currently minimal)
+    ../packages/utilities.nix    # Media processing (imagemagick, ghostscript)
   ];
 
-  # Cross-platform desktop packages
+  # Desktop-specific home configuration
   home.packages = with pkgs; [
-    # Add cross-platform GUI applications here
-    # Examples:
-    # firefox     # Web browser (if not using system-wide)
-    # thunderbird # Email client
+    # Additional desktop packages can be added here
+    # These are for packages that don't fit into the organized categories
     # libreoffice # Office suite
     # gimp        # Image editor
   ];

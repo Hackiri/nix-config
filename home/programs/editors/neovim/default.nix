@@ -36,7 +36,8 @@
       ghostscript # Provides gs for PDF rendering
       tectonic # LaTeX rendering
       mermaid-cli # Provides mmdc for Mermaid diagrams
-      pngpaste # For img-clip.nvim clipboard image pasting
+    ] ++ lib.optionals pkgs.stdenv.isDarwin [
+      pngpaste # For img-clip.nvim clipboard image pasting (macOS only)
     ];
 
     extraLuaConfig = ''
