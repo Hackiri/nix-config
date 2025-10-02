@@ -106,6 +106,7 @@ return {
       sort_case_insensitive = false,
       use_default_mappings = false,
       retain_hidden_root_indent = true,
+      log_level = "info", -- Valid options: "trace", "debug", "info", "warn", "error", "fatal"
       source_selector = {
         winbar = false,
         statusline = false,

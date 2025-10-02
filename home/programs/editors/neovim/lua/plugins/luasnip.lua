@@ -1,8 +1,8 @@
 return {
   "L3MON4D3/LuaSnip",
   version = "v2.*",
-  -- install jsregexp (optional!).
-	build = "make install_jsregexp",
+  -- jsregexp is provided via Nix extraLuaPackages in default.nix
+  -- This is required for LSP snippet transformations
   dependencies = {
     "rafamadriz/friendly-snippets",
   },

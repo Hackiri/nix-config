@@ -10,8 +10,11 @@ return {
   dependencies = {
     -- NOTE: These plugins may need updates for main branch compatibility
     { "nvim-treesitter/nvim-treesitter-textobjects" }, -- Let it use default branch
+    { "nvim-treesitter/nvim-treesitter-context", version = "*" }, -- Show context at top
     { "windwp/nvim-ts-autotag", version = "*" },
     { "JoosepAlviste/nvim-ts-context-commentstring", version = "*" },
+    { "RRethy/nvim-treesitter-endwise", version = "*" }, -- Auto-add end in Ruby, Lua, etc.
+    { "RRethy/nvim-treesitter-textsubjects", version = false }, -- Smart text selection
   },
   
   init = function(plugin)
@@ -85,11 +88,19 @@ return {
             return
           end
           
+          -- Disable for very large files (performance optimization)
+          local filename = vim.api.nvim_buf_get_name(buf)
+          if filename ~= "" then
+            local max_filesize = 500 * 1024 -- 500 KB
+            local ok, stats = pcall(vim.uv.fs_stat, filename)
+            if ok and stats and stats.size > max_filesize then
+              return -- Skip treesitter for large files
+            end
+          end
+          
           -- Force filetype detection if not set (critical for explorer support)
           local ft = vim.bo[buf].filetype
           if ft == "" then
-            -- Get filename and detect filetype
-            local filename = vim.api.nvim_buf_get_name(buf)
             if filename ~= "" then
               -- Force filetype detection
               vim.api.nvim_buf_call(buf, function()
@@ -318,13 +329,33 @@ return {
       textobjects.setup({
         select = {
           lookahead = true,
+          selection_modes = {},
+          include_surrounding_whitespace = false,
           keymaps = {
+            -- Parameter/Argument text objects
             ["aa"] = "@parameter.outer",
             ["ia"] = "@parameter.inner",
+            -- Function text objects
             ["af"] = "@function.outer",
             ["if"] = "@function.inner",
+            -- Class text objects
             ["ac"] = "@class.outer",
             ["ic"] = "@class.inner",
+            -- Conditional text objects
+            ["ai"] = "@conditional.outer",
+            ["ii"] = "@conditional.inner",
+            -- Loop text objects
+            ["al"] = "@loop.outer",
+            ["il"] = "@loop.inner",
+            -- Block text objects
+            ["ab"] = "@block.outer",
+            ["ib"] = "@block.inner",
+            -- Call text objects
+            ["a/"] = "@call.outer",
+            ["i/"] = "@call.inner",
+            -- Comment text objects (capital C to avoid clash with class)
+            ["aC"] = "@comment.outer",
+            ["iC"] = "@comment.inner",
           },
         },
         move = {
@@ -332,10 +363,30 @@ return {
           goto_next_start = {
             ["]m"] = "@function.outer",
             ["]]"] = "@class.outer",
+            ["]i"] = "@conditional.outer",
+            ["]l"] = "@loop.outer",
+          },
+          goto_next_end = {
+            ["]M"] = "@function.outer",
+            ["]["] = "@class.outer",
           },
           goto_previous_start = {
             ["[m"] = "@function.outer",
             ["[["] = "@class.outer",
+            ["[i"] = "@conditional.outer",
+            ["[l"] = "@loop.outer",
+          },
+          goto_previous_end = {
+            ["[M"] = "@function.outer",
+            ["[]"] = "@class.outer",
+          },
+        },
+        swap = {
+          swap_next = {
+            ["<leader>a"] = "@parameter.inner",
+          },
+          swap_previous = {
+            ["<leader>A"] = "@parameter.inner",
           },
         },
       })
@@ -348,6 +399,7 @@ return {
       filetypes = {
         "html", "javascript", "typescript", "javascriptreact", "typescriptreact",
         "svelte", "vue", "tsx", "jsx", "xml", "php", "markdown",
+        "astro", "glimmer", "handlebars", "hbs", "rescript",
       },
     })
     
@@ -356,6 +408,51 @@ return {
     -- ========================================================================
     vim.g.skip_ts_context_commentstring_module = true
     require("ts_context_commentstring").setup({})
+    
+    -- ========================================================================
+    -- TREESITTER CONTEXT (sticky context at top)
+    -- ========================================================================
+    local context_ok, context = pcall(require, "treesitter-context")
+    if context_ok then
+      context.setup({
+        enable = true,
+        max_lines = 3, -- How many lines to show
+        min_window_height = 20, -- Minimum editor window height
+        line_numbers = true,
+        multiline_threshold = 1,
+        trim_scope = 'outer',
+        mode = 'cursor', -- 'cursor' or 'topline'
+      })
+      
+      -- Keybinding to jump to context
+      vim.keymap.set("n", "[c", function()
+        context.go_to_context()
+      end, { desc = "Jump to context", silent = true })
+    end
+    
+    -- ========================================================================
+    -- TEXTSUBJECTS (smart text selection)
+    -- ========================================================================
+    local textsubjects_ok, textsubjects = pcall(require, "nvim-treesitter-textsubjects")
+    if textsubjects_ok then
+      textsubjects.configure({
+        prev_selection = ",",
+        keymaps = {
+          ["."] = "textsubjects-smart", -- Smart selection
+          [";"] = "textsubjects-container-outer", -- Container selection
+          ["i;"] = { "textsubjects-container-inner", desc = "Select inside containers" },
+        },
+      })
+    end
+    
+    -- ========================================================================
+    -- ENDWISE (auto-add end statements)
+    -- ========================================================================
+    local endwise_ok, endwise = pcall(require, "nvim-treesitter-endwise")
+    if endwise_ok then
+      -- Endwise is configured automatically via treesitter if available
+      -- No explicit setup needed for main branch
+    end
     
     -- Performance optimization
     vim.opt.maxmempattern = 10000

@@ -50,6 +50,11 @@ return {
       prettier = {
         -- Use the version installed by Mason
         command = vim.fn.stdpath("data") .. "/mason/bin/prettier",
+        -- Add condition to check if the command exists and is executable
+        condition = function()
+          local cmd = vim.fn.stdpath("data") .. "/mason/bin/prettier"
+          return vim.fn.executable(cmd) == 1
+        end,
       },
     },
     -- Disable formatters that are showing warnings

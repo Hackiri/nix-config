@@ -15,13 +15,25 @@ return {
       local capabilities = require("blink.cmp").get_lsp_capabilities()
       local lspconfig = require("lspconfig")
 
-      -- Stylua LSP currently fails (`stylua --lsp` not supported by system Stylua).
-      -- We format Lua via conform.nvim instead. Ensure Stylua LSP does not auto-start.
+      -- Stylua is a FORMATTER, not an LSP server.
+      -- Mason might try to start it as LSP which causes "exit code 2" error.
+      -- We format Lua via conform.nvim instead.
+      -- Aggressively prevent stylua from being started as an LSP server.
+      
+      -- Method 1: Disable in lspconfig if it exists
       pcall(function()
-        if vim.lsp and vim.lsp.disable then
-          vim.lsp.disable("stylua")
-        end
+        require("lspconfig.configs").stylua = nil
       end)
+      
+      -- Method 2: Override vim.lsp.start to block stylua
+      local original_lsp_start = vim.lsp.start
+      vim.lsp.start = function(config, opts)
+        if config and (config.name == "stylua" or config.cmd and config.cmd[1] and config.cmd[1]:match("stylua")) then
+          -- Silently refuse to start stylua as LSP
+          return nil
+        end
+        return original_lsp_start(config, opts)
+      end
 
       -- Setup servers with enhanced capabilities
       local servers = {
@@ -117,6 +129,17 @@ return {
       require("mason-lspconfig").setup({
         ensure_installed = vim.tbl_keys(mason_servers),
         automatic_installation = false,
+        -- Explicitly prevent stylua from being configured as an LSP
+        -- (it's a formatter, not an LSP server)
+        handlers = {
+          -- Default handler for all servers
+          function(server_name)
+            -- Skip stylua - it's not an LSP server
+            if server_name == "stylua" then
+              return
+            end
+          end,
+        },
       })
 
       -- Configure all servers using native Neovim API
@@ -138,6 +161,8 @@ return {
         "prettier", -- JS/TS formatter
         "ruff", -- Python linter/formatter CLI
         "js-debug-adapter", -- DAP adapter for JS/TS
+        "templ", -- Go template formatter
+        -- Note: jsregexp for LuaSnip is provided via Nix extraLuaPackages
       }
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
@@ -185,7 +210,8 @@ return {
           end, "[L]SP [W]orkspace [L]ist Folders")
 
           -- Format on save if the client supports it
-          if client.name ~= "stylua" and client.supports_method("textDocument/formatting") then
+          -- Skip stylua (it's a formatter, not an LSP) and other non-LSP formatters
+          if client and client.name ~= "stylua" and client.supports_method("textDocument/formatting") then
             vim.api.nvim_create_autocmd("BufWritePre", {
               group = vim.api.nvim_create_augroup("format_on_save" .. event.buf, { clear = true }),
               buffer = event.buf,

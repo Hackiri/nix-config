@@ -15,8 +15,14 @@
     withPython3 = true;
     withRuby = false;
 
-    # Add pynvim for Python support
-    extraPython3Packages = ps: with ps; [pynvim];
+    # Add pynvim for Python support and pylatexenc for render-markdown LaTeX support
+    extraPython3Packages = ps: with ps; [
+      pynvim
+      pylatexenc # Provides latex2text for render-markdown.nvim
+    ];
+
+    # Add jsregexp for LuaSnip transformations
+    extraLuaPackages = ps: with ps; [jsregexp];
 
     extraPackages = with pkgs; [
       tree-sitter

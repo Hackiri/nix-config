@@ -37,6 +37,9 @@
 
         # YAML/JSON
         yq-go
+
+        # Go Templates
+        templ
       ]
       ++ lib.optionals (lib.hasAttr "autopep8" pkgs) [
         autopep8 # Python code formatter (if available)
