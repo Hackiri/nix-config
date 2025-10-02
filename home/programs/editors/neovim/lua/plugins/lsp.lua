@@ -43,6 +43,15 @@ return {
               runtime = { version = "LuaJIT" },
               workspace = {
                 checkThirdParty = false,
+                ignoreDir = {
+                  ".direnv/",
+                  ".git/",
+                  ".jj/",
+                  "__pycache__/",
+                  "_build",
+                  "result",
+                },
+                useGitIgnore = true,
                 library = {
                   "${3rd}/luv/library",
                   unpack(vim.api.nvim_get_runtime_file("", true)),
@@ -93,7 +102,15 @@ return {
         },
         -- Add other servers with basic setup
         rust_analyzer = {},
-        pylsp = {},
+        pylsp = {
+          settings = {
+            pylsp = {
+              plugins = {
+                mypy = { enabled = true },
+              },
+            },
+          },
+        },
         ts_ls = {},
         html = {},
         dockerls = {},
@@ -104,7 +121,15 @@ return {
         jsonls = {},
         sqlls = {},
         terraformls = {},
-        yamlls = {},
+        yamlls = {
+          settings = {
+            redhat = {
+              telemetry = {
+                enabled = false,
+              },
+            },
+          },
+        },
         bashls = {},
         graphql = {},
         cssls = {},
@@ -151,6 +176,15 @@ return {
       -- Enable all configured servers
       for server_name, _ in pairs(servers) do
         vim.lsp.enable(server_name)
+      end
+
+      -- Prevent nixd from attaching to shell scripts with nix shebangs
+      local match_contents = require("vim.filetype.detect").match_contents
+      require("vim.filetype.detect").match_contents = function(...)
+        local result = match_contents(...)
+        if result ~= "nix" then
+          return result
+        end
       end
 
       -- Ensure non-LSP tools are installed (LSP servers handled by mason-lspconfig)

@@ -372,7 +372,8 @@ require("lazy").setup({
     -- Import user plugins
     -- import any extras modules here
     { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
-    { import = "lazyvim.plugins.extras.ui.mini-animate" },
+    -- Disabled to prevent duplicate <leader>ua keymaps
+    -- { import = "lazyvim.plugins.extras.ui.mini-animate" },
     { import = "lazyvim.plugins.extras.formatting.prettier" },
     -- { import = "lazyvim.plugins.extras.ai.codeium" }, -- Replaced with windsurf.vim plugin
     -- Copilot is configured in plugins/copilot.lua

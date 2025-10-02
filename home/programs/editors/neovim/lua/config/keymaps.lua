@@ -81,12 +81,17 @@ map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 
 -- Code Navigation and Editing
-map("n", "<leader>a", "<cmd>AerialToggle<CR>", { desc = "Toggle code outline" })
+-- Note: Aerial outline toggle is now at <leader>o (defined in plugins/aerial.lua)
+-- Removed <leader>a mapping to prevent conflict with Avante AI prefix
 map("v", "<", "<gv", { desc = "Unindent line" })
 map("v", ">", ">gv", { desc = "Indent line" })
 map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move line down" })
 map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move line up" })
-map("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>\>/gI<Left><Left><Left>]], { desc = "Replace word under cursor" })
+
+-- Search and Replace Operations
+-- Note: <leader>sr is "replace surrounding" (mini.surround), not search/replace
+-- Using <leader>sR for search/replace word under cursor
+map("n", "<leader>sR", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>\>/gI<Left><Left><Left>]], { desc = "Replace word under cursor" })
 
 -- Harpoon Marks (<leader>h prefix)
 map("n", "<leader>ha", function()

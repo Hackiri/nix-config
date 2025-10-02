@@ -34,14 +34,8 @@ return {
   event = { "BufWritePre" },
   cmd = { "ConformInfo" },
   keys = {
-    {
-      "<leader>f",
-      function()
-        require("conform").format({ async = true, lsp_format = "fallback" })
-      end,
-      mode = "",
-      desc = "[F]ormat buffer",
-    },
+    -- Removed <leader>f to prevent conflict with find/file prefix
+    -- Use <leader>lf instead (defined in config/keymaps.lua)
   },
   opts = {
     -- Define formatters

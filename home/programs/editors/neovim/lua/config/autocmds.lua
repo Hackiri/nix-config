@@ -177,7 +177,7 @@ M.setup = function()
               vim.cmd("filetype detect")
             end)
           end
-          
+
           vim.api.nvim_exec_autocmds("FileType", {})
 
           if vim.g.editorconfig then
@@ -187,7 +187,7 @@ M.setup = function()
       end
     end,
   })
-  
+
   -- Additional autocmd to ensure filetype detection for explorer-opened files
   vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
     group = vim.api.nvim_create_augroup("EnsureFiletypeDetection", { clear = true }),
@@ -216,7 +216,7 @@ M.setup = function()
       -- Trigger LazyFile event for actual files (not special buffers)
       local file = vim.api.nvim_buf_get_name(event.buf)
       local buftype = vim.api.nvim_get_option_value("buftype", { buf = event.buf })
-      
+
       if file ~= "" and buftype == "" then
         vim.api.nvim_exec_autocmds("User", { pattern = "LazyFile", modeline = false })
         -- Remove the autocmd after first trigger to avoid duplicate events

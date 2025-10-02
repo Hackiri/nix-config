@@ -382,11 +382,12 @@ return {
           },
         },
         swap = {
+          -- Changed from <leader>a to <leader>sa to avoid conflict with Avante AI prefix
           swap_next = {
-            ["<leader>a"] = "@parameter.inner",
+            ["<leader>sa"] = "@parameter.inner",
           },
           swap_previous = {
-            ["<leader>A"] = "@parameter.inner",
+            ["<leader>sA"] = "@parameter.inner",
           },
         },
       })
