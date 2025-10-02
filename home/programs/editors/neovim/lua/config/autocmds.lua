@@ -171,6 +171,13 @@ M.setup = function()
         vim.api.nvim_del_augroup_by_name("FilePost")
 
         vim.schedule(function()
+          -- Force filetype detection for files opened from explorers
+          if vim.bo[args.buf].filetype == "" then
+            vim.api.nvim_buf_call(args.buf, function()
+              vim.cmd("filetype detect")
+            end)
+          end
+          
           vim.api.nvim_exec_autocmds("FileType", {})
 
           if vim.g.editorconfig then
@@ -180,8 +187,47 @@ M.setup = function()
       end
     end,
   })
+  
+  -- Additional autocmd to ensure filetype detection for explorer-opened files
+  vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+    group = vim.api.nvim_create_augroup("EnsureFiletypeDetection", { clear = true }),
+    callback = function(args)
+      -- If filetype is empty, force detection
+      vim.schedule(function()
+        local buf = args.buf
+        if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].filetype == "" then
+          local filename = vim.api.nvim_buf_get_name(buf)
+          if filename ~= "" and vim.fn.filereadable(filename) == 1 then
+            vim.api.nvim_buf_call(buf, function()
+              vim.cmd("filetype detect")
+            end)
+          end
+        end
+      end)
+    end,
+    desc = "Ensure filetype detection for explorer-opened files",
+  })
 
-  -- Ensure Tree-sitter highlighting starts on filetype (Neovim 0.11+)
+  -- LazyFile event for lazy loading plugins when opening files
+  -- This mimics LazyVim's LazyFile event
+  vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile", "BufWritePre" }, {
+    group = augroup("lazy_file"),
+    callback = function(event)
+      -- Trigger LazyFile event for actual files (not special buffers)
+      local file = vim.api.nvim_buf_get_name(event.buf)
+      local buftype = vim.api.nvim_get_option_value("buftype", { buf = event.buf })
+      
+      if file ~= "" and buftype == "" then
+        vim.api.nvim_exec_autocmds("User", { pattern = "LazyFile", modeline = false })
+        -- Remove the autocmd after first trigger to avoid duplicate events
+        vim.api.nvim_del_augroup_by_name("lazyvim_lazy_file")
+      end
+    end,
+  })
+
+  -- Fallback: Ensure Tree-sitter highlighting starts on filetype (Neovim 0.11+)
+  -- NOTE: Primary treesitter autocmds are in plugins/treesitter.lua (init function)
+  -- This is a fallback for filetypes not explicitly listed
   vim.api.nvim_create_autocmd("FileType", {
     group = augroup("treesitter_start"),
     callback = function(ev)
@@ -190,6 +236,18 @@ M.setup = function()
         if not vim.treesitter.highlighter.active[ev.buf] then
           vim.treesitter.start(ev.buf)
         end
+      end)
+    end,
+  })
+
+  -- Specific autocmd for markdown files to ensure tree-sitter highlighting
+  vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+    group = augroup("markdown_treesitter"),
+    pattern = "*.md",
+    callback = function(ev)
+      -- Force start tree-sitter highlighting for markdown files
+      pcall(function()
+        vim.treesitter.start(ev.buf, "markdown")
       end)
     end,
   })

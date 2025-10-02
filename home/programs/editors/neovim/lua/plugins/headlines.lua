@@ -1,6 +1,8 @@
 return {
   "lukas-reineke/headlines.nvim",
+  enabled = false, -- Disabled to avoid conflict with render-markdown.nvim
   dependencies = "nvim-treesitter/nvim-treesitter",
+  -- Only load for specific filetypes (excludes markdown to avoid conflict with render-markdown.nvim)
   ft = { "norg", "rmd", "org" },
   config = function()
     require("headlines").setup({

@@ -42,6 +42,7 @@
           "podman-compose" # Podman Compose
           "podman" # Podman
           "wordnet" # Wordnet dictionary
+          "coreutils" # GNU coreutils for yazi.nvim (provides grealpath)
         ]
         ++ config.services.homebrew.extraBrews;
 

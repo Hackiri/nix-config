@@ -42,6 +42,17 @@ return {
     vim.cmd(string.format([[highlight RenderMD6Fg cterm=bold gui=bold guifg=%s]], color6_bg))
   end,
   config = function()
+    -- Ensure tree-sitter highlighting is enabled for markdown files
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "markdown",
+      callback = function(ev)
+        -- Force enable tree-sitter highlighting for markdown
+        pcall(function()
+          vim.treesitter.start(ev.buf, "markdown")
+        end)
+      end,
+    })
+
     -- Add keybindings for markdown rendering under <leader>r prefix
     vim.keymap.set("n", "<leader>rt", "<cmd>RenderToggle<CR>", { desc = "Toggle Markdown Rendering" })
     vim.keymap.set("n", "<leader>rr", "<cmd>RenderRefresh<CR>", { desc = "Refresh Markdown Rendering" })
@@ -97,6 +108,10 @@ return {
       },
     },
     latex = {
+      enabled = false, -- Disabled to avoid LaTeX tool warnings
+    },
+    -- Explicitly handle plugin conflicts
+    anti_conceal = {
       enabled = true,
     },
   },

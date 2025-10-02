@@ -22,9 +22,10 @@
       tree-sitter
       fzf
       vscode-js-debug
-      # For LuaSnip transformations
+      # For LuaSnip transformations (Lua 5.1 required)
       lua51Packages.lua
       lua51Packages.luarocks
+      luajit
 
       # Build tools for native extensions
       cmake
@@ -36,6 +37,9 @@
       ghostscript # Provides gs for PDF rendering
       tectonic # LaTeX rendering
       mermaid-cli # Provides mmdc for Mermaid diagrams
+    ] ++ lib.optionals pkgs.stdenv.isLinux [
+      # GNU coreutils for yazi.nvim (provides grealpath) - NixOS only
+      coreutils
     ] ++ lib.optionals pkgs.stdenv.isDarwin [
       pngpaste # For img-clip.nvim clipboard image pasting (macOS only)
     ];

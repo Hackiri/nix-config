@@ -235,6 +235,30 @@ return {
               unnamed = "",
             },
           },
+          -- Language/Parser indicator
+          {
+            function()
+              local buf = vim.api.nvim_get_current_buf()
+              local ft = vim.bo[buf].filetype
+              if ft == "" then
+                return ""
+              end
+              
+              -- Check if treesitter is active for this buffer
+              local ts_active = vim.treesitter.highlighter.active[buf] ~= nil
+              if ts_active then
+                -- Get the language from treesitter
+                local lang = vim.treesitter.language.get_lang(ft) or ft
+                return " " .. lang
+              end
+              
+              return ""
+            end,
+            color = { fg = "#7aa2f7", gui = "bold" }, -- Blue color for language
+            cond = function()
+              return vim.bo.filetype ~= ""
+            end,
+          },
           { file_permissions },
           {
             function()

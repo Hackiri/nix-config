@@ -1,19 +1,23 @@
+-- nvim-treesitter configuration for MAIN branch
+-- This is the new, minimal API that requires manual highlighting setup
+
 return {
   "nvim-treesitter/nvim-treesitter",
-  version = false, -- track main branch; queries/parsers evolve together
-  build = ":TSUpdate",
-  event = { "BufReadPost", "BufNewFile" }, -- Load on buffer read/new
-  priority = 1000, -- Give it high priority to load early
+  branch = "main", -- Modern rewrite with minimal API
+  build = ":TSUpdate", -- Official recommendation from main branch README
+  lazy = false, -- Load immediately
+  
   dependencies = {
-    { "nvim-treesitter/nvim-treesitter-textobjects", version = false },
-    { "nvim-treesitter/nvim-treesitter-context", version = false },
+    -- NOTE: These plugins may need updates for main branch compatibility
+    { "nvim-treesitter/nvim-treesitter-textobjects" }, -- Let it use default branch
     { "windwp/nvim-ts-autotag", version = "*" },
     { "JoosepAlviste/nvim-ts-context-commentstring", version = "*" },
-    { "RRethy/nvim-treesitter-endwise", version = "*" }, -- Auto-add end in Ruby, Lua, etc.
-    { "RRethy/nvim-treesitter-textsubjects", version = false }, -- Text objects for text
   },
-  -- Define filetype associations as early as possible so detection works for any file open method
-  init = function()
+  
+  init = function(plugin)
+    -- Add to runtimepath EARLY so treesitter is available
+    require("lazy.core.loader").add_to_rtp(plugin)
+    
     -- File type associations
     local filetypes = {
       terraform = { "tf", "tfvars", "terraform" },
@@ -33,348 +37,328 @@ return {
         vim.filetype.add({ extension = { [ext] = filetype } })
       end
     end
-  end,
-  config = function()
-    -- Skip ts_context_commentstring module
-    vim.g.skip_ts_context_commentstring_module = true
-
-    -- Set up ts_context_commentstring
-    require("ts_context_commentstring").setup({})
-
-    -- Define language groups for better organization
-    local language_groups = {
-      -- Web Development
-      web = {
-        "html",
-        "css",
-        "scss", -- Added scss
-        "javascript",
-        "typescript",
-        "tsx",
-        "vue",
-        "svelte",
-        "graphql",
-        "json",
-        "jsonc",
-        "xml",
-      },
-      -- Backend Development
-      backend = {
-        "python",
-        "java",
-        "go",
-        "rust",
-        "ruby",
-        "php",
-        "c",
-        "cpp",
-        "c_sharp",
-        "kotlin",
-        "scala",
-      },
-      -- System and DevOps
-      system = {
-        "bash",
-        "fish",
-        "dockerfile",
-        "terraform",
-        "hcl",
-        "make",
-        "cmake",
-        "perl",
-        "regex",
-        "toml",
-        "awk",
-      },
-      -- Data and Config
-      data = {
-        "yaml",
-        "json",
-        "toml",
-        "ini",
-        "sql",
-        "graphql",
-        "proto",
-      },
-      -- Documentation and Markup
-      docs = {
-        "markdown",
-        "markdown_inline",
-        "vimdoc",
-        "rst",
-        "latex",
-        "bibtex",
-        "norg", -- Added norg (Neorg)
-        "typst", -- Added typst
-      },
-      -- Version Control
-      vcs = {
-        "git_config",
-        "gitattributes",
-        "gitcommit",
-        "gitignore",
-        "diff",
-      },
-      -- Scripting and Config
-      scripting = {
-        "lua",
-        "vim",
-        "query",
-        "regex",
-        "jq",
-        "nix",
-        "groovy",
-      },
+    
+    -- ========================================================================
+    -- SETUP AUTOCMDS EARLY (in init, not config)
+    -- ========================================================================
+    -- This ensures autocmds are registered BEFORE files are opened from explorers
+    
+    local highlight_filetypes = {
+      "lua", "python", "javascript", "typescript", "tsx", "jsx",
+      "rust", "go", "java", "c", "cpp", "ruby", "php",
+      "html", "css", "scss", "json", "yaml", "toml",
+      "bash", "fish", "markdown", "vim", "nix", "terraform",
+      "dockerfile", "sql", "graphql", "vue", "svelte",
     }
-
-    -- Flatten language groups into a single list
-    local ensure_installed = {}
-    for _, group in pairs(language_groups) do
-      for _, lang in ipairs(group) do
-        table.insert(ensure_installed, lang)
-      end
+    
+    local indent_filetypes = {
+      "lua", "javascript", "typescript", "tsx", "jsx",
+      "rust", "go", "java", "c", "cpp", "ruby", "php",
+      "html", "css", "json", "vim", "nix",
+    }
+    
+    local fold_filetypes = {
+      "lua", "python", "javascript", "typescript", "tsx", "jsx",
+      "rust", "go", "java", "c", "cpp", "ruby",
+    }
+    
+    -- Highlighting autocmd - using multiple events for maximum coverage
+    -- This catches files opened from CLI, explorers, and buffer switches
+    local highlight_ft_set = {}
+    for _, ft in ipairs(highlight_filetypes) do
+      highlight_ft_set[ft] = true
     end
-
-    -- Configure the core nvim-treesitter plugin (install dir/runtimepath management)
-    -- Neovim 0.11 switched to vim.treesitter for highlighting; nvim-treesitter now
-    -- focuses on parser management and utilities. No per-module setup here.
-    require("nvim-treesitter").setup({})
-
-    -- Ensure parsers for our language list are installed (non-blocking)
-    vim.schedule(function()
-      local ok, installer = pcall(require, "nvim-treesitter.install")
+    
+    -- Primary autocmd: BufReadPost + BufWinEnter for explorer support
+    vim.api.nvim_create_autocmd({ "BufReadPost", "BufWinEnter" }, {
+      group = vim.api.nvim_create_augroup("TreesitterHighlight", { clear = true }),
+      callback = function(args)
+        -- Defer to ensure treesitter is fully loaded
+        vim.schedule(function()
+          local buf = args.buf
+          if not vim.api.nvim_buf_is_valid(buf) then
+            return
+          end
+          
+          -- Check if already active
+          if vim.treesitter.highlighter.active[buf] then
+            return
+          end
+          
+          -- Force filetype detection if not set (critical for explorer support)
+          local ft = vim.bo[buf].filetype
+          if ft == "" then
+            -- Get filename and detect filetype
+            local filename = vim.api.nvim_buf_get_name(buf)
+            if filename ~= "" then
+              -- Force filetype detection
+              vim.api.nvim_buf_call(buf, function()
+                vim.cmd("filetype detect")
+              end)
+              
+              -- Re-check filetype after detection
+              vim.schedule(function()
+                ft = vim.bo[buf].filetype
+                if ft ~= "" and highlight_ft_set[ft] and not vim.treesitter.highlighter.active[buf] then
+                  pcall(vim.treesitter.start, buf)
+                end
+              end)
+              return
+            end
+            return
+          end
+          
+          -- Check if filetype is in our list
+          if not highlight_ft_set[ft] then
+            return
+          end
+          
+          -- Start treesitter
+          pcall(vim.treesitter.start, buf)
+        end)
+      end,
+      desc = "Enable treesitter highlighting (explorer support)",
+    })
+    
+    -- Secondary: FileType event for immediate response
+    vim.api.nvim_create_autocmd("FileType", {
+      group = vim.api.nvim_create_augroup("TreesitterHighlightFT", { clear = true }),
+      pattern = highlight_filetypes,
+      callback = function(args)
+        vim.schedule(function()
+          local buf = args.buf
+          if vim.api.nvim_buf_is_valid(buf) and not vim.treesitter.highlighter.active[buf] then
+            pcall(vim.treesitter.start, buf)
+          end
+        end)
+      end,
+      desc = "Enable treesitter highlighting on FileType",
+    })
+    
+    -- Indentation autocmd
+    vim.api.nvim_create_autocmd("FileType", {
+      group = vim.api.nvim_create_augroup("TreesitterIndent", { clear = true }),
+      pattern = indent_filetypes,
+      callback = function()
+        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end,
+      desc = "Enable treesitter indentation (experimental)",
+    })
+    
+    -- Folding autocmd
+    vim.api.nvim_create_autocmd("FileType", {
+      group = vim.api.nvim_create_augroup("TreesitterFold", { clear = true }),
+      pattern = fold_filetypes,
+      callback = function()
+        vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+        vim.wo.foldmethod = "expr"
+        vim.wo.foldenable = false
+      end,
+      desc = "Enable treesitter folding",
+    })
+  end,
+  
+  config = function()
+    -- ========================================================================
+    -- MANUAL TREESITTER LOADER
+    -- ========================================================================
+    -- Create user command and keybinding for manual loading
+    
+    -- User command: :TSStart
+    vim.api.nvim_create_user_command("TSStart", function()
+      local buf = vim.api.nvim_get_current_buf()
+      local ft = vim.bo[buf].filetype
+      
+      if ft == "" then
+        vim.notify("No filetype detected. Set filetype first with :set filetype=<lang>", vim.log.levels.WARN)
+        return
+      end
+      
+      -- Check if already active
+      if vim.treesitter.highlighter.active[buf] then
+        vim.notify("Treesitter already active for " .. ft, vim.log.levels.INFO)
+        return
+      end
+      
+      -- Try to start treesitter
+      local ok, err = pcall(vim.treesitter.start, buf)
       if ok then
-        pcall(installer.install, ensure_installed, { summary = false })
+        vim.notify("✓ Treesitter started for " .. ft, vim.log.levels.INFO)
+      else
+        vim.notify("✗ Failed to start treesitter: " .. tostring(err), vim.log.levels.ERROR)
+        -- Suggest installing parser
+        vim.notify("Try: :TSInstall " .. ft, vim.log.levels.INFO)
       end
-    end)
-
-    -- Configure textobjects via its own plugin API (new style)
-    require("nvim-treesitter-textobjects").setup({
-      select = {
-        lookahead = true,
-        selection_modes = {},
-        include_surrounding_whitespace = false,
-        keymaps = {
-          -- Parameter/Argument text objects
-          ["aa"] = "@parameter.outer",
-          ["ia"] = "@parameter.inner",
-          -- Function text objects
-          ["af"] = "@function.outer",
-          ["if"] = "@function.inner",
-          -- Class text objects
-          ["ac"] = "@class.outer",
-          ["ic"] = "@class.inner",
-          -- Conditional text objects
-          ["ai"] = "@conditional.outer",
-          ["ii"] = "@conditional.inner",
-          -- Loop text objects
-          ["al"] = "@loop.outer",
-          ["il"] = "@loop.inner",
-          -- Block text objects
-          ["ab"] = "@block.outer",
-          ["ib"] = "@block.inner",
-          -- Call text objects
-          ["a/"] = "@call.outer",
-          ["i/"] = "@call.inner",
-          -- Comment text objects (use capital C to avoid clash with class)
-          ["aC"] = "@comment.outer",
-          ["iC"] = "@comment.inner",
-        },
-      },
-      move = {
-        set_jumps = true,
-        goto_next_start = {
-          ["]m"] = "@function.outer",
-          ["]]"] = "@class.outer",
-          ["]i"] = "@conditional.outer",
-          ["]l"] = "@loop.outer",
-          ["]s"] = "@statement.outer",
-          ["]z"] = "@fold.outer",
-        },
-        goto_next_end = {
-          ["]M"] = "@function.outer",
-          ["]["] = "@class.outer",
-          ["]Z"] = "@fold.outer",
-        },
-        goto_previous_start = {
-          ["[m"] = "@function.outer",
-          ["[["] = "@class.outer",
-          ["[i"] = "@conditional.outer",
-          ["[l"] = "@loop.outer",
-          ["[s"] = "@statement.outer",
-          ["[z"] = "@fold.outer",
-        },
-        goto_previous_end = {
-          ["[M"] = "@function.outer",
-          ["[]"] = "@class.outer",
-          ["[Z"] = "@fold.outer",
-        },
-      },
-      swap = {
-        swap_next = {
-          ["<leader>a"] = "@parameter.inner",
-          ["<leader>f"] = "@function.outer",
-          ["<leader>e"] = "@element",
-        },
-        swap_previous = {
-          ["<leader>A"] = "@parameter.inner",
-          ["<leader>F"] = "@function.outer",
-          ["<leader>E"] = "@element",
-        },
-      },
+    end, {
+      desc = "Manually start treesitter highlighting for current buffer",
     })
-
-    -- Configure textsubjects via its own API
-    require("nvim-treesitter-textsubjects").configure({
-      prev_selection = ",",
-      keymaps = {
-        ["."] = "textsubjects-smart",
-        [";"] = "textsubjects-container-outer",
-        ["i;"] = "textsubjects-container-inner",
-      },
+    
+    -- User command: :TSRestart (stop + start)
+    vim.api.nvim_create_user_command("TSRestart", function()
+      local buf = vim.api.nvim_get_current_buf()
+      local ft = vim.bo[buf].filetype
+      
+      -- Stop if active
+      if vim.treesitter.highlighter.active[buf] then
+        pcall(vim.treesitter.stop, buf)
+      end
+      
+      -- Wait a tick then restart
+      vim.schedule(function()
+        local ok = pcall(vim.treesitter.start, buf)
+        if ok then
+          vim.notify("✓ Treesitter restarted for " .. ft, vim.log.levels.INFO)
+        else
+          vim.notify("✗ Failed to restart treesitter", vim.log.levels.ERROR)
+        end
+      end)
+    end, {
+      desc = "Restart treesitter highlighting for current buffer",
     })
-
-    -- Keymaps for textobjects (select)
-    local map = vim.keymap.set
-    for _, mode in ipairs({ "x", "o" }) do
-      map(mode, "aa", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@parameter.outer", "textobjects")
-      end, { desc = "TS: parameter.outer" })
-      map(mode, "ia", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@parameter.inner", "textobjects")
-      end, { desc = "TS: parameter.inner" })
-      map(mode, "af", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@function.outer", "textobjects")
-      end, { desc = "TS: function.outer" })
-      map(mode, "if", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@function.inner", "textobjects")
-      end, { desc = "TS: function.inner" })
-      map(mode, "ac", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@class.outer", "textobjects")
-      end, { desc = "TS: class.outer" })
-      map(mode, "ic", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@class.inner", "textobjects")
-      end, { desc = "TS: class.inner" })
-      map(mode, "ai", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@conditional.outer", "textobjects")
-      end, { desc = "TS: conditional.outer" })
-      map(mode, "ii", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@conditional.inner", "textobjects")
-      end, { desc = "TS: conditional.inner" })
-      map(mode, "al", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@loop.outer", "textobjects")
-      end, { desc = "TS: loop.outer" })
-      map(mode, "il", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@loop.inner", "textobjects")
-      end, { desc = "TS: loop.inner" })
-      map(mode, "ab", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@block.outer", "textobjects")
-      end, { desc = "TS: block.outer" })
-      map(mode, "ib", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@block.inner", "textobjects")
-      end, { desc = "TS: block.inner" })
-      map(mode, "a/", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@call.outer", "textobjects")
-      end, { desc = "TS: call.outer" })
-      map(mode, "i/", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@call.inner", "textobjects")
-      end, { desc = "TS: call.inner" })
-      map(mode, "aC", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@comment.outer", "textobjects")
-      end, { desc = "TS: comment.outer" })
-      map(mode, "iC", function()
-        require("nvim-treesitter-textobjects.select").select_textobject("@comment.inner", "textobjects")
-      end, { desc = "TS: comment.inner" })
+    
+    -- User command: :TSStatus
+    vim.api.nvim_create_user_command("TSStatus", function()
+      local buf = vim.api.nvim_get_current_buf()
+      local ft = vim.bo[buf].filetype
+      local active = vim.treesitter.highlighter.active[buf] ~= nil
+      
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+      print("Treesitter Status")
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+      print("Buffer: " .. buf)
+      print("Filetype: " .. (ft ~= "" and ft or "NONE"))
+      print("Active: " .. (active and "✓ YES" or "✗ NO"))
+      
+      if ft ~= "" then
+        local lang = vim.treesitter.language.get_lang(ft) or ft
+        print("Language: " .. lang)
+        
+        -- Check if parser exists
+        local parser_path = vim.fn.stdpath("data") .. "/site/parser/" .. lang .. ".so"
+        local has_parser = vim.fn.filereadable(parser_path) == 1
+        print("Parser: " .. (has_parser and "✓ Installed" or "✗ Not installed"))
+        
+        if not has_parser then
+          print("\nInstall with: :TSInstall " .. lang)
+        end
+      end
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    end, {
+      desc = "Show treesitter status for current buffer",
+    })
+    
+    -- Keybinding: <leader>ts to manually start treesitter
+    vim.keymap.set("n", "<leader>ts", "<cmd>TSStart<cr>", {
+      desc = "Start Treesitter highlighting",
+      silent = true,
+    })
+    
+    -- Keybinding: <leader>tr to restart treesitter
+    vim.keymap.set("n", "<leader>tr", "<cmd>TSRestart<cr>", {
+      desc = "Restart Treesitter highlighting",
+      silent = true,
+    })
+    
+    -- Main branch only handles parser installation
+    -- No module configuration (highlight, indent, etc.)
+    
+    local languages = {
+      -- Core languages
+      "c", "lua", "vim", "vimdoc", "query",
+      -- Web Development
+      "html", "css", "scss", "javascript", "typescript", "tsx", "jsx",
+      "vue", "svelte", "graphql", "json", "jsonc", "xml",
+      -- Backend
+      "python", "java", "go", "rust", "ruby", "php", "cpp", "c_sharp",
+      "kotlin", "scala",
+      -- System and DevOps
+      "bash", "fish", "dockerfile", "terraform", "hcl", "make", "cmake",
+      "perl", "toml", "awk",
+      -- Data and Config
+      "yaml", "ini", "sql", "proto",
+      -- Documentation
+      "markdown", "markdown_inline", "rst", "latex", "bibtex", "typst",
+      -- Version Control
+      "git_config", "gitattributes", "gitcommit", "gitignore", "diff",
+      -- Scripting
+      "regex", "jq", "nix", "groovy",
+    }
+    
+    -- Main branch setup - only configures install directory
+    local ok, ts = pcall(require, "nvim-treesitter")
+    if not ok then
+      vim.notify("nvim-treesitter not available", vim.log.levels.ERROR)
+      return
     end
-
-    -- Keymaps for textobjects (move)
-    map({ "n", "x", "o" }, "]m", function()
-      require("nvim-treesitter-textobjects.move").goto_next_start("@function.outer", "textobjects")
-    end, { desc = "TS: next function start" })
-    map({ "n", "x", "o" }, "]]", function()
-      require("nvim-treesitter-textobjects.move").goto_next_start("@class.outer", "textobjects")
-    end, { desc = "TS: next class start" })
-    map({ "n", "x", "o" }, "]i", function()
-      require("nvim-treesitter-textobjects.move").goto_next_start("@conditional.outer", "textobjects")
-    end, { desc = "TS: next conditional start" })
-    map({ "n", "x", "o" }, "]l", function()
-      require("nvim-treesitter-textobjects.move").goto_next_start("@loop.outer", "textobjects")
-    end, { desc = "TS: next loop start" })
-    map({ "n", "x", "o" }, "]s", function()
-      require("nvim-treesitter-textobjects.move").goto_next_start("@statement.outer", "textobjects")
-    end, { desc = "TS: next statement start" })
-    map({ "n", "x", "o" }, "]z", function()
-      require("nvim-treesitter-textobjects.move").goto_next_start("@fold", "folds")
-    end, { desc = "TS: next fold" })
-
-    map({ "n", "x", "o" }, "]M", function()
-      require("nvim-treesitter-textobjects.move").goto_next_end("@function.outer", "textobjects")
-    end, { desc = "TS: next function end" })
-    map({ "n", "x", "o" }, "][", function()
-      require("nvim-treesitter-textobjects.move").goto_next_end("@class.outer", "textobjects")
-    end, { desc = "TS: next class end" })
-
-    map({ "n", "x", "o" }, "[m", function()
-      require("nvim-treesitter-textobjects.move").goto_previous_start("@function.outer", "textobjects")
-    end, { desc = "TS: prev function start" })
-    map({ "n", "x", "o" }, "[[", function()
-      require("nvim-treesitter-textobjects.move").goto_previous_start("@class.outer", "textobjects")
-    end, { desc = "TS: prev class start" })
-    map({ "n", "x", "o" }, "[i", function()
-      require("nvim-treesitter-textobjects.move").goto_previous_start("@conditional.outer", "textobjects")
-    end, { desc = "TS: prev conditional start" })
-    map({ "n", "x", "o" }, "[l", function()
-      require("nvim-treesitter-textobjects.move").goto_previous_start("@loop.outer", "textobjects")
-    end, { desc = "TS: prev loop start" })
-    map({ "n", "x", "o" }, "[s", function()
-      require("nvim-treesitter-textobjects.move").goto_previous_start("@statement.outer", "textobjects")
-    end, { desc = "TS: prev statement start" })
-    map({ "n", "x", "o" }, "[z", function()
-      require("nvim-treesitter-textobjects.move").goto_previous_start("@fold", "folds")
-    end, { desc = "TS: prev fold" })
-
-    map({ "n", "x", "o" }, "[M", function()
-      require("nvim-treesitter-textobjects.move").goto_previous_end("@function.outer", "textobjects")
-    end, { desc = "TS: prev function end" })
-    map({ "n", "x", "o" }, "[]", function()
-      require("nvim-treesitter-textobjects.move").goto_previous_end("@class.outer", "textobjects")
-    end, { desc = "TS: prev class end" })
-
-    -- Keymaps for textobjects (swap)
-    map("n", "<leader>a", function()
-      require("nvim-treesitter-textobjects.swap").swap_next("@parameter.inner", "textobjects")
-    end, { desc = "TS: swap next param" })
-    map("n", "<leader>A", function()
-      require("nvim-treesitter-textobjects.swap").swap_previous("@parameter.inner", "textobjects")
-    end, { desc = "TS: swap prev param" })
-
-    -- Configure autotag explicitly with supported filetypes
+    
+    -- Setup install directory
+    ts.setup({
+      install_dir = vim.fn.stdpath("data") .. "/site",
+    })
+    
+    -- Install parsers using the official API
+    -- This is async and returns a promise, but we don't need to wait
+    vim.schedule(function()
+      pcall(ts.install, languages)
+    end)
+    
+    -- ========================================================================
+    -- NOTE: Autocmds moved to init() function for earlier registration
+    -- ========================================================================
+    -- This ensures they work when opening files from explorers (mini-files, snacks, etc.)
+    
+    -- ========================================================================
+    -- TEXTOBJECTS (If plugin supports main branch)
+    -- ========================================================================
+    -- NOTE: nvim-treesitter-textobjects may not fully support main branch yet
+    -- This is a best-effort configuration
+    
+    local textobjects_ok, textobjects = pcall(require, "nvim-treesitter-textobjects")
+    if textobjects_ok and textobjects.setup then
+      textobjects.setup({
+        select = {
+          lookahead = true,
+          keymaps = {
+            ["aa"] = "@parameter.outer",
+            ["ia"] = "@parameter.inner",
+            ["af"] = "@function.outer",
+            ["if"] = "@function.inner",
+            ["ac"] = "@class.outer",
+            ["ic"] = "@class.inner",
+          },
+        },
+        move = {
+          set_jumps = true,
+          goto_next_start = {
+            ["]m"] = "@function.outer",
+            ["]]"] = "@class.outer",
+          },
+          goto_previous_start = {
+            ["[m"] = "@function.outer",
+            ["[["] = "@class.outer",
+          },
+        },
+      })
+    end
+    
+    -- ========================================================================
+    -- AUTOTAG
+    -- ========================================================================
     require("nvim-ts-autotag").setup({
       filetypes = {
-        "html",
-        "javascript",
-        "typescript",
-        "javascriptreact",
-        "typescriptreact",
-        "svelte",
-        "vue",
-        "tsx",
-        "jsx",
-        "rescript",
-        "xml",
-        "php",
-        "markdown",
-        "astro",
-        "glimmer",
-        "handlebars",
-        "hbs",
+        "html", "javascript", "typescript", "javascriptreact", "typescriptreact",
+        "svelte", "vue", "tsx", "jsx", "xml", "php", "markdown",
       },
     })
-
-    -- Folding configuration is handled in `config/folding.lua` (LSP-based by default)
-
+    
+    -- ========================================================================
+    -- CONTEXT COMMENTSTRING
+    -- ========================================================================
+    vim.g.skip_ts_context_commentstring_module = true
+    require("ts_context_commentstring").setup({})
+    
     -- Performance optimization
-    vim.opt.maxmempattern = 10000 -- Increase max memory for pattern matching
-    vim.opt.regexpengine = 1 -- Use new regexp engine
+    vim.opt.maxmempattern = 10000
+    vim.opt.regexpengine = 1
   end,
 }
