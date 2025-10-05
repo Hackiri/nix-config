@@ -3,16 +3,31 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  kubernetesTools = import ../../../pkgs/collections/kubernetes-tools.nix {inherit pkgs;};
+in {
   options.programs.kube = with lib; {
     enable = mkEnableOption "kubernetes tools configuration";
+
+    toolset = mkOption {
+      type = types.enum [ "minimal" "admin" "operations" "devops" "security-focused" "mesh" "complete" ];
+      default = "admin";
+      description = ''
+        Which set of Kubernetes tools to install:
+        - minimal: Core tools only (kubectl, helm, kustomize, kubectx, kubecolor)
+        - admin: For cluster administration (core + observability + security)
+        - operations: For production cluster management
+        - devops: For CI/CD and GitOps workflows
+        - security-focused: For cluster security auditing
+        - mesh: For service mesh management
+        - complete: All available tools
+      '';
+    };
   };
 
   config = lib.mkIf config.programs.kube.enable {
     home = {
-      packages = with pkgs;
-      # Import the kubernetes-tools package set
-        (import ../../../../pkgs {inherit pkgs;}).kubernetes-tools;
+      packages = kubernetesTools.sets.${config.programs.kube.toolset};
 
       # Create k9s configuration directory and basic config
       file.".config/k9s/config.yml".text = ''

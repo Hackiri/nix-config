@@ -16,7 +16,8 @@
     ../programs/editors # Neovim, Emacs, Neovide
 
     # Development tools and configurations
-    ../programs/development # Git, direnv, Kubernetes tools
+    ../programs/development # Git, direnv
+    ../programs/kubernetes # Kubernetes tools and config
 
     # Terminal and shell enhancements
     ../programs/terminals # Tmux, Alacritty, Ghostty
@@ -25,15 +26,15 @@
     ../programs/utilities # btop, yazi, sops
 
     # Development-specific package collections
-    ../packages/dev-tools.nix    # gcc, cmake, make, etc.
+    ../packages/build-tools.nix    # gcc, cmake, make, etc.
     ../packages/code-quality.nix   # linters, formatters
     ../packages/languages.nix     # nodejs, python, php
     ../packages/terminals.nix     # tmuxinator, moreutils
     ../packages/security.nix      # sops, age
     ../packages/network.nix       # cachix (nix-specific)
-    
+
     # Custom overlay packages
-    ../custom # Custom overlay packages
+    ../packages/custom # Custom overlay packages
   ];
 
   # Development-specific home configuration

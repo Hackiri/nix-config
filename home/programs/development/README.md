@@ -8,7 +8,8 @@ The development configuration is organized into focused modules:
 
 - **`direnv/`** - Enhanced direnv configuration with intelligent caching and multi-language support
 - **`git/`** - Robust git configuration with sops-managed secrets and enhanced hooks
-- **`kube/`** - Comprehensive Kubernetes tooling and configuration
+
+For Kubernetes tools and configuration, see `../kubernetes/`
 
 ## 📁 Directory Structure
 
@@ -18,11 +19,8 @@ development/
 ├── default.nix        # Main module imports
 ├── direnv/
 │   └── default.nix    # Enhanced direnv with smart caching
-├── git/
-│   └── git-hooks.nix  # Git hooks with error handling
-└── kube/
-    ├── kube.nix       # Kubernetes program enablement
-    └── kube-config.nix # K8s tools and shell integration
+└── git/
+    └── git-hooks.nix  # Git hooks with error handling
 ```
 
 ## ✨ Key Features
@@ -53,12 +51,6 @@ layout go                   # Go projects with isolated GOPATH
 - **Error Handling**: Comprehensive validation and fallback mechanisms
 - **GPG Integration**: Automatic commit and tag signing
 
-### Kubernetes Tooling
-
-- **Comprehensive Toolset**: 40+ Kubernetes and cloud-native tools
-- **Organized Categories**: Tools grouped by function (core, security, observability, etc.)
-- **Shell Integration**: Enhanced completions and aliases
-- **k9s Configuration**: Pre-configured with optimized settings and themes
 
 ## 🛠️ Usage Examples
 
@@ -86,24 +78,6 @@ layout go                   # Go projects with isolated GOPATH
 
 2. The layout will auto-detect your package manager (npm, yarn, pnpm, bun)
 
-### Using Kubernetes Tools
-
-All tools are available in your shell with enhanced features:
-
-```bash
-# Colorized kubectl output
-kubectl get pods
-
-# Fast context switching
-kubectx production
-kubens monitoring
-
-# Multi-pod log tailing
-stern app-name
-
-# Terminal Kubernetes dashboard
-k9s
-```
 
 ## 🔧 Configuration
 

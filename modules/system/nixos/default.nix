@@ -11,8 +11,8 @@
     ../shared/nix.nix
     ../shared/users.nix
 
-    # Feature modules
-    ../../features/fonts.nix
+    # Optional feature modules
+    ../../optional-features/fonts.nix
   ];
 
   # Enable features

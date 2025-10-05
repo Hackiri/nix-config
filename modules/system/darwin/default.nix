@@ -15,8 +15,8 @@
     # Darwin-specific modules
     ./defaults.nix
 
-    # Feature modules
-    ../../features/fonts.nix
+    # Optional feature modules
+    ../../optional-features/fonts.nix
 
     # Service modules
     ../../services/homebrew.nix

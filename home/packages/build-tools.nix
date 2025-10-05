@@ -1,4 +1,5 @@
-# Development tools and utilities
+# Build tools, compilers, and core development utilities
+# (Renamed from dev-tools.nix to avoid confusion with pkgs/dev-tools.nix script)
 {pkgs, ...}: {
   home.packages = with pkgs; [
     #--------------------------------------------------

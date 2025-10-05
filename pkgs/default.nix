@@ -1,13 +1,13 @@
 # This file exports all custom packages
 {pkgs ? import <nixpkgs> {}}: rec {
-  # Development tools package - now returns the package directly
-  dev-tools = import ./dev-tools.nix {inherit pkgs;};
+  # Development tools script
+  dev-tools = import ./scripts/dev-tools.nix {inherit pkgs;};
 
   # Development shell environment (returns an attribute set with script, environment, etc.)
-  devshell = import ./devshell {inherit pkgs;};
+  devshell = import ./scripts/devshell {inherit pkgs;};
 
-  # Kubernetes and infrastructure tools
-  kubernetes-tools = import ./kubernetes-tools.nix {inherit pkgs;};
+  # Kubernetes tool collections
+  kubernetes-tools = import ./collections/kubernetes-tools.nix {inherit pkgs;};
 
   # Convenience function to create a package set with all kubernetes tools
   kube-packages = pkgs.buildEnv {

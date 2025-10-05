@@ -6,7 +6,7 @@
   ...
 }: {
   imports = [
-    ../../home/profiles/macos.nix # macOS-specific profile (includes desktop -> development -> minimal chain)
+    ../../home/profiles/darwin.nix # Darwin-specific profile (includes desktop -> development -> minimal chain)
   ];
 
   # Platform-specific home directory

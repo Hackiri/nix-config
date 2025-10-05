@@ -4,15 +4,18 @@
 {pkgs, ...}: {
   imports = [
     # Core development tools
-    ./dev-tools.nix # Development tools and utilities (combines cli-tools + build-tools)
-    ./languages.nix # Programming language runtimes
-    ./python.nix # Python-specific packages
+    ./build-tools.nix # Build tools, compilers, and core dev utilities
+    ./languages.nix # Programming language runtimes (Node, Python, Go, Rust, Ruby, PHP)
 
     # Quality and utilities
     ./code-quality.nix # Linters, formatters, and code analysis
     ./utilities.nix # Media and document processing
     ./network.nix # Network utilities and tools
     ./system.nix # System-specific utilities
+
+    # Development categories
+    ./databases.nix # Database client tools (PostgreSQL, Redis, MongoDB, etc.)
+    ./web-dev.nix # Web development tools (servers, HTTP clients, testing)
 
     # Application categories
     ./security.nix # Security and encryption tools
