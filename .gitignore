@@ -6,6 +6,11 @@ result*
 # Nix build logs
 *.log
 
+Docs/
+
+# Claude
+.claude
+
 # direnv
 .direnv
 
