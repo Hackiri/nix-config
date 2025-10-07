@@ -137,24 +137,6 @@ M.setup = function()
     end,
   })
 
-  -- Set the TMUX title to the file name of current buffer
-  -- This requires the following tmux settings:
-  --   set -g allow-rename on
-  --   set -g automatic-rename off
-  vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "BufFilePost", "BufWritePost" }, {
-    group = augroup("tmux_title"),
-    callback = function()
-      local filename = vim.fn.expand("%:t") -- get filename only (no path)
-      if filename == "" then
-        return
-      end
-      -- truncate to 15 characters
-      local shortname = #filename > 15 and filename:sub(1, 15) .. "…" or filename
-      -- Update tmux window name
-      io.write("\027kVI:" .. shortname .. "\027\\")
-    end,
-  })
-
   -- User event that loads after UIEnter + only if file buf is there
   vim.api.nvim_create_autocmd({ "UIEnter", "BufReadPost", "BufNewFile" }, {
     group = vim.api.nvim_create_augroup("FilePost", { clear = true }),

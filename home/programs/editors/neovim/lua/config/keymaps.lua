@@ -12,6 +12,15 @@ map({ "n", "v" }, "<M-h>", "^", { desc = "Go to line start" })
 map({ "n", "v" }, "<M-l>", "$", { desc = "Go to line end" })
 map("v", "<M-l>", "$h", { desc = "Go to line end minus one" })
 
+-- Quick Save & Quit
+map("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
+map("n", "<C-q>", "<cmd>q<CR>", { desc = "Quit file" })
+
+-- Search Improvements
+map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
+map("n", "n", "nzzzv", { desc = "Next result and center" })
+map("n", "N", "Nzzzv", { desc = "Previous result and center" })
+
 -- Window Management (<leader>w prefix)
 map("n", "<leader>wv", "<C-w>v", { desc = "Split window vertically" })
 map("n", "<leader>ws", "<C-w>s", { desc = "Split window horizontally" })
@@ -59,6 +68,10 @@ map("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer" })
 map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer" })
 map("n", "<leader>bx", ":bdelete<CR>", { desc = "Close buffer" })
 
+-- Quick Buffer Navigation
+map("n", "<Tab>", ":bnext<CR>", { desc = "Next buffer" })
+map("n", "<S-Tab>", ":bprevious<CR>", { desc = "Previous buffer" })
+
 -- Git Operations (<leader>g prefix)
 map("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "LazyGit" })
 map("n", "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<CR>", { desc = "Toggle git blame" })
@@ -79,6 +92,9 @@ map("n", "<leader>lR", vim.lsp.buf.references, { desc = "Find references" })
 map("n", "<leader>ll", vim.diagnostic.open_float, { desc = "Line diagnostics" })
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+map("n", "<leader>dt", function()
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = "Toggle diagnostics" })
 
 -- Code Navigation and Editing
 -- Note: Aerial outline toggle is now at <leader>o (defined in plugins/aerial.lua)
@@ -87,6 +103,11 @@ map("v", "<", "<gv", { desc = "Unindent line" })
 map("v", ">", ">gv", { desc = "Indent line" })
 map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move line down" })
 map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move line up" })
+
+-- Better delete and yank
+map("n", "x", '"_x', { desc = "Delete char without yank" })
+map({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
+map("n", "<leader>Y", '"+Y', { desc = "Yank line to system clipboard" })
 
 -- Search and Replace Operations
 -- Note: <leader>sr is "replace surrounding" (mini.surround), not search/replace

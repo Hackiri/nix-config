@@ -10,6 +10,19 @@ return {
       { "mason-org/mason-lspconfig.nvim", version = "*" },
       { "WhoIsSethDaniel/mason-tool-installer.nvim", version = "*" },
     },
+
+      -- Useful status updates for LSP.
+      {
+        'j-hui/fidget.nvim',
+        opts = {
+          notification = {
+            window = {
+              winblend = 0, -- Background color opacity in the notification window
+            },
+          },
+        },
+      },
+
     config = function()
       -- Get enhanced LSP capabilities from blink.cmp
       local capabilities = require("blink.cmp").get_lsp_capabilities()
@@ -52,10 +65,7 @@ return {
                   "result",
                 },
                 useGitIgnore = true,
-                library = {
-                  "${3rd}/luv/library",
-                  unpack(vim.api.nvim_get_runtime_file("", true)),
-                },
+                library = vim.api.nvim_get_runtime_file("", true),
               },
               completion = {
                 callSnippet = "Replace",
@@ -65,6 +75,9 @@ return {
             },
           },
         },
+        svelte = {},
+        tinymist = {},
+        emmet_ls = {},
         nixd = {
           cmd = { "nixd" },
           filetypes = { "nix" },
@@ -168,13 +181,9 @@ return {
       })
 
       -- Configure all servers using native Neovim API
-      for server_name, server in pairs(servers) do
-        server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-        vim.lsp.config(server_name, server)
-      end
-
-      -- Enable all configured servers
-      for server_name, _ in pairs(servers) do
+      for server_name, cfg in pairs(servers) do
+        cfg.capabilities = vim.tbl_deep_extend("force", {}, capabilities, cfg.capabilities or {})
+        vim.lsp.config(server_name, cfg)
         vim.lsp.enable(server_name)
       end
 
@@ -284,7 +293,14 @@ return {
           source = "if_many",
           spacing = 2,
         },
-        signs = true,
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = ' ',
+            [vim.diagnostic.severity.WARN] = ' ',
+            [vim.diagnostic.severity.INFO] = ' ',
+            [vim.diagnostic.severity.HINT] = '󰌵 ',
+          },
+        },
         update_in_insert = false,
       })
     end,
