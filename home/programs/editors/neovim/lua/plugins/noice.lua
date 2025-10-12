@@ -4,7 +4,8 @@ return {
   version = "*",
   dependencies = {
     { "MunifTanjim/nui.nvim", version = "*" },
-    { "rcarriga/nvim-notify", version = "*" },
+    -- nvim-notify replaced by Snacks.notifier (LazyVim 14.x+)
+    -- { "rcarriga/nvim-notify", version = "*" },
   },
   opts = function()
     local focused = true

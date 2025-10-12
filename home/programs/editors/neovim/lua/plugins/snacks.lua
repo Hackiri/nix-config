@@ -446,5 +446,12 @@ return {
         },
       },
     },
+    config = function(_, opts)
+      require("snacks").setup(opts)
+      -- Set vim.notify to use Snacks.notifier (replaces nvim-notify)
+      vim.notify = function(msg, level, notify_opts)
+        return require("snacks").notify(msg, { level = level, opts = notify_opts })
+      end
+    end,
   },
 }

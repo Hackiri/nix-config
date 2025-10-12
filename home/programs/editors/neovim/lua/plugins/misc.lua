@@ -49,14 +49,15 @@ return {
   --     require("colorizer").setup()
   --   end,
   -- },
-  {
-    -- Notification manager
-    "rcarriga/nvim-notify",
-    config = function()
-      require("notify").setup({
-        timeout = 5000,
-      })
-      vim.notify = require("notify")
-    end,
-  },
+  -- Notification manager (nvim-notify) replaced by Snacks.notifier in LazyVim 14.x+
+  -- Snacks.notifier is configured in plugins/snacks.lua
+  -- {
+  --   "rcarriga/nvim-notify",
+  --   config = function()
+  --     require("notify").setup({
+  --       timeout = 5000,
+  --     })
+  --     vim.notify = require("notify")
+  --   end,
+  -- },
 }
