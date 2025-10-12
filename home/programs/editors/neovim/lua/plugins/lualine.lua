@@ -194,9 +194,17 @@ return {
       options = {
         theme = "auto",
         globalstatus = true,
+        icons_enabled = true,
         disabled_filetypes = { statusline = { "dashboard", "alpha" } },
+        ignore_focus = {},
+        always_divide_middle = true,
         component_separators = { left = "", right = "" },
         section_separators = { left = "", right = "" },
+        refresh = {
+          statusline = 1000,
+          tabline = 1000,
+          winbar = 1000,
+        },
       },
       sections = {
         lualine_a = { "mode" },
@@ -243,7 +251,6 @@ return {
               if ft == "" then
                 return ""
               end
-              
               -- Check if treesitter is active for this buffer
               local ts_active = vim.treesitter.highlighter.active[buf] ~= nil
               if ts_active then
@@ -251,7 +258,6 @@ return {
                 local lang = vim.treesitter.language.get_lang(ft) or ft
                 return " " .. lang
               end
-              
               return ""
             end,
             color = { fg = "#7aa2f7", gui = "bold" }, -- Blue color for language

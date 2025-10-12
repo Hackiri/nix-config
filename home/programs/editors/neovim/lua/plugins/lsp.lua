@@ -7,7 +7,7 @@ return {
       -- Useful status updates for LSP
       { "j-hui/fidget.nvim", version = "*", opts = {} },
       -- Automatically install LSPs and related tools to stdpath for neovim
-      { "mason-org/mason-lspconfig.nvim", version = "*" },
+      { "mason-org/mason-lspconfig.nvim", version = "2.*" }, -- LazyVim 15.x requires v2.x
       { "WhoIsSethDaniel/mason-tool-installer.nvim", version = "*" },
     },
 
@@ -236,12 +236,13 @@ return {
           end
 
           -- Keep your existing keymaps but reorganize under <leader>l prefix
-          map("<leader>ld", require("telescope.builtin").lsp_definitions, "[L]SP [D]efinition")
-          map("<leader>lr", require("telescope.builtin").lsp_references, "[L]SP [R]eferences")
-          map("<leader>li", require("telescope.builtin").lsp_implementations, "[L]SP [I]mplementation")
-          map("<leader>lt", require("telescope.builtin").lsp_type_definitions, "[L]SP [T]ype Definition")
-          map("<leader>ls", require("telescope.builtin").lsp_document_symbols, "[L]SP Document [S]ymbols")
-          map("<leader>lw", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[L]SP [W]orkspace Symbols")
+          -- Using fzf-lua for LSP navigation (LazyVim 14.x+ default)
+          map("<leader>ld", "<cmd>FzfLua lsp_definitions<cr>", "[L]SP [D]efinition")
+          map("<leader>lr", "<cmd>FzfLua lsp_references<cr>", "[L]SP [R]eferences")
+          map("<leader>li", "<cmd>FzfLua lsp_implementations<cr>", "[L]SP [I]mplementation")
+          map("<leader>lt", "<cmd>FzfLua lsp_typedefs<cr>", "[L]SP [T]ype Definition")
+          map("<leader>ls", "<cmd>FzfLua lsp_document_symbols<cr>", "[L]SP Document [S]ymbols")
+          map("<leader>lw", "<cmd>FzfLua lsp_workspace_symbols<cr>", "[L]SP [W]orkspace Symbols")
           map("<leader>ln", vim.lsp.buf.rename, "[L]SP Re[n]ame")
           map("<leader>la", vim.lsp.buf.code_action, "[L]SP Code [A]ction")
           map("<leader>lk", vim.lsp.buf.hover, "[L]SP Hover Documentation")

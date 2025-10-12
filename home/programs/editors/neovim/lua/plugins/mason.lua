@@ -3,6 +3,7 @@ return {
   -- Mason package manager for external tools
   {
     "mason-org/mason.nvim",
+    version = "2.*", -- LazyVim 15.x requires mason.nvim v2.x
     cmd = "Mason",
     keys = { { "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" } },
     -- Load Mason earlier in the startup process

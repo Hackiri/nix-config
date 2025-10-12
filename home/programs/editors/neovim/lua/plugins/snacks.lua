@@ -158,6 +158,30 @@ return {
       },
     },
     opts = {
+      -- Indent guides (LazyVim 14.x+ replaces indent-blankline.nvim)
+      indent = {
+        enabled = true,
+        char = "│",
+        blank = " ",
+        priority = 1,
+        -- Exclude certain filetypes
+        filter = function(buf)
+          local filetype = vim.bo[buf].filetype
+          local exclude_fts = {
+            "help",
+            "alpha",
+            "dashboard",
+            "neo-tree",
+            "Trouble",
+            "lazy",
+            "mason",
+            "notify",
+            "toggleterm",
+            "lazyterm",
+          }
+          return not vim.tbl_contains(exclude_fts, filetype)
+        end,
+      },
       -- Add explicit explorer configuration to fix the nil table error
       explorer = {
         enabled = true,

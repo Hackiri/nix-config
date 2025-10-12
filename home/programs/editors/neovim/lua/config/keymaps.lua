@@ -43,27 +43,20 @@ map("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Move buffer to new tab" })
 -- File Explorer and Search (<leader>e, <leader>f prefix)
 map("n", "<leader>e", "<cmd>Neotree toggle<CR>", { desc = "Toggle file explorer" })
 
--- Telescope (<leader>f prefix)
-map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", { desc = "Find files" })
-map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "Find text" })
-map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", { desc = "Find buffers" })
-map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", { desc = "Find help" })
-map("n", "<leader>fr", "<cmd>Telescope oldfiles<CR>", { desc = "Recent files" })
-map("n", "<leader>fc", "<cmd>Telescope commands<CR>", { desc = "Commands" })
-map("n", "<leader>fk", "<cmd>Telescope keymaps<CR>", { desc = "Keymaps" })
-map("n", "<leader>fs", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "Find symbols" })
-map("n", "<leader>fd", "<cmd>Telescope diagnostics<CR>", { desc = "Diagnostics" })
-map("n", "<leader>fy", "<cmd>Telescope neoclip<CR>", { desc = "Clipboard history" })
+-- fzf-lua (<leader>f prefix) - LazyVim 14.x+ default picker
+map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find files" })
+map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Find text" })
+map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Find buffers" })
+map("n", "<leader>fh", "<cmd>FzfLua help_tags<CR>", { desc = "Find help" })
+map("n", "<leader>fr", "<cmd>FzfLua oldfiles<CR>", { desc = "Recent files" })
+map("n", "<leader>fc", "<cmd>FzfLua commands<CR>", { desc = "Commands" })
+map("n", "<leader>fk", "<cmd>FzfLua keymaps<CR>", { desc = "Keymaps" })
+map("n", "<leader>fs", "<cmd>FzfLua lsp_document_symbols<CR>", { desc = "Find symbols" })
+map("n", "<leader>fd", "<cmd>FzfLua diagnostics_workspace<CR>", { desc = "Diagnostics" })
+map("n", "<leader>fy", "<cmd>FzfLua registers<CR>", { desc = "Registers/Clipboard" })
 
 -- Buffer Management (<leader>b prefix)
-map("n", "<leader>bb", function()
-  require("telescope.builtin").buffers(require("telescope.themes").get_ivy({
-    sort_mru = true,
-    sort_lastused = true,
-    initial_mode = "normal",
-    layout_config = { preview_width = 0.45 },
-  }))
-end, { desc = "Browse buffers" })
+map("n", "<leader>bb", "<cmd>FzfLua buffers<CR>", { desc = "Browse buffers" })
 map("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer" })
 map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer" })
 map("n", "<leader>bx", ":bdelete<CR>", { desc = "Close buffer" })
