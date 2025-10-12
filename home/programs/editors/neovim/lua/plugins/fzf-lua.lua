@@ -4,7 +4,8 @@
 
 return {
   "ibhagwan/fzf-lua",
-  version = "*",
+  -- Use latest version for Neovim 0.11.3 treesitter compatibility
+  version = false,
   cmd = "FzfLua",
   keys = {
     -- Files
@@ -58,6 +59,17 @@ return {
           horizontal = "right:60%",
           scrollbar = "border",
           delay = 50,
+        },
+      },
+
+      -- Previewers configuration - fix for Neovim 0.11.3 treesitter compatibility
+      previewers = {
+        builtin = {
+          -- Disable treesitter highlighting in previewer to avoid API compatibility issues
+          treesitter = { enable = false },
+          -- Use syntax highlighting instead
+          syntax = true,
+          syntax_limit_b = 1024 * 100, -- 100KB limit
         },
       },
 
