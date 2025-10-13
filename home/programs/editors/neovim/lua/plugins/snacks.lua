@@ -1,13 +1,3 @@
--- Documentation:
--- https://github.com/folke/snacks.nvim/blob/main/docs/lazygit.md
--- https://github.com/folke/snacks.nvim/blob/main/docs/picker.md
--- https://github.com/folke/snacks.nvim/blob/main/docs/image.md
-
--- NOTE: If you experience an issue where you cannot select a file with the
--- snacks picker when you're in insert mode (only in normal mode), and you use
--- the bullets.vim plugin, that's the cause. See:
--- https://github.com/folke/snacks.nvim/issues/812
-
 return {
     -- HACK: docs @ https://github.com/folke/snacks.nvim/blob/main/docs
     {
@@ -37,69 +27,15 @@ return {
                 enabled = true,
                 exclude = { "latex" },
             },
-            bigfile = {
-                enabled = true,
-                size = 1024 * 1024 * 1.5, -- 1.5MB
-            },
-            words = {
-                enabled = true,
-            },
-            statuscolumn = {
-                enabled = true,
-            },
-            scroll = {
-                enabled = true,
-            },
-            scope = {
-                enabled = true,
-            },
             zen = {
                 enabled = true,
-            },
-            dim = {
-                enabled = true,
-            },
-            git = {
-                enabled = true,
-            },
-            gitbrowse = {
-                enabled = true,
-            },
-            -- Indent guides
-            indent = {
-                enabled = true,
-                char = "│",
-                blank = " ",
-                priority = 1,
-                filter = function(buf)
-                    local filetype = vim.bo[buf].filetype
-                    local exclude_fts = {
-                        "help", "alpha", "dashboard", "neo-tree", "Trouble",
-                        "lazy", "mason", "notify", "toggleterm", "lazyterm",
-                    }
-                    return not vim.tbl_contains(exclude_fts, filetype)
-                end,
-            },
-            -- Notifications
-            notifier = {
-                enabled = true,
-                top_down = false,
-            },
-            -- Lazygit fullscreen config
-            lazygit = {
-                theme = {
-                    selectedLineBgColor = { bg = "CursorLine" },
-                },
-                win = {
-                    width = 0,
-                    height = 0,
-                },
             },
             -- HACK: read picker docs @ https://github.com/folke/snacks.nvim/blob/main/docs/picker.md
             picker = {
                 enabled = true,
-                matcher = {
+                matchers = {
                     frecency = true,
+                    cwd_bonus = false,
                 },
                 formatters = {
                     file = {
@@ -108,18 +44,6 @@ return {
                         icon_width = 2,
                         truncate = 80,
                     },
-                },
-                -- Score manipulation for frecency
-                transform = function(item)
-                    if not item.file then return item end
-                    -- Example: demote certain files
-                    -- if item.file:match("pattern") then
-                    --     item.score_add = (item.score_add or 0) - 30
-                    -- end
-                    return item
-                end,
-                debug = {
-                    scores = false,
                 },
                 -- Global window keybindings
                 win = {
@@ -216,32 +140,21 @@ return {
                 },
                 img_dirs = { "img", "images", "assets", "static", "public", "media", "attachments","Archives/All-Vault-Images/", "~/Library", "~/Downloads" },
             },
+            dashboard = {
+                enabled = true,
+                sections = {
+                    { section = "header" },
+                    { section = "keys", gap = 1, padding = 1 },
+                    { section = "startup" },
+                },
+            },
         },
         -- NOTE: Keymaps
         keys = {
-            -- Disable explorer keymap (conflicts with mini.files)
-            { "<leader>e", false },
-
-            -- General
             { "<leader>lg", function() require("snacks").lazygit() end, desc = "Lazygit" },
+            { "<leader>gl", function() require("snacks").lazygit.log() end, desc = "Lazygit Logs" },
             { "<leader>rN", function() require("snacks").rename.rename_file() end, desc = "Fast Rename Current File" },
             { "<leader>dB", function() require("snacks").bufdelete() end, desc = "Delete or Close Buffer  (Confirm)" },
-
-            -- Git
-            {
-                "<leader>gl",
-                function()
-                    Snacks.picker.git_log({
-                        finder = "git_log",
-                        format = "git_log",
-                        preview = "git_show",
-                        confirm = "git_checkout",
-                        layout = "vertical",
-                    })
-                end,
-                desc = "Git Log",
-            },
-            { "<M-b>", function() Snacks.picker.git_branches({ layout = "select" }) end, desc = "Git Branches" },
 
             -- File Navigation
             { "<leader>pf", function() require("snacks").picker.files() end, desc = "Find Files (Snacks Picker)" },
@@ -253,7 +166,7 @@ return {
                     supports_live = true,
                 })
             end, desc = "Find Files" },
-            { "<leader>pc", function() require("snacks").picker.files({ cwd = "~/dotfiles/nvim/.config/nvim/lua" }) end, desc = "Find Config File" },
+            { "<leader>pc", function() require("snacks").picker.files({ cwd = "~/nix-config" }) end, desc = "Find Config File" },
 
             -- Buffer Navigation with delete functionality
             {
@@ -327,26 +240,31 @@ return {
             -- Utilities
             { "<M-k>", function() Snacks.picker.keymaps({ layout = "vertical" }) end, desc = "Keymaps" },
             { "<leader>pk", function() require("snacks").picker.keymaps({ layout = "ivy" }) end, desc = "Search Keymaps (Snacks Picker)" },
+
+            -- Git
+            {
+                "<leader>gl",
+                function()
+                    Snacks.picker.git_log({
+                        finder = "git_log",
+                        format = "git_log",
+                        preview = "git_show",
+                        confirm = "git_checkout",
+                        layout = "vertical",
+                    })
+                end,
+                desc = "Git Log",
+            },
+            { "<M-b>", function() Snacks.picker.git_branches({ layout = "select" }) end, desc = "Git Branches" },
+            { "<leader>gbr", function() require("snacks").picker.git_branches({ layout = "select" }) end, desc = "Pick and Switch Git Branches" },
+
+            -- Other Utils
             { "<leader>th" , function() require("snacks").picker.colorschemes({ layout = "ivy" }) end, desc = "Pick Color Schemes"},
             { "<leader>vh", function() require("snacks").picker.help() end, desc = "Help Pages" },
-
-            -- Zen mode
+            
+            -- Zen Mode
             { "<leader>z", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
-
-            -- Git browse
-            { "<leader>gb", function() Snacks.gitbrowse() end, desc = "Git Browse (Open in Browser)", mode = { "n", "x" } },
-
-            -- Scope navigation
-            { "]]", function() Snacks.scope.jump({ direction = "next" }) end, desc = "Jump to Next Scope" },
-            { "[[", function() Snacks.scope.jump({ direction = "prev" }) end, desc = "Jump to Previous Scope" },
-        },
-        config = function(_, opts)
-            require("snacks").setup(opts)
-            -- Set vim.notify to use Snacks.notifier (replaces nvim-notify)
-            vim.notify = function(msg, level, notify_opts)
-                return require("snacks").notify(msg, { level = level, opts = notify_opts })
-            end
-        end,
+        }
     },
     -- NOTE: todo comments w/ snacks
     {
