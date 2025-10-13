@@ -1,14 +1,48 @@
--- nvim-treesitter configuration (STABLE master branch)
+-- nvim-treesitter configuration (STABLE)
 return {
   "nvim-treesitter/nvim-treesitter",
-  version = false, -- Use latest commit from master
-  build = ":TSUpdate",
-  event = { "BufReadPost", "BufNewFile" },
-  cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
-  
+  build = function()
+    -- Don't run TSUpdate during build, it causes API errors
+    -- Parsers will be installed on first use via ensure_installed
+  end,
+  event = { "LazyFile", "VeryLazy" },
+  lazy = vim.fn.argc(-1) == 0, -- load treesitter early when opening a file from the cmdline
+  init = function(plugin)
+    -- PERF: add nvim-treesitter queries to the rtp and it's custom query predicates early
+    -- This is needed because a bunch of plugins no longer `require("nvim-treesitter")`, which
+    -- no longer trigger the **nvim-treesitter** module to be loaded in time.
+    -- Luckily, the only things that those plugins need are the custom queries, which we make available
+    -- during startup.
+    require("lazy.core.loader").add_to_rtp(plugin)
+    require("nvim-treesitter.query_predicates")
+  end,
   dependencies = {
-    "nvim-treesitter/nvim-treesitter-textobjects",
-    "nvim-treesitter/nvim-treesitter-context",
+    {
+      "nvim-treesitter/nvim-treesitter-textobjects",
+      config = function()
+        -- When in diff mode, we want to use the default
+        -- vim text objects c & C instead of the treesitter ones.
+        local move = require("nvim-treesitter.textobjects.move") ---@type table<string,fun(...)>
+        local configs = require("nvim-treesitter.configs")
+        for name, fn in pairs(move) do
+          if name:find("goto") == 1 then
+            move[name] = function(q, ...)
+              if vim.wo.diff then
+                local config = configs.get_module("textobjects.move")[name] ---@type table<string,string>
+                for key, query in pairs(config or {}) do
+                  if q == query and key:find("[%]%[][cC]") then
+                    vim.cmd("normal! " .. key)
+                    return
+                  end
+                end
+              end
+              return fn(q, ...)
+            end
+          end
+        end
+      end,
+    },
+    { "nvim-treesitter/nvim-treesitter-context" },
   },
   
   opts = {
@@ -18,7 +52,7 @@ return {
     -- Automatically install missing parsers when entering buffer
     auto_install = false, -- Disabled to prevent hangs
     
-    -- List of parsers to install (or "all")
+    -- List of parsers to install
     ensure_installed = {
       "bash",
       "c",
@@ -43,6 +77,7 @@ return {
       "vimdoc",
       "xml",
       "yaml",
+      "nix",
     },
     
     -- Highlighting
