@@ -8,13 +8,13 @@ return {
   lazy = false, -- Load immediately
   
   dependencies = {
-    -- NOTE: These plugins may need updates for main branch compatibility
-    { "nvim-treesitter/nvim-treesitter-textobjects" }, -- Let it use default branch
+    -- NOTE: textobjects plugin NOT compatible with main branch - disabled
+    -- { "nvim-treesitter/nvim-treesitter-textobjects" },
     { "nvim-treesitter/nvim-treesitter-context", version = "*" }, -- Show context at top
     { "windwp/nvim-ts-autotag", version = "*" },
     { "JoosepAlviste/nvim-ts-context-commentstring", version = "*" },
     { "RRethy/nvim-treesitter-endwise", version = "*" }, -- Auto-add end in Ruby, Lua, etc.
-    { "RRethy/nvim-treesitter-textsubjects", version = false }, -- Smart text selection
+    -- { "RRethy/nvim-treesitter-textsubjects", version = false }, -- Not compatible with main
   },
   
   init = function(plugin)
@@ -270,10 +270,49 @@ return {
       silent = true,
     })
     
+    -- ========================================================================
+    -- NATIVE NEOVIM TREESITTER INSPECTION (replaces deprecated playground)
+    -- ========================================================================
+    -- Neovim 0.10+ has built-in treesitter inspection commands
+    
+    -- Keybinding: <leader>ti to inspect highlight groups under cursor
+    vim.keymap.set("n", "<leader>ti", "<cmd>Inspect<cr>", {
+      desc = "Inspect highlight groups under cursor",
+      silent = true,
+    })
+    
+    -- Keybinding: <leader>tt to show parsed syntax tree (TSPlayground replacement)
+    vim.keymap.set("n", "<leader>tt", "<cmd>InspectTree<cr>", {
+      desc = "Show parsed syntax tree (Treesitter Playground)",
+      silent = true,
+    })
+    
+    -- Keybinding: <leader>tq to open Live Query Editor (Neovim 0.10+)
+    vim.keymap.set("n", "<leader>tq", "<cmd>EditQuery<cr>", {
+      desc = "Open Live Query Editor",
+      silent = true,
+    })
+    
+    -- User command aliases for discoverability
+    vim.api.nvim_create_user_command("TSPlayground", "InspectTree", {
+      desc = "Show parsed syntax tree (alias for :InspectTree)",
+    })
+    
+    vim.api.nvim_create_user_command("TSInspect", "Inspect", {
+      desc = "Inspect highlight groups under cursor (alias for :Inspect)",
+    })
+    
     -- Main branch only handles parser installation
     -- No module configuration (highlight, indent, etc.)
     
-    local languages = {
+    -- Only install essential parsers immediately (non-blocking)
+    local essential_languages = {
+      "c", "lua", "vim", "vimdoc", "query", -- Core Neovim
+      "markdown", "markdown_inline", -- Documentation
+    }
+    
+    -- Full list of languages to install on-demand
+    local all_languages = {
       -- Core languages
       "c", "lua", "vim", "vimdoc", "query",
       -- Web Development
@@ -307,11 +346,71 @@ return {
       install_dir = vim.fn.stdpath("data") .. "/site",
     })
     
-    -- Install parsers using the official API
-    -- This is async and returns a promise, but we don't need to wait
-    vim.schedule(function()
-      pcall(ts.install, languages)
-    end)
+    -- Install only essential parsers at startup (fast, non-blocking)
+    -- DISABLED: Even essential parsers can cause hangs on slow connections
+    -- Use :TSInstallEssential to install them manually
+    -- vim.schedule(function()
+    --   pcall(ts.install, essential_languages)
+    -- end)
+    
+    -- Command to install essential parsers manually
+    vim.api.nvim_create_user_command("TSInstallEssential", function()
+      vim.notify("Installing essential parsers...", vim.log.levels.INFO)
+      ts.install(essential_languages)
+    end, {
+      desc = "Install essential treesitter parsers",
+    })
+    
+    -- Create user command to install all parsers manually
+    vim.api.nvim_create_user_command("TSInstallAll", function()
+      vim.notify("Installing all treesitter parsers...", vim.log.levels.INFO)
+      ts.install(all_languages)
+    end, {
+      desc = "Install all treesitter parsers",
+    })
+    
+    -- Auto-install parser when opening a file (on-demand)
+    -- DISABLED: Can cause hangs, use :TSInstall <lang> manually instead
+    -- vim.api.nvim_create_autocmd("FileType", {
+    --   group = vim.api.nvim_create_augroup("TreesitterAutoInstall", { clear = true }),
+    --   callback = function(args)
+    --     local ft = vim.bo[args.buf].filetype
+    --     if ft == "" then
+    --       return
+    --     end
+    --     
+    --     -- Get the language for this filetype
+    --     local lang = vim.treesitter.language.get_lang(ft) or ft
+    --     
+    --     -- Check if parser exists
+    --     local parser_path = vim.fn.stdpath("data") .. "/site/parser/" .. lang .. ".so"
+    --     local has_parser = vim.fn.filereadable(parser_path) == 1
+    --     
+    --     -- Install if missing
+    --     if not has_parser then
+    --       vim.schedule(function()
+    --         vim.notify("Installing " .. lang .. " parser...", vim.log.levels.INFO)
+    --         pcall(ts.install, { lang })
+    --       end)
+    --     end
+    --   end,
+    --   desc = "Auto-install treesitter parser on demand",
+    -- })
+    
+    -- Instead, create a command to install parser for current filetype
+    vim.api.nvim_create_user_command("TSInstallCurrent", function()
+      local ft = vim.bo.filetype
+      if ft == "" then
+        vim.notify("No filetype detected", vim.log.levels.WARN)
+        return
+      end
+      
+      local lang = vim.treesitter.language.get_lang(ft) or ft
+      vim.notify("Installing " .. lang .. " parser...", vim.log.levels.INFO)
+      ts.install({ lang })
+    end, {
+      desc = "Install treesitter parser for current filetype",
+    })
     
     -- ========================================================================
     -- NOTE: Autocmds moved to init() function for earlier registration
@@ -319,79 +418,17 @@ return {
     -- This ensures they work when opening files from explorers (mini-files, snacks, etc.)
     
     -- ========================================================================
-    -- TEXTOBJECTS (If plugin supports main branch)
+    -- TEXTOBJECTS - DISABLED (Not compatible with main branch)
     -- ========================================================================
-    -- NOTE: nvim-treesitter-textobjects may not fully support main branch yet
-    -- This is a best-effort configuration
+    -- NOTE: nvim-treesitter-textobjects does NOT support main branch
+    -- The plugin requires the old configs API which doesn't exist in main
+    -- Alternative: Use native Neovim text objects or flash.nvim for selection
     
-    local textobjects_ok, textobjects = pcall(require, "nvim-treesitter-textobjects")
-    if textobjects_ok and textobjects.setup then
-      textobjects.setup({
-        select = {
-          lookahead = true,
-          selection_modes = {},
-          include_surrounding_whitespace = false,
-          keymaps = {
-            -- Parameter/Argument text objects
-            ["aa"] = "@parameter.outer",
-            ["ia"] = "@parameter.inner",
-            -- Function text objects
-            ["af"] = "@function.outer",
-            ["if"] = "@function.inner",
-            -- Class text objects
-            ["ac"] = "@class.outer",
-            ["ic"] = "@class.inner",
-            -- Conditional text objects
-            ["ai"] = "@conditional.outer",
-            ["ii"] = "@conditional.inner",
-            -- Loop text objects
-            ["al"] = "@loop.outer",
-            ["il"] = "@loop.inner",
-            -- Block text objects
-            ["ab"] = "@block.outer",
-            ["ib"] = "@block.inner",
-            -- Call text objects
-            ["a/"] = "@call.outer",
-            ["i/"] = "@call.inner",
-            -- Comment text objects (capital C to avoid clash with class)
-            ["aC"] = "@comment.outer",
-            ["iC"] = "@comment.inner",
-          },
-        },
-        move = {
-          set_jumps = true,
-          goto_next_start = {
-            ["]m"] = "@function.outer",
-            ["]]"] = "@class.outer",
-            ["]i"] = "@conditional.outer",
-            ["]l"] = "@loop.outer",
-          },
-          goto_next_end = {
-            ["]M"] = "@function.outer",
-            ["]["] = "@class.outer",
-          },
-          goto_previous_start = {
-            ["[m"] = "@function.outer",
-            ["[["] = "@class.outer",
-            ["[i"] = "@conditional.outer",
-            ["[l"] = "@loop.outer",
-          },
-          goto_previous_end = {
-            ["[M"] = "@function.outer",
-            ["[]"] = "@class.outer",
-          },
-        },
-        swap = {
-          -- Changed from <leader>a to <leader>sa to avoid conflict with Avante AI prefix
-          swap_next = {
-            ["<leader>sa"] = "@parameter.inner",
-          },
-          swap_previous = {
-            ["<leader>sA"] = "@parameter.inner",
-          },
-        },
-      })
-    end
+    -- DISABLED: Causes "module 'nvim-treesitter-textobjects.lua' not found" error
+    -- local textobjects_ok, textobjects = pcall(require, "nvim-treesitter-textobjects")
+    -- if textobjects_ok and textobjects.setup then
+    --   textobjects.setup({ ... })
+    -- end
     
     -- ========================================================================
     -- AUTOTAG
@@ -432,19 +469,16 @@ return {
     end
     
     -- ========================================================================
-    -- TEXTSUBJECTS (smart text selection)
+    -- TEXTSUBJECTS - DISABLED (Not compatible with main branch)
     -- ========================================================================
-    local textsubjects_ok, textsubjects = pcall(require, "nvim-treesitter-textsubjects")
-    if textsubjects_ok then
-      textsubjects.configure({
-        prev_selection = ",",
-        keymaps = {
-          ["."] = "textsubjects-smart", -- Smart selection
-          [";"] = "textsubjects-container-outer", -- Container selection
-          ["i;"] = { "textsubjects-container-inner", desc = "Select inside containers" },
-        },
-      })
-    end
+    -- NOTE: nvim-treesitter-textsubjects also requires old configs API
+    -- Alternative: Use flash.nvim for smart text selection (already installed)
+    
+    -- DISABLED: Not compatible with main branch
+    -- local textsubjects_ok, textsubjects = pcall(require, "nvim-treesitter-textsubjects")
+    -- if textsubjects_ok then
+    --   textsubjects.configure({ ... })
+    -- end
     
     -- ========================================================================
     -- ENDWISE (auto-add end statements)

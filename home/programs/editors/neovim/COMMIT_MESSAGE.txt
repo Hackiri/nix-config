@@ -1,0 +1,98 @@
+feat(neovim): fix treesitter main branch with explorer support and manual controls
+
+Complete overhaul of nvim-treesitter configuration to support main branch API
+and enable reliable highlighting when opening files from file explorers
+(mini-files, snacks, neo-tree, etc.).
+
+## Major Changes
+
+### 1. Treesitter Main Branch Configuration
+- Verified correct main branch API usage (vim.treesitter.start/stop)
+- Confirmed :TSUpdate, :TSInstall, :TSInstallInfo commands available
+- Added compatibility shims in lazy.lua for dependency plugins
+- Documented official API and breaking changes from master branch
+
+### 2. Explorer Support (Multi-Event + Deferred Loading)
+- Moved autocmds from config() to init() for earlier registration
+- Added multi-event approach: BufReadPost, BufWinEnter, FileType
+- Implemented vim.schedule() deferred execution for timing safety
+- Added duplicate prevention and validation checks
+- Fixes highlighting not working when opening files from explorers
+
+### 3. Filetype Detection Fix
+- Added forced filetype detection in multiple layers
+- Layer 1: Dedicated BufRead/BufNewFile autocmd
+- Layer 2: FilePost autocmd with forced detection
+- Layer 3: Treesitter autocmd with detection fallback
+- Fixes "No filetype detected" error from explorer-opened files
+
+### 4. Manual Loading Commands
+- Added :TSStart command to manually start treesitter
+- Added :TSRestart command to restart broken highlighting
+- Added :TSStatus command to debug treesitter state
+- Added <leader>ts keybinding for quick manual start
+- Added <leader>tr keybinding for quick restart
+
+### 5. Statusline Language Indicator
+- Added language indicator to lualine statusline
+- Shows "󰘧 <language>" when treesitter is active
+- Blue color with bold styling for visibility
+- Only displays when treesitter is actively running
+
+## Technical Details
+
+### Files Modified
+
+**lua/plugins/treesitter.lua**
+- Moved autocmds (highlight, indent, fold) to init() function
+- Added multi-event autocmds with vim.schedule() wrapper
+- Added forced filetype detection in autocmd callback
+- Added :TSStart, :TSRestart, :TSStatus user commands
+- Added keybindings for manual control
+
+**lua/plugins/lualine.lua**
+- Added language indicator component showing active language
+- Checks vim.treesitter.highlighter.active status
+- Gets language via vim.treesitter.language.get_lang()
+
+**lua/config/autocmds.lua**
+- Added forced filetype detection in FilePost autocmd
+- Added dedicated EnsureFiletypeDetection autocmd group
+- Added fallback notes for treesitter_start autocmd
+
+### Key Improvements
+
+1. **Timing**: Autocmds registered in init() run before file loading
+2. **Deferred execution**: vim.schedule() ensures plugin is loaded
+3. **Multiple events**: Catches files from CLI, explorers, buffer switches
+4. **Forced detection**: Triple-layer filetype detection system
+5. **Manual fallback**: Commands and keybindings when auto-load fails
+6. **Visual feedback**: Statusline shows active language
+7. **Error handling**: pcall wrappers and validation checks throughout
+
+## Tested With
+
+- ✅ CLI file opening (nvim test.lua)
+- ✅ Mini-files explorer
+- ✅ Snacks dashboard and file browser
+- ✅ Neo-tree file explorer
+- ✅ Telescope file pickers
+- ✅ Buffer switching (:bnext/:bprev)
+- ✅ Split opening (:split/:vsplit)
+- ✅ :edit command
+
+## Breaking Changes
+
+None. Backward compatible with existing setup.
+
+## Documentation
+
+Added comprehensive documentation files:
+- TREESITTER_VERIFICATION.md - Main branch API verification
+- TREESITTER_LANGUAGE_LOADING.md - Language loading system
+- TREESITTER_EXPLORER_FIX_V2.md - Multi-event approach
+- TREESITTER_MANUAL_LOADING.md - Manual commands guide
+- TREESITTER_FILETYPE_FIX.md - Filetype detection fix
+
+Resolves issues with treesitter not loading from file explorers and
+missing filetype detection for explorer-opened files.
