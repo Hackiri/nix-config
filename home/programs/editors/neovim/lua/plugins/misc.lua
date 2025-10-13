@@ -1,10 +1,6 @@
 -- Standalone plugins with less than 10 lines of config go here
 return {
   {
-    -- autoclose tags
-    "windwp/nvim-ts-autotag",
-  },
-  {
     -- detect tabstop and shiftwidth automatically
     "tpope/vim-sleuth",
   },
@@ -19,21 +15,6 @@ return {
   {
     -- Bind9 DNS syntax highlighting
     "egberts/vim-syntax-bind-named",
-  },
-  {
-    -- Autoclose parentheses, brackets, quotes, etc.
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    config = true,
-    opts = {},
-  },
-  {
-    "mireq/luasnip-snippets",
-    dependencies = { "L3MON4D3/LuaSnip" },
-    init = function()
-      -- Mandatory setup function
-      require("luasnip_snippets.common.snip_utils").setup()
-    end,
   },
   {
     -- Highlight todo, notes, etc in comments
