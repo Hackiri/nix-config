@@ -3,7 +3,13 @@
 return {
   "nvim-treesitter/nvim-treesitter",
   branch = "master", -- Frozen for backward compatibility, main is active development
-  build = ":TSUpdate", -- Official recommendation: updates parsers to lockfile.json versions
+  build = function()
+    -- Defer TSUpdate to avoid API errors during build phase
+    -- The API isn't fully loaded during lazy.nvim's build phase
+    vim.schedule(function()
+      vim.cmd("TSUpdate")
+    end)
+  end,
   lazy = false, -- nvim-treesitter does NOT support lazy-loading
   init = function(plugin)
     -- PERF: add nvim-treesitter queries to the rtp and it's custom query predicates early
