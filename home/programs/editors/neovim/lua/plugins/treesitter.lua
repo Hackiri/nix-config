@@ -3,7 +3,7 @@
 
 return {
   "nvim-treesitter/nvim-treesitter",
-  build = ":TSUpdate",
+  -- No build command - parsers install via ensure_installed
   event = { "LazyFile", "VeryLazy" },
   lazy = vim.fn.argc(-1) == 0,
   
