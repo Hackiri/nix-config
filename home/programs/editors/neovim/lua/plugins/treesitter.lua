@@ -1,12 +1,10 @@
--- nvim-treesitter configuration (STABLE)
+-- nvim-treesitter configuration
+-- Using master branch for backward compatibility (main will be default in future)
 return {
   "nvim-treesitter/nvim-treesitter",
-  build = function()
-    -- Don't run TSUpdate during build, it causes API errors
-    -- Parsers will be installed on first use via ensure_installed
-  end,
-  event = { "LazyFile", "VeryLazy" },
-  lazy = vim.fn.argc(-1) == 0, -- load treesitter early when opening a file from the cmdline
+  branch = "master", -- Frozen for backward compatibility, main is active development
+  build = ":TSUpdate", -- Official recommendation: updates parsers to lockfile.json versions
+  lazy = false, -- nvim-treesitter does NOT support lazy-loading
   init = function(plugin)
     -- PERF: add nvim-treesitter queries to the rtp and it's custom query predicates early
     -- This is needed because a bunch of plugins no longer `require("nvim-treesitter")`, which
