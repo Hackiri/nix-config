@@ -124,7 +124,15 @@ return {
           if not highlight_ft_set[ft] then
             return
           end
-          
+
+          -- Check if parser exists before trying to start treesitter
+          local lang = vim.treesitter.language.get_lang(ft) or ft
+          local parser_path = vim.fn.stdpath("data") .. "/site/parser/" .. lang .. ".so"
+          if vim.fn.filereadable(parser_path) == 0 then
+            -- Parser not installed, skip silently
+            return
+          end
+
           -- Start treesitter
           pcall(vim.treesitter.start, buf)
         end)
@@ -139,9 +147,20 @@ return {
       callback = function(args)
         vim.schedule(function()
           local buf = args.buf
-          if vim.api.nvim_buf_is_valid(buf) and not vim.treesitter.highlighter.active[buf] then
-            pcall(vim.treesitter.start, buf)
+          if not vim.api.nvim_buf_is_valid(buf) or vim.treesitter.highlighter.active[buf] then
+            return
           end
+
+          -- Check if parser exists before trying to start treesitter
+          local ft = vim.bo[buf].filetype
+          local lang = vim.treesitter.language.get_lang(ft) or ft
+          local parser_path = vim.fn.stdpath("data") .. "/site/parser/" .. lang .. ".so"
+          if vim.fn.filereadable(parser_path) == 0 then
+            -- Parser not installed, skip silently
+            return
+          end
+
+          pcall(vim.treesitter.start, buf)
         end)
       end,
       desc = "Enable treesitter highlighting on FileType",
@@ -347,11 +366,28 @@ return {
     ts.setup({
       install_dir = vim.fn.stdpath("data") .. "/site",
     })
-    
-    -- Install only essential parsers at startup (fast, non-blocking)
-    vim.schedule(function()
-      pcall(ts.install, essential_languages)
-    end)
+
+    -- Check which parsers are missing and install them SYNCHRONOUSLY
+    -- This prevents "substitute" errors on startup
+    local parser_dir = vim.fn.stdpath("data") .. "/site/parser"
+    local missing_parsers = {}
+
+    for _, lang in ipairs(essential_languages) do
+      local parser_path = parser_dir .. "/" .. lang .. ".so"
+      if vim.fn.filereadable(parser_path) == 0 then
+        table.insert(missing_parsers, lang)
+      end
+    end
+
+    -- Only install if there are missing parsers
+    if #missing_parsers > 0 then
+      vim.notify(
+        string.format("Installing %d missing parser(s): %s", #missing_parsers, table.concat(missing_parsers, ", ")),
+        vim.log.levels.INFO
+      )
+      -- Install synchronously to prevent query errors on startup
+      pcall(ts.install, missing_parsers)
+    end
     
     -- Command to install essential parsers manually
     vim.api.nvim_create_user_command("TSInstallEssential", function()
