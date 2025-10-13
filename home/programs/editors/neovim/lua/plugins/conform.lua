@@ -8,24 +8,37 @@
 -- https://github.com/stevearc/conform.nvim/blob/master/README.md#setup
 -- "FocusLost" used when switching from skitty-notes
 -- "BufLeave" is used when switching between 2 buffers
-vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave" }, {
-  pattern = "*",
-  callback = function(args)
-    local buf = args.buf or vim.api.nvim_get_current_buf()
-    -- Only format if the current mode is normal mode
-    -- Only format if autoformat is enabled for the current buffer (if
-    -- autoformat disabled globally the buffers inherits it, see :LazyFormatInfo)
-    if LazyVim.format.enabled(buf) and vim.fn.mode() == "n" then
-      -- Add a small delay to the formatting so it doesn't interfere with
-      -- CopilotChat's or grug-far buffer initialization, this helps me to not
-      -- get errors when using the "BufLeave" event above, if not using
-      -- "BufLeave" the delay is not needed
-      vim.defer_fn(function()
-        if vim.api.nvim_buf_is_valid(buf) then
-          require("conform").format({ bufnr = buf })
+-- Defer autocmd creation until after LazyVim is loaded
+vim.api.nvim_create_autocmd("User", {
+  pattern = "VeryLazy",
+  once = true,
+  callback = function()
+    -- Auto-format when focus is lost or I leave the buffer
+    vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave" }, {
+      pattern = "*",
+      callback = function(args)
+        local buf = args.buf or vim.api.nvim_get_current_buf()
+        -- Only format if the current mode is normal mode
+        -- Check if LazyVim is available and autoformat is enabled
+        local lazyvim_ok = pcall(require, "lazyvim.util")
+        if lazyvim_ok and LazyVim and LazyVim.format and LazyVim.format.enabled(buf) and vim.fn.mode() == "n" then
+          -- Add a small delay to the formatting so it doesn't interfere with
+          -- CopilotChat's or grug-far buffer initialization
+          vim.defer_fn(function()
+            if vim.api.nvim_buf_is_valid(buf) then
+              require("conform").format({ bufnr = buf })
+            end
+          end, 100)
+        elseif vim.fn.mode() == "n" then
+          -- Fallback: format without LazyVim check
+          vim.defer_fn(function()
+            if vim.api.nvim_buf_is_valid(buf) then
+              require("conform").format({ bufnr = buf })
+            end
+          end, 100)
         end
-      end, 100)
-    end
+      end,
+    })
   end,
 })
 

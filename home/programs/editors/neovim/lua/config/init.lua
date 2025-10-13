@@ -1,17 +1,14 @@
 -- lua/config/init.lua
-
--- Load lazy.nvim configuration first
-require("config.lazy")
+-- This file is loaded by the root init.lua after lazy.nvim is set up
 
 -- Load core configurations
 require("config.options")
 require("config.keymaps")
 require("config.autocmds")
 require("config.colors")
--- require("config.session")
 
--- Load LuaSnip first
-local status_ok, luasnip = pcall(require, "luasnip")
+-- Load LuaSnip configuration
+local status_ok, _ = pcall(require, "luasnip")
 if status_ok then
   require("config.luasnip_config")
 end
@@ -21,5 +18,5 @@ require("config.highlights")
 
 -- Load folding (with error handling)
 vim.schedule(function()
-  require("config.folding")
+  pcall(require, "config.folding")
 end)

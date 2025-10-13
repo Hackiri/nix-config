@@ -5,23 +5,21 @@ return {
     dependencies = {
       "saghen/blink.cmp",
       -- Useful status updates for LSP
-      { "j-hui/fidget.nvim", version = "*", opts = {} },
-      -- Automatically install LSPs and related tools to stdpath for neovim
-      { "mason-org/mason-lspconfig.nvim", version = "2.*" }, -- LazyVim 15.x requires v2.x
-      { "WhoIsSethDaniel/mason-tool-installer.nvim", version = "*" },
-    },
-
-      -- Useful status updates for LSP.
       {
-        'j-hui/fidget.nvim',
+        "j-hui/fidget.nvim",
+        version = "*",
         opts = {
           notification = {
             window = {
-              winblend = 0, -- Background color opacity in the notification window
+              winblend = 0,
             },
           },
         },
       },
+      -- Automatically install LSPs and related tools to stdpath for neovim
+      { "mason-org/mason-lspconfig.nvim", version = "2.*" }, -- LazyVim 15.x requires v2.x
+      { "WhoIsSethDaniel/mason-tool-installer.nvim", version = "*" },
+    },
 
     config = function()
       -- Get enhanced LSP capabilities from blink.cmp
@@ -51,6 +49,7 @@ return {
       -- Setup servers with enhanced capabilities
       local servers = {
         lua_ls = {
+          single_file_support = true,
           settings = {
             Lua = {
               runtime = { version = "LuaJIT" },
@@ -68,10 +67,54 @@ return {
                 library = vim.api.nvim_get_runtime_file("", true),
               },
               completion = {
-                callSnippet = "Replace",
+                workspaceWord = true,
+                callSnippet = "Both",
+              },
+              hint = {
+                enable = true,
+                setType = false,
+                paramType = true,
+                paramName = "Disable",
+                semicolon = "Disable",
+                arrayIndex = "Disable",
+              },
+              doc = {
+                privateName = { "^_" },
+              },
+              type = {
+                castNumberToInteger = true,
               },
               telemetry = { enable = false },
-              diagnostics = { disable = { "missing-fields" } },
+              diagnostics = {
+                disable = { "incomplete-signature-doc", "trailing-space", "missing-fields" },
+                groupSeverity = {
+                  strong = "Warning",
+                  strict = "Warning",
+                },
+                groupFileStatus = {
+                  ["ambiguity"] = "Opened",
+                  ["await"] = "Opened",
+                  ["codestyle"] = "None",
+                  ["duplicate"] = "Opened",
+                  ["global"] = "Opened",
+                  ["luadoc"] = "Opened",
+                  ["redefined"] = "Opened",
+                  ["strict"] = "Opened",
+                  ["strong"] = "Opened",
+                  ["type-check"] = "Opened",
+                  ["unbalanced"] = "Opened",
+                  ["unused"] = "Opened",
+                },
+                unusedLocalExclude = { "_*" },
+              },
+              format = {
+                enable = false,
+                defaultConfig = {
+                  indent_style = "space",
+                  indent_size = "2",
+                  continuation_indent_size = "2",
+                },
+              },
             },
           },
         },
@@ -124,18 +167,54 @@ return {
             },
           },
         },
-        ts_ls = {},
+        ts_ls = {
+          root_dir = function(...)
+            return require("lspconfig.util").root_pattern(".git")(...)
+          end,
+          single_file_support = false,
+          settings = {
+            typescript = {
+              inlayHints = {
+                includeInlayParameterNameHints = "literal",
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = false,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+              },
+            },
+            javascript = {
+              inlayHints = {
+                includeInlayParameterNameHints = "all",
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+              },
+            },
+          },
+        },
         html = {},
         dockerls = {},
         docker_compose_language_service = {},
         ruff = {},
-        tailwindcss = {},
+        tailwindcss = {
+          root_dir = function(...)
+            return require("lspconfig.util").root_pattern(".git")(...)
+          end,
+        },
         taplo = {},
         jsonls = {},
         sqlls = {},
         terraformls = {},
         yamlls = {
           settings = {
+            yaml = {
+              keyOrdering = false,
+            },
             redhat = {
               telemetry = {
                 enabled = false,
@@ -303,6 +382,24 @@ return {
           },
         },
         update_in_insert = false,
+      })
+    end,
+  },
+  -- Override LazyVim LSP keymaps to prevent window reuse on goto definition
+  {
+    "neovim/nvim-lspconfig",
+    opts = function()
+      local keys = require("lazyvim.plugins.lsp.keymaps").get()
+      vim.list_extend(keys, {
+        {
+          "gd",
+          function()
+            -- DO NOT REUSE WINDOW - opens in new split/window
+            require("fzf-lua").lsp_definitions({ jump_to_single_result = true, reuse_win = false })
+          end,
+          desc = "Goto Definition",
+          has = "definition",
+        },
       })
     end,
   },
