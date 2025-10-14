@@ -4,6 +4,8 @@ return {
     "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
+    -- Disable LazyVim default keymaps for Snacks picker (we use fzf-lua)
+    keys = {},
     -- NOTE: Options
     opts = {
       styles = {
@@ -34,8 +36,9 @@ return {
         enabled = true,
       },
       -- HACK: read picker docs @ https://github.com/folke/snacks.nvim/blob/main/docs/picker.md
+      -- NOTE: Picker disabled - using fzf-lua instead
       picker = {
-        enabled = true,
+        enabled = false,
         matchers = {
           frecency = true,
           cwd_bonus = false,

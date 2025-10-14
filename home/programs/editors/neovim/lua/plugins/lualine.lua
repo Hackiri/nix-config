@@ -105,6 +105,7 @@ return {
       progress = "󰔟",
       lock = "",
       dots = "󰇘",
+      recording = "󰑋",
     }
 
     -- Cache system for improved performance
@@ -169,6 +170,46 @@ return {
     local function get_spell_status()
       local lang_map = { en = "English", es = "Spanish" }
       return "Spell: " .. (lang_map[vim.bo.spelllang] or vim.bo.spelllang)
+    end
+
+    -- Macro recording indicator
+    local function show_macro_recording()
+      local recording_register = vim.fn.reg_recording()
+      if recording_register == "" then
+        return ""
+      else
+        return icons.recording .. "  " .. recording_register
+      end
+    end
+
+    -- Word count for text files
+    local function get_word_count()
+      local ft = vim.bo.filetype
+      if ft == "markdown" or ft == "md" or ft == "txt" or ft == "text" then
+        local wc = vim.fn.wordcount()
+        if wc.visual_words then
+          return wc.visual_words == 1 and "1 word" or wc.visual_words .. " words"
+        else
+          return wc.words .. " words"
+        end
+      end
+      return ""
+    end
+
+    local function should_show_word_count()
+      local ft = vim.bo.filetype
+      return ft == "markdown" or ft == "md" or ft == "txt" or ft == "text"
+    end
+
+    -- Visual scroll position with icons
+    local function get_scroll_position()
+      local progress_icons = {
+        "󰋙", "󰫃", "󰫄", "󰫅", "󰫆", "󰫇", "󰫈",
+      }
+      local current = vim.api.nvim_win_get_cursor(0)[1]
+      local lines = vim.api.nvim_buf_line_count(0)
+      local i = math.floor((current - 1) / lines * #progress_icons) + 1
+      return progress_icons[i] or progress_icons[1]
     end
 
     local function get_file_permissions()
@@ -379,6 +420,25 @@ return {
             color = { fg = colors.blue, gui = "bold" },
             cond = hide_in_width,
           },
+          -- Word count for text files
+          {
+            get_word_count,
+            color = { fg = colors.gray1, bg = colors.gray2, gui = "bold" },
+            separator = { left = "", right = "" },
+            padding = 1,
+            cond = should_show_word_count,
+          },
+          -- Macro recording indicator
+          {
+            show_macro_recording,
+            color = { fg = "#ffffff", bg = colors.red1, gui = "bold" },
+            separator = { left = "", right = "" },
+            padding = 1,
+          },
+          -- Search count
+          { "searchcount", cond = hide_in_small_window },
+          -- Selection count
+          { "selectioncount", cond = hide_in_small_window },
         },
         lualine_x = {
           -- Lazy status
@@ -423,7 +483,13 @@ return {
           "filetype",
         },
         lualine_y = {
-          location,
+          {
+            "location",
+            padding = 0,
+            fmt = function()
+              return icons.line_number .. " %l:%c " .. get_scroll_position()
+            end,
+          },
           progress,
         },
         lualine_z = {},
@@ -448,6 +514,27 @@ return {
         "toggleterm",
         "nvim-dap-ui",
       },
+    })
+
+    -- Auto-refresh lualine when macro recording starts/stops
+    vim.api.nvim_create_autocmd("RecordingEnter", {
+      callback = function()
+        lualine.refresh()
+      end,
+    })
+
+    vim.api.nvim_create_autocmd("RecordingLeave", {
+      callback = function()
+        -- Wait 50ms for vim.fn.reg_recording() to clear before refreshing
+        local timer = vim.loop.new_timer()
+        timer:start(
+          50,
+          0,
+          vim.schedule_wrap(function()
+            lualine.refresh()
+          end)
+        )
+      end,
     })
   end,
 }

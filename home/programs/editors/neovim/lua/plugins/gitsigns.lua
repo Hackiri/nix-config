@@ -49,26 +49,31 @@ return {
         return "<Ignore>"
       end, { expr = true, desc = "Prev Hunk" })
 
-      -- Actions
-      map("n", "<leader>hs", gs.stage_hunk, { desc = "Stage Hunk" })
-      map("n", "<leader>hr", gs.reset_hunk, { desc = "Reset Hunk" })
-      map("v", "<leader>hs", function()
+      -- Git Hunk Actions (<leader>gh prefix)
+      map("n", "<leader>ghs", gs.stage_hunk, { desc = "Stage Hunk" })
+      map("n", "<leader>ghr", gs.reset_hunk, { desc = "Reset Hunk" })
+      map("v", "<leader>ghs", function()
         gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
       end, { desc = "Stage Hunk" })
-      map("v", "<leader>hr", function()
+      map("v", "<leader>ghr", function()
         gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
       end, { desc = "Reset Hunk" })
-      map("n", "<leader>hS", gs.stage_buffer, { desc = "Stage Buffer" })
-      map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "Undo Stage Hunk" })
-      map("n", "<leader>hR", gs.reset_buffer, { desc = "Reset Buffer" })
-      map("n", "<leader>hp", gs.preview_hunk, { desc = "Preview Hunk" })
-      map("n", "<leader>hb", function()
+      map("n", "<leader>ghS", gs.stage_buffer, { desc = "Stage Buffer" })
+      map("n", "<leader>ghu", gs.undo_stage_hunk, { desc = "Undo Stage Hunk" })
+      map("n", "<leader>ghR", gs.reset_buffer, { desc = "Reset Buffer" })
+      map("n", "<leader>ghp", gs.preview_hunk, { desc = "Preview Hunk" })
+      map("n", "<leader>ghb", function()
         gs.blame_line({ full = true })
       end, { desc = "Blame Line" })
-      map("n", "<leader>hd", gs.diffthis, { desc = "Diff This" })
-      map("n", "<leader>hD", function()
+      map("n", "<leader>ghd", gs.diffthis, { desc = "Diff This" })
+      map("n", "<leader>ghD", function()
         gs.diffthis("~")
       end, { desc = "Diff This ~" })
+      
+      -- Additional git operations
+      map("n", "<leader>gb", gs.toggle_current_line_blame, { desc = "Toggle git blame" })
+      map("n", "<leader>gd", gs.diffthis, { desc = "Git diff" })
+      map("n", "<leader>gp", gs.preview_hunk, { desc = "Preview git hunk" })
     end,
   },
 }

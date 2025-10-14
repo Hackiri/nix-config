@@ -12,24 +12,42 @@ return {
     { "<leader>ff", "<cmd>FzfLua files<cr>", desc = "Find Files" },
     { "<leader>fg", "<cmd>FzfLua live_grep<cr>", desc = "Find Text (Live Grep)" },
     { "<leader>fw", "<cmd>FzfLua grep_cword<cr>", desc = "Find Word Under Cursor" },
+    { "<leader>fv", "<cmd>FzfLua grep_visual<cr>", mode = "v", desc = "Find Visual Selection" },
     { "<leader>fh", "<cmd>FzfLua help_tags<cr>", desc = "Find Help" },
     { "<leader>fo", "<cmd>FzfLua oldfiles<cr>", desc = "Find Recent Files" },
     { "<leader>fb", "<cmd>FzfLua buffers<cr>", desc = "Find Buffers" },
+    { "<leader>fr", "<cmd>FzfLua resume<cr>", desc = "Resume Last Search" },
 
     -- Git
     { "<leader>fgf", "<cmd>FzfLua git_files<cr>", desc = "Find Git Files" },
     { "<leader>fgc", "<cmd>FzfLua git_commits<cr>", desc = "Find Git Commits" },
+    { "<leader>fgB", "<cmd>FzfLua git_bcommits<cr>", desc = "Find Git Buffer Commits" },
     { "<leader>fgb", "<cmd>FzfLua git_branches<cr>", desc = "Find Git Branches" },
     { "<leader>fgs", "<cmd>FzfLua git_status<cr>", desc = "Find Git Status" },
 
     -- LSP
-    { "<leader>fr", "<cmd>FzfLua lsp_references<cr>", desc = "Find References" },
+    { "<leader>fR", "<cmd>FzfLua lsp_references<cr>", desc = "Find References" },
     { "<leader>fd", "<cmd>FzfLua lsp_definitions<cr>", desc = "Find Definitions" },
     { "<leader>fi", "<cmd>FzfLua lsp_implementations<cr>", desc = "Find Implementations" },
     { "<leader>ft", "<cmd>FzfLua lsp_typedefs<cr>", desc = "Find Type Definitions" },
     { "<leader>fs", "<cmd>FzfLua lsp_document_symbols<cr>", desc = "Find Document Symbols" },
     { "<leader>fws", "<cmd>FzfLua lsp_workspace_symbols<cr>", desc = "Find Workspace Symbols" },
     { "<leader>fwd", "<cmd>FzfLua diagnostics_workspace<cr>", desc = "Find Workspace Diagnostics" },
+    {
+      "<leader>fca",
+      function()
+        require("fzf-lua").lsp_code_actions({
+          winopts = {
+            relative = "cursor",
+            row = 1.01,
+            col = 0,
+            height = 0.2,
+            width = 0.4,
+          },
+        })
+      end,
+      desc = "Code Actions (Near Cursor)",
+    },
 
     -- Search
     { "<leader>f/", "<cmd>FzfLua blines<cr>", desc = "Find in Current Buffer" },
@@ -40,13 +58,27 @@ return {
     { "<leader>fk", "<cmd>FzfLua keymaps<cr>", desc = "Find Keymaps" },
     { "<leader>fm", "<cmd>FzfLua marks<cr>", desc = "Find Marks" },
     { "<leader>fj", "<cmd>FzfLua jumps<cr>", desc = "Find Jump List" },
+    { "<leader>fy", "<cmd>FzfLua registers<cr>", desc = "Find Registers" },
+    { "<leader>fz", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling Suggestions" },
+    { "<leader>fc", "<cmd>FzfLua commands<cr>", desc = "Find Commands" },
+    { "<leader>fb", "<cmd>FzfLua buffers<cr>", desc = "Find Buffers" },
   },
   opts = function()
     local actions = require("fzf-lua.actions")
+    local path = require("fzf-lua.path")
+
+    -- Custom action: Copy file path with line:col to clipboard
+    local function copy_file_path(selected, opts)
+      local file_and_path = path.entry_to_file(selected[1], opts).stripped
+      vim.fn.setreg("+", file_and_path)  -- System clipboard
+      vim.fn.setreg("0", file_and_path)  -- Yank register
+      vim.notify("Copied: " .. file_and_path, vim.log.levels.INFO)
+    end
 
     return {
       -- Global configuration
       "default-title", -- Use default title style
+      fzf_opts = { ["--wrap"] = true }, -- Wrap long lines in fzf
 
       winopts = {
         height = 0.80,
@@ -59,7 +91,13 @@ return {
           horizontal = "right:60%",
           scrollbar = "border",
           delay = 50,
+          wrap = "wrap", -- Wrap long lines in preview
         },
+      },
+
+      -- Default settings
+      defaults = {
+        formatter = "path.filename_first", -- Show filename before path for easier scanning
       },
 
       -- Previewers configuration - fix for Neovim 0.11.3 treesitter compatibility
@@ -98,6 +136,7 @@ return {
           ["ctrl-t"] = actions.file_tabedit,
           ["ctrl-q"] = actions.file_sel_to_qf,
           ["alt-q"] = actions.file_sel_to_ll,
+          ["ctrl-y"] = { fn = copy_file_path, exec_silent = true }, -- Copy file:line:col to clipboard
         },
         buffers = {
           ["default"] = actions.buf_edit,
@@ -129,6 +168,12 @@ return {
         file_icons = true,
         color_icons = true,
         rg_opts = "--hidden --column --line-number --no-heading --color=always --smart-case -g '!.git'",
+        rg_glob = true, -- Enable passing flags to ripgrep
+        -- Usage: search for 'pattern -- -F' to pass -F (fixed string) flag to rg
+        rg_glob_fn = function(query, opts)
+          local regex, flags = query:match("^(.-)%s%-%-(.*)$")
+          return (regex or query), flags
+        end,
       },
 
       -- LSP configuration

@@ -40,23 +40,44 @@ map("n", "<leader>tj", "<cmd>tabn<CR>", { desc = "Next tab" })
 map("n", "<leader>tk", "<cmd>tabp<CR>", { desc = "Previous tab" })
 map("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Move buffer to new tab" })
 
--- File Explorer and Search (<leader>e, <leader>f prefix)
-map("n", "<leader>e", "<cmd>Neotree toggle<CR>", { desc = "Toggle file explorer" })
+-- fzf-lua (<leader>f prefix) - Override LazyVim defaults
+-- Note: These keymaps load immediately to override LazyVim's Snacks picker defaults
+-- The plugin config is in lua/plugins/fzf-lua.lua
+map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files" })
+map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Find Text (Live Grep)" })
+map("n", "<leader>fw", "<cmd>FzfLua grep_cword<CR>", { desc = "Find Word Under Cursor" })
+map("v", "<leader>fv", "<cmd>FzfLua grep_visual<CR>", { desc = "Find Visual Selection" })
+map("n", "<leader>fh", "<cmd>FzfLua help_tags<CR>", { desc = "Find Help" })
+map("n", "<leader>fo", "<cmd>FzfLua oldfiles<CR>", { desc = "Find Recent Files" })
+map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Find Buffers" })
+map("n", "<leader>fr", "<cmd>FzfLua resume<CR>", { desc = "Resume Last Search" })
+map("n", "<leader>fc", "<cmd>FzfLua commands<CR>", { desc = "Find Commands" })
+map("n", "<leader>fk", "<cmd>FzfLua keymaps<CR>", { desc = "Find Keymaps" })
+map("n", "<leader>fm", "<cmd>FzfLua marks<CR>", { desc = "Find Marks" })
+map("n", "<leader>fj", "<cmd>FzfLua jumps<CR>", { desc = "Find Jump List" })
+map("n", "<leader>fy", "<cmd>FzfLua registers<CR>", { desc = "Find Registers" })
+map("n", "<leader>fz", "<cmd>FzfLua spell_suggest<CR>", { desc = "Spelling Suggestions" })
+map("n", "<leader>f/", "<cmd>FzfLua blines<CR>", { desc = "Find in Current Buffer" })
+map("n", "<leader>f?", "<cmd>FzfLua search_history<CR>", { desc = "Find Search History" })
+map("n", "<leader>f:", "<cmd>FzfLua command_history<CR>", { desc = "Find Command History" })
 
--- fzf-lua (<leader>f prefix) - LazyVim 14.x+ default picker
-map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find files" })
-map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Find text" })
-map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Find buffers" })
-map("n", "<leader>fh", "<cmd>FzfLua help_tags<CR>", { desc = "Find help" })
-map("n", "<leader>fr", "<cmd>FzfLua oldfiles<CR>", { desc = "Recent files" })
-map("n", "<leader>fc", "<cmd>FzfLua commands<CR>", { desc = "Commands" })
-map("n", "<leader>fk", "<cmd>FzfLua keymaps<CR>", { desc = "Keymaps" })
-map("n", "<leader>fs", "<cmd>FzfLua lsp_document_symbols<CR>", { desc = "Find symbols" })
-map("n", "<leader>fd", "<cmd>FzfLua diagnostics_workspace<CR>", { desc = "Diagnostics" })
-map("n", "<leader>fy", "<cmd>FzfLua registers<CR>", { desc = "Registers/Clipboard" })
+-- fzf-lua Git (<leader>fg prefix)
+map("n", "<leader>fgf", "<cmd>FzfLua git_files<CR>", { desc = "Find Git Files" })
+map("n", "<leader>fgc", "<cmd>FzfLua git_commits<CR>", { desc = "Find Git Commits" })
+map("n", "<leader>fgB", "<cmd>FzfLua git_bcommits<CR>", { desc = "Find Git Buffer Commits" })
+map("n", "<leader>fgb", "<cmd>FzfLua git_branches<CR>", { desc = "Find Git Branches" })
+map("n", "<leader>fgs", "<cmd>FzfLua git_status<CR>", { desc = "Find Git Status" })
 
--- Buffer Management (<leader>b prefix)
-map("n", "<leader>bb", "<cmd>FzfLua buffers<CR>", { desc = "Browse buffers" })
+-- fzf-lua LSP (<leader>f prefix)
+map("n", "<leader>fR", "<cmd>FzfLua lsp_references<CR>", { desc = "Find References" })
+map("n", "<leader>fd", "<cmd>FzfLua lsp_definitions<CR>", { desc = "Find Definitions" })
+map("n", "<leader>fi", "<cmd>FzfLua lsp_implementations<CR>", { desc = "Find Implementations" })
+map("n", "<leader>ft", "<cmd>FzfLua lsp_typedefs<CR>", { desc = "Find Type Definitions" })
+map("n", "<leader>fs", "<cmd>FzfLua lsp_document_symbols<CR>", { desc = "Find Document Symbols" })
+map("n", "<leader>fws", "<cmd>FzfLua lsp_workspace_symbols<CR>", { desc = "Find Workspace Symbols" })
+map("n", "<leader>fwd", "<cmd>FzfLua diagnostics_workspace<CR>", { desc = "Find Workspace Diagnostics" })
+
+-- Buffer Management
 map("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer" })
 map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer" })
 map("n", "<leader>bx", ":bdelete<CR>", { desc = "Close buffer" })
@@ -65,24 +86,7 @@ map("n", "<leader>bx", ":bdelete<CR>", { desc = "Close buffer" })
 map("n", "<Tab>", ":bnext<CR>", { desc = "Next buffer" })
 map("n", "<S-Tab>", ":bprevious<CR>", { desc = "Previous buffer" })
 
--- Git Operations (<leader>g prefix)
-map("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "LazyGit" })
-map("n", "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<CR>", { desc = "Toggle git blame" })
-map("n", "<leader>gd", "<cmd>Gitsigns diffthis<CR>", { desc = "Git diff" })
-map("n", "<leader>gp", "<cmd>Gitsigns preview_hunk<CR>", { desc = "Preview git hunk" })
-
--- LSP Operations (<leader>l prefix)
-map("n", "<leader>lf", vim.lsp.buf.format, { desc = "Format" })
-map("n", "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
-map("n", "<leader>lr", vim.lsp.buf.rename, { desc = "Rename" })
-map("n", "<leader>ld", vim.lsp.buf.definition, { desc = "Go to definition" })
-map("n", "<leader>lD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
-map("n", "<leader>li", vim.lsp.buf.implementation, { desc = "Go to implementation" })
-map("n", "<leader>lt", vim.lsp.buf.type_definition, { desc = "Go to type definition" })
-map("n", "<leader>lh", vim.lsp.buf.hover, { desc = "Hover documentation" })
-map("n", "<leader>ls", vim.lsp.buf.signature_help, { desc = "Signature help" })
-map("n", "<leader>lR", vim.lsp.buf.references, { desc = "Find references" })
-map("n", "<leader>ll", vim.diagnostic.open_float, { desc = "Line diagnostics" })
+-- Diagnostics Navigation (LSP-independent)
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 map("n", "<leader>dt", function()
@@ -107,41 +111,14 @@ map("n", "<leader>Y", '"+Y', { desc = "Yank line to system clipboard" })
 -- Using <leader>sR for search/replace word under cursor
 map("n", "<leader>sR", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>\>/gI<Left><Left><Left>]], { desc = "Replace word under cursor" })
 
--- Harpoon Marks (<leader>h prefix)
-map("n", "<leader>ha", function()
-  require("harpoon"):list():add()
-end, { desc = "Add file to harpoon" })
-
-map("n", "<leader>hh", function()
-  local harpoon = require("harpoon")
-  harpoon.ui:toggle_quick_menu(harpoon:list())
-end, { desc = "Show harpoon menu" })
-
-map("n", "<leader>h1", function()
-  require("harpoon"):list():select(1)
-end, { desc = "Navigate to file 1" })
-
-map("n", "<leader>h2", function()
-  require("harpoon"):list():select(2)
-end, { desc = "Navigate to file 2" })
-
-map("n", "<leader>h3", function()
-  require("harpoon"):list():select(3)
-end, { desc = "Navigate to file 3" })
-
-map("n", "<leader>h4", function()
-  require("harpoon"):list():select(4)
-end, { desc = "Navigate to file 4" })
-
-map("n", "<leader>hp", function()
-  require("harpoon"):list():prev()
-end, { desc = "Navigate to previous mark" })
-
-map("n", "<leader>hn", function()
-  require("harpoon"):list():next()
-end, { desc = "Navigate to next mark" })
-
 -- Misc Operations
+-- Note: Plugin-specific keymaps are defined in their respective plugin files:
+--   - File explorer: lua/plugins/neo-tree.lua
+--   - Fuzzy finder: lua/plugins/fzf-lua.lua
+--   - Git operations: lua/plugins/gitsigns.lua and lua/plugins/lazygit.lua
+--   - LSP operations: lua/plugins/lsp.lua (in LspAttach autocmd)
+--   - Harpoon marks: lua/plugins/harpoon.lua
+--   - Aerial outline: lua/plugins/aerial.lua
 map("n", "<leader>ch", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" }) -- Changed from <leader>h to <leader>ch
 map("n", "<leader>+", "<C-a>", { desc = "Increment number" })
 map("n", "<leader>-", "<C-x>", { desc = "Decrement number" })
