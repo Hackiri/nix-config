@@ -126,6 +126,10 @@ return {
           cmd = { "nixd" },
           filetypes = { "nix" },
           root_dir = function(fname)
+            -- Ensure fname is a string path (not a buffer number)
+            if type(fname) ~= "string" then
+              fname = vim.api.nvim_buf_get_name(fname)
+            end
             return lspconfig.util.root_pattern(".git", "flake.nix", "shell.nix")(fname)
               or lspconfig.util.find_git_ancestor(fname)
               or vim.fn.getcwd()
