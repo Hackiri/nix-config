@@ -30,12 +30,12 @@ return {
       -- Mason might try to start it as LSP which causes "exit code 2" error.
       -- We format Lua via conform.nvim instead.
       -- Aggressively prevent stylua from being started as an LSP server.
-      
+
       -- Method 1: Disable in lspconfig if it exists
       pcall(function()
         require("lspconfig.configs").stylua = nil
       end)
-      
+
       -- Method 2: Override vim.lsp.start to block stylua
       local original_lsp_start = vim.lsp.start
       vim.lsp.start = function(config, opts)
@@ -375,10 +375,10 @@ return {
         },
         signs = {
           text = {
-            [vim.diagnostic.severity.ERROR] = ' ',
-            [vim.diagnostic.severity.WARN] = ' ',
-            [vim.diagnostic.severity.INFO] = ' ',
-            [vim.diagnostic.severity.HINT] = '󰌵 ',
+            [vim.diagnostic.severity.ERROR] = " ",
+            [vim.diagnostic.severity.WARN] = " ",
+            [vim.diagnostic.severity.INFO] = " ",
+            [vim.diagnostic.severity.HINT] = "󰌵 ",
           },
         },
         update_in_insert = false,

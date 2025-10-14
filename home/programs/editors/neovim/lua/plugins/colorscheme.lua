@@ -5,13 +5,9 @@ return {
     opts = {
       -- colorscheme = "catppuccin",
       -- catppuccin catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
-      -- colorscheme = "Duskfox",
-      -- colorscheme = "nightfox",
-      -- colorscheme = "carbonfox",
-      colorscheme = "eldritch-dark",
-      -- colorscheme = "gruvbox",
+      -- colorscheme = "eldritch-light", -- light mode
+      colorscheme = "eldritch-dark", -- dark mode
       -- colorscheme = "kanagawa",
-      -- colorscheme = "tokyonight-night",
     },
   },
 }

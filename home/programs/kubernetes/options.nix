@@ -10,7 +10,7 @@ in {
     enable = mkEnableOption "kubernetes tools configuration";
 
     toolset = mkOption {
-      type = types.enum [ "minimal" "admin" "operations" "devops" "security-focused" "mesh" "complete" ];
+      type = types.enum ["minimal" "admin" "operations" "devops" "security-focused" "mesh" "complete"];
       default = "admin";
       description = ''
         Which set of Kubernetes tools to install:

@@ -37,7 +37,7 @@
   security = {
     sudo = {
       wheelNeedsPassword = false;
-      execWheelOnly = true;  # Only allow wheel group to use sudo
+      execWheelOnly = true; # Only allow wheel group to use sudo
     };
   };
 }

@@ -81,6 +81,22 @@ return {
       fold_indent = "",
       fold_none = "󰝾",
 
+      -- LSP
+      lsp_client = "",
+      lsp_progress = "",
+      lsp_progress_done = "",
+
+      -- File
+      file_permissions = "",
+
+      -- Package
+      package_pending = "",
+      package_installed = "",
+      package_uninstalled = "",
+
+      -- Term
+      term = "",
+
       -- Misc
       line_number = " 󰏽",
       connected = "󰌘",
@@ -134,7 +150,11 @@ return {
 
     local function get_venv_name()
       local venv = os.getenv("VIRTUAL_ENV")
-      return venv and venv:match("([^/]+)$") or ""
+      if not venv then
+        return ""
+      end
+      local name = venv:match("([^/]+)$")
+      return name or ""
     end
 
     local function should_show_permissions()
@@ -174,11 +194,11 @@ return {
 
     -- LSP status function
     local function get_lsp_status()
-      local clients = vim.lsp.get_active_clients()
+      local clients = vim.lsp.get_clients()
       if #clients == 0 then
         return icons.disconnected .. " No LSP"
       end
-      local buf_clients = vim.lsp.get_active_clients({ bufnr = 0 })
+      local buf_clients = vim.lsp.get_clients({ bufnr = 0 })
       if #buf_clients == 0 then
         return icons.disconnected .. " No LSP"
       end
@@ -186,7 +206,7 @@ return {
       for _, client in pairs(buf_clients) do
         table.insert(buf_client_names, client.name)
       end
-      return icons.connected .. " " .. table.concat(buf_client_names, ", ")
+      return icons.lsp_client .. " " .. table.concat(buf_client_names, ", ")
     end
 
     -- Component configurations
@@ -286,9 +306,10 @@ return {
     local fold_method = {
       function()
         local ok, folding = pcall(require, "config.folding")
-        if not ok then
+        if not ok or type(folding) ~= "table" then
           return ""
         end
+        ---@type string
         local method = folding.get_fold_method()
         local method_icons = {
           lsp = icons.fold_lsp,
@@ -406,6 +427,7 @@ return {
         },
         lualine_z = {},
       },
+      -- inactive sections
       inactive_sections = {
         lualine_a = {},
         lualine_b = {},

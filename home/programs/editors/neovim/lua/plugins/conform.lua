@@ -53,28 +53,27 @@ return {
   opts = {
     -- Define formatters
     formatters = {
-      -- Override prettier to use the Mason-installed version
+      -- Use system-installed prettier from Nix
       prettier = {
-        -- Use the version installed by Mason
-        command = vim.fn.stdpath("data") .. "/mason/bin/prettier",
-        -- Add condition to check if the command exists and is executable
+        -- Let conform find prettier in PATH (installed via Nix)
+        command = "prettier",
         condition = function()
-          local cmd = vim.fn.stdpath("data") .. "/mason/bin/prettier"
-          return vim.fn.executable(cmd) == 1
+          return vim.fn.executable("prettier") == 1
+        end,
+      },
+      -- Use system-installed shfmt from Nix
+      shfmt = {
+        command = "shfmt",
+        condition = function()
+          return vim.fn.executable("shfmt") == 1
         end,
       },
     },
     -- Disable formatters that are showing warnings
     formatters_by_ft = {
-      -- I was having issues formatting .templ files, all the lines were aligned
-      -- to the left.
-      -- When I ran :ConformInfo I noticed that 2 formatters showed up:
-      -- "LSP: html, templ"
-      -- But none showed as `ready` This fixed that issue and now templ files
-      -- are formatted correctly and :ConformInfo shows:
-      -- "LSP: html, templ"
-      -- "templ ready (templ) /Users/wm/.local/share/nvim/mason/bin/templ"
-      templ = { "templ" },
+      -- Disabled templ formatter (not installed via Nix)
+      -- Uncomment the line below if you install templ via Nix
+      -- templ = { "templ" },
       -- Not sure why I couldn't make ruff work, so I'll use ruff_format instead
       -- it didn't work even if I added the pyproject.toml in the project or
       -- root of my dots, I was getting the error [LSP][ruff] timeout
@@ -94,6 +93,11 @@ return {
 
       -- Use stylua for Lua files
       lua = { "stylua" },
+
+      -- Shell script formatting
+      sh = { "shfmt" },
+      bash = { "shfmt" },
+      zsh = { "shfmt" },
 
       -- Explicitly disable fish_indent since it's not installed
       fish = {},

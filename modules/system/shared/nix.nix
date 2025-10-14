@@ -12,16 +12,16 @@
       # Core Nix features
       experimental-features = ["nix-command" "flakes" "ca-derivations"];
       warn-dirty = "false";
-      
+
       # Performance optimizations
-      max-jobs = "auto";           # Use all available CPU cores for builds
-      cores = 0;                   # Use all available cores per job
-      sandbox = true;              # Enable sandboxed builds for security
-      
+      max-jobs = "auto"; # Use all available CPU cores for builds
+      cores = 0; # Use all available cores per job
+      sandbox = true; # Enable sandboxed builds for security
+
       # Build optimization
-      keep-outputs = true;         # Keep build outputs for GC roots
-      keep-derivations = true;     # Keep derivations for debugging
-      
+      keep-outputs = true; # Keep build outputs for GC roots
+      keep-derivations = true; # Keep derivations for debugging
+
       # Binary cache configuration
       substituters = [
         "https://cache.nixos.org"
@@ -54,6 +54,6 @@
 
   # Enable nix-index for command-not-found functionality
   programs.nix-index.enable = true;
-  
+
   # Note: nixpkgs.config.allowUnfree is handled in flake.nix
 }

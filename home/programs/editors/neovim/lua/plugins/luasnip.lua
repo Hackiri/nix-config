@@ -1507,12 +1507,12 @@ done]=],
       ),
 
       -- For loop
-      s("shfor", fmt('for {} in {}; do\n  {}\ndone', { i(1, "item"), i(2, "items"), i(3, "# body") })),
+      s("shfor", fmt("for {} in {}; do\n  {}\ndone", { i(1, "item"), i(2, "items"), i(3, "# body") })),
 
       -- While read loop
       s(
         "shwhile",
-        fmt('while IFS= read -r {}; do\n  {}\ndone < {}', { i(1, "line"), i(2, "# process line"), i(3, "file") })
+        fmt("while IFS= read -r {}; do\n  {}\ndone < {}", { i(1, "line"), i(2, "# process line"), i(3, "file") })
       ),
 
       -- Check if command exists

@@ -100,6 +100,96 @@ gpull        # Pull with rebase
 gpush        # Push to current branch
 ```
 
+### Keyboard Shortcuts (Keymaps)
+
+The configuration includes powerful keyboard shortcuts for Git operations and file navigation using FZF integration.
+
+#### Git Integration Keymaps
+
+All Git keymaps use `Ctrl+G` followed by another key combination. These only work inside Git repositories.
+
+**File and Status Management:**
+```bash
+Ctrl+G Ctrl+F    # Git File Status Browser
+                 # Shows modified/untracked files with diff preview
+                 # Multi-select with TAB
+
+Ctrl+G Ctrl+ST   # Enhanced Git Status (interactive)
+                 # Press Ctrl+A to add/unstage files
+                 # Press Ctrl+C to commit
+                 # Live diff preview
+
+Ctrl+G Ctrl+A    # Interactive Git Add
+                 # Multi-select files to stage (TAB to select)
+                 # Shows diff for modified files, content for new files
+```
+
+**Branch and Tag Management:**
+```bash
+Ctrl+G Ctrl+B    # Git Branch Browser
+                 # Lists local and remote branches
+                 # Shows commit history for selected branch
+                 # Multi-select supported
+
+Ctrl+G Ctrl+T    # Git Tag Browser
+                 # Lists all tags with version sorting
+                 # Shows tag details and associated commits
+```
+
+**History and Commits:**
+```bash
+Ctrl+G Ctrl+H    # Git History Browser
+                 # Interactive commit history with diff preview
+                 # Press Ctrl+S to toggle sort order
+                 # Multi-select commits
+
+Ctrl+G Ctrl+C    # Interactive Git Commit
+                 # Opens editor for commit message
+                 # Shows staged files and their status
+                 # Auto-filters out comments
+```
+
+**Remote and Stash:**
+```bash
+Ctrl+G Ctrl+R    # Git Remote Browser
+                 # Lists remotes with their URLs
+                 # Shows commit history for each remote
+
+Ctrl+G Ctrl+S    # Git Stash Browser
+                 # Browse stashed changes
+                 # Preview stash contents
+```
+
+#### FZF Navigation Keymaps
+
+Built-in FZF shortcuts for file and directory navigation:
+
+```bash
+Ctrl+T           # Fuzzy file/directory finder
+                 # Search recursively from current directory
+                 # Preview files with syntax highlighting (bat)
+                 # Preview directories with tree structure (eza)
+
+Alt+C            # Fuzzy directory finder + cd
+                 # Quickly navigate to any subdirectory
+                 # Preview directory structure
+
+Ctrl+R           # Command history search
+                 # Fuzzy find previous commands
+                 # Execute or edit selected command
+```
+
+#### Preview Features
+
+All FZF keymaps include intelligent previews:
+- **Files**: Syntax-highlighted content (first 500 lines)
+- **Directories**: Tree structure (first 200 lines)
+- **Git diffs**: Color-coded changes
+- **Git commits**: Full commit details and diff
+- **Git branches**: Commit history graph
+
+Press `Ctrl+/` in any FZF window to toggle preview visibility.
+
 ### Shell Functions
 
 #### Configuration Management

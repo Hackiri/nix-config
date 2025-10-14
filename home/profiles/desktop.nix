@@ -12,8 +12,8 @@
     ./development.nix
 
     # Desktop-specific package collections
-    ../packages/desktop.nix      # GUI applications (currently minimal)
-    ../packages/utilities.nix    # Media processing (imagemagick, ghostscript)
+    ../packages/desktop.nix # GUI applications (currently minimal)
+    ../packages/utilities.nix # Media processing (imagemagick, ghostscript)
   ];
 
   # Desktop-specific home configuration

@@ -127,8 +127,8 @@ return {
           min_keyword_length = 3,
           opts = {
             -- Use the system dictionary file which should be available on macOS
-            dictionary_files = nil,
-            dictionary_directories = nil,
+            dictionary_files = vim.fn.expand("~/nix-config/home/programs/editors/neovim/spell/en.utf-8.add"),
+            dictionary_directories = { "~/nix-config/home/programs/editors/neovim/dictionaries" },
 
             -- Use ripgrep for searching words
             get_command = function()
