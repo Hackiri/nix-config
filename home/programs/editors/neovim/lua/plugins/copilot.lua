@@ -2,6 +2,7 @@ return {
   {
     "zbirenbaum/copilot.lua",
     version = "*",
+    event = "InsertEnter", -- Load when entering insert mode
     opts = {
       suggestion = {
         enabled = false,

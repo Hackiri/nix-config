@@ -3,7 +3,7 @@ local trigger_text = ";"
 return {
   "saghen/blink.cmp",
   enabled = true,
-  event = "VimEnter",
+  event = { "InsertEnter", "CmdlineEnter" }, -- Load only when entering insert or command mode
   version = "1.*",
   dependencies = {
     "moyiz/blink-emoji.nvim",

@@ -349,7 +349,7 @@ end
 -- Set up lazy.nvim
 require("lazy").setup({
   defaults = {
-    lazy = false,
+    lazy = true, -- Enable lazy loading by default for better startup time
     version = false,
   },
   dev = {

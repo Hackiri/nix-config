@@ -2,6 +2,7 @@
 return {
   "lewis6991/gitsigns.nvim",
   version = "*",
+  event = { "BufReadPre", "BufNewFile" }, -- Load when reading files
   opts = {
     -- See `:help gitsigns.txt`
     signs = {

@@ -1,7 +1,6 @@
 return {
   "nvim-neo-tree/neo-tree.nvim",
-  lazy = false,
-  cmd = "Neotree",
+  cmd = "Neotree", -- Load only when :Neotree command is used
   branch = "v3.x",
   dependencies = {
     { "nvim-lua/plenary.nvim", version = "*" },

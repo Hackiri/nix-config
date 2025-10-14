@@ -2,6 +2,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     version = "*",
+    event = { "BufReadPre", "BufNewFile" }, -- Load LSP when opening files
     dependencies = {
       "saghen/blink.cmp",
       -- Useful status updates for LSP

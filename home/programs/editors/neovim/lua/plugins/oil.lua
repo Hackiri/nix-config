@@ -1,6 +1,17 @@
 return {
   "stevearc/oil.nvim",
   -- enabled = false,
+  keys = {
+    { "-", "<CMD>Oil<CR>", desc = "Open parent directory" },
+    {
+      "<leader>-",
+      function()
+        require("oil").toggle_float()
+      end,
+      desc = "Open Oil in float",
+    },
+  },
+  cmd = "Oil", -- Load when Oil command is called
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
     require("oil").setup({
@@ -19,10 +30,7 @@ return {
       skip_confirm_for_simple_edits = true,
     })
 
-    -- opens parent dir over current active window
-    vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
-    -- open parent dir in float window
-    vim.keymap.set("n", "<leader>-", require("oil").toggle_float)
+    -- Keymaps are now defined in the keys spec above for lazy loading
 
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "oil", -- Adjust if Oil uses a specific file type identifier

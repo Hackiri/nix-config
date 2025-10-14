@@ -1,5 +1,6 @@
 return {
   "nvim-lualine/lualine.nvim",
+  event = "VeryLazy", -- Load after initial UI is rendered
   dependencies = {
     "nvim-tree/nvim-web-devicons",
     "nvim-lua/lsp-status.nvim", -- For LSP status

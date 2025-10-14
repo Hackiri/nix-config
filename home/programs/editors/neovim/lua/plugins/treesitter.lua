@@ -5,7 +5,7 @@ return {
   "nvim-treesitter/nvim-treesitter",
   branch = "main", -- Modern rewrite with minimal API
   build = ":TSUpdate", -- Official recommendation from main branch README
-  lazy = false, -- Load immediately
+  event = { "BufReadPost", "BufNewFile" }, -- Load when reading files
 
   dependencies = {
     -- NOTE: These plugins are DISABLED for main branch - they cause loading errors
