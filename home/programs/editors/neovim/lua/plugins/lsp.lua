@@ -371,8 +371,8 @@ return {
             })
           end
 
-          -- Document highlight COMPLETELY DISABLED to prevent cursor lag
-          -- This was causing hangs on tsx/jsx files even with filetype checks
+          -- Document highlight DISABLED - using Snacks.words instead
+          -- Snacks.words provides better performance and doesn't cause cursor lag
           -- if client and client.server_capabilities.documentHighlightProvider then
           --   vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
           --     buffer = event.buf,

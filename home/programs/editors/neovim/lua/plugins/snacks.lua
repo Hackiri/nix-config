@@ -30,6 +30,9 @@ return {
       zen = {
         enabled = true,
       },
+      words = {
+        enabled = true,
+      },
       -- HACK: read picker docs @ https://github.com/folke/snacks.nvim/blob/main/docs/picker.md
       picker = {
         enabled = true,
@@ -262,7 +265,9 @@ return {
       {
         "<leader>ps",
         function()
-          require("snacks").picker.grep()
+          require("snacks").picker.grep({
+            exclude = { "dictionaries/words.txt" },
+          })
         end,
         desc = "Grep word",
       },

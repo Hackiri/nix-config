@@ -11,24 +11,5 @@ return {
   },
   config = function(_, opts)
     require("smear_cursor").setup(opts)
-
-    -- Disable smear cursor for TSX/JSX files to prevent lag
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = { "tsx", "jsx", "typescriptreact", "javascriptreact" },
-      callback = function()
-        require("smear_cursor").enabled = false
-      end,
-    })
-
-    -- Re-enable for other filetypes
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = "*",
-      callback = function()
-        local ft = vim.bo.filetype
-        if ft ~= "tsx" and ft ~= "jsx" and ft ~= "typescriptreact" and ft ~= "javascriptreact" then
-          require("smear_cursor").enabled = true
-        end
-      end,
-    })
   end,
 }

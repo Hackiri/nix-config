@@ -115,10 +115,12 @@ M.setup = function()
     end,
   })
 
+  -- Close special filetypes with <esc> (more intuitive than q)
   vim.api.nvim_create_autocmd("FileType", {
     group = augroup("close_with_q"),
     pattern = {
       "PlenaryTestPopup",
+      "grug-far",
       "help",
       "lspinfo",
       "man",
@@ -131,16 +133,29 @@ M.setup = function()
       "checkhealth",
       "neotest-summary",
       "neotest-output-panel",
+      "dbout",
+      "gitsigns-blame",
+      "Lazy",
     },
     callback = function(event)
       vim.bo[event.buf].buflisted = false
-      vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
+      vim.schedule(function()
+        vim.keymap.set("n", "<esc>", function()
+          vim.cmd("close")
+          pcall(vim.api.nvim_buf_delete, event.buf, { force = true })
+        end, {
+          buffer = event.buf,
+          silent = true,
+          desc = "Quit buffer",
+        })
+      end)
     end,
   })
 
+  -- Wrap and spell check for text filetypes
   vim.api.nvim_create_autocmd("FileType", {
     group = augroup("wrap_spell"),
-    pattern = { "gitcommit", "markdown" },
+    pattern = { "text", "plaintex", "typst", "gitcommit", "markdown" },
     callback = function()
       vim.opt_local.wrap = true
       vim.opt_local.spell = true
@@ -217,22 +232,6 @@ M.setup = function()
     end,
   })
 
-  -- Fallback: Ensure Tree-sitter highlighting starts on filetype (Neovim 0.11+)
-  -- NOTE: Primary treesitter autocmds are in plugins/treesitter.lua (init function)
-  -- DISABLED: This creates conflicts with the primary treesitter autocmds
-  -- causing freezes on tsx/jsx files due to race conditions
-  -- vim.api.nvim_create_autocmd("FileType", {
-  --   group = augroup("treesitter_start"),
-  --   callback = function(ev)
-  --     -- Start only if not already active; ignore failures
-  --     pcall(function()
-  --       if not vim.treesitter.highlighter.active[ev.buf] then
-  --         vim.treesitter.start(ev.buf)
-  --       end
-  --     end)
-  --   end,
-  -- })
-
   -- Specific autocmd for markdown files to ensure tree-sitter highlighting
   vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
     group = augroup("markdown_treesitter"),
@@ -241,6 +240,35 @@ M.setup = function()
       -- Force start tree-sitter highlighting for markdown files
       pcall(function()
         vim.treesitter.start(ev.buf, "markdown")
+      end)
+    end,
+  })
+
+  -- Auto-fold markdown headings when opening markdown files
+  vim.api.nvim_create_autocmd("BufRead", {
+    group = augroup("markdown_fold"),
+    pattern = "*.md",
+    callback = function()
+      -- Avoid running multiple times for the same buffer
+      if vim.b.zk_executed then
+        return
+      end
+      vim.b.zk_executed = true
+      -- Use vim.defer_fn to add a slight delay before executing zk
+      vim.defer_fn(function()
+        vim.cmd("normal zk")
+        vim.notify("Folded markdown headings", vim.log.levels.INFO)
+      end, 100) -- Delay in milliseconds
+    end,
+  })
+
+  -- Clear jump list when Neovim starts (prevents stale jumps from previous sessions)
+  vim.api.nvim_create_autocmd("BufWinEnter", {
+    group = augroup("clear_jumps"),
+    once = true,
+    callback = function()
+      vim.schedule(function()
+        vim.cmd("clearjumps")
       end)
     end,
   })
