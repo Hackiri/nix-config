@@ -172,32 +172,54 @@ return {
             },
           },
         },
-        ts_ls = {
-          root_dir = function(...)
-            return require("lspconfig.util").root_pattern(".git")(...)
+        -- Use vtsls with minimal configuration for better performance
+        vtsls = {
+          root_dir = function(fname)
+            -- Strict root pattern - prioritize package.json and tsconfig.json
+            -- Fall back to .git to avoid indexing from home directory
+            local util = require("lspconfig.util")
+            return util.root_pattern("package.json", "tsconfig.json", "jsconfig.json")(fname)
+              or util.root_pattern(".git")(fname)
           end,
-          single_file_support = false,
+          single_file_support = false, -- Disable to prevent LSP from starting without project root
+          filetypes = {
+            "javascript",
+            "javascriptreact",
+            "javascript.jsx",
+            "typescript",
+            "typescriptreact",
+            "typescript.tsx",
+          },
           settings = {
-            typescript = {
-              inlayHints = {
-                includeInlayParameterNameHints = "literal",
-                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                includeInlayFunctionParameterTypeHints = true,
-                includeInlayVariableTypeHints = false,
-                includeInlayPropertyDeclarationTypeHints = true,
-                includeInlayFunctionLikeReturnTypeHints = true,
-                includeInlayEnumMemberValueHints = true,
+            vtsls = {
+              -- Minimal settings for better performance
+              typescript = {
+                updateImportsOnFileMove = { enabled = "always" },
+                suggest = {
+                  completeFunctionCalls = false, -- Disable for better performance
+                },
+                inlayHints = {
+                  parameterNames = { enabled = "none" }, -- Disable for performance
+                  parameterTypes = { enabled = false },
+                  variableTypes = { enabled = false },
+                  propertyDeclarationTypes = { enabled = false },
+                  functionLikeReturnTypes = { enabled = false },
+                  enumMemberValues = { enabled = false },
+                },
               },
-            },
-            javascript = {
-              inlayHints = {
-                includeInlayParameterNameHints = "all",
-                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                includeInlayFunctionParameterTypeHints = true,
-                includeInlayVariableTypeHints = true,
-                includeInlayPropertyDeclarationTypeHints = true,
-                includeInlayFunctionLikeReturnTypeHints = true,
-                includeInlayEnumMemberValueHints = true,
+              javascript = {
+                updateImportsOnFileMove = { enabled = "always" },
+                suggest = {
+                  completeFunctionCalls = false,
+                },
+                inlayHints = {
+                  parameterNames = { enabled = "none" },
+                  parameterTypes = { enabled = false },
+                  variableTypes = { enabled = false },
+                  propertyDeclarationTypes = { enabled = false },
+                  functionLikeReturnTypes = { enabled = false },
+                  enumMemberValues = { enabled = false },
+                },
               },
             },
           },
@@ -349,18 +371,19 @@ return {
             })
           end
 
-          -- Document highlight
-          if client and client.server_capabilities.documentHighlightProvider then
-            vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-              buffer = event.buf,
-              callback = vim.lsp.buf.document_highlight,
-            })
-
-            vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-              buffer = event.buf,
-              callback = vim.lsp.buf.clear_references,
-            })
-          end
+          -- Document highlight COMPLETELY DISABLED to prevent cursor lag
+          -- This was causing hangs on tsx/jsx files even with filetype checks
+          -- if client and client.server_capabilities.documentHighlightProvider then
+          --   vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+          --     buffer = event.buf,
+          --     callback = vim.lsp.buf.document_highlight,
+          --   })
+          --
+          --   vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+          --     buffer = event.buf,
+          --     callback = vim.lsp.buf.clear_references,
+          --   })
+          -- end
         end,
       })
 

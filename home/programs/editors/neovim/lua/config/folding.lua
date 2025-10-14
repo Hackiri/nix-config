@@ -53,11 +53,18 @@ function M.enable_lsp_folding(bufnr)
 
   -- Auto-fold imports if supported (Neovim 0.10+)
   if vim.lsp.foldclose then
-    local client = vim.lsp.get_client_by_id(vim.lsp.get_clients({ bufnr = bufnr })[1].id)
-    if client and client.server_capabilities.foldingRangeProvider then
-      vim.schedule(function()
-        vim.lsp.foldclose("imports", 0)
-      end)
+    local clients = vim.lsp.get_clients({ bufnr = bufnr })
+    if clients and #clients > 0 then
+      local client = vim.lsp.get_client_by_id(clients[1].id)
+      if client and client.server_capabilities.foldingRangeProvider then
+        -- Delay fold close to ensure LSP has sent folding ranges
+        vim.defer_fn(function()
+          -- Gracefully handle case where folds don't exist yet
+          pcall(function()
+            vim.lsp.foldclose("imports", bufnr)
+          end)
+        end, 200) -- Wait 200ms for LSP to provide folding ranges
+      end
     end
   end
 

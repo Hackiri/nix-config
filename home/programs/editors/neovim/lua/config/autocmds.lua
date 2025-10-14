@@ -31,7 +31,16 @@ M.setup = function()
     group = ibl_group,
     pattern = "*",
     callback = function(opts)
-      ibl.debounced_refresh(opts.buf)
+      -- Skip expensive IBL refresh on cursor move for TSX/JSX files to prevent lag
+      local ft = vim.bo[opts.buf].filetype
+      if ft == "tsx" or ft == "jsx" or ft == "typescriptreact" or ft == "javascriptreact" then
+        -- Only refresh on text changes, not cursor movement
+        if opts.event == "TextChanged" or opts.event == "TextChangedI" or opts.event == "BufWinEnter" then
+          ibl.debounced_refresh(opts.buf)
+        end
+      else
+        ibl.debounced_refresh(opts.buf)
+      end
     end,
   })
 
@@ -210,18 +219,19 @@ M.setup = function()
 
   -- Fallback: Ensure Tree-sitter highlighting starts on filetype (Neovim 0.11+)
   -- NOTE: Primary treesitter autocmds are in plugins/treesitter.lua (init function)
-  -- This is a fallback for filetypes not explicitly listed
-  vim.api.nvim_create_autocmd("FileType", {
-    group = augroup("treesitter_start"),
-    callback = function(ev)
-      -- Start only if not already active; ignore failures
-      pcall(function()
-        if not vim.treesitter.highlighter.active[ev.buf] then
-          vim.treesitter.start(ev.buf)
-        end
-      end)
-    end,
-  })
+  -- DISABLED: This creates conflicts with the primary treesitter autocmds
+  -- causing freezes on tsx/jsx files due to race conditions
+  -- vim.api.nvim_create_autocmd("FileType", {
+  --   group = augroup("treesitter_start"),
+  --   callback = function(ev)
+  --     -- Start only if not already active; ignore failures
+  --     pcall(function()
+  --       if not vim.treesitter.highlighter.active[ev.buf] then
+  --         vim.treesitter.start(ev.buf)
+  --       end
+  --     end)
+  --   end,
+  -- })
 
   -- Specific autocmd for markdown files to ensure tree-sitter highlighting
   vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {

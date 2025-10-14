@@ -18,25 +18,34 @@ vim.api.nvim_create_autocmd("User", {
       pattern = "*",
       callback = function(args)
         local buf = args.buf or vim.api.nvim_get_current_buf()
+
+        -- Skip formatting if buffer is not valid or is being loaded
+        if not vim.api.nvim_buf_is_valid(buf) then
+          return
+        end
+
+        -- Skip if buffer is not loaded (prevents interfering with file loading)
+        if not vim.api.nvim_buf_is_loaded(buf) then
+          return
+        end
+
         -- Only format if the current mode is normal mode
+        if vim.fn.mode() ~= "n" then
+          return
+        end
+
         -- Check if LazyVim is available and autoformat is enabled
         local lazyvim_ok = pcall(require, "lazyvim.util")
-        if lazyvim_ok and LazyVim and LazyVim.format and LazyVim.format.enabled(buf) and vim.fn.mode() == "n" then
-          -- Add a small delay to the formatting so it doesn't interfere with
-          -- CopilotChat's or grug-far buffer initialization
-          vim.defer_fn(function()
-            if vim.api.nvim_buf_is_valid(buf) then
-              require("conform").format({ bufnr = buf })
-            end
-          end, 100)
-        elseif vim.fn.mode() == "n" then
-          -- Fallback: format without LazyVim check
-          vim.defer_fn(function()
-            if vim.api.nvim_buf_is_valid(buf) then
-              require("conform").format({ bufnr = buf })
-            end
-          end, 100)
+        if lazyvim_ok and LazyVim and LazyVim.format and not LazyVim.format.enabled(buf) then
+          return
         end
+
+        -- Add a delay to prevent interfering with file loading
+        vim.defer_fn(function()
+          if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+            require("conform").format({ bufnr = buf, quiet = true })
+          end
+        end, 100)
       end,
     })
   end,
