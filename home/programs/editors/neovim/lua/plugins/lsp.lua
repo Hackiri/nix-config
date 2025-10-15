@@ -165,12 +165,75 @@ return {
           },
         },
         -- Add other servers with basic setup
-        rust_analyzer = {},
+        rust_analyzer = {
+          single_file_support = true,
+          settings = {
+            ["rust-analyzer"] = {
+              cargo = {
+                allFeatures = true, -- Load all cargo features into workspace
+                loadOutDirsFromCheck = true, -- Load build script outputs
+              },
+              procMacro = {
+                enable = true, -- Enable proc macro expansion in workspace
+              },
+              checkOnSave = {
+                command = "clippy", -- Use clippy for workspace-wide diagnostics
+              },
+              workspace = {
+                symbol = {
+                  search = {
+                    kind = "all_symbols", -- Search all symbols in workspace
+                  },
+                },
+              },
+            },
+          },
+        },
         pylsp = {
+          single_file_support = true,
+          root_dir = function(fname)
+            return lspconfig.util.root_pattern("pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git")(
+              fname
+            )
+          end,
           settings = {
             pylsp = {
               plugins = {
                 mypy = { enabled = true },
+                jedi = {
+                  environment = vim.env.VIRTUAL_ENV, -- Use active virtual environment
+                  extra_paths = {}, -- Can add custom paths if needed
+                },
+                pylsp_mypy = {
+                  enabled = true,
+                  live_mode = true, -- Real-time type checking
+                },
+                rope_autoimport = {
+                  enabled = true, -- Enable auto-import from workspace
+                },
+              },
+            },
+          },
+        },
+        gopls = {
+          single_file_support = true,
+          settings = {
+            gopls = {
+              experimentalWorkspaceModule = true, -- Multi-module workspace support
+              analyses = {
+                unusedparams = true,
+                shadow = true,
+                unusedvariable = true,
+              },
+              staticcheck = true, -- Enable staticcheck for workspace
+              gofumpt = true, -- Stricter formatting
+              codelenses = {
+                gc_details = true,
+                generate = true,
+                regenerate_cgo = true,
+                tidy = true,
+                upgrade_dependency = true,
+                vendor = true,
               },
             },
           },

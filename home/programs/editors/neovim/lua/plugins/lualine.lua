@@ -241,22 +241,12 @@ return {
       }
     end
 
-    -- LSP status function
-    local function get_lsp_status()
-      local clients = vim.lsp.get_clients()
-      if #clients == 0 then
-        return icons.disconnected .. " No LSP"
-      end
-      local buf_clients = vim.lsp.get_clients({ bufnr = 0 })
-      if #buf_clients == 0 then
-        return icons.disconnected .. " No LSP"
-      end
-      local buf_client_names = {}
-      for _, client in pairs(buf_clients) do
-        table.insert(buf_client_names, client.name)
-      end
-      return icons.lsp_client .. " " .. table.concat(buf_client_names, ", ")
-    end
+    -- LSP status component configuration
+    local lsp_status = {
+      "lsp_status",
+      icon = icons.lsp_client,
+      show_name = true, -- Set to false to hide client names and show only status icons
+    }
 
     -- Component configurations
     local mode = {
@@ -447,11 +437,11 @@ return {
             cond = trouble_symbols.has,
             color = { fg = colors.cyan, gui = "italic" },
           },
-          {
-            get_lsp_status,
+          -- Built-in LSP status with progress indicators
+          vim.tbl_extend("force", lsp_status, {
             color = { fg = colors.blue, gui = "bold" },
             cond = hide_in_width,
-          },
+          }),
           -- Word count for text files
           {
             get_word_count,
