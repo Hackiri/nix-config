@@ -46,10 +46,13 @@
         tectonic # LaTeX rendering
         mermaid-cli # Provides mmdc for Mermaid diagrams
 
-        # Formatters for conform.nvim
+        # Formatters and linters for conform.nvim and diagnostics
         nodePackages.prettier # JavaScript/TypeScript/CSS/HTML/JSON/YAML/Markdown formatter
+        stylua # Lua formatter
         shfmt # Shell script formatter
-        # Note: templ formatter can be added if needed via: templ
+        shellcheck # Shell script linter
+        python311Packages.ruff # Python linter and formatter (CLI)
+        templ # Go template formatter
       ]
       ++ lib.optionals pkgs.stdenv.isLinux [
         # GNU coreutils for yazi.nvim (provides grealpath) - NixOS only
@@ -82,6 +85,18 @@
   # Symlink custom Lua configuration files
   xdg.configFile."nvim/lua" = {
     source = ./lua;
+    recursive = true;
+  };
+
+  # Symlink dictionaries for blink-cmp dictionary completion
+  xdg.configFile."nvim/dictionaries" = {
+    source = ./dictionaries;
+    recursive = true;
+  };
+
+  # Symlink spell files for vim spell checking and dictionary completion
+  xdg.configFile."nvim/spell" = {
+    source = ./spell;
     recursive = true;
   };
 }

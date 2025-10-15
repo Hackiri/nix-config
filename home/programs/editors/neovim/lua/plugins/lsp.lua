@@ -369,14 +369,12 @@ return {
       end
 
       -- Ensure non-LSP tools are installed (LSP servers handled by mason-lspconfig)
+      -- NOTE: Formatters and linters are now managed via Nix (see default.nix)
+      -- This ensures reproducible builds and avoids version conflicts
       local ensure_installed = {
-        "stylua", -- Lua formatter
-        "shfmt", -- Shell formatter
-        "shellcheck", -- Shell linter
-        "prettier", -- JS/TS formatter
-        "ruff", -- Python linter/formatter CLI
         "js-debug-adapter", -- DAP adapter for JS/TS
-        "templ", -- Go template formatter
+        -- Note: The following are now installed via Nix:
+        --   stylua, shfmt, shellcheck, prettier, ruff, templ
         -- Note: jsregexp for LuaSnip is provided via Nix extraLuaPackages
       }
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })

@@ -129,19 +129,24 @@ return {
           max_items = 8,
           min_keyword_length = 3,
           opts = {
-            -- Use the system dictionary file which should be available on macOS
-            dictionary_files = vim.fn.expand("~/nix-config/home/programs/editors/neovim/spell/en.utf-8.add"),
-            dictionary_directories = { "~/nix-config/home/programs/editors/neovim/dictionaries" },
+            -- Use Neovim's config directory for portable paths
+            -- These files are symlinked via xdg.configFile in default.nix
+            dictionary_files = vim.fn.stdpath("config") .. "/spell/en.utf-8.add",
+            dictionary_directories = { vim.fn.stdpath("config") .. "/dictionaries" },
 
-            -- Use ripgrep for searching words
+            -- Use ripgrep for searching words - will be found in PATH
             get_command = function()
-              -- Use the full path to ripgrep to avoid PATH issues
-              return "/run/current-system/sw/bin/rg"
+              -- First check if rg is in PATH, then fall back to system path
+              if vim.fn.executable("rg") == 1 then
+                return "rg"
+              else
+                return "/run/current-system/sw/bin/rg"
+              end
             end,
 
             get_command_args = function(prefix)
-              -- Use the dictionary file in your Neovim config
-              local dict_path = vim.fn.expand("~/nix-config/home/programs/editors/neovim/dictionaries/words.txt")
+              -- Use the dictionary file in Neovim's config directory
+              local dict_path = vim.fn.stdpath("config") .. "/dictionaries/words.txt"
 
               return {
                 "--color=never",
