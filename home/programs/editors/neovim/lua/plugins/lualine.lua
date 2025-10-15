@@ -204,7 +204,13 @@ return {
     -- Visual scroll position with icons
     local function get_scroll_position()
       local progress_icons = {
-        "󰋙", "󰫃", "󰫄", "󰫅", "󰫆", "󰫇", "󰫈",
+        "󰋙",
+        "󰫃",
+        "󰫄",
+        "󰫅",
+        "󰫆",
+        "󰫇",
+        "󰫈",
       }
       local current = vim.api.nvim_win_get_cursor(0)[1]
       local lines = vim.api.nvim_buf_line_count(0)
@@ -441,11 +447,13 @@ return {
           { "selectioncount", cond = hide_in_small_window },
         },
         lualine_x = {
-          -- Lazy status
+          -- Lazy status with icon
           {
-            lazy_status.updates,
+            function()
+              return icons.package_pending .. " " .. lazy_status.updates()
+            end,
             cond = lazy_status.has_updates,
-            color = { fg = colors.orange },
+            color = { fg = colors.orange, gui = "bold" },
           },
           -- Spell status with separators
           create_separator(should_show_spell_status),

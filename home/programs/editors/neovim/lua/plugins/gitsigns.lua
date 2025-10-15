@@ -69,7 +69,7 @@ return {
       map("n", "<leader>ghD", function()
         gs.diffthis("~")
       end, { desc = "Diff This ~" })
-      
+
       -- Additional git operations
       map("n", "<leader>gb", gs.toggle_current_line_blame, { desc = "Toggle git blame" })
       map("n", "<leader>gd", gs.diffthis, { desc = "Git diff" })

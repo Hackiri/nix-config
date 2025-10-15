@@ -70,8 +70,8 @@ return {
     -- Custom action: Copy file path with line:col to clipboard
     local function copy_file_path(selected, opts)
       local file_and_path = path.entry_to_file(selected[1], opts).stripped
-      vim.fn.setreg("+", file_and_path)  -- System clipboard
-      vim.fn.setreg("0", file_and_path)  -- Yank register
+      vim.fn.setreg("+", file_and_path) -- System clipboard
+      vim.fn.setreg("0", file_and_path) -- Yank register
       vim.notify("Copied: " .. file_and_path, vim.log.levels.INFO)
     end
 

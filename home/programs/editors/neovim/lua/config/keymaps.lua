@@ -93,6 +93,18 @@ map("n", "<leader>dt", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle diagnostics" })
 
+-- Trouble.nvim (<leader>x prefix for diagnostics/trouble)
+map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Toggle Diagnostics (Trouble)" })
+map("n", "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Toggle Buffer Diagnostics (Trouble)" })
+map("n", "<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>", { desc = "Toggle Symbols (Trouble)" })
+map("n", "<leader>xl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", { desc = "Toggle LSP References (Trouble)" })
+map("n", "<leader>xL", "<cmd>Trouble loclist toggle<cr>", { desc = "Toggle Location List (Trouble)" })
+map("n", "<leader>xQ", "<cmd>Trouble quickfix toggle<cr>", { desc = "Toggle Quickfix List (Trouble)" })
+map("n", "<leader>xr", "<cmd>Trouble lsp_references toggle<cr>", { desc = "Toggle LSP References (Trouble)" })
+map("n", "<leader>xd", "<cmd>Trouble lsp_definitions toggle<cr>", { desc = "Toggle LSP Definitions (Trouble)" })
+map("n", "<leader>xi", "<cmd>Trouble lsp_implementations toggle<cr>", { desc = "Toggle LSP Implementations (Trouble)" })
+map("n", "<leader>xt", "<cmd>Trouble lsp_type_definitions toggle<cr>", { desc = "Toggle LSP Type Definitions (Trouble)" })
+
 -- Code Navigation and Editing
 -- Note: Aerial outline toggle is now at <leader>o (defined in plugins/aerial.lua)
 -- Removed <leader>a mapping to prevent conflict with Avante AI prefix
