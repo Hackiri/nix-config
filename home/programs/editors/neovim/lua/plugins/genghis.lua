@@ -11,34 +11,34 @@ return {
     },
   },
   keys = {
-    -- Copy filepath operations
+    -- Copy filepath operations (remapped to uppercase Y to avoid yazi/clipboard conflicts)
     {
-      "<leader>ya",
+      "<leader>Ya",
       function()
         require("genghis").copyFilepathWithTilde()
       end,
-      desc = "Yank: Absolute path (with ~)",
+      desc = "Genghis: Yank absolute path (~)",
     },
     {
-      "<leader>yr",
+      "<leader>Yr",
       function()
         require("genghis").copyRelativePath()
       end,
-      desc = "Yank: Relative path",
+      desc = "Genghis: Yank relative path",
     },
     {
-      "<leader>yn",
+      "<leader>Yn",
       function()
         require("genghis").copyFilename()
       end,
-      desc = "Yank: Filename",
+      desc = "Genghis: Yank filename",
     },
     {
-      "<leader>yp",
+      "<leader>Yp",
       function()
         require("genghis").copyDirectoryPath()
       end,
-      desc = "Yank: Directory path",
+      desc = "Genghis: Yank directory path",
     },
 
     -- File navigation (navigate between files in same directory)
@@ -47,58 +47,58 @@ return {
       function()
         require("genghis").navigateToFileInFolder("next")
       end,
-      desc = "File: Next file in folder",
+      desc = "Genghis: Next file in folder",
     },
     {
       "<S-M-CR>",
       function()
         require("genghis").navigateToFileInFolder("prev")
       end,
-      desc = "File: Previous file in folder",
+      desc = "Genghis: Previous file in folder",
     },
 
-    -- File operations
+    -- File operations (remapped to uppercase F to avoid FZF conflicts)
     {
-      "<leader>fr",
+      "<leader>FR",
       function()
         require("genghis").renameFile()
       end,
-      desc = "File: Rename",
+      desc = "Genghis: Rename file",
     },
     {
-      "<leader>fn",
+      "<leader>FN",
       function()
         require("genghis").createNewFile()
       end,
-      desc = "File: New file",
+      desc = "Genghis: New file",
     },
     {
-      "<leader>fw",
+      "<leader>FW",
       function()
         require("genghis").duplicateFile()
       end,
-      desc = "File: Duplicate",
+      desc = "Genghis: Duplicate file",
     },
     {
-      "<leader>fm",
+      "<leader>FM",
       function()
         require("genghis").moveToFolderInCwd()
       end,
-      desc = "File: Move to folder",
+      desc = "Genghis: Move to folder",
     },
     {
-      "<leader>fd",
+      "<leader>FD",
       function()
         require("genghis").trashFile()
       end,
-      desc = "File: Delete (trash)",
+      desc = "Genghis: Delete file (trash)",
     },
     {
-      "<leader>fx",
+      "<leader>FX",
       function()
         require("genghis").chmodx()
       end,
-      desc = "File: chmod +x",
+      desc = "Genghis: chmod +x",
     },
 
     -- Move selection to new file

@@ -7,43 +7,43 @@ return {
     "stevearc/dressing.nvim", -- Optional: improves input UI
   },
   keys = {
-    -- Core git operations
+    -- Core git operations (remapped to avoid conflicts)
     {
-      "<leader>gc",
+      "<leader>gcs",
       function()
         require("tinygit").smartCommit({ pushIfClean = false })
       end,
-      desc = "Git: Smart commit",
+      desc = "Tinygit: Smart commit",
     },
     {
-      "<leader>gC",
+      "<leader>gcp",
       function()
         require("tinygit").smartCommit({ pushIfClean = true })
       end,
-      desc = "Git: Smart commit & push",
+      desc = "Tinygit: Smart commit & push",
     },
     {
-      "<leader>gp",
+      "<leader>gpl",
       function()
         require("tinygit").push({ pullBefore = true })
       end,
-      desc = "Git: Pull & push",
+      desc = "Tinygit: Pull & push",
     },
     {
-      "<leader>gP",
+      "<leader>gpr",
       function()
         require("tinygit").push({ createGitHubPr = true })
       end,
-      desc = "Git: Push & create PR",
+      desc = "Tinygit: Push & create PR",
     },
 
     -- Advanced commit operations
     {
-      "<leader>gf",
+      "<leader>gfx",
       function()
         require("tinygit").fixupCommit({ autoRebase = true })
       end,
-      desc = "Git: Fixup commit & rebase",
+      desc = "Tinygit: Fixup commit & rebase",
     },
     {
       "<leader>gm",
@@ -83,64 +83,64 @@ return {
       desc = "Git: Open issue under cursor",
     },
 
-    -- File history
+    -- File history (remapped to avoid conflict with gitsigns hunks)
     {
-      "<leader>gh",
+      "<leader>gH",
       function()
         require("tinygit").fileHistory()
       end,
       mode = { "n", "x" },
-      desc = "Git: File history",
+      desc = "Tinygit: File history",
     },
 
-    -- GitHub URLs
+    -- GitHub URLs (remapped to avoid conflicts)
     {
-      "<leader>gu",
+      "<leader>gurl",
       function()
         require("tinygit").githubUrl("file")
       end,
       mode = { "n", "x" },
-      desc = "Git: GitHub URL (file)",
+      desc = "Tinygit: GitHub URL (file)",
     },
     {
-      "<leader>gU",
+      "<leader>gurL",
       function()
         require("tinygit").githubUrl("repo")
       end,
-      desc = "Git: GitHub URL (repo)",
+      desc = "Tinygit: GitHub URL (repo)",
     },
     {
-      "<leader>gb",
+      "<leader>gbl",
       function()
         require("tinygit").githubUrl("blame")
       end,
       mode = { "n", "x" },
-      desc = "Git: GitHub blame URL",
+      desc = "Tinygit: GitHub blame URL",
     },
 
     -- Stash operations
     {
-      "<leader>gt",
+      "<leader>gst",
       function()
         require("tinygit").stashPush()
       end,
-      desc = "Git: Stash push",
+      desc = "Tinygit: Stash push",
     },
     {
-      "<leader>gT",
+      "<leader>gsT",
       function()
         require("tinygit").stashPop()
       end,
-      desc = "Git: Stash pop",
+      desc = "Tinygit: Stash pop",
     },
 
-    -- Undo operations
+    -- Undo operations (fixed duplicate mapping)
     {
-      "<leader>gu",
+      "<leader>guz",
       function()
         require("tinygit").undoLastCommitOrAmend()
       end,
-      desc = "Git: Undo last commit/amend",
+      desc = "Tinygit: Undo last commit/amend",
     },
   },
   opts = {

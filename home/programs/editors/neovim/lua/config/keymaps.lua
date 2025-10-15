@@ -156,18 +156,18 @@ map({ "n", "x" }, "<leader>am", function()
   require("personal-plugins.alt-alt").gotoMostChangedFile()
 end, { desc = "Navigate: Goto most changed file" })
 
--- Smart duplicate (from v12 config)
-map({ "n", "v" }, "<leader>d", function()
+-- Smart duplicate (from v12 config) - remapped to avoid DAP conflict
+map({ "n", "v" }, "<leader>D", function()
   require("personal-plugins.misc").smartDuplicate()
 end, { desc = "Edit: Smart duplicate" })
 
--- Toggle or increment (from v12 config)
-map("n", "<leader>tt", function()
+-- Toggle or increment (from v12 config) - remapped to avoid Snacks conflict
+map("n", "<leader>tg", function()
   require("personal-plugins.misc").toggleOrIncrement()
 end, { desc = "Edit: Toggle word or increment" })
 
--- Toggle case (from v12 config)
-map("n", "<leader>tc", function()
+-- Toggle case (from v12 config) - remapped to avoid Snacks conflict
+map("n", "<leader>tC", function()
   require("personal-plugins.misc").toggleTitleCase()
 end, { desc = "Edit: Toggle lower/Title case" })
 
@@ -176,7 +176,8 @@ map("n", "<leader>lc", function()
   require("personal-plugins.misc").lspCapabilities()
 end, { desc = "LSP: Show capabilities" })
 
-map("n", "<leader>lr", function()
+-- LSP rename camel/snake - remapped to avoid FZF references conflict
+map("n", "<leader>lR", function()
   require("personal-plugins.misc").camelSnakeLspRename()
 end, { desc = "LSP: Rename (camel/snake)" })
 
