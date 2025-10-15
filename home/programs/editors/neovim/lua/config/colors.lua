@@ -1,78 +1,54 @@
 -- Neovim Lua colors configuration
+-- Pure Lua implementation - no external shell script needed
 
--- Load the colors once when the module is required and then expose the colors
--- directly. This avoids the need to call load_colors() in every file
+local M = {}
 
--- Function to load colors from the external file
-local function load_colors()
-  local colors = {}
+-- Define your color palette directly in Lua
+M.colors = {
+  -- Lighter markdown headings (4 colors to the right)
+  color18 = "#2d244b", -- Markdown heading 1 - color04
+  color19 = "#10492d", -- Markdown heading 2 - color02
+  color20 = "#013e4a", -- Markdown heading 3 - color03
+  color21 = "#4b314c", -- Markdown heading 4 - color01
+  color22 = "#1e2b00", -- Markdown heading 5 - color05
+  color23 = "#2d1c08", -- Markdown heading 6 - color08
+  color26 = "#0D1116", -- Markdown heading foreground (usually color10)
 
-  -- First try to find the file in the current config directory
-  local config_paths = {
-    vim.fn.stdpath("config") .. "/lua/config/active-colorscheme.sh",
-    vim.fn.expand("~/nix-config/home/programs/editors/neovim/lua/config/active-colorscheme/active-colorscheme.sh"),
-  }
+  -- Primary colors
+  color04 = "#987afb",
+  color02 = "#37f499",
+  color03 = "#04d1f9",
+  color01 = "#fca6ff",
+  color05 = "#9ad900",
+  color08 = "#e58f2a",
+  color06 = "#05ff23",
 
-  local file
-  local active_file
+  -- Background and UI colors
+  color10 = "#0D1116", -- Terminal and neovim background
+  color17 = "#141b22", -- Lualine across, 1 color to the right of background
+  color07 = "#141b22", -- Markdown codeblock, 2 to the right of background
+  color25 = "#232e3b", -- Background of inactive tmux pane, 3 to the right
+  color13 = "#232e3b", -- Line across cursor, 5 to the right of background
+  color15 = "#013e4a", -- Tmux inactive windows, 7 colors to the right
 
-  -- Try each possible path
-  for _, path in ipairs(config_paths) do
-    file = io.open(path, "r")
-    if file then
-      active_file = path
-      break
+  -- Text and UI elements
+  color09 = "#b7bfce", -- Comments
+  color11 = "#f16c75", -- Underline spellbad
+  color12 = "#f1fc79", -- Underline spellcap
+  color14 = "#ffffff", -- Cursor and tmux windows text
+}
+
+-- Apply colors to Neovim highlight groups
+function M.setup()
+  if _G.vim then
+    for name, hex in pairs(M.colors) do
+      vim.api.nvim_set_hl(0, name, { fg = hex })
     end
   end
-
-  -- If file not found, use default colors
-  if not file then
-    vim.notify("Could not open active colorscheme file. Using default colors.", vim.log.levels.WARN)
-    return {
-      color0 = "#282c34",
-      color1 = "#e06c75",
-      color2 = "#98c379",
-      color3 = "#e5c07b",
-      color4 = "#61afef",
-      color5 = "#c678dd",
-      color6 = "#56b6c2",
-      color7 = "#abb2bf",
-      color8 = "#545862",
-      color9 = "#e06c75",
-      color10 = "#98c379",
-      color11 = "#e5c07b",
-      color12 = "#61afef",
-      color13 = "#c678dd",
-      color14 = "#56b6c2",
-      color15 = "#c8ccd4",
-      background = "#282c34",
-      foreground = "#abb2bf",
-    }
-  end
-
-  -- Parse the file
-  for line in file:lines() do
-    if not line:match("^%s*#") and not line:match("^%s*$") and not line:match("^wallpaper=") then
-      local name, value = line:match("^(%S+)=%s*(.+)")
-      if name and value then
-        colors[name] = value:gsub('"', "")
-      end
-    end
-  end
-
-  file:close()
-  return colors
 end
 
--- Load colors when the module is required
-local colors = load_colors()
-
--- Check if the 'vim' global exists (i.e., if running in Neovim)
-if _G.vim then
-  for name, hex in pairs(colors) do
-    vim.api.nvim_set_hl(0, name, { fg = hex })
-  end
-end
+-- Auto-setup when module is loaded
+M.setup()
 
 -- Return the colors table for external usage (like wezterm)
-return colors
+return M.colors

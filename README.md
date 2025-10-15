@@ -18,17 +18,15 @@ nix-config/
 ├── flake.lock                  # Flake input locks
 ├── hosts/                      # Host-specific configurations
 │   ├── mbp/                    # MacBook Pro
-│   ├── desktop/                # NixOS Desktop
-│   └── shared/                 # Shared configurations
+│   └── desktop/                # NixOS Desktop
 ├── home/                       # Home Manager configurations
-│   ├── profiles/               # User profiles (development, minimal, desktop)
-│   ├── programs/               # Program configurations
-│   ├── packages/               # Package collections
-│   └── shared/                 # Shared home configurations
+│   ├── profiles/               # User profiles (minimal, development, desktop, darwin, nixos)
+│   ├── programs/               # Program configurations (editors, terminals, shells, etc.)
+│   └── packages/               # Package collections (build-tools, languages, web-dev, etc.)
 ├── modules/                    # System modules
-│   ├── system/                 # System configurations
+│   ├── system/                 # System configurations (darwin, nixos)
 │   ├── services/               # Service configurations
-│   ├── features/               # Optional features
+│   ├── optional-features/      # Optional features
 │   └── hardware/               # Hardware-specific modules
 ├── overlays/                   # Nixpkgs overlays
 ├── pkgs/                       # Custom packages
@@ -206,7 +204,6 @@ This configuration provides many convenient aliases for system management:
 # Build and switch
 nixswitch    # Build and activate configuration
 nixbuild     # Build only (no activation)
-nixboot      # Build but activate on next boot
 nixcheck     # Check configuration validity
 nixdry       # Dry run (test build without changes)
 
@@ -229,7 +226,6 @@ nxdev        # Enter development shell
 
 # Update workflow
 nix flake update  # Update flake inputs
-nixswitch         # Apply updates
 ```
 
 #### **Quick Navigation**

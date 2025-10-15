@@ -5,7 +5,6 @@
   # Build variants
   nixbuild = "sudo darwin-rebuild build --flake ~/nix-config#mbp"; # Build only
   nixswitch = "sudo darwin-rebuild switch --flake ~/nix-config#mbp"; # Build and activate
-  nixboot = "sudo darwin-rebuild boot --flake ~/nix-config#mbp"; # Build but activate on next boot
   nixcheck = "sudo darwin-rebuild check --flake ~/nix-config#mbp"; # Check configuration
   nixdry = "sudo darwin-rebuild dry-build --flake ~/nix-config#mbp"; # Test build without making changes
   nixedit = "sudo darwin-rebuild edit --flake ~/nix-config#mbp"; # Open configuration in $EDITOR
