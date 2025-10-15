@@ -2,6 +2,7 @@
 -- https://github.com/olimorris/codecompanion.nvim
 return {
   "olimorris/codecompanion.nvim",
+  event = "VeryLazy", -- Load after UI is rendered to improve startup time
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
