@@ -8,11 +8,11 @@
   ...
 }: {
   imports = [
-    # Foundation: Desktop environment (includes development + minimal)
+    # Profiles: Desktop environment (includes development + minimal)
     ./desktop.nix
 
-    # NixOS-specific configurations
-    ../nixos.nix
+    # Platform: Linux-specific packages and settings
+    ./platform/nixos.nix
   ];
 
   # NixOS-specific profile configurations

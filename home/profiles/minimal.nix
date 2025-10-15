@@ -9,10 +9,10 @@
   ...
 }: {
   imports = [
-    # Basic shell enhancements
-    ../programs/shells/default.nix
+    # Programs: Shell configuration and enhancements
+    ../programs/shells
 
-    # Essential utilities
+    # Programs: Essential system monitoring utilities
     ../programs/utilities/btop
   ];
 

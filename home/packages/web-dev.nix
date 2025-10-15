@@ -4,7 +4,7 @@
     #--------------------------------------------------
     # Web Servers
     #--------------------------------------------------
-    caddy # Modern, automatic HTTPS web server
+    # caddy # Modern, automatic HTTPS web server
     # python3's http.server module available via Python runtime
     # nodePackages.http-server # Simple HTTP server (optional)
     # nodePackages.live-server # Live-reloading HTTP server (optional)

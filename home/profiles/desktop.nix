@@ -8,12 +8,12 @@
   ...
 }: {
   imports = [
-    # Foundation: Development environment (includes minimal.nix)
+    # Profiles: Development environment (includes minimal)
     ./development.nix
 
-    # Desktop-specific package collections
-    ../packages/desktop.nix # GUI applications (currently minimal)
-    ../packages/utilities.nix # Media processing (imagemagick, ghostscript)
+    # Packages: Desktop applications and media tools
+    ../packages/desktop.nix
+    ../packages/utilities.nix
   ];
 
   # Desktop-specific home configuration

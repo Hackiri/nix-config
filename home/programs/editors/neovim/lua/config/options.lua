@@ -41,7 +41,7 @@ vim.opt.scrolloff = 10 -- Number of lines to keep above and below the cursor (ki
 vim.opt.cursorline = true -- Enable highlighting of the current line
 vim.opt.cmdheight = 0 -- Hide command line unless needed
 vim.opt.laststatus = 3 -- Global statusline
-vim.opt.guicursor = "n-v-c:block-Cursor/lCursor"
+vim.opt.guicursor = "n-v-c:block-Cursor/lCursor" -- Cursor shape
 vim.opt.winborder = "rounded" -- Rounded window borders
 
 -- Visualize whitespace (from kickstart)
@@ -61,7 +61,7 @@ vim.opt.wrap = false -- Don't wrap lines
 vim.opt.backup = false -- No backup file
 vim.opt.swapfile = false -- No swap file
 vim.opt.undofile = true -- Enable persistent undo
-vim.opt.undolevels = 10000
+vim.opt.undolevels = 10000 -- Number of undo levels
 vim.opt.writebackup = false -- No backup file
 
 -- Search

@@ -8,14 +8,14 @@
   ...
 }: {
   imports = [
-    # Foundation: Desktop environment (includes development + minimal)
+    # Profiles: Desktop environment (includes development + minimal)
     ./desktop.nix
 
-    # macOS-specific configurations
-    ../darwin.nix
+    # Platform: macOS-specific packages and settings
+    ./platform/darwin.nix
 
-    # macOS-specific program configurations
-    ../programs/utilities/aerospace # Window manager (macOS only)
+    # Programs: macOS window management
+    ../programs/utilities/aerospace
   ];
 
   # macOS-specific profile configurations

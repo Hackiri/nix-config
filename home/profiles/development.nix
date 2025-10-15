@@ -9,32 +9,34 @@
   ...
 }: {
   imports = [
-    # Foundation: Essential cross-platform tools
+    # Profiles: Foundation layer (minimal tools)
     ./minimal.nix
 
-    # Text editors and IDEs
-    ../programs/editors # Neovim, Emacs, Neovide
+    # Programs: Text editors and IDEs
+    ../programs/editors
 
-    # Development tools and configurations
-    ../programs/development # Git, direnv
-    ../programs/kubernetes # Kubernetes tools and config
+    # Programs: Development tools and configurations
+    ../programs/development
+    ../programs/kubernetes
 
-    # Terminal and shell enhancements
-    ../programs/terminals # Tmux, Alacritty, Ghostty
+    # Programs: Terminal emulators and multiplexers
+    ../programs/terminals
 
-    # Utility programs
-    ../programs/utilities # btop, yazi, sops
+    # Programs: System utilities and file managers
+    ../programs/utilities
 
-    # Development-specific package collections
-    ../packages/build-tools.nix # gcc, cmake, make, etc.
-    ../packages/code-quality.nix # linters, formatters
-    ../packages/languages.nix # nodejs, python, php
-    ../packages/terminals.nix # tmuxinator, moreutils
-    ../packages/security.nix # sops, age
-    ../packages/network.nix # cachix (nix-specific)
+    # Packages: Build tools and compilers
+    ../packages/build-tools.nix
+    ../packages/code-quality.nix
+    ../packages/databases.nix
+    ../packages/languages.nix
+    ../packages/network.nix
+    ../packages/security.nix
+    ../packages/terminals.nix
+    ../packages/web-dev.nix
 
-    # Custom overlay packages
-    ../packages/custom # Custom overlay packages
+    # Packages: Custom overlay packages
+    ../packages/custom
   ];
 
   # Development-specific home configuration

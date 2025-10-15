@@ -27,12 +27,6 @@ map("n", "<leader>ws", "<C-w>s", { desc = "Split window horizontally" })
 map("n", "<leader>we", "<C-w>=", { desc = "Make splits equal size" })
 map("n", "<leader>wx", "<cmd>close<CR>", { desc = "Close current split" })
 
--- Remove conflicting window movement keys (handled by vim-tmux-navigator)
--- map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
--- map("n", "<C-j>", "<C-w>j", { desc = "Move to bottom window" })
--- map("n", "<C-k>", "<C-w>k", { desc = "Move to top window" })
--- map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
-
 -- Tab Management (<leader>t prefix)
 map("n", "<leader>tn", "<cmd>tabnew<CR>", { desc = "New tab" })
 map("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close tab" })
