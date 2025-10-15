@@ -131,7 +131,7 @@ return {
           opts = {
             -- Use Neovim's config directory for portable paths
             -- These files are symlinked via xdg.configFile in default.nix
-            dictionary_files = vim.fn.stdpath("config") .. "/spell/en.utf-8.add",
+            dictionary_files = { vim.fn.stdpath("config") .. "/spell/en.utf-8.add" },
             dictionary_directories = { vim.fn.stdpath("config") .. "/dictionaries" },
 
             -- Use ripgrep for searching words - will be found in PATH

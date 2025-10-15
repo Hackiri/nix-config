@@ -25,6 +25,16 @@ return {
     config = function()
       -- Get enhanced LSP capabilities from blink.cmp
       local capabilities = require("blink.cmp").get_lsp_capabilities()
+
+      -- Disable workspace file watching to prevent constant reloads
+      -- LSP servers will still receive file change notifications from Neovim,
+      -- but won't trigger full workspace reloads on every edit
+      capabilities.workspace = capabilities.workspace or {}
+      capabilities.workspace.didChangeWatchedFiles = {
+        dynamicRegistration = false,
+        relativePatternSupport = false,
+      }
+
       local lspconfig = require("lspconfig")
 
       -- Stylua is a FORMATTER, not an LSP server.
