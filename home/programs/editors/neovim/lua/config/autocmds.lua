@@ -272,6 +272,193 @@ M.setup = function()
       end)
     end,
   })
+
+  -- Auto-nohl with inline search count (from v12 config)
+  -- Automatically clears search highlight and shows inline search count
+  local function searchCountIndicator(mode)
+    local signColumnPlusScrollbarWidth = 2 + 3
+
+    local countNs = vim.api.nvim_create_namespace("searchCounter")
+    vim.api.nvim_buf_clear_namespace(0, countNs, 0, -1)
+    if mode == "clear" then
+      return
+    end
+
+    local row = vim.api.nvim_win_get_cursor(0)[1]
+    local count = vim.fn.searchcount()
+    if vim.tbl_isempty(count) or count.total == 0 then
+      return
+    end
+
+    local text = (" %d/%d "):format(count.current, count.total)
+    local line = vim.api.nvim_get_current_line():gsub("\t", (" "):rep(vim.bo.shiftwidth))
+    local lineFull = #line + signColumnPlusScrollbarWidth >= vim.api.nvim_win_get_width(0)
+    local margin = { (" "):rep(lineFull and signColumnPlusScrollbarWidth or 0) }
+
+    vim.api.nvim_buf_set_extmark(0, countNs, row - 1, 0, {
+      virt_text = { { text, "IncSearch" }, margin },
+      virt_text_pos = lineFull and "right_align" or "eol",
+      priority = 200,
+    })
+  end
+
+  -- Auto-nohl and search count indicator
+  vim.on_key(function(key, _typed)
+    key = vim.fn.keytrans(key)
+    local isCmdlineSearch = vim.fn.getcmdtype():find("[/?]") ~= nil
+    local isNormalMode = vim.api.nvim_get_mode().mode == "n"
+    local searchStarted = (key == "/" or key == "?") and isNormalMode
+    local searchConfirmed = (key == "<CR>" and isCmdlineSearch)
+    local searchCancelled = (key == "<Esc>" and isCmdlineSearch)
+    if not (searchStarted or searchConfirmed or searchCancelled or isNormalMode) then
+      return
+    end
+
+    local searchMovement = vim.tbl_contains({ "n", "N", "*", "#" }, key)
+
+    if searchCancelled or (not searchMovement and not searchConfirmed) then
+      vim.opt.hlsearch = false
+      searchCountIndicator("clear")
+    elseif searchMovement or searchConfirmed or searchStarted then
+      vim.opt.hlsearch = true
+      vim.defer_fn(searchCountIndicator, 1)
+    end
+  end, vim.api.nvim_create_namespace("autoNohlAndSearchCount"))
+
+  -- Lucky indent (from v12 config)
+  -- Auto-detect and set indent based on first indented line
+  local function luckyIndent(bufnr)
+    local linesToCheck = 50
+    if not vim.api.nvim_buf_is_valid(bufnr) or vim.bo[bufnr].buftype ~= "" then
+      return
+    end
+
+    -- Don't apply if .editorconfig is in effect
+    local ec = vim.b[bufnr].editorconfig
+    if ec and (ec.indent_style or ec.indent_size or ec.tab_width) then
+      return
+    end
+
+    -- Guess indent from first indented line
+    local indent
+    local maxToCheck = math.min(linesToCheck, vim.api.nvim_buf_line_count(bufnr))
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, maxToCheck, false)
+    for lnum = 1, #lines do
+      indent = lines[lnum]:match("^%s*")
+      if #indent > 0 then
+        break
+      end
+    end
+
+    if not indent or #indent == 0 then
+      return
+    end
+
+    local spaces = indent:match(" +")
+    if vim.bo[bufnr].ft == "markdown" then
+      if not spaces then
+        return
+      end
+      if #spaces == 2 then
+        return
+      end -- 2 space indents from hardwrap, not real indent
+    end
+
+    -- Apply if needed
+    local opts = { title = "Lucky indent", icon = "󰉶" }
+    if spaces and not vim.bo.expandtab then
+      vim.bo[bufnr].expandtab = true
+      vim.bo[bufnr].shiftwidth = #spaces
+      vim.notify_once(("Set indentation to %d spaces."):format(#spaces), nil, opts)
+    elseif not spaces and vim.bo.expandtab then
+      vim.bo[bufnr].expandtab = false
+      vim.notify_once("Set indentation to tabs.", nil, opts)
+    end
+  end
+
+  vim.api.nvim_create_autocmd("BufReadPost", {
+    group = augroup("lucky_indent"),
+    desc = "Auto-detect indent from first indented line",
+    callback = function(ctx)
+      vim.defer_fn(function()
+        luckyIndent(ctx.buf)
+      end, 100)
+    end,
+  })
+
+  -- Favicon prefixes for URLs (from v12 config)
+  -- Adds icons before URLs in comments
+  local favicons = {
+    apple = "",
+    github = "",
+    google = "",
+    microsoft = "",
+    neovim = "",
+    openai = "",
+    reddit = "",
+    stackoverflow = "󰓌",
+    ycombinator = "",
+    youtube = "",
+  }
+
+  local function addFavicons(bufnr)
+    if not bufnr then
+      bufnr = 0
+    end
+    if not vim.api.nvim_buf_is_valid(bufnr) or vim.bo[bufnr].buftype ~= "" then
+      return
+    end
+
+    local hasCommentParser, urlQuery = pcall(vim.treesitter.query.parse, "comment", "(uri) @string.special.url")
+    if not hasCommentParser then
+      return
+    end
+
+    local hasParserForFt, _ = pcall(vim.treesitter.get_parser, bufnr)
+    if not hasParserForFt then
+      return
+    end
+
+    local ns = vim.api.nvim_create_namespace("url-favicons")
+    vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+
+    local langTree = vim.treesitter.get_parser(bufnr)
+    if not langTree then
+      return
+    end
+
+    langTree:for_each_tree(function(tree, _)
+      if not urlQuery.iter_captures then
+        return
+      end
+      local commentUrlNodes = urlQuery:iter_captures(tree:root(), bufnr)
+      vim.iter(commentUrlNodes):each(function(_, node)
+        local nodeText = vim.treesitter.get_node_text(node, bufnr)
+        local sitename = nodeText:match("(%w+)%.com") or nodeText:match("(%w+)%.io")
+        local icon = favicons[sitename]
+        if not icon then
+          return
+        end
+
+        local row, col = node:start()
+        vim.api.nvim_buf_set_extmark(bufnr, ns, row, col, {
+          virt_text = { { icon .. " ", "Comment" } },
+          virt_text_pos = "inline",
+        })
+      end)
+    end)
+  end
+
+  vim.api.nvim_create_autocmd({ "FocusGained", "BufReadPost", "TextChanged", "InsertLeave" }, {
+    group = augroup("url_favicons"),
+    desc = "Add favicons to URLs in comments",
+    callback = function(ctx)
+      local delay = ctx.event == "BufReadPost" and 300 or 0
+      vim.defer_fn(function()
+        addFavicons(ctx.buf)
+      end, delay)
+    end,
+  })
 end
 
 return M

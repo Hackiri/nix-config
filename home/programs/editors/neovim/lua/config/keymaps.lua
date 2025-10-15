@@ -146,3 +146,69 @@ map("n", "<C-u>", function()
   local lines = math.floor(vim.api.nvim_win_get_height(0) * scroll_percentage)
   vim.cmd("normal! " .. lines .. "kzz")
 end, { desc = "Scroll up" })
+
+-- Alt-file navigation (from v12 config)
+map({ "n", "x" }, "<leader>aa", function()
+  require("personal-plugins.alt-alt").gotoAltFile()
+end, { desc = "Navigate: Goto alt file" })
+
+map({ "n", "x" }, "<leader>am", function()
+  require("personal-plugins.alt-alt").gotoMostChangedFile()
+end, { desc = "Navigate: Goto most changed file" })
+
+-- Smart duplicate (from v12 config)
+map({ "n", "v" }, "<leader>d", function()
+  require("personal-plugins.misc").smartDuplicate()
+end, { desc = "Edit: Smart duplicate" })
+
+-- Toggle or increment (from v12 config)
+map("n", "<leader>tt", function()
+  require("personal-plugins.misc").toggleOrIncrement()
+end, { desc = "Edit: Toggle word or increment" })
+
+-- Toggle case (from v12 config)
+map("n", "<leader>tc", function()
+  require("personal-plugins.misc").toggleTitleCase()
+end, { desc = "Edit: Toggle lower/Title case" })
+
+-- LSP utilities (from v12 config)
+map("n", "<leader>lc", function()
+  require("personal-plugins.misc").lspCapabilities()
+end, { desc = "LSP: Show capabilities" })
+
+map("n", "<leader>lr", function()
+  require("personal-plugins.misc").camelSnakeLspRename()
+end, { desc = "LSP: Rename (camel/snake)" })
+
+-- Buffer utilities (from v12 config)
+map("n", "<leader>bi", function()
+  require("personal-plugins.misc").inspectBuffer()
+end, { desc = "Buffer: Inspect info" })
+
+-- Sticky yank (from v12 config) - cursor doesn't move after yank
+map({ "n", "x" }, "gy", function()
+  vim.b.cursorPreYank = vim.api.nvim_win_get_cursor(0)
+  return "y"
+end, { expr = true, desc = "Yank (sticky - cursor stays)" })
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+  desc = "Sticky yank: return cursor to position",
+  callback = function()
+    if vim.v.event.operator == "y" and vim.v.event.regname == "" and vim.b.cursorPreYank then
+      vim.api.nvim_win_set_cursor(0, vim.b.cursorPreYank)
+      vim.b.cursorPreYank = nil
+    end
+  end,
+})
+
+-- Cyclic paste (from v12 config) - paste through deletion history with u.u.u.
+map("n", "<leader>p", '"1p', { desc = "Paste: Cyclic paste from history" })
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+  desc = "Cyclic paste: store yanks in register 1",
+  callback = function()
+    if vim.v.event.operator == "y" and vim.v.event.regname == "" then
+      vim.fn.setreg("1", vim.fn.getreg("0"))
+    end
+  end,
+})
