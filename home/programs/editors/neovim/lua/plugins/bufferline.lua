@@ -248,7 +248,7 @@ return {
         -- Appearance
         separator_style = { icons.buffer.separator, icons.buffer.separator },
         indicator = {
-          icon = "▎",
+          icon = "☕", -- Coffee cup indicator (fun visual marker)
           style = "icon",
         },
 

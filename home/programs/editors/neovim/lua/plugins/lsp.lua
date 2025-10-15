@@ -79,6 +79,9 @@ return {
                 semicolon = "Disable",
                 arrayIndex = "Disable",
               },
+              codeLens = {
+                enable = true,
+              },
               doc = {
                 privateName = { "^_" },
               },
