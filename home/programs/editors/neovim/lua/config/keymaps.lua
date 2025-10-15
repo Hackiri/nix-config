@@ -86,12 +86,47 @@ map("n", "<leader>bx", ":bdelete<CR>", { desc = "Close buffer" })
 map("n", "<Tab>", ":bnext<CR>", { desc = "Next buffer" })
 map("n", "<S-Tab>", ":bprevious<CR>", { desc = "Previous buffer" })
 
+-- Neovim 0.11+ Default LSP Keymaps
+-- Override the built-in gr* mappings to use FzfLua for better UI
+-- These mappings are set by Neovim 0.11+ by default, but we override them here
+map("n", "grn", vim.lsp.buf.rename, { desc = "LSP Rename" })
+map("n", "grr", "<cmd>FzfLua lsp_references<cr>", { desc = "LSP References" })
+map("n", "gri", "<cmd>FzfLua lsp_implementations<cr>", { desc = "LSP Implementations" })
+map("n", "gra", vim.lsp.buf.code_action, { desc = "LSP Code Actions" })
+map("n", "grt", "<cmd>FzfLua lsp_typedefs<cr>", { desc = "LSP Type Definition" })
+map("n", "gO", "<cmd>FzfLua lsp_document_symbols<cr>", { desc = "LSP Document Symbols" })
+
+-- Signature help in insert mode (Neovim 0.11+ default)
+map("i", "<C-s>", vim.lsp.buf.signature_help, { desc = "LSP Signature Help" })
+
 -- Diagnostics Navigation (LSP-independent)
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 map("n", "<leader>dt", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle diagnostics" })
+
+-- Toggle virtual text diagnostics mode (all lines vs current line only)
+-- Neovim 0.11+ feature to reduce clutter
+map("n", "<leader>dv", function()
+  local current_config = vim.diagnostic.config()
+  local current_virt_text = current_config.virtual_text
+
+  if type(current_virt_text) == "table" and current_virt_text.only_current_line then
+    -- Currently showing only current line, switch to all lines
+    vim.diagnostic.config({
+      virtual_text = vim.tbl_extend("force", current_virt_text, { only_current_line = false }),
+    })
+    vim.notify("Virtual text: All lines", vim.log.levels.INFO)
+  else
+    -- Currently showing all lines, switch to current line only
+    local virt_text_config = type(current_virt_text) == "table" and current_virt_text or {}
+    vim.diagnostic.config({
+      virtual_text = vim.tbl_extend("force", virt_text_config, { only_current_line = true }),
+    })
+    vim.notify("Virtual text: Current line only", vim.log.levels.INFO)
+  end
+end, { desc = "Toggle virtual text mode (all/current line)" })
 
 -- Trouble.nvim (<leader>x prefix for diagnostics/trouble)
 map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Toggle Diagnostics (Trouble)" })

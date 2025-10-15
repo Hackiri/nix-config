@@ -1,3 +1,11 @@
+-- LSP Configuration
+-- This config is compatible with Neovim 0.11+ which introduces:
+--   - New vim.lsp.config() and vim.lsp.enable() APIs (used below)
+--   - Default keymaps: grn, grr, gri, gra, grt, gO, <C-S> (overridden in keymaps.lua)
+--   - Virtual text diagnostics now opt-in (explicitly enabled below)
+--   - New diagnostic display options: only_current_line, virtual_lines
+-- See: https://gpanders.com/blog/whats-new-in-neovim-0-11/
+
 return {
   {
     "neovim/nvim-lspconfig",
@@ -462,6 +470,11 @@ return {
       })
 
       -- Configure diagnostics
+      -- NOTE: Neovim 0.11+ changes:
+      --   - Virtual text is now opt-in (disabled by default)
+      --   - New 'only_current_line' option available to reduce clutter
+      --   - Virtual lines option available (set virtual_lines = true)
+      -- We explicitly enable virtual_text here and provide a toggle via <leader>dv
       vim.diagnostic.config({
         severity_sort = true,
         float = { border = "rounded", source = "if_many" },
@@ -474,6 +487,9 @@ return {
           end,
           source = "if_many",
           spacing = 2,
+          -- Set only_current_line = true to show diagnostics only for the current line
+          -- Toggle this via <leader>dv keymap
+          only_current_line = false,
         },
         signs = {
           text = {

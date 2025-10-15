@@ -42,6 +42,7 @@ vim.opt.cursorline = true -- Enable highlighting of the current line
 vim.opt.cmdheight = 0 -- Hide command line unless needed
 vim.opt.laststatus = 3 -- Global statusline
 vim.opt.guicursor = "n-v-c:block-Cursor/lCursor"
+vim.opt.winborder = "rounded" -- Rounded window borders
 
 -- Visualize whitespace (from kickstart)
 vim.opt.list = true
