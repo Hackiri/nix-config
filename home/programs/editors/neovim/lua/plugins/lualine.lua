@@ -4,6 +4,7 @@ return {
   dependencies = {
     "nvim-tree/nvim-web-devicons",
     "nvim-lua/lsp-status.nvim", -- For LSP status
+    "folke/trouble.nvim", -- For symbol statusline integration
   },
   config = function()
     local lualine = require("lualine")
@@ -371,6 +372,25 @@ return {
       color = { fg = colors.purple },
     }
 
+    -- Trouble symbols statusline integration
+    local trouble_symbols = {
+      get = function() return "" end,
+      has = function() return false end,
+    }
+
+    -- Initialize Trouble symbols statusline if available
+    local ok, trouble = pcall(require, "trouble")
+    if ok then
+      trouble_symbols = trouble.statusline({
+        mode = "lsp_document_symbols",
+        groups = {},
+        title = false,
+        filter = { range = true },
+        format = "{kind_icon}{symbol.name:Normal}",
+        hl_group = "lualine_c_normal",
+      })
+    end
+
     -- Setup
     require("lualine").setup({
       options = {
@@ -421,6 +441,12 @@ return {
         lualine_c = {
           filename,
           diagnostics,
+          -- Trouble: Current symbol (function, class, etc.)
+          {
+            trouble_symbols.get,
+            cond = trouble_symbols.has,
+            color = { fg = colors.cyan, gui = "italic" },
+          },
           {
             get_lsp_status,
             color = { fg = colors.blue, gui = "bold" },
