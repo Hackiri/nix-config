@@ -8,6 +8,7 @@ return {
   dependencies = {
     "moyiz/blink-emoji.nvim",
     "Kaiser-Yang/blink-cmp-dictionary",
+    "olimorris/codecompanion.nvim", -- CodeCompanion AI suggestions
     {
       "saghen/blink.compat",
       version = "2.*", -- Use v2.* for blink.cmp v1.*
@@ -20,7 +21,7 @@ return {
   opts = function(_, opts)
     -- Merge custom sources with the existing ones from lazyvim
     opts.sources = vim.tbl_deep_extend("force", opts.sources or {}, {
-      default = { "lsp", "path", "snippets", "buffer", "dadbod", "emoji", "dictionary", "codeium" },
+      default = { "lsp", "path", "snippets", "buffer", "dadbod", "emoji", "dictionary", "codeium", "codecompanion" },
       providers = {
         lsp = {
           name = "lsp",
@@ -198,6 +199,13 @@ return {
           opts = {
             -- This will be passed to the codeium nvim-cmp source
           },
+        },
+        codecompanion = {
+          name = "CodeCompanion",
+          module = "codecompanion.providers.completion.blink",
+          enabled = true,
+          async = true,
+          score_offset = 95, -- High priority, slightly below codeium
         },
       },
     })
