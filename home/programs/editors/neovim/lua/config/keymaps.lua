@@ -17,7 +17,7 @@ map("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
 map("n", "<C-q>", "<cmd>q<CR>", { desc = "Quit file" })
 
 -- Search Improvements
-map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
+-- Note: Auto-nohlsearch is handled by autocmds.lua (auto-nohl with search count)
 map("n", "n", "nzzzv", { desc = "Next result and center" })
 map("n", "N", "Nzzzv", { desc = "Previous result and center" })
 
@@ -131,9 +131,7 @@ map("n", "<leader>sR", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>\>/gI<Left><Left><Left>]],
 --   - LSP operations: lua/plugins/lsp.lua (in LspAttach autocmd)
 --   - Harpoon marks: lua/plugins/harpoon.lua
 --   - Aerial outline: lua/plugins/aerial.lua
-map("n", "<leader>ch", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" }) -- Changed from <leader>h to <leader>ch
-map("n", "<leader>+", "<C-a>", { desc = "Increment number" })
-map("n", "<leader>-", "<C-x>", { desc = "Decrement number" })
+-- Note: <leader>ch removed - auto-nohlsearch is handled by autocmds.lua
 
 -- Improved scrolling
 local scroll_percentage = 0.35
@@ -192,24 +190,7 @@ map({ "n", "x" }, "gy", function()
   return "y"
 end, { expr = true, desc = "Yank (sticky - cursor stays)" })
 
-vim.api.nvim_create_autocmd("TextYankPost", {
-  desc = "Sticky yank: return cursor to position",
-  callback = function()
-    if vim.v.event.operator == "y" and vim.v.event.regname == "" and vim.b.cursorPreYank then
-      vim.api.nvim_win_set_cursor(0, vim.b.cursorPreYank)
-      vim.b.cursorPreYank = nil
-    end
-  end,
-})
-
 -- Cyclic paste (from v12 config) - paste through deletion history with u.u.u.
 map("n", "<leader>p", '"1p', { desc = "Paste: Cyclic paste from history" })
 
-vim.api.nvim_create_autocmd("TextYankPost", {
-  desc = "Cyclic paste: store yanks in register 1",
-  callback = function()
-    if vim.v.event.operator == "y" and vim.v.event.regname == "" then
-      vim.fn.setreg("1", vim.fn.getreg("0"))
-    end
-  end,
-})
+-- Note: TextYankPost autocmds consolidated in autocmds.lua (yank_utilities group)

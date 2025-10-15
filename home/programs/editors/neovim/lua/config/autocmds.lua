@@ -82,11 +82,24 @@ M.setup = function()
     command = "checktime",
   })
 
+  -- Consolidated TextYankPost: highlight, sticky cursor, cyclic paste
   vim.api.nvim_create_autocmd("TextYankPost", {
-    desc = "Highlight when yanking (copying) text",
-    group = augroup("highlight_yank"),
+    desc = "Yank utilities: highlight, sticky cursor, cyclic paste",
+    group = augroup("yank_utilities"),
     callback = function()
+      -- Highlight yanked text
       vim.highlight.on_yank()
+
+      -- Sticky yank: return cursor to position (from v12 config)
+      if vim.v.event.operator == "y" and vim.v.event.regname == "" and vim.b.cursorPreYank then
+        vim.api.nvim_win_set_cursor(0, vim.b.cursorPreYank)
+        vim.b.cursorPreYank = nil
+      end
+
+      -- Cyclic paste: store yanks in register 1 (from v12 config)
+      if vim.v.event.operator == "y" and vim.v.event.regname == "" then
+        vim.fn.setreg("1", vim.fn.getreg("0"))
+      end
     end,
   })
 
