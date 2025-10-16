@@ -12,7 +12,7 @@
     ./desktop.nix
 
     # Platform: Linux-specific packages and settings
-    ./platform/nixos.nix
+    ./platform/nixos-pkgs.nix
   ];
 
   # NixOS-specific profile configurations

@@ -145,7 +145,7 @@ nix run nixpkgs#nix-darwin -- switch --flake .
    cp ~/.config/sops/age/keys.txt ~/Library/Application\ Support/sops/age/keys.txt
 
    # Get the public key from the generated file
-   grep "public key:" ~/.config/sops/age/keys.txt
+   grep "KEY"  ~/.config/sops/age/keys.txt
    ```
 
    d. **Update SOPS Configuration**

@@ -12,7 +12,7 @@
     ./desktop.nix
 
     # Platform: macOS-specific packages and settings
-    ./platform/darwin.nix
+    ./platform/darwin-pkgs.nix
 
     # Programs: macOS window management
     ../programs/utilities/aerospace
