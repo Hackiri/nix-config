@@ -44,10 +44,13 @@ return {
       function()
         local mf = require("mini.files")
         if not mf.close() then
-          mf.open(mf.get_fs_entry().path)
+          -- If mini.files wasn't open, open it at the current file/directory
+          local buf_name = vim.api.nvim_buf_get_name(0)
+          local path = vim.fn.filereadable(buf_name) == 1 and buf_name or vim.fn.fnamemodify(buf_name, ":p:h")
+          mf.open(path, true)
         end
       end,
-      desc = "Mini Files (Toggle Preview)",
+      desc = "Mini Files (Toggle)",
     },
   },
   opts = {

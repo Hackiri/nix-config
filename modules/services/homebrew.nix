@@ -82,6 +82,7 @@
           # Utilities
           "obsidian" # Note-taking
           "hammerspoon" # Automation
+          "pika" # color picker
 
           # Creative
           "blender"
