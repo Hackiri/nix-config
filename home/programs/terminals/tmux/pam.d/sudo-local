@@ -1,5 +1,0 @@
-# sudo-local: local config file that enables Touch ID for sudo in tmux
-auth       sufficient     pam_tid.so
-auth       sufficient     pam_smartcard.so
-auth       required      pam_opendirectory.so
-auth       required      pam_deny.so
