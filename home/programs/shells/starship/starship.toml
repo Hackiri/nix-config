@@ -4,6 +4,7 @@
 
 add_newline = true
 command_timeout = 2000
+scan_timeout = 10
 continuation_prompt = "[▸▹ ](dimmed white)"
 
 format = """($nix_shell$container$fill$git_metrics\n)$cmd_duration\
@@ -59,6 +60,7 @@ $ocaml\
 $opa\
 $perl\
 $php\
+$typst\
 $pulumi\
 $purescript\
 $python\
@@ -75,6 +77,7 @@ $vlang\
 $vagrant\
 $zig\
 $buf\
+$bun\
 $conda\
 $meson\
 $spack\
@@ -260,9 +263,9 @@ style = "bold bright-yellow"
 [nodejs]
 format = " [node](italic) [◫ ($version)](bold bright-green)"
 version_format = "${raw}"
-detect_files = ["package-lock.json", "yarn.lock"]
+detect_files = ["package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb"]
 detect_folders = ["node_modules"]
-detect_extensions = []
+detect_extensions = ["js", "mjs", "cjs", "ts"]
 
 [python]
 format = " [py](italic) [${symbol}${version}]($style)"
@@ -293,6 +296,20 @@ format = " [sw](italic) [${symbol}${version}]($style)"
 symbol = "◁ "
 style = "bold bright-red"
 version_format = "${raw}"
+
+[bun]
+format = " [bun](italic) [${symbol}${version}]($style)"
+symbol = "◉ "
+style = "bold yellow"
+version_format = "${raw}"
+
+[typst]
+format = " [ts](italic) [${symbol}${version}]($style)"
+symbol = "⌁ "
+style = "bold blue"
+version_format = "${raw}"
+detect_extensions = ["ts", "tsx", "mts", "cts"]
+detect_files = ["tsconfig.json"]
 
 [aws]
 disabled = true
@@ -358,7 +375,7 @@ symbol = '󱄅'
 format = '[$symbol nix⎪$state⎪]($style) [$name](italic dimmed white)'
 impure_msg = '[⌽](bold dimmed red)'
 pure_msg = '[⌾](bold dimmed green)'
-unknown_msg = '[◌](bold dimmed ellow)'
+unknown_msg = '[◌](bold dimmed yellow)'
 
 [spack]
 symbol = "◇ "

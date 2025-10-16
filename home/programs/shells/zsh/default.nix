@@ -107,43 +107,39 @@ in {
         plugins = [
           "git"
           "sudo"
-          "history"
           "direnv"
-          "fzf"
-          "zoxide"
-          "z"
           "extract"
           "colored-man-pages"
-          "command-not-found"
-          "aliases"
-          "alias-finder"
-          "common-aliases"
-          "copypath"
-          "copyfile"
-          "copybuffer"
-          "dirhistory"
+          "kubectl"
           "docker"
           "docker-compose"
-          "kubectl"
-          "npm"
-          "pip"
-          "python"
-          "rust"
-          "golang"
           "macos"
-          "vscode"
-          "web-search"
           "jsontools"
         ];
       };
 
       initContent = ''
+                # Performance optimizations
+                export DISABLE_AUTO_UPDATE="true"
+                export DISABLE_MAGIC_FUNCTIONS="true"
+                export ZSH_AUTOSUGGEST_USE_ASYNC=1
+                export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+                export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
                 # Set a fixed path for the completion dump
                 export ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump"
 
                 # Ensure cache directory exists
                 if [[ ! -d "$ZSH_CACHE_DIR" ]]; then
                   mkdir -p "$ZSH_CACHE_DIR"
+                fi
+
+                # Optimize completion loading - only rebuild cache once per day
+                autoload -Uz compinit
+                if [[ -n $ZSH_COMPDUMP(#qN.mh+24) ]]; then
+                  compinit -d "$ZSH_COMPDUMP"
+                else
+                  compinit -C -d "$ZSH_COMPDUMP"
                 fi
 
                 # Initialize zoxide with cd as the command
@@ -302,8 +298,7 @@ in {
                 # Interactive status view with detailed file information and actions
                 _gst() {
                   is_in_git_repo || return
-                  local cmd="''${FZF_CTRL_T_COMMAND:-\"git status --short\"}"
-                  eval "''$cmd" | fzf-down --ansi \
+                  git status --short | fzf-down --ansi \
                     --preview 'git diff --color=always {2}' \
                     --header 'Press CTRL-A to add/unstage, CTRL-C to commit' \
                     --bind 'ctrl-a:execute(git add {2} || git restore --staged {2})' \
@@ -358,15 +353,15 @@ in {
                 bind-git-helper f b t r h s st a c
                 unset -f bind-git-helper
 
-                # Initialize Starship prompt
-                eval "$(starship init zsh)"
-
-                # Source oh-my-zsh
+                # Source oh-my-zsh first (before Starship)
                 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
                   source "$ZSH/oh-my-zsh.sh"
                 else
                   echo "Warning: oh-my-zsh.sh not found at $ZSH/oh-my-zsh.sh"
                 fi
+
+                # Initialize Starship prompt (must be after oh-my-zsh)
+                eval "$(starship init zsh)"
 
                 # Basic configurations
                 zstyle ':completion:*' matcher-list "" 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'

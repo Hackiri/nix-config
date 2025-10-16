@@ -122,7 +122,6 @@
   gaa = "git add .";
   gcmsg = "git commit -m";
   gst = "git status .";
-  gitsave = "gaa && gcmsg '.' && gpush";
   gco = "git checkout";
   gcb = "git checkout -b";
   gcm = "git checkout main";
@@ -131,9 +130,7 @@
   gpush = "git push";
   glast = "git log -1 HEAD";
 
-  # System and utility commands
-  kbrestart = "systemctl --user restart keybase";
-  restartemacs = "systemctl --user restart emacs";
+  # System and utility commands (macOS uses launchctl, not systemctl)
   edit = "emacsclient -n -c";
   ednix = "emacsclient -nw ~/nix-config/flake.nix";
   ec = "emacsclient -nw";
