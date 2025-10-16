@@ -67,8 +67,9 @@
       vim.g.mapleader = " "
       vim.g.maplocalleader = " "
 
-      -- Use system Python
-      -- vim.g.python3_host_prog is not set, so Neovim will find Python in PATH
+      -- Python configuration
+      -- Nix provides Python with required packages via extraPython3Packages
+      -- Neovim will automatically find it in PATH (no need to set python3_host_prog)
 
       -- Capture neovim_mode from environment variable
       vim.g.neovim_mode = vim.env.NEOVIM_MODE or "default"
