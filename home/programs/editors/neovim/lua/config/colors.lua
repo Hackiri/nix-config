@@ -36,6 +36,8 @@ M.colors = {
   color11 = "#f16c75", -- Underline spellbad
   color12 = "#f1fc79", -- Underline spellcap
   color14 = "#ffffff", -- Cursor and tmux windows text
+  color16 = "#e9b3fd", -- Visual selection background
+  color24 = "#f94dff", -- Cursor background and bold text
 }
 
 -- Apply colors to Neovim highlight groups
