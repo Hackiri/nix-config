@@ -84,16 +84,70 @@ darwin.nix / nixos.nix (platform-specific)
 ---
 
 ### `nixos.nix` - NixOS Profile
-**Purpose**: NixOS-specific configuration entry point  
+**Purpose**: NixOS-specific configuration entry point
 **Includes**:
 - All tools from desktop → development → minimal chain
 - Linux-specific packages and settings
 - X11/Wayland utilities
 
-**Inherits from**: `desktop.nix`  
-**Platform**: NixOS (Linux)  
+**Inherits from**: `desktop.nix`
+**Platform**: NixOS (Linux)
 **Imports**:
 - Platform: platform/nixos.nix
+
+---
+
+### `kube-dev.nix` - Kubernetes Development Profile
+**Purpose**: Kubernetes engineer workflow with configurable toolsets
+**Includes**:
+- Remote cluster management tools (kubectl, helm, kubectx, kubecolor)
+- GitOps and CI/CD tools (ArgoCD, Flux, Skaffold, Tekton)
+- Infrastructure as Code (Terraform, Pulumi, Ansible)
+- Cloud provider CLIs (AWS, GCP, Azure)
+- Local development cluster tools (kind, tilt, kubeconform)
+- K9s terminal UI with custom configuration
+- 60+ kubectl/helm shell aliases
+- Neovim Kubernetes snippets
+
+**Standalone profile**: Can be imported into any configuration
+**Configuration options**:
+```nix
+profiles.kube-dev = {
+  enable = true;
+  toolset = "devops";      # Options: "devops" or "complete"
+  includeLocalDev = true;  # Include kind, tilt, kubeconform
+};
+```
+
+**Toolset options**:
+- `devops`: CI/CD and GitOps workflows (recommended for remote clusters)
+  - Core: kubectl, helm, kustomize, kubectx, kubecolor
+  - GitOps: argocd, flux, skaffold, tekton
+  - IaC: terraform, pulumi, ansible
+  - Cloud: AWS, GCP, Azure CLIs
+  - Containers: skopeo, dive, crane
+  - CNI: cilium-cli
+  - Distributions: talosctl, k0sctl
+
+- `complete`: All available Kubernetes tools (includes observability, security, service mesh)
+  - Everything in devops + k9s, stern, popeye, kube-bench, istio, linkerd, helm plugins, etc.
+
+**Usage example**:
+```nix
+# hosts/mbp/home.nix
+{
+  imports = [
+    ../../home/profiles/darwin.nix
+    ../../home/profiles/kube-dev.nix
+  ];
+
+  profiles.kube-dev = {
+    enable = true;
+    toolset = "devops";
+    includeLocalDev = true;
+  };
+}
+```
 
 ---
 

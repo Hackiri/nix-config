@@ -169,7 +169,8 @@
       operations = core ++ contextManagement ++ observability ++ security ++ networking ++ distributions;
 
       # DevOps set for CI/CD and GitOps to remote clusters
-      devops = core ++ contextManagement ++ gitops ++ iac ++ containers ++ cloudClis;
+      # Includes CNI management (Cilium) and modern K8s distributions (Talos)
+      devops = core ++ contextManagement ++ gitops ++ iac ++ containers ++ cloudClis ++ networking ++ distributions;
 
       # Security-focused set for cluster auditing
       security-focused = core ++ security ++ observability ++ devUtils;
