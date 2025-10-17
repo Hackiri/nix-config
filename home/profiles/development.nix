@@ -34,9 +34,7 @@
     ../packages/security.nix
     ../packages/terminals.nix
     ../packages/web-dev.nix
-
-    # Packages: Custom overlay packages
-    ../packages/custom
+    ../packages/custom.nix # Custom packages from /pkgs/
   ];
 
   # Development-specific home configuration
