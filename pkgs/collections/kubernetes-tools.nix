@@ -183,5 +183,5 @@
     };
   };
 in
-  # Export the complete tool set by default, but make categories available
-  kubernetesTools.all
+  # Export the kubernetesTools record with all categories and sets
+  kubernetesTools
