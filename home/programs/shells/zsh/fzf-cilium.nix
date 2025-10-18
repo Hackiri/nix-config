@@ -179,7 +179,7 @@ _: ''
 
   # Cilium Debug Info (^c^d)
   # Gather debug information from Cilium pod
-  _cd() {
+  _cdebug() {
     is_cilium_available || return
     local pod
     pod="$(_cp)"
@@ -206,7 +206,7 @@ _: ''
   }
 
   # Bind Cilium helper functions
-  # p=pods, s=status, t=connectivity-test, e=endpoints, m=monitor, l=policies, v=service-map, b=bpf-maps, u=hubble-ui, o=hubble-observe, h=health, d=debug
-  bind-cilium-helper p s t e m l v b u o h d
+  # p=pods, s=status, t=connectivity-test, e=endpoints, m=monitor, l=policies, v=service-map, b=bpf-maps, u=hubble-ui, o=hubble-observe, h=health, debug=debug
+  bind-cilium-helper p s t e m l v b u o h debug
   unset -f bind-cilium-helper
 ''

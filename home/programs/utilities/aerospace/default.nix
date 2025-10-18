@@ -286,7 +286,7 @@
       # Workspace F - Finder (floating)
       [[on-window-detected]]
       if.app-id = 'com.apple.finder'
-      run = ['move-node-to-workspace F', 'layout floating']
+      run = ['layout floating', 'move-node-to-workspace F']
 
       # Workspace P - Productivity/Tools
       [[on-window-detected]]

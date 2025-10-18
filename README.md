@@ -234,3 +234,18 @@ dots         # cd ~/nix-config
 files        # Open yazi file manager
 vi           # nvim (Neovim)
 ```
+
+## Documentation
+
+Detailed documentation for specific components:
+
+### Core Configuration
+- **[Home Manager Profiles](home/profiles/README.md)** - User profile system (minimal, development, desktop, darwin, nixos)
+- **[Custom Packages](pkgs/README.md)** - Custom Nix packages and development tools
+
+### Programs
+- **[Zsh Configuration](home/programs/shells/zsh/README.md)** - Comprehensive Zsh setup with FZF keybindings and aliases
+- **[Development Tools](home/programs/development/README.md)** - Direnv and Git configuration
+- **[Kubernetes Tools](home/programs/kubernetes/README.md)** - Kubernetes toolsets and utilities
+- **[Neovim Configuration](home/programs/editors/neovim/Docs/README.md)** - Enhanced Neovim setup with v12 features
+- **[Neovim Snippets](home/programs/editors/neovim/lua/snippets/README.md)** - Custom code snippets
