@@ -31,11 +31,46 @@ macos-option-as-alt = right
 # Quick terminal slide animation duration (0 = disabled)
 quick-terminal-animation-duration = 0.08
 
-# Toggle inspector panel
-keybind = super+i=inspector:toggle
+# ===== Keybindings =====
 
-# Reload configuration
+# System controls
+keybind = super+i=inspector:toggle
 keybind = super+r=reload_config
+
+# Tab management (super+t conflicts avoided, using super+shift)
+keybind = super+shift+t=new_tab
+keybind = super+shift+w=close_surface
+keybind = super+shift+[=previous_tab
+keybind = super+shift+]=next_tab
+keybind = super+1=goto_tab:1
+keybind = super+2=goto_tab:2
+keybind = super+3=goto_tab:3
+keybind = super+4=goto_tab:4
+keybind = super+5=goto_tab:5
+keybind = super+6=goto_tab:6
+keybind = super+7=goto_tab:7
+keybind = super+8=goto_tab:8
+keybind = super+9=goto_tab:9
+
+# Split management (avoid super+h/j/k/l which might be used in nvim terminal mode)
+keybind = super+shift+d=new_split:right
+keybind = super+shift+down=new_split:down
+keybind = super+shift+left=goto_split:left
+keybind = super+shift+right=goto_split:right
+keybind = super+shift+up=goto_split:top
+keybind = super+shift+down=goto_split:bottom
+keybind = super+shift+x=close_surface
+
+# Split resizing
+keybind = super+ctrl+left=resize_split:left,10
+keybind = super+ctrl+right=resize_split:right,10
+keybind = super+ctrl+up=resize_split:up,10
+keybind = super+ctrl+down=resize_split:down,10
+keybind = super+shift+equal=equalize_splits
+
+# Window management
+keybind = super+n=new_window
+keybind = super+shift+n=new_window:new-instance
 
 # App icon style (official, blueprint, chalkboard, microchip, glass, holographic, paper, retro, xray)
 macos-icon = official

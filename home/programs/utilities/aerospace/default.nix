@@ -60,34 +60,60 @@
       # Main mode bindings
       [mode.main.binding]
       # Launch applications
-      alt-shift-enter = 'exec-and-forget open -na alacritty'
-      alt-shift-b = 'exec-and-forget open -a "Brave Browser"'
-      alt-shift-t = 'exec-and-forget open -a "Telegram"'
-      alt-shift-f = 'exec-and-forget open -a Finder'
+      alt-shift-enter = 'exec-and-forget open -na ghostty'
+      cmd-shift-enter = 'exec-and-forget open -na alacritty'
+      ctrl-shift-b = 'exec-and-forget open -a "Brave Browser"'
+      ctrl-shift-t = 'exec-and-forget open -a "Telegram"'
+      ctrl-shift-f = 'exec-and-forget open -a Finder'
+      ctrl-shift-n = 'exec-and-forget open -a Notion'
+      ctrl-shift-o = 'exec-and-forget open -a Obsidian'
+      ctrl-shift-v = 'exec-and-forget open -na neovide'
 
       # Window management
       alt-q = "close"
+      alt-shift-q = "close-all-windows-but-current"
       alt-slash = 'layout tiles horizontal vertical'
       alt-comma = 'layout accordion horizontal vertical'
+      alt-period = 'layout floating tiling'
 
-      # Focus movement - using cmd-shift for better ergonomics
-      cmd-shift-h = 'focus left'
-      cmd-shift-j = 'focus down'
-      cmd-shift-k = 'focus up'
-      cmd-shift-l = 'focus right'
+      # Focus movement - using alt+hjkl (won't conflict with neovim/neovide)
+      alt-h = 'focus left'
+      alt-j = 'focus down'
+      alt-k = 'focus up'
+      alt-l = 'focus right'
 
       # Focus back-and-forth for quick workspace switching
-      alt-o = 'focus-back-and-forth'
+      alt-tab = 'workspace-back-and-forth'
 
-      # Window movement - using ctrl-shift to separate from focus
-      ctrl-shift-h = 'move left'
-      ctrl-shift-j = 'move down'
-      ctrl-shift-k = 'move up'
-      ctrl-shift-l = 'move right'
+      # Focus monitors
+      alt-left = 'focus-monitor left'
+      alt-right = 'focus-monitor right'
+      alt-up = 'focus-monitor up'
+      alt-down = 'focus-monitor down'
 
-      # Resize windows
+      # Window movement - using alt-shift to pair with focus
+      alt-shift-h = 'move left'
+      alt-shift-j = 'move down'
+      alt-shift-k = 'move up'
+      alt-shift-l = 'move right'
+
+      # Move to monitors
+      alt-shift-left = 'move-node-to-monitor left'
+      alt-shift-right = 'move-node-to-monitor right'
+      alt-shift-up = 'move-node-to-monitor up'
+      alt-shift-down = 'move-node-to-monitor down'
+
+      # Resize windows (fine-grained and coarse)
+      ctrl-alt-h = 'resize width -50'
+      ctrl-alt-j = 'resize height +50'
+      ctrl-alt-k = 'resize height -50'
+      ctrl-alt-l = 'resize width +50'
       alt-shift-minus = 'resize smart -50'
       alt-shift-equal = 'resize smart +50'
+
+      # Fullscreen and maximize
+      alt-shift-f = 'fullscreen'
+      alt-shift-m = 'macos-native-fullscreen'
 
       # Workspace management - keeping numeric for compatibility
       alt-1 = 'workspace 1'
@@ -153,58 +179,152 @@
       alt-shift-k = ['join-with up', 'mode main']
       alt-shift-l = ['join-with right', 'mode main']
 
-      # Window detection rules
+      # Window detection rules - organized by workspace
+
+      # Workspace B - Browsers
       [[on-window-detected]]
       if.app-id = 'com.brave.Browser'
-      run = 'move-node-to-workspace 1'
+      run = 'move-node-to-workspace B'
+
+      [[on-window-detected]]
+      if.app-id = 'com.google.Chrome'
+      run = 'move-node-to-workspace B'
+
+      [[on-window-detected]]
+      if.app-id = 'app.zen-browser.zen'
+      run = 'move-node-to-workspace B'
+
+      [[on-window-detected]]
+      if.app-id = 'org.mozilla.firefox'
+      run = 'move-node-to-workspace B'
+
+      [[on-window-detected]]
+      if.app-id = 'company.thebrowser.Browser'
+      run = 'move-node-to-workspace B'
+
+      # Workspace T - Terminals
+      [[on-window-detected]]
+      if.app-id = 'com.mitchellh.ghostty'
+      run = 'move-node-to-workspace T'
 
       [[on-window-detected]]
       if.app-id = 'org.alacritty'
-      run = 'move-node-to-workspace 2'
+      run = 'move-node-to-workspace T'
 
+      [[on-window-detected]]
+      if.app-id = 'com.apple.Terminal'
+      run = 'move-node-to-workspace T'
+
+      [[on-window-detected]]
+      if.app-id = 'net.kovidgoyal.kitty'
+      run = 'move-node-to-workspace T'
+
+      # Workspace E - Editors (Code/Text)
+      [[on-window-detected]]
+      if.app-id = 'com.microsoft.VSCode'
+      run = 'move-node-to-workspace E'
+
+      [[on-window-detected]]
+      if.app-id = 'com.neovide.neovide'
+      run = 'move-node-to-workspace E'
+
+      [[on-window-detected]]
+      if.app-id = 'org.gnu.Emacs'
+      run = 'move-node-to-workspace E'
+
+      [[on-window-detected]]
+      if.app-id = 'com.jetbrains.intellij'
+      run = 'move-node-to-workspace E'
+
+      # Workspace N - Notes
+      [[on-window-detected]]
+      if.app-id = 'notion.id'
+      run = 'move-node-to-workspace N'
+
+      [[on-window-detected]]
+      if.app-id = 'md.obsidian'
+      run = 'move-node-to-workspace N'
+
+      [[on-window-detected]]
+      if.app-id = 'com.apple.Notes'
+      run = 'move-node-to-workspace N'
+
+      [[on-window-detected]]
+      if.app-id = 'com.logseq.logseq'
+      run = 'move-node-to-workspace N'
+
+      # Workspace M - Media & Communication
       [[on-window-detected]]
       if.app-id = 'com.tdesktop.Telegram'
-      run = 'move-node-to-workspace 3'
+      run = 'move-node-to-workspace M'
 
       [[on-window-detected]]
-      if.app-id = 'com.obsproject.obs-studio'
-      run = 'move-node-to-workspace 4'
+      if.app-id = 'com.hnc.Discord'
+      run = 'move-node-to-workspace M'
+
+      [[on-window-detected]]
+      if.app-id = 'com.tinyspeck.slackmacgap'
+      run = 'move-node-to-workspace M'
+
+      [[on-window-detected]]
+      if.app-id = 'com.spotify.client'
+      run = 'move-node-to-workspace M'
 
       [[on-window-detected]]
       if.app-id = 'us.zoom.xos'
-      run = 'move-node-to-workspace 5'
+      run = 'move-node-to-workspace M'
+
+      # Workspace V - Video/Recording
+      [[on-window-detected]]
+      if.app-id = 'com.obsproject.obs-studio'
+      run = 'move-node-to-workspace V'
 
       [[on-window-detected]]
-      if.app-name-regex-substring = 'finder'
-      run = 'layout floating'
+      if.app-id = 'com.loom.desktop'
+      run = 'move-node-to-workspace V'
 
+      # Workspace F - Finder (floating)
+      [[on-window-detected]]
+      if.app-id = 'com.apple.finder'
+      run = ['move-node-to-workspace F', 'layout floating']
+
+      # Workspace P - Productivity/Tools
+      [[on-window-detected]]
+      if.app-id = 'com.1password.1password'
+      run = 'move-node-to-workspace P'
+
+      [[on-window-detected]]
+      if.app-id = 'com.raycast.macos'
+      run = 'move-node-to-workspace P'
+
+      # Floating windows (utilities and system apps)
       [[on-window-detected]]
       if.app-name-regex-substring = 'Shottr'
       run = 'layout floating'
 
       [[on-window-detected]]
-      if.app-id = 'com.mitchellh.ghostty'
-      run = "move-node-to-workspace T"
+      if.app-id = 'com.apple.systempreferences'
+      run = 'layout floating'
 
       [[on-window-detected]]
-      if.app-id = 'com.google.Chrome'
-      run = "move-node-to-workspace B"
+      if.app-id = 'com.apple.ActivityMonitor'
+      run = 'layout floating'
 
       [[on-window-detected]]
-      if.app-id = 'app.zen-browser.zen'
-      run = "move-node-to-workspace B"
+      if.app-id = 'com.apple.archiveutility'
+      run = 'layout floating'
 
       [[on-window-detected]]
-      if.app-id = 'com.apple.finder'
-      run = "move-node-to-workspace F"
+      if.app-id = 'com.apple.calculator'
+      run = 'layout floating'
 
       [[on-window-detected]]
-      if.app-id = 'notion.id'
-      run = "move-node-to-workspace N"
+      if.app-name-regex-substring = '(?i)settings'
+      run = 'layout floating'
 
       [[on-window-detected]]
-      if.app-id = 'md.obsidian'
-      run = "move-node-to-workspace N"
+      if.app-name-regex-substring = '(?i)preference'
+      run = 'layout floating'
     '';
   };
 }
