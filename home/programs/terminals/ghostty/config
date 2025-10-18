@@ -25,9 +25,6 @@ macos-titlebar-style = hidden
 # Disable close confirmation prompts
 confirm-close-surface = false
 
-# System-wide keybind to toggle dropdown/quake-style quick terminal
-keybind = global:cmd+s=toggle_quick_terminal
-
 # Right Option key behaves as Alt for terminal sequences
 macos-option-as-alt = right
 

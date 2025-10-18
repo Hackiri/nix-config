@@ -83,21 +83,23 @@
     '';
   };
 
-  # Symlink custom Lua configuration files
-  xdg.configFile."nvim/lua" = {
-    source = ./lua;
-    recursive = true;
-  };
+  # Symlink custom Lua configuration files, dictionaries, and spell files
+  xdg.configFile = {
+    "nvim/lua" = {
+      source = ./lua;
+      recursive = true;
+    };
 
-  # Symlink dictionaries for blink-cmp dictionary completion
-  xdg.configFile."nvim/dictionaries" = {
-    source = ./dictionaries;
-    recursive = true;
-  };
+    # Symlink dictionaries for blink-cmp dictionary completion
+    "nvim/dictionaries" = {
+      source = ./dictionaries;
+      recursive = true;
+    };
 
-  # Symlink spell files for vim spell checking and dictionary completion
-  xdg.configFile."nvim/spell" = {
-    source = ./spell;
-    recursive = true;
+    # Symlink spell files for vim spell checking and dictionary completion
+    "nvim/spell" = {
+      source = ./spell;
+      recursive = true;
+    };
   };
 }

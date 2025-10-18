@@ -6,11 +6,11 @@ local f = ls.function_node
 local fmt = require("luasnip.extras.fmt").fmt
 
 local docker_snippets = {
-      -- Multi-stage Node.js
-      s(
-        "dfnode",
-        fmt(
-          [[
+  -- Multi-stage Node.js
+  s(
+    "dfnode",
+    fmt(
+      [[
 # Build stage
 FROM node:{}-alpine AS builder
 
@@ -41,24 +41,24 @@ EXPOSE {}
 
 CMD ["{}"]
 ]],
-          {
-            i(1, "20"),
-            i(2, "RUN npm run build"),
-            f(function(args)
-              return args[1][1]
-            end, { 1 }),
-            i(3, "COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist"),
-            i(4, "3000"),
-            i(5, "node", "server.js"),
-          }
-        )
-      ),
+      {
+        i(1, "20"),
+        i(2, "RUN npm run build"),
+        f(function(args)
+          return args[1][1]
+        end, { 1 }),
+        i(3, "COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist"),
+        i(4, "3000"),
+        i(5, "node", "server.js"),
+      }
+    )
+  ),
 
-      -- Python with Poetry
-      s(
-        "dfpython",
-        fmt(
-          [[
+  -- Python with Poetry
+  s(
+    "dfpython",
+    fmt(
+      [[
 FROM python:{}-slim
 
 WORKDIR /app
@@ -85,20 +85,20 @@ EXPOSE {}
 
 CMD ["python", "{}"]
 ]],
-          {
-            i(1, "3.11"),
-            i(2, "gcc"),
-            i(3, "8000"),
-            i(4, "main.py"),
-          }
-        )
-      ),
+      {
+        i(1, "3.11"),
+        i(2, "gcc"),
+        i(3, "8000"),
+        i(4, "main.py"),
+      }
+    )
+  ),
 
-      -- Go multi-stage
-      s(
-        "dfgo",
-        fmt(
-          [[
+  -- Go multi-stage
+  s(
+    "dfgo",
+    fmt(
+      [[
 # Build stage
 FROM golang:{}-alpine AS builder
 
@@ -123,18 +123,18 @@ EXPOSE {}
 
 CMD ["./main"]
 ]],
-          {
-            i(1, "1.21"),
-            i(2, "8080"),
-          }
-        )
-      ),
+      {
+        i(1, "1.21"),
+        i(2, "8080"),
+      }
+    )
+  ),
 
-      -- Rust multi-stage
-      s(
-        "dfrust",
-        fmt(
-          [[
+  -- Rust multi-stage
+  s(
+    "dfrust",
+    fmt(
+      [[
 # Build stage
 FROM rust:{}-alpine AS builder
 
@@ -162,22 +162,22 @@ EXPOSE {}
 
 CMD ["./{}"]
 ]],
-          {
-            i(1, "1.75"),
-            i(2, "app"),
-            i(3, "8080"),
-            f(function(args)
-              return args[1][1]
-            end, { 2 }),
-          }
-        )
-      ),
+      {
+        i(1, "1.75"),
+        i(2, "app"),
+        i(3, "8080"),
+        f(function(args)
+          return args[1][1]
+        end, { 2 }),
+      }
+    )
+  ),
 
-      -- Nginx static site
-      s(
-        "dfnginx",
-        fmt(
-          [[
+  -- Nginx static site
+  s(
+    "dfnginx",
+    fmt(
+      [[
 FROM nginx:{}-alpine
 
 # Copy custom nginx config
@@ -190,19 +190,19 @@ EXPOSE {}
 
 CMD ["nginx", "-g", "daemon off;"]
 ]],
-          {
-            i(1, "alpine"),
-            i(2, "dist"),
-            i(3, "80"),
-          }
-        )
-      ),
+      {
+        i(1, "alpine"),
+        i(2, "dist"),
+        i(3, "80"),
+      }
+    )
+  ),
 
-      -- Development Dockerfile
-      s(
-        "dfdev",
-        fmt(
-          [[
+  -- Development Dockerfile
+  s(
+    "dfdev",
+    fmt(
+      [[
 FROM {}:{}
 
 WORKDIR /app
@@ -225,23 +225,23 @@ EXPOSE {}
 # Development command with hot reload
 CMD [{}]
 ]],
-          {
-            i(1, "node"),
-            i(2, "20-alpine"),
-            i(3, "RUN apk add --no-cache git"),
-            i(4, "package*.json"),
-            i(5, "RUN npm install"),
-            i(6, "3000"),
-            i(7, '"npm", "run", "dev"'),
-          }
-        )
-      ),
+      {
+        i(1, "node"),
+        i(2, "20-alpine"),
+        i(3, "RUN apk add --no-cache git"),
+        i(4, "package*.json"),
+        i(5, "RUN npm install"),
+        i(6, "3000"),
+        i(7, '"npm", "run", "dev"'),
+      }
+    )
+  ),
 
-      -- Basic Dockerfile template
-      s(
-        "dfbasic",
-        fmt(
-          [[
+  -- Basic Dockerfile template
+  s(
+    "dfbasic",
+    fmt(
+      [[
 FROM {}:{}
 
 WORKDIR /app
@@ -254,21 +254,21 @@ EXPOSE {}
 
 CMD [{}]
 ]],
-          {
-            i(1, "ubuntu"),
-            i(2, "22.04"),
-            i(3, "# Build commands"),
-            i(4, "8080"),
-            i(5, '"./app"'),
-          }
-        )
-      ),
+      {
+        i(1, "ubuntu"),
+        i(2, "22.04"),
+        i(3, "# Build commands"),
+        i(4, "8080"),
+        i(5, '"./app"'),
+      }
+    )
+  ),
 
-      -- .dockerignore file
-      s(
-        "dockerignore",
-        fmt(
-          [[
+  -- .dockerignore file
+  s(
+    "dockerignore",
+    fmt(
+      [[
 # Git
 .git
 .gitignore
@@ -308,11 +308,11 @@ docs
 
 {}
 ]],
-          {
-            i(1, "# Additional ignores"),
-          }
-        )
-      ),
-    }
+      {
+        i(1, "# Additional ignores"),
+      }
+    )
+  ),
+}
 
 return docker_snippets

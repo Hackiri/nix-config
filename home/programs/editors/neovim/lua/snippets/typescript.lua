@@ -6,11 +6,11 @@ local f = ls.function_node
 local fmt = require("luasnip.extras.fmt").fmt
 
 local ts_snippets = {
-      -- React component
-      s(
-        "tsreact",
-        fmt(
-          [[
+  -- React component
+  s(
+    "tsreact",
+    fmt(
+      [[
 import React from 'react'
 
 interface {}Props {{
@@ -23,26 +23,26 @@ export const {}: React.FC<{}Props> = ({{ {} }}) => {{
   )
 }}
 ]],
-          {
-            i(1, "Component"),
-            i(2, "// Props"),
-            f(function(args)
-              return args[1][1]
-            end, { 1 }),
-            f(function(args)
-              return args[1][1]
-            end, { 1 }),
-            i(3, "props"),
-            i(4, "<div>Component</div>"),
-          }
-        )
-      ),
+      {
+        i(1, "Component"),
+        i(2, "// Props"),
+        f(function(args)
+          return args[1][1]
+        end, { 1 }),
+        f(function(args)
+          return args[1][1]
+        end, { 1 }),
+        i(3, "props"),
+        i(4, "<div>Component</div>"),
+      }
+    )
+  ),
 
-      -- API endpoint
-      s(
-        "tsapi",
-        fmt(
-          [[
+  -- API endpoint
+  s(
+    "tsapi",
+    fmt(
+      [[
 export async function {}(
   req: NextApiRequest,
   res: NextApiResponse
@@ -54,31 +54,31 @@ export async function {}(
   }}
 }}
 ]],
-          {
-            i(1, "handler"),
-            i(2, "// Implementation"),
-          }
-        )
-      ),
+      {
+        i(1, "handler"),
+        i(2, "// Implementation"),
+      }
+    )
+  ),
 
-      -- Interface
-      s(
-        "tsinterface",
-        fmt(
-          [[
+  -- Interface
+  s(
+    "tsinterface",
+    fmt(
+      [[
 interface {} {{
   {}: {}
   {}
 }}
 ]],
-          {
-            i(1, "InterfaceName"),
-            i(2, "property"),
-            i(3, "type"),
-            i(4, "// Additional properties"),
-          }
-        )
-      ),
-    }
+      {
+        i(1, "InterfaceName"),
+        i(2, "property"),
+        i(3, "type"),
+        i(4, "// Additional properties"),
+      }
+    )
+  ),
+}
 
 return ts_snippets

@@ -5,7 +5,7 @@
 # through this aggregator to provide better control and clarity.
 #
 # IMPORT LOCATIONS:
-# - development.nix: build-tools, code-quality, databases, languages, network, 
+# - development.nix: build-tools, code-quality, databases, languages, network,
 #                    security, terminals, web-dev, custom
 # - desktop.nix: desktop, utilities
 #
@@ -27,7 +27,6 @@
 # ./terminals.nix      - Terminal applications and tools (tmuxinator, moreutils)
 # ./utilities.nix      - Media and document processing (imagemagick, ghostscript)
 # ./web-dev.nix        - Web development tools (httpie, curl, grpcurl, caddy)
-
 # This is a placeholder module that does nothing
 {pkgs, ...}: {
   # No imports - packages are imported directly in profile files

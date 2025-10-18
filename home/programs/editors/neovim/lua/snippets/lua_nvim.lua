@@ -6,11 +6,11 @@ local f = ls.function_node
 local fmt = require("luasnip.extras.fmt").fmt
 
 local lua_snippets = {
-      -- Neovim plugin structure
-      s(
-        "nvimplugin",
-        fmt(
-          [[
+  -- Neovim plugin structure
+  s(
+    "nvimplugin",
+    fmt(
+      [[
 return {{
   "{}",
   version = "*",
@@ -23,20 +23,20 @@ return {{
     }})
   end,
 }}]],
-          {
-            i(1, "author/plugin"),
-            i(2, "-- dependencies"),
-            i(3, "plugin"),
-            i(4, "-- configuration"),
-          }
-        )
-      ),
+      {
+        i(1, "author/plugin"),
+        i(2, "-- dependencies"),
+        i(3, "plugin"),
+        i(4, "-- configuration"),
+      }
+    )
+  ),
 
-      -- Lazy plugin spec with lazy loading
-      s(
-        "nvimplazy",
-        fmt(
-          [[
+  -- Lazy plugin spec with lazy loading
+  s(
+    "nvimplazy",
+    fmt(
+      [[
 return {{
   "{}",
   lazy = {},
@@ -48,23 +48,23 @@ return {{
     {}
   end,
 }}]],
-          {
-            i(1, "author/plugin"),
-            i(2, "true"),
-            i(3, "VeryLazy"),
-            i(4, "<leader>key"),
-            i(5, "-- action"),
-            i(6, "Description"),
-            i(7, "-- setup"),
-          }
-        )
-      ),
+      {
+        i(1, "author/plugin"),
+        i(2, "true"),
+        i(3, "VeryLazy"),
+        i(4, "<leader>key"),
+        i(5, "-- action"),
+        i(6, "Description"),
+        i(7, "-- setup"),
+      }
+    )
+  ),
 
-      -- Autocommand
-      s(
-        "nvimau",
-        fmt(
-          [[
+  -- Autocommand
+  s(
+    "nvimau",
+    fmt(
+      [[
 vim.api.nvim_create_autocmd("{}", {{
   group = vim.api.nvim_create_augroup("{}", {{ clear = true }}),
   pattern = "{}",
@@ -72,51 +72,51 @@ vim.api.nvim_create_autocmd("{}", {{
     {}
   end,
 }})]],
-          {
-            i(1, "BufEnter"),
-            i(2, "group-name"),
-            i(3, "*"),
-            i(4, "-- callback"),
-          }
-        )
-      ),
+      {
+        i(1, "BufEnter"),
+        i(2, "group-name"),
+        i(3, "*"),
+        i(4, "-- callback"),
+      }
+    )
+  ),
 
-      -- Keymap
-      s(
-        "nvimmap",
-        fmt('vim.keymap.set("{}", "{}", {}, {{ desc = "{}" }})', {
-          i(1, "n"),
-          i(2, "<leader>key"),
-          i(3, "function"),
-          i(4, "Description"),
-        })
-      ),
+  -- Keymap
+  s(
+    "nvimmap",
+    fmt('vim.keymap.set("{}", "{}", {}, {{ desc = "{}" }})', {
+      i(1, "n"),
+      i(2, "<leader>key"),
+      i(3, "function"),
+      i(4, "Description"),
+    })
+  ),
 
-      -- User command
-      s(
-        "nvimcmd",
-        fmt(
-          [[
+  -- User command
+  s(
+    "nvimcmd",
+    fmt(
+      [[
 vim.api.nvim_create_user_command("{}", function(opts)
   {}
 end, {{
   desc = "{}",
   {}
 }})]],
-          {
-            i(1, "CommandName"),
-            i(2, "-- implementation"),
-            i(3, "Command description"),
-            i(4, "-- options"),
-          }
-        )
-      ),
+      {
+        i(1, "CommandName"),
+        i(2, "-- implementation"),
+        i(3, "Command description"),
+        i(4, "-- options"),
+      }
+    )
+  ),
 
-      -- LSP on_attach
-      s(
-        "lspattach",
-        fmt(
-          [[
+  -- LSP on_attach
+  s(
+    "lspattach",
+    fmt(
+      [[
 vim.api.nvim_create_autocmd("LspAttach", {{
   group = vim.api.nvim_create_augroup("lsp-attach-{}", {{ clear = true }}),
   callback = function(event)
@@ -128,18 +128,18 @@ vim.api.nvim_create_autocmd("LspAttach", {{
     {}
   end,
 }})]],
-          {
-            i(1, "custom"),
-            i(2, "-- keymaps"),
-          }
-        )
-      ),
+      {
+        i(1, "custom"),
+        i(2, "-- keymaps"),
+      }
+    )
+  ),
 
-      -- Module pattern
-      s(
-        "luamod",
-        fmt(
-          [[
+  -- Module pattern
+  s(
+    "luamod",
+    fmt(
+      [[
 local M = {{}}
 
 function M.{}({})
@@ -152,20 +152,20 @@ function M.setup(opts)
 end
 
 return M]],
-          {
-            i(1, "function_name"),
-            i(2, "args"),
-            i(3, "-- implementation"),
-            i(4, "-- setup logic"),
-          }
-        )
-      ),
+      {
+        i(1, "function_name"),
+        i(2, "args"),
+        i(3, "-- implementation"),
+        i(4, "-- setup logic"),
+      }
+    )
+  ),
 
-      -- Protected call
-      s(
-        "pcall",
-        fmt(
-          [[
+  -- Protected call
+  s(
+    "pcall",
+    fmt(
+      [[
 local ok, {} = pcall(require, "{}")
 if not ok then
   vim.notify("{} not found", vim.log.levels.{})
@@ -173,19 +173,19 @@ if not ok then
 end
 
 {}]],
-          {
-            i(1, "module"),
-            f(function(args)
-              return args[1][1]
-            end, { 1 }),
-            f(function(args)
-              return args[1][1]
-            end, { 1 }),
-            i(2, "ERROR"),
-            i(3, "-- use module"),
-          }
-        )
-      ),
-    }
+      {
+        i(1, "module"),
+        f(function(args)
+          return args[1][1]
+        end, { 1 }),
+        f(function(args)
+          return args[1][1]
+        end, { 1 }),
+        i(2, "ERROR"),
+        i(3, "-- use module"),
+      }
+    )
+  ),
+}
 
 return lua_snippets

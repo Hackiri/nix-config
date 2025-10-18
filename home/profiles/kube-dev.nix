@@ -57,7 +57,7 @@ in {
     # Enable Kubernetes tools module
     programs.kube = {
       enable = true;
-      toolset = cfg.toolset;
+      inherit (cfg) toolset;
     };
 
     # Add local development tools if enabled

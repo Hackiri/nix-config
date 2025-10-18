@@ -6,11 +6,11 @@ local f = ls.function_node
 local fmt = require("luasnip.extras.fmt").fmt
 
 local docker_compose_snippets = {
-      -- Basic compose file
-      s(
-        "dcbase",
-        fmt(
-          [[
+  -- Basic compose file
+  s(
+    "dcbase",
+    fmt(
+      [[
 version: '3.8'
 
 services:
@@ -20,25 +20,25 @@ services:
     restart: unless-stopped
     ports:
       - "{}:{}"]],
-          {
-            i(1, "app"),
-            i(2, "image-name"),
-            f(function(args)
-              return args[1][1]
-            end, { 1 }),
-            i(3, "8080"),
-            f(function(args)
-              return args[1][1]
-            end, { 3 }),
-          }
-        )
-      ),
+      {
+        i(1, "app"),
+        i(2, "image-name"),
+        f(function(args)
+          return args[1][1]
+        end, { 1 }),
+        i(3, "8080"),
+        f(function(args)
+          return args[1][1]
+        end, { 3 }),
+      }
+    )
+  ),
 
-      -- Node.js service
-      s(
-        "dcnode",
-        fmt(
-          [[
+  -- Node.js service
+  s(
+    "dcnode",
+    fmt(
+      [[
   {}:
     build:
       context: .
@@ -55,29 +55,29 @@ services:
       - /usr/src/app/node_modules
     depends_on:
       - {}]],
-          {
-            i(1, "node-app"),
-            f(function(args)
-              return args[1][1]
-            end, { 1 }),
-            i(2, "development"),
-            i(3, "3000"),
-            f(function(args)
-              return args[1][1]
-            end, { 3 }),
-            f(function(args)
-              return args[1][1]
-            end, { 3 }),
-            i(4, "mongodb"),
-          }
-        )
-      ),
+      {
+        i(1, "node-app"),
+        f(function(args)
+          return args[1][1]
+        end, { 1 }),
+        i(2, "development"),
+        i(3, "3000"),
+        f(function(args)
+          return args[1][1]
+        end, { 3 }),
+        f(function(args)
+          return args[1][1]
+        end, { 3 }),
+        i(4, "mongodb"),
+      }
+    )
+  ),
 
-      -- Database service (MongoDB)
-      s(
-        "dcmongo",
-        fmt(
-          [[
+  -- Database service (MongoDB)
+  s(
+    "dcmongo",
+    fmt(
+      [[
   mongodb:
     image: mongo:{}
     container_name: mongodb
@@ -93,20 +93,20 @@ services:
 
 volumes:
   mongodb_data:]],
-          {
-            i(1, "latest"),
-            i(2, "root"),
-            i(3, "password"),
-            i(4, "mydatabase"),
-          }
-        )
-      ),
+      {
+        i(1, "latest"),
+        i(2, "root"),
+        i(3, "password"),
+        i(4, "mydatabase"),
+      }
+    )
+  ),
 
-      -- Database service (PostgreSQL)
-      s(
-        "dcpostgres",
-        fmt(
-          [[
+  -- Database service (PostgreSQL)
+  s(
+    "dcpostgres",
+    fmt(
+      [[
   postgres:
     image: postgres:{}
     container_name: postgres
@@ -122,20 +122,20 @@ volumes:
 
 volumes:
   postgres_data:]],
-          {
-            i(1, "latest"),
-            i(2, "postgres"),
-            i(3, "password"),
-            i(4, "mydatabase"),
-          }
-        )
-      ),
+      {
+        i(1, "latest"),
+        i(2, "postgres"),
+        i(3, "password"),
+        i(4, "mydatabase"),
+      }
+    )
+  ),
 
-      -- Redis service
-      s(
-        "dcredis",
-        fmt(
-          [[
+  -- Redis service
+  s(
+    "dcredis",
+    fmt(
+      [[
   redis:
     image: redis:{}
     container_name: redis
@@ -148,18 +148,18 @@ volumes:
 
 volumes:
   redis_data:]],
-          {
-            i(1, "alpine"),
-            i(2, " --requirepass mypassword"),
-          }
-        )
-      ),
+      {
+        i(1, "alpine"),
+        i(2, " --requirepass mypassword"),
+      }
+    )
+  ),
 
-      -- Nginx reverse proxy
-      s(
-        "dcnginx",
-        fmt(
-          [[
+  -- Nginx reverse proxy
+  s(
+    "dcnginx",
+    fmt(
+      [[
   nginx:
     image: nginx:{}
     container_name: nginx
@@ -172,18 +172,18 @@ volumes:
       - ./certs:/etc/nginx/certs:ro
     depends_on:
       - {}]],
-          {
-            i(1, "alpine"),
-            i(2, "app"),
-          }
-        )
-      ),
+      {
+        i(1, "alpine"),
+        i(2, "app"),
+      }
+    )
+  ),
 
-      -- Development environment
-      s(
-        "dcdev",
-        fmt(
-          [[
+  -- Development environment
+  s(
+    "dcdev",
+    fmt(
+      [[
 version: '3.8'
 
 services:
@@ -201,25 +201,25 @@ services:
       - .:/app
       - /app/node_modules
     command: {}]],
-          {
-            i(1, "dev"),
-            f(function(args)
-              return args[1][1]
-            end, { 1 }),
-            i(2, "3000"),
-            f(function(args)
-              return args[1][1]
-            end, { 2 }),
-            i(3, "npm run dev"),
-          }
-        )
-      ),
+      {
+        i(1, "dev"),
+        f(function(args)
+          return args[1][1]
+        end, { 1 }),
+        i(2, "3000"),
+        f(function(args)
+          return args[1][1]
+        end, { 2 }),
+        i(3, "npm run dev"),
+      }
+    )
+  ),
 
-      -- Full stack setup
-      s(
-        "dcfullstack",
-        fmt(
-          [[
+  -- Full stack setup
+  s(
+    "dcfullstack",
+    fmt(
+      [[
 version: '3.8'
 
 services:
@@ -262,33 +262,33 @@ services:
 
 volumes:
   postgres_data:]],
-          {
-            i(1, "3000"),
-            f(function(args)
-              return args[1][1]
-            end, { 1 }),
-            i(2, "5000"),
-            f(function(args)
-              return args[1][1]
-            end, { 2 }),
-            f(function(args)
-              return args[1][1]
-            end, { 2 }),
-            i(3, "postgres"),
-            i(4, "password"),
-            i(5, "myapp"),
-            f(function(args)
-              return args[1][1]
-            end, { 3 }),
-            f(function(args)
-              return args[1][1]
-            end, { 4 }),
-            f(function(args)
-              return args[1][1]
-            end, { 5 }),
-          }
-        )
-      ),
-    }
+      {
+        i(1, "3000"),
+        f(function(args)
+          return args[1][1]
+        end, { 1 }),
+        i(2, "5000"),
+        f(function(args)
+          return args[1][1]
+        end, { 2 }),
+        f(function(args)
+          return args[1][1]
+        end, { 2 }),
+        i(3, "postgres"),
+        i(4, "password"),
+        i(5, "myapp"),
+        f(function(args)
+          return args[1][1]
+        end, { 3 }),
+        f(function(args)
+          return args[1][1]
+        end, { 4 }),
+        f(function(args)
+          return args[1][1]
+        end, { 5 }),
+      }
+    )
+  ),
+}
 
 return docker_compose_snippets

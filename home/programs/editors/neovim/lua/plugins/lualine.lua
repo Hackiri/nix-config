@@ -364,8 +364,12 @@ return {
 
     -- Trouble symbols statusline integration
     local trouble_symbols = {
-      get = function() return "" end,
-      has = function() return false end,
+      get = function()
+        return ""
+      end,
+      has = function()
+        return false
+      end,
     }
 
     -- Initialize Trouble symbols statusline if available

@@ -93,7 +93,7 @@ require("lazy").setup({
       ft = "📂",
       init = "⚙",
       keys = "🗝",
-      plugin = "🔌",
+      plugin = " ",
       runtime = "💻",
       require = "🌙",
       source = "📄",

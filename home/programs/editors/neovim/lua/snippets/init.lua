@@ -13,7 +13,10 @@ function M.load_snippets()
     { filetypes = { "markdown" }, module = "snippets.markdown" },
     { filetypes = { "python" }, module = "snippets.python" },
     { filetypes = { "rust" }, module = "snippets.rust" },
-    { filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" }, module = "snippets.typescript" },
+    {
+      filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+      module = "snippets.typescript",
+    },
     { filetypes = { "go" }, module = "snippets.go" },
     { filetypes = { "javascript", "typescript" }, module = "snippets.node" }, -- Node.js specific snippets
     { filetypes = { "nix" }, module = "snippets.nix" },

@@ -21,7 +21,7 @@ function M.setup()
     end
 
     local Query = {}
-    
+
     local function wrap_query(obj)
       if type(obj) ~= "table" then
         return obj

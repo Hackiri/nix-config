@@ -132,8 +132,8 @@ vimcmd_visual_symbol = "󰈈"
 
 [shell]
 disabled = false
-bash_indicator = ""
-zsh_indicator = ""
+bash_indicator = ""
+zsh_indicator = ""
 unknown_indicator = "󰞷 "
 style = "bold italic blue"
 
@@ -212,9 +212,19 @@ style = "italic dimmed bright-purple"
 threshold = 70
 style = "italic dimmed yellow"
 
+[kubernetes]
+disabled = false
+format = ' [☸ $context⎪$namespace](bold purple)'
+symbol = "☸ "
+
+[kubernetes.context_aliases]
+"prod-cluster" = "🔴 prod"
+"dev-cluster" = "🟢 dev"
+"staging-cluster" = "🟡 stage"
+
 [git_branch]
 format = " [$branch(:$remote_branch)]($style)"
-symbol = "[󰘬](bold italic bright-blue)"
+symbol = "󰘬 "
 style = "italic bright-blue"
 truncation_symbol = "…"
 truncation_length = 11
@@ -263,7 +273,13 @@ style = "bold bright-yellow"
 [nodejs]
 format = " [node](italic) [󰎙 ($version)](bold bright-green)"
 version_format = "${raw}"
-detect_files = ["package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb"]
+detect_files = [
+  "package.json",
+  "package-lock.json",
+  "yarn.lock",
+  "pnpm-lock.yaml",
+  "bun.lockb",
+]
 detect_folders = ["node_modules"]
 detect_extensions = ["js", "mjs", "cjs", "ts"]
 
@@ -380,3 +396,4 @@ unknown_msg = '[◌](bold dimmed yellow)'
 [spack]
 symbol = "◇ "
 format = " spack [$symbol$environment]($style)"
+

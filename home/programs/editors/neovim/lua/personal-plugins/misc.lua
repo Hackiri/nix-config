@@ -73,7 +73,7 @@ function M.toggleOrIncrement()
 
   -- If no toggle found, increment number
   if not toggled then
-    vim.cmd("normal! \<C-a>")
+    vim.cmd("normal! <C-a>")
   end
 end
 
