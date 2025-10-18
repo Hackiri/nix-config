@@ -370,21 +370,21 @@ return {
         },
       })
 
-      -- Configure all servers using native Neovim API
+      -- Configure all servers using lspconfig's setup function
+      -- This automatically handles filetype detection and attachment
       for server_name, cfg in pairs(servers) do
         cfg.capabilities = vim.tbl_deep_extend("force", {}, capabilities, cfg.capabilities or {})
-        vim.lsp.config(server_name, cfg)
-        vim.lsp.enable(server_name)
+        lspconfig[server_name].setup(cfg)
       end
 
       -- Prevent nixd from attaching to shell scripts with nix shebangs
-      local match_contents = require("vim.filetype.detect").match_contents
-      require("vim.filetype.detect").match_contents = function(...)
-        local result = match_contents(...)
-        if result ~= "nix" then
-          return result
-        end
-      end
+      -- (This section can be removed if not needed - currently it does nothing)
+      -- local match_contents = require("vim.filetype.detect").match_contents
+      -- require("vim.filetype.detect").match_contents = function(...)
+      --   local result = match_contents(...)
+      --   -- If you want to prevent nix filetype detection in certain cases, add logic here
+      --   return result
+      -- end
 
       -- Ensure non-LSP tools are installed (LSP servers handled by mason-lspconfig)
       -- NOTE: Formatters and linters are now managed via Nix (see default.nix)

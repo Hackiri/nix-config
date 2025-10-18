@@ -40,6 +40,7 @@ local ensureInstalled = {
     "gitignore",
     "just",
     "make",
+    "nix",
     "query", -- treesitter query files
     "requirements", -- pip requirements file
   },
