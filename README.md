@@ -43,59 +43,56 @@ nix-config/
 
 ### Complete Setup Guide
 
-1. **Install Nix (Determinate Systems) upstream channel**
+1. **Install Nix (Determinate Systems)**
 
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --determinate
 ```
 
-2. **Clone This Repository**
+   > **Note:** This installs Determinate Nix, which provides enhanced stability and features. macOS users can alternatively use the [graphical installer](https://install.determinate.systems/determinate-pkg/stable/Universal).
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/nix-config.git ~/nix-config
-cd ~/nix-config
-```
+2. **Get the Repository**
 
-3. **Configure Your System**
-   Before installing nix-darwin, customize the configuration files to match your system:
-
-   a. **Update System Configuration in `flake.nix`:**
-
-   ### System Configuration Function
-   The configuration uses a flexible `mkDarwin` function that parameterizes system creation:
-
-   ```nix
-   # Function to create a Darwin system configuration
-   mkDarwin = {
-     name,
-     system ? "x86_64-darwin",
-     username ? "wm",
-   }:
+   **Option A: Fork (Recommended for maintaining your own version)**
+   
+   ```bash
+   # 1. Fork on GitHub: https://github.com/Hackiri/nix-config (click Fork button)
+   # 2. Clone your fork
+   git clone https://github.com/yourusername/nix-config.git ~/nix-config
+   cd ~/nix-config
    ```
 
-   ```nix
-   # Set correct system architecture
-   system = "x86_64-darwin"; # or "aarch64-darwin" for Apple Silicon
+   **Option B: Direct Clone (Quick start)**
+   
+   ```bash
+   # Clone directly and make it your own
+   git clone https://github.com/Hackiri/nix-config.git ~/nix-config
+   cd ~/nix-config
+   # Remove original remote and add your own later
+   git remote remove origin
+   ```
 
-   # Update hostname and user configuration
+3. **Configure Your System**
+
+   **Edit `flake.nix` (lines 164-170)** - This is the ONLY required edit to start:
+
+   ```nix
    darwinConfigurations = {
-     "your-hostname" = mkDarwin {
-       name = "nix-darwin";
-       username = "your-username";
+     "mbp" = mkDarwin {           # Change "mbp" to your hostname
+       name = "mbp";              # Change to match your host directory name
+       system = "x86_64-darwin";  # or "aarch64-darwin" for Apple Silicon
+       username = "wm";           # Change to your macOS username
      };
    };
    ```
 
-   This allows for:
-   - Consistent username usage throughout the configuration
-   - Easy switching between different machines and users
-   - Passing the username variable to all modules via `specialArgs` 
-   - Configuring home-manager with the same username
+   **What to change:**
+   - **Hostname key** (`"mbp"`): Your computer's hostname (run `hostname` to check)
+   - **name**: Must match a directory in `hosts/` (use existing `mbp` or create your own)
+   - **system**: `"x86_64-darwin"` (Intel) or `"aarch64-darwin"` (Apple Silicon)
+   - **username**: Your macOS username (run `whoami` to check)
 
-   b. **Configure Host Settings in `hosts/nix-darwin/configuration.nix`**
-
-   c. **Set Up User Environment in `hosts/nix-darwin/home.nix`**
+   **Optional:** Customize host-specific settings in `hosts/mbp/configuration.nix` and `hosts/mbp/home.nix` later
 
 4. **Install nix-darwin**
 
