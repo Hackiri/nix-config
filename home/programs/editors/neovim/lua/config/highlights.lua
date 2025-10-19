@@ -2,14 +2,21 @@
 vim.api.nvim_create_autocmd("ColorScheme", {
   callback = function()
     -- Get terminal background color
-    local active_theme = vim.g.colors_name
-    if active_theme == "tokyonight" then -- change to your preferred theme(s)
-      local bg = "#1a1b26" -- Tokyo Night terminal background
-      local border_color = "#292e42" -- Subtle border color
-      -- ... your highlight overrides here ...
-      vim.api.nvim_set_hl(0, "Normal", { bg = bg })
-      -- (repeat for other highlight groups)
-    end
+    -- -- Get terminal background color
+    -- local active_theme = vim.g.colors_name
+    -- if active_theme == "tokyonight" then -- change to your preferred theme(s)
+    --   -- local bg = "#1a1b26" -- Tokyo Night terminal background
+    --   -- local border_color = "#292e42" -- Subtle border color
+    --   -- ... your highlight overrides here ...
+    --   -- vim.api.nvim_set_hl(0, "Normal", { bg = bg })
+    --   -- (repeat for other highlight groups)
+    -- end
+    -- Get background color from the active colorscheme
+    local normal_hl = vim.api.nvim_get_hl(0, { name = "Normal" })
+    local bg = normal_hl.bg and string.format("#%06x", normal_hl.bg) or "#1a1b26"
+
+    local border_hl = vim.api.nvim_get_hl(0, { name = "FloatBorder" })
+    local border_color = border_hl.fg and string.format("#%06x", border_hl.fg) or "#292e42"
 
     -- General UI background
     vim.api.nvim_set_hl(0, "Normal", { bg = bg })
