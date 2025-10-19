@@ -2,7 +2,6 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
     # General code quality
-    pre-commit # Framework for managing git pre-commit hooks
     shellcheck # Static analysis tool for shell scripts
 
     # Nix-specific tools
@@ -13,5 +12,8 @@
 
     # Language-specific formatters
     stylua # Opinionated Lua code formatter
+
+    # Note: pre-commit hooks are now managed by git-hooks.nix in flake.nix
+    # The tools above are still available for standalone use
   ];
 }

@@ -19,6 +19,10 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Git hooks management
+    git-hooks.url = "github:cachix/git-hooks.nix";
+    git-hooks.inputs.nixpkgs.follows = "nixpkgs";
+
     # Homebrew inputs
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     homebrew-core = {
@@ -37,7 +41,6 @@
 
   outputs = inputs:
     with inputs; let
-      inherit (self) outputs;
       # Define system types for convenience
       supportedSystems = ["x86_64-darwin" "aarch64-darwin" "x86_64-linux"];
 
@@ -46,16 +49,6 @@
 
       # Import the overlay from the overlays directory
       overlay = import ./overlays;
-
-      # Configure nixpkgs with overlays
-      nixpkgsConfig = {
-        overlays = [
-          overlay
-          # Add emacs-overlay for native compilation support
-          inputs.emacs-overlay.overlays.default
-        ];
-        config = {allowUnfree = true;};
-      };
 
       # Create a pkgs for each system with our overlays
       pkgsForSystem = system:
@@ -185,6 +178,22 @@
         # };
       };
 
+      # Git pre-commit hooks checks
+      checks = forAllSystems (system: {
+        pre-commit-check = git-hooks.lib.${system}.run {
+          src = ./.;
+          hooks = {
+            # Nix formatters and linters
+            alejandra.enable = true;
+            deadnix.enable = true;
+            statix.enable = true;
+
+            # Lua formatter
+            stylua.enable = true;
+          };
+        };
+      });
+
       # Make custom packages available as flake outputs
       packages = forAllSystems (system: let
         pkgs = pkgsForSystem system;
@@ -195,6 +204,16 @@
         inherit (customPkgs) dev-tools kube-packages;
         # Export the devshell script as the main devshell package
         devshell = customPkgs.devshell.script;
+      });
+
+      # Development shells with pre-commit hooks
+      devShells = forAllSystems (system: let
+        pkgs = pkgsForSystem system;
+      in {
+        default = pkgs.mkShell {
+          inherit (self.checks.${system}.pre-commit-check) shellHook;
+          buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
+        };
       });
 
       # Make custom packages available as apps

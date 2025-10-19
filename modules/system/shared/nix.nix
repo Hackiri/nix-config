@@ -12,7 +12,7 @@
     # Note: With nix.enable = false, nix-darwin won't manage Nix settings, GC, or optimisation
     # You can configure these directly in /etc/nix/nix.conf if needed
     enable = false;
-    
+
     # The following settings are disabled when nix.enable = false
     # Determinate Nix manages these through its own configuration
     # settings = {
@@ -32,7 +32,7 @@
     #     "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     #   ];
     # };
-    
+
     # GC and optimisation are managed by Determinate Nix
     # gc.automatic = false;
     # optimise.automatic = false;

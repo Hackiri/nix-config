@@ -1,8 +1,6 @@
 {
   pkgs,
-  lib,
   config,
-  inputs ? {},
   ...
 }: let
   # Enhanced hook scripts with better error handling and logging
@@ -122,51 +120,6 @@
       log_warning "Failed to read some sops secrets, git config may be incomplete"
     fi
   '';
-
-  preCommitHook = pkgs.writeShellScript "pre-commit-hook" ''
-    set -euo pipefail
-
-    # Color definitions for better output
-    RED='\033[0;31m'
-    GREEN='\033[0;32m'
-    YELLOW='\033[1;33m'
-    BLUE='\033[0;34m'
-    NC='\033[0m' # No Color
-
-    log_info() { echo -e "''${BLUE}[INFO]''${NC} $1"; }
-    log_success() { echo -e "''${GREEN}[SUCCESS]''${NC} $1"; }
-    log_warning() { echo -e "''${YELLOW}[WARNING]''${NC} $1"; }
-    log_error() { echo -e "''${RED}[ERROR]''${NC} $1"; }
-
-    log_info "Running pre-commit hooks..."
-
-    # Check if pre-commit is available
-    if ! command -v ${pkgs.pre-commit}/bin/pre-commit >/dev/null 2>&1; then
-      log_warning "pre-commit not found, skipping pre-commit hooks"
-      exit 0
-    fi
-
-    # Check if .pre-commit-config.yaml exists
-    if [[ ! -f .pre-commit-config.yaml ]]; then
-      log_warning "No .pre-commit-config.yaml found, skipping pre-commit hooks"
-      exit 0
-    fi
-
-    # Run pre-commit hooks with timeout
-    if timeout 300 ${pkgs.pre-commit}/bin/pre-commit run --all-files; then
-      log_success "All pre-commit hooks passed!"
-      exit 0
-    else
-      exit_code=$?
-      if [[ $exit_code -eq 124 ]]; then
-        log_error "Pre-commit hooks timed out after 5 minutes"
-      else
-        log_error "Pre-commit hooks failed (exit code: $exit_code)"
-      fi
-      log_info "Fix the issues above and try committing again"
-      exit 1
-    fi
-  '';
 in {
   # Sops configuration
   sops = {
@@ -218,6 +171,7 @@ in {
   };
 
   # Create git template directory with hooks
+  # Note: pre-commit hooks are now managed by git-hooks.nix in flake.nix
   home.file = {
     ".git-template/hooks/post-checkout" = {
       source = postCheckoutHook;
@@ -225,10 +179,6 @@ in {
     };
     ".git-template/hooks/post-merge" = {
       source = postMergeHook;
-      executable = true;
-    };
-    ".git-template/hooks/pre-commit" = {
-      source = preCommitHook;
       executable = true;
     };
   };
