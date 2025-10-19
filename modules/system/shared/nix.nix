@@ -7,49 +7,35 @@
 }: {
   # Nix configuration
   nix = {
-    enable = true;
-    settings = {
-      # Core Nix features
-      experimental-features = ["nix-command" "flakes" "ca-derivations"];
-      warn-dirty = "false";
-
-      # Performance optimizations
-      max-jobs = "auto"; # Use all available CPU cores for builds
-      cores = 0; # Use all available cores per job
-      sandbox = true; # Enable sandboxed builds for security
-
-      # Build optimization
-      keep-outputs = true; # Keep build outputs for GC roots
-      keep-derivations = true; # Keep derivations for debugging
-
-      # Binary cache configuration
-      substituters = [
-        "https://cache.nixos.org"
-        "https://nix-community.cachix.org"
-      ];
-      trusted-public-keys = [
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      ];
-    };
-    # Garbage collection settings
-    gc =
-      {
-        automatic = true;
-        options = "--delete-older-than 30d"; # Keep generations for 30 days
-      }
-      // lib.optionalAttrs pkgs.stdenv.isDarwin {
-        # Darwin-specific GC interval
-        interval = {
-          Weekday = 0;
-          Hour = 3;
-          Minute = 0;
-        }; # Run GC weekly on Sundays at 3am
-      };
-    # Use optimise instead of auto-optimise-store
-    optimise = {
-      automatic = true;
-    };
+    # Disable nix-darwin's Nix management when using Determinate Nix
+    # Determinate Nix manages its own daemon and conflicts with nix-darwin's native management
+    # Note: With nix.enable = false, nix-darwin won't manage Nix settings, GC, or optimisation
+    # You can configure these directly in /etc/nix/nix.conf if needed
+    enable = false;
+    
+    # The following settings are disabled when nix.enable = false
+    # Determinate Nix manages these through its own configuration
+    # settings = {
+    #   experimental-features = ["nix-command" "flakes" "ca-derivations"];
+    #   warn-dirty = "false";
+    #   max-jobs = "auto";
+    #   cores = 0;
+    #   sandbox = true;
+    #   keep-outputs = true;
+    #   keep-derivations = true;
+    #   substituters = [
+    #     "https://cache.nixos.org"
+    #     "https://nix-community.cachix.org"
+    #   ];
+    #   trusted-public-keys = [
+    #     "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    #     "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    #   ];
+    # };
+    
+    # GC and optimisation are managed by Determinate Nix
+    # gc.automatic = false;
+    # optimise.automatic = false;
   };
 
   # Enable nix-index for command-not-found functionality
