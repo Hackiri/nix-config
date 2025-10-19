@@ -128,7 +128,19 @@ nix run nixpkgs#nix-darwin -- switch --flake .
    # Copy the output and add it to GitHub Settings > SSH and GPG keys > New GPG key
    ```
 
-   c. **Set Up SOPS for Secrets Management**
+   c. **Set Up SOPS for Secrets Management (Optional)**
+
+   > **Note:** SOPS is optional. Skip this if you don't need encrypted secrets. You can configure Git settings directly in your config files instead.
+
+   **What you can store in secrets:**
+   - Git credentials (username, email, GPG signing key)
+   - API tokens and keys (GitHub, OpenAI, AWS, etc.)
+   - SSH private keys
+   - Database passwords
+   - Environment-specific credentials
+   - Any sensitive configuration values
+
+   **Setup steps:**
 
    ```bash
    # Generate age key for SOPS
@@ -145,7 +157,7 @@ nix run nixpkgs#nix-darwin -- switch --flake .
    grep "KEY"  ~/.config/sops/age/keys.txt
    ```
 
-   d. **Update SOPS Configuration**
+   d. **Update SOPS Configuration (Optional)**
 
    Update `.sops.yaml` with your new age public key:
 
@@ -159,14 +171,25 @@ nix run nixpkgs#nix-darwin -- switch --flake .
              - *main-key
    ```
 
-   e. **Create Encrypted Secrets File**
+   e. **Create Encrypted Secrets File (Optional)**
 
    ```bash
-   # Create new secrets file with your information
+   # Example: Create secrets file with your information
    cat > secrets/secrets.yaml << EOF
+   # Git configuration
    git-userName: your-username
    git-userEmail: your-email@example.com
    git-signingKey: YOUR_GPG_KEY_ID
+   
+   # API tokens (examples)
+   github-token: ghp_your_token_here
+   openai-api-key: sk-your_key_here
+   
+   # SSH keys
+   ssh-private-key: |
+     -----BEGIN OPENSSH PRIVATE KEY-----
+     your_key_content_here
+     -----END OPENSSH PRIVATE KEY-----
    EOF
 
    # Encrypt the secrets file
