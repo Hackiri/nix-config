@@ -2,23 +2,44 @@
 
 This directory contains the layered profile system for Home Manager configurations.
 
+## Directory Structure
+
+```
+profiles/
+├── base/                    # Foundation profiles
+│   ├── minimal.nix         # Essential cross-platform tools
+│   └── secrets.nix         # Optional sops-nix secrets management
+├── features/               # Feature-specific profiles
+│   ├── development.nix     # Development tools and environments
+│   ├── desktop.nix         # GUI applications and desktop tools
+│   └── kubernetes.nix      # Kubernetes tooling and workflows
+├── platform/               # Platform-specific profiles
+│   ├── darwin.nix          # macOS complete profile
+│   ├── nixos.nix           # NixOS complete profile
+│   ├── darwin-pkgs.nix     # macOS-specific packages
+│   └── nixos-pkgs.nix      # Linux-specific packages
+└── README.md
+```
+
 ## Profile Hierarchy
 
 Profiles are organized in an inheritance chain, with each level building upon the previous:
 
 ```
-minimal.nix (foundation)
+base/minimal.nix (foundation)
     ↓
-development.nix (adds dev tools)
+features/development.nix (adds dev tools)
     ↓
-desktop.nix (adds GUI apps)
+features/desktop.nix (adds GUI apps)
     ↓
-darwin.nix / nixos.nix (platform-specific)
+platform/darwin.nix or platform/nixos.nix (platform-specific)
 ```
 
 ## Profile Descriptions
 
-### `minimal.nix` - Foundation Profile
+### Base Profiles
+
+#### `base/minimal.nix` - Foundation Profile
 **Purpose**: Essential cross-platform tools available everywhere  
 **Includes**:
 - Basic CLI tools (bat, eza, fd, fzf, jq, ripgrep, tree, zoxide)
@@ -31,9 +52,7 @@ darwin.nix / nixos.nix (platform-specific)
 **Used by**: All other profiles  
 **Imports**: Programs (shells, utilities/btop)
 
----
-
-### `secrets.nix` - Secrets Management Profile
+#### `base/secrets.nix` - Secrets Management Profile
 **Purpose**: Git hooks with sops-nix encrypted secrets integration  
 **Includes**:
 - Git with post-checkout/post-merge hooks that read from sops secrets
@@ -46,14 +65,16 @@ darwin.nix / nixos.nix (platform-specific)
 - Git credentials stored in sops secrets
 
 **Usage**: 
-- **New users**: Comment out `./secrets.nix` import in `development.nix` until you set up sops
+- **New users**: Comment out `../base/secrets.nix` import in `features/development.nix` until you set up sops
 - **Advanced users**: Keep uncommented and follow README section 6c for setup
 
 **Standalone**: Can be imported independently if you only need secrets management
 
 ---
 
-### `development.nix` - Development Profile
+### Feature Profiles
+
+#### `features/development.nix` - Development Profile
 **Purpose**: Comprehensive development environment  
 **Includes**:
 - Text editors (Neovim, Emacs, Neovide)
@@ -68,58 +89,75 @@ darwin.nix / nixos.nix (platform-specific)
 - Security tools
 - **Optional**: Secrets profile (can be commented out)
 
-**Inherits from**: `minimal.nix`  
-**Optionally imports**: `secrets.nix` (comment out if not using sops)  
-**Used by**: `desktop.nix`  
+**Inherits from**: `base/minimal.nix`  
+**Optionally imports**: `base/secrets.nix` (comment out if not using sops)  
+**Used by**: `features/desktop.nix`  
 **Imports**: 
 - Programs: editors, development, kubernetes, terminals, utilities
 - Packages: build-tools, code-quality, databases, languages, network, security, terminals, web-dev, custom
 
----
-
-### `desktop.nix` - Desktop Profile
+#### `features/desktop.nix` - Desktop Profile
 **Purpose**: GUI applications and desktop environment tools  
 **Includes**:
 - Desktop applications
 - Media processing tools (imagemagick, ghostscript)
 
-**Inherits from**: `development.nix` (which includes `minimal.nix`)  
-**Used by**: `darwin.nix`, `nixos.nix`  
+**Inherits from**: `features/development.nix` (which includes `base/minimal.nix`)  
+**Used by**: `platform/darwin.nix`, `platform/nixos.nix`  
 **Imports**:
 - Packages: desktop, utilities
 
+#### `features/kubernetes.nix` - Kubernetes Development Profile
+**Purpose**: Kubernetes engineer workflow with remote cluster management  
+**Includes**:
+- Kubernetes CLI tools (kubectl, helm, kustomize, kubectx)
+- GitOps tools (argocd, flux)
+- Container tools (skopeo, dive, crane)
+- Local development (kind, tilt, kubeconform)
+- Cloud provider CLIs (AWS, GCP, Azure)
+
+**Configuration Options**:
+- `toolset`: "devops" (default) or "complete"
+- `includeLocalDev`: Enable local Kubernetes development tools
+
+**Standalone**: Can be imported independently for Kubernetes-only setups
+
 ---
 
-### `darwin.nix` - macOS Profile
+### Platform Profiles
+
+#### `platform/darwin.nix` - macOS Profile
 **Purpose**: macOS-specific configuration entry point  
 **Includes**:
 - All tools from desktop → development → minimal chain
 - macOS-specific packages and settings
 - macOS window management (AeroSpace)
 
-**Inherits from**: `desktop.nix`  
+**Inherits from**: `features/desktop.nix`  
 **Platform**: macOS (Darwin)  
 **Imports**:
-- Platform: platform/darwin.nix
+- Platform: platform/darwin-pkgs.nix
 - Programs: utilities/aerospace
 
 ---
 
-### `nixos.nix` - NixOS Profile
+#### `platform/nixos.nix` - NixOS Profile
 **Purpose**: NixOS-specific configuration entry point
 **Includes**:
 - All tools from desktop → development → minimal chain
 - Linux-specific packages and settings
 - X11/Wayland utilities
 
-**Inherits from**: `desktop.nix`
+**Inherits from**: `features/desktop.nix`
 **Platform**: NixOS (Linux)
 **Imports**:
-- Platform: platform/nixos.nix
+- Platform: platform/nixos-pkgs.nix
 
 ---
 
-### `kube-dev.nix` - Kubernetes Development Profile
+## Legacy Profiles (Deprecated)
+
+### `kube-dev.nix` - Kubernetes Development Profile (DEPRECATED)
 **Purpose**: Kubernetes engineer workflow with configurable toolsets
 **Includes**:
 - Remote cluster management tools (kubectl, helm, kubectx, kubecolor)

@@ -1,9 +1,8 @@
 # Development tools and configurations
-# Note: Basic Git config is included here.
-# For Git with sops-integrated hooks, import the secrets profile instead.
+# Note: Git configuration is in base/git.nix (imported via features/development.nix)
+# This ensures no conflicts and makes Git truly optional.
 {...}: {
   imports = [
-    ./git/default.nix # Basic Git without sops
     ./direnv
   ];
 }

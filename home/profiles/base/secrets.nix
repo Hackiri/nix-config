@@ -1,19 +1,12 @@
-# Secrets profile - Git hooks with sops-nix integration
-# This profile configures Git with encrypted secrets management using sops-nix.
+# Secrets profile - SOPS utilities for encrypted secrets management
+# This profile provides sops-nix utilities and shell aliases.
+#
+# NOTE: Git with sops hooks is now included by default in features/development.nix
+#       via base/git.nix. This profile only provides the sops command-line utilities.
 #
 # ═══════════════════════════════════════════════════════════════════════════
 # ⚠️  IMPORTANT: This profile requires setup before use
 # ═══════════════════════════════════════════════════════════════════════════
-#
-# QUICK START FOR NEW USERS:
-# -------------------------
-# 1. Comment out this import in development.nix:
-#    # ./secrets.nix  # <-- Add # to disable
-#
-# 2. Configure Git manually after installation:
-#    git config --global user.name "Your Name"
-#    git config --global user.email "your@email.com"
-#    git config --global user.signingkey "YOUR_GPG_KEY_ID"
 #
 # ADVANCED SETUP (for encrypted secrets):
 # ---------------------------------------
@@ -32,27 +25,25 @@
 #    sops secrets/secrets.yaml
 #    # Add: git-userName, git-userEmail, git-signingKey
 #
-# 5. Uncomment this import in development.nix
+# 5. Uncomment this import in features/development.nix
 #
 # WHAT THIS PROFILE DOES:
 # -----------------------
-# - Installs Git hooks (post-checkout, post-merge) that auto-configure Git
-# - Reads Git credentials from encrypted sops secrets
 # - Provides sops shell aliases (sops-edit, sops-encrypt, sops-decrypt)
-# - Configures GPG for commit signing
+# - Enables sops-nix for encrypted secrets management
+#
+# NOTE: Git hooks that read from sops are already included via base/git.nix
+#       in features/development.nix, so Git will automatically use your
+#       encrypted credentials once you set them up.
 #
 # FILES INCLUDED:
 # ---------------
-# - ../programs/development/git/git-hooks.nix (Git + sops hooks)
-# - ../programs/utilities/sops-nix/sops.nix (sops utilities)
+# - ../../programs/utilities/sops-nix/sops.nix (sops utilities)
 #
 # ═══════════════════════════════════════════════════════════════════════════
 {...}: {
   imports = [
-    # Git configuration with sops-integrated hooks
-    ../programs/development/git/git-hooks.nix
-
-    # SOPS utilities and aliases
-    ../programs/utilities/sops-nix/sops.nix
+    # SOPS utilities and aliases (not included in default utilities)
+    ../../programs/utilities/sops-nix/sops.nix
   ];
 }

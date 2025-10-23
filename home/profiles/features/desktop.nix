@@ -1,19 +1,14 @@
 # Desktop profile - GUI applications and desktop environment tools
 # Inherits from development.nix which includes minimal.nix foundation.
 # Adds desktop applications, media tools, and GUI utilities.
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
-    # Profiles: Development environment (includes minimal)
+    # Features: Development environment (includes minimal)
     ./development.nix
 
     # Packages: Desktop applications and media tools
-    ../packages/desktop.nix
-    ../packages/utilities.nix
+    ../../packages/desktop.nix
+    ../../packages/utilities.nix
   ];
 
   # Enable and configure neovide GUI editor

@@ -2,18 +2,16 @@
 # This profile provides the foundation that all other profiles inherit from.
 # It includes only the most essential tools that should be available everywhere.
 {
-  config,
-  lib,
   pkgs,
   username,
   ...
 }: {
   imports = [
     # Programs: Shell configuration and enhancements
-    ../programs/shells
+    ../../programs/shells
 
     # Programs: Essential system monitoring utilities
-    ../programs/utilities/btop
+    ../../programs/utilities/btop
   ];
 
   # Common home-manager configuration (replaces home/shared/base.nix)

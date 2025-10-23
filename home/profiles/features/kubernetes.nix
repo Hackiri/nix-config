@@ -3,10 +3,10 @@
 # This profile can be imported standalone or added to existing profiles for Kubernetes capabilities.
 #
 # Usage:
-#   imports = [ ../../home/profiles/kube-dev.nix ];
+#   imports = [ ../../home/profiles/features/kubernetes.nix ];
 #
 # Configuration:
-#   profiles.kube-dev = {
+#   profiles.kubernetes = {
 #     enable = true;
 #     toolset = "devops";  # or "complete"
 #     includeLocalDev = true;
@@ -17,9 +17,9 @@
   pkgs,
   ...
 }: let
-  cfg = config.profiles.kube-dev;
+  cfg = config.profiles.kubernetes;
 in {
-  options.profiles.kube-dev = with lib; {
+  options.profiles.kubernetes = with lib; {
     enable = mkEnableOption "Kubernetes development profile";
 
     toolset = mkOption {

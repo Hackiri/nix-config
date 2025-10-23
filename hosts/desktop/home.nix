@@ -1,14 +1,7 @@
-{
-  config,
-  lib,
-  pkgs,
-  inputs,
-  username,
-  ...
-}: {
+{username, ...}: {
   # Import shared home-manager modules
   imports = [
-    ../../home/profiles/nixos.nix # NixOS-specific profile (includes desktop -> development -> minimal chain)
+    ../../home/profiles/platform/nixos.nix # NixOS-specific profile (includes desktop -> development -> minimal chain)
   ];
 
   # Platform-specific home directory
