@@ -30,6 +30,7 @@
           noto-fonts
           noto-fonts-cjk-sans
           noto-fonts-emoji
+          nerd-fonts.symbols-only
         ]
         ++ config.features.fonts.extraFonts;
     };

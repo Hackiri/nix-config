@@ -42,7 +42,7 @@
  vterm
 
  :checkers
- syntax
+ (syntax +flymake)  ; Use flymake instead of flycheck for Emacs 31 compatibility
  spell
  grammar
 
@@ -53,6 +53,7 @@
  (magit +forge)
  pdf
  rgb
+ ;; tree-sitter  ; Not needed - Emacs 31 has built-in tree-sitter support
 
  :os
  macos
@@ -61,10 +62,10 @@
  emacs-lisp
  (json +lsp)
  (python +lsp +pyright)
- (javascript +lsp)
- (typescript +lsp)
+ (javascript +lsp +tree-sitter)
+ (typescript +lsp +tree-sitter)
  web
- (org +roam2 +journal)
+ (org +roam +journal)
  markdown
  sh
  yaml

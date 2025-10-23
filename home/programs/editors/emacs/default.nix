@@ -23,6 +23,9 @@ in {
     enable = true;
     package = lib.mkForce pkgs.emacs-git;
     extraPackages = epkgs: [
+      # Tree-sitter grammars for all languages
+      epkgs.treesit-grammars.with-all-grammars
+
       # Nix support
       epkgs.nix-mode
       epkgs.nixpkgs-fmt
@@ -104,7 +107,7 @@ in {
 
         # Set up environment variables for Doom Emacs
         export EMACSDIR="$HOME/.config/emacs"
-        export DOOMDIR="$HOME/.doom.d"
+        export DOOMDIR="$HOME/.config/doom"
         export DOOMLOCALDIR="$EMACSDIR/.local"
 
         echo "Setting up Doom Emacs with:"
@@ -135,7 +138,7 @@ in {
           echo "Doom Emacs already installed at $EMACSDIR"
         fi
 
-        # Ensure Doom config directory exists at ~/.doom.d (Doom's default location)
+        # Ensure Doom config directory exists at ~/.config/doom (Doom's default location)
         "$MKDIR_BIN" -p "$DOOMDIR"
 
         # Create required snippet directories if they don't exist
@@ -143,7 +146,7 @@ in {
         "$MKDIR_BIN" -p "$DOOMDIR/etc/snippets"
 
         # Use our custom Doom config files directly
-        echo "Copying custom Doom Emacs configuration from nix-config to ~/.doom.d..."
+        echo "Copying custom Doom Emacs configuration from nix-config to ~/.config/doom..."
 
         # Copy configuration files
         CONFIG_SOURCE="${config.home.homeDirectory}/nix-config/home/programs/editors/emacs/doom.d"
@@ -300,7 +303,7 @@ in {
                   cat > "$doom_launcher" << EOF
         #!/bin/zsh
         export EMACSDIR="$HOME/.config/emacs"
-        export DOOMDIR="$HOME/.doom.d"
+        export DOOMDIR="$HOME/.config/doom"
         export PATH="$EMACSDIR/bin:$PATH"
         exec "${pkgs.emacs30}/bin/emacs"
         EOF
@@ -312,7 +315,7 @@ in {
                   cat > "$doom_sync_launcher" << EOF
         #!/bin/zsh
         export EMACSDIR="$HOME/.config/emacs"
-        export DOOMDIR="$HOME/.doom.d"
+        export DOOMDIR="$HOME/.config/doom"
         export PATH="$EMACSDIR/bin:$PATH"
         "$EMACSDIR/bin/doom" sync
         echo "Press any key to close this window"
@@ -384,6 +387,20 @@ in {
       unzip
       zip
       gzip
+
+      # Python development tools
+      python3Packages.black
+      python3Packages.pyflakes
+      python3Packages.isort
+      pipenv
+      python3Packages.pytest # nose is deprecated, use pytest instead
+
+      # Web development tools
+      nodePackages.stylelint
+      nodePackages.js-beautify
+
+      # Shell formatting
+      shfmt
     ];
   };
 }

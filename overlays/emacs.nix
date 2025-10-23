@@ -1,7 +1,19 @@
 # Emacs overlay configuration
 # This overlay provides custom Emacs configurations and packages
 final: prev: {
-  # Custom Emacs configurations
+  # Emacs git/unstable version - main package used throughout config
+  emacs-git = prev.emacs-unstable.override {
+    # Enable native compilation for better performance
+    withNativeCompilation = true;
+    # Enable tree-sitter support
+    withTreeSitter = true;
+    # macOS specific optimizations
+    withNS = prev.stdenv.isDarwin;
+    # Linux specific features
+    withGTK3 = prev.stdenv.isLinux;
+    withXwidgets = prev.stdenv.isLinux;
+  };
+  # Custom Emacs configurations (alternative build)
   emacs-custom = prev.emacs-unstable.override {
     # Enable native compilation for better performance
     withNativeCompilation = true;
@@ -33,7 +45,7 @@ final: prev: {
 
   # Custom Emacs packages set with additional packages
   emacsPackagesFor-custom = emacsPackages:
-    emacsPackages.overrideScope (efinal: eprev: {
+    emacsPackages.overrideScope (_efinal: eprev: {
       # Add any custom Emacs package overrides here
       # Example: treesit-grammars with additional languages
       treesit-grammars = eprev.treesit-grammars.with-grammars (grammars:
@@ -60,5 +72,5 @@ final: prev: {
     });
 
   # Emacs with custom package set
-  emacs-with-packages = (prev.emacsPackagesFor final.emacs-custom).emacsWithPackages;
+  emacs-with-packages = (prev.emacsPackagesFor final.emacs-git).emacsWithPackages;
 }

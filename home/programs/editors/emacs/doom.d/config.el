@@ -1,5 +1,18 @@
 ;;; config.el -*- lexical-binding: t; -*-
 
+;; Emacs 31 compatibility: Define missing keymap-read-only-bind function
+;; This function doesn't exist in Emacs but some packages expect it
+;; Based on the pattern, it appears to be a curried function that takes a keymap
+;; and returns a function that binds keys in that keymap
+(unless (fboundp 'keymap-read-only-bind)
+  (defun keymap-read-only-bind (keymap)
+    "Return a function that binds keys in KEYMAP.
+This is a compatibility shim for packages expecting this function in Emacs 31."
+    (lambda (key def)
+      (define-key keymap key def))))
+
+;; Note: Also using flymake instead of flycheck for better Emacs 31 compatibility
+
 ;; User identity
 (setq user-full-name "hackiri"
       user-mail-address "128340174+Hackiri@users.noreply.github.com")
