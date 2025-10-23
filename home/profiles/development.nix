@@ -2,15 +2,15 @@
 # This profile includes all tools and configurations needed for software development,
 # including editors, development tools, terminals, and package collections.
 # Inherits from minimal.nix for essential cross-platform tools.
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     # Profiles: Foundation layer (minimal tools)
     ./minimal.nix
+
+    # Profiles: Secrets management (OPTIONAL - comment out if not using sops)
+    # Requires age key setup - see README section 5 for instructions
+    # If you're a new user, comment this out until you set up sops-nix
+    ./secrets.nix
 
     # Programs: Text editors and IDEs
     ../programs/editors

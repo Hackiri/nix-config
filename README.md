@@ -94,14 +94,40 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    **Optional:** Customize host-specific settings in `hosts/mbp/configuration.nix` and `hosts/mbp/home.nix` later
 
-4. **Install nix-darwin**
+4. **Choose Your Profile Setup**
+
+   **Option A: Skip Secrets (Recommended for first-time users)**
+   
+   Comment out the secrets profile in `home/profiles/development.nix`:
+   
+   ```nix
+   imports = [
+     ./minimal.nix
+     # ./secrets.nix  # <-- Comment this out
+     ../programs/editors
+     # ... rest of imports
+   ];
+   ```
+   
+   Then configure Git manually after installation:
+   ```bash
+   git config --global user.name "Your Name"
+   git config --global user.email "your-email@example.com"
+   git config --global user.signingkey "YOUR_GPG_KEY_ID"
+   ```
+
+   **Option B: Use Secrets Profile (Advanced)**
+   
+   Keep `./secrets.nix` uncommented and follow step 5c below to set up sops-nix.
+
+5. **Install nix-darwin**
 
 ```bash
 # Install nix-darwin with your customized configuration
 nix run nixpkgs#nix-darwin -- switch --flake .
 ```
 
-5. **Set Up Authentication and Secrets**
+6. **Set Up Authentication and Secrets**
 
    a. **Generate SSH Key for GitHub**
 
@@ -128,9 +154,9 @@ nix run nixpkgs#nix-darwin -- switch --flake .
    # Copy the output and add it to GitHub Settings > SSH and GPG keys > New GPG key
    ```
 
-   c. **Set Up SOPS for Secrets Management (Optional)**
+   c. **Set Up SOPS for Secrets Management (Optional - Only if using secrets.nix profile)**
 
-   > **Note:** SOPS is optional. Skip this if you don't need encrypted secrets. You can configure Git settings directly in your config files instead.
+   > **Note:** Only follow this section if you kept `./secrets.nix` uncommented in step 4. Otherwise, skip this entirely.
 
    **What you can store in secrets:**
    - Git credentials (username, email, GPG signing key)

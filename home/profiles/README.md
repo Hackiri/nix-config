@@ -33,11 +33,31 @@ darwin.nix / nixos.nix (platform-specific)
 
 ---
 
+### `secrets.nix` - Secrets Management Profile
+**Purpose**: Git hooks with sops-nix encrypted secrets integration  
+**Includes**:
+- Git with post-checkout/post-merge hooks that read from sops secrets
+- SOPS utilities and shell aliases
+- GPG configuration for commit signing
+
+**Requirements**:
+- Age key at `~/.config/sops/age/keys.txt`
+- Encrypted `secrets/secrets.yaml` with your age public key
+- Git credentials stored in sops secrets
+
+**Usage**: 
+- **New users**: Comment out `./secrets.nix` import in `development.nix` until you set up sops
+- **Advanced users**: Keep uncommented and follow README section 6c for setup
+
+**Standalone**: Can be imported independently if you only need secrets management
+
+---
+
 ### `development.nix` - Development Profile
 **Purpose**: Comprehensive development environment  
 **Includes**:
 - Text editors (Neovim, Emacs, Neovide)
-- Development tools (Git, direnv)
+- Development tools (Git with basic config, direnv)
 - Kubernetes tools and configuration
 - Terminal emulators (Alacritty, Ghostty, Tmux)
 - Build tools and compilers
@@ -46,8 +66,10 @@ darwin.nix / nixos.nix (platform-specific)
 - Programming language runtimes
 - Web development tools
 - Security tools
+- **Optional**: Secrets profile (can be commented out)
 
 **Inherits from**: `minimal.nix`  
+**Optionally imports**: `secrets.nix` (comment out if not using sops)  
 **Used by**: `desktop.nix`  
 **Imports**: 
 - Programs: editors, development, kubernetes, terminals, utilities
