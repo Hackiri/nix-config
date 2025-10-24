@@ -15,8 +15,8 @@
     # - Automatically reads Git credentials from encrypted sops secrets
     # - Requires: age key setup + secrets.yaml configuration
     # - Also import base/secrets.nix below for sops CLI utilities
-    ../base/git.nix
-    #
+    # ../base/git.nix
+
     # OPTION 2: Basic Git without sops (SIMPLE)
     # - Manual Git configuration via: git config --global user.name/email
     # - No sops integration, no automatic credential management
