@@ -27,7 +27,7 @@
     # Base: SOPS utilities (OPTIONAL - only needed if using base/git.nix)
     # Provides sops CLI commands: sops-edit, sops-encrypt, sops-decrypt
     # Comment out if using basic Git (OPTION 2 above)
-    ../base/secrets.nix
+    # ../base/secrets.nix
 
     # Programs: Text editors and IDEs
     ../../programs/editors
