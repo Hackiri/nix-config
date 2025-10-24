@@ -98,7 +98,11 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    **Option A: Skip Secrets (Recommended for first-time users)**
    
-   Comment out the secrets profile in `home/profiles/development.nix`:
+   Comment out the secrets & git profile in `home/profiles/development.nix`:
+   ```nix
+   # ../base/git.nix
+   # ../base/secrets.nix
+   ```
    
    Configure Git manually after installation:
    ```bash
@@ -151,7 +155,7 @@ nix run nixpkgs#nix-darwin -- switch --flake .
    - Environment-specific credentials
    - Any sensitive configuration values
 
-   **Setup steps:**
+   **Optional Setup steps:**
 
    ```bash
    # Generate age key for SOPS
