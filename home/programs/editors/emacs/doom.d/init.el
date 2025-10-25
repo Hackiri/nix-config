@@ -5,7 +5,7 @@
  ;;bidi
 
  :completion
- (company +childframe)
+ (company +childframe +tng)
  (vertico +icons)
 
  :ui
@@ -29,7 +29,7 @@
  (evil +everywhere)
  file-templates
  fold
- format
+ (format +onsave)
  snippets
 
  :emacs
@@ -47,9 +47,10 @@
  grammar
 
  :tools
+ direnv
  (eval +overlay)
  lookup
- lsp
+ (lsp +peek)
  (magit +forge)
  pdf
  rgb
