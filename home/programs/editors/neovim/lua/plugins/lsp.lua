@@ -65,10 +65,18 @@ return {
         return original_lsp_start(config, opts)
       end
 
-      -- Setup servers with enhanced capabilities
+      -- Configure servers using vim.lsp.config with root_markers
+      -- This uses the new Neovim 0.11+ API which is simpler and more maintainable
+      --
+      -- Strategy: Only specify root_markers when:
+      --   1. We need custom behavior beyond lspconfig defaults
+      --   2. We want to prevent false positives (e.g., tailwindcss)
+      --   3. We've improved the defaults (e.g., added go.work, shell.nix)
+      --
+      -- For simple servers, we omit root_markers to use lspconfig's well-tested defaults
       local servers = {
         lua_ls = {
-          single_file_support = true,
+          -- Use lspconfig defaults: .luarc.json, .luarc.jsonc, .luacheckrc, stylua.toml, .git
           settings = {
             Lua = {
               runtime = { version = "LuaJIT" },
@@ -140,22 +148,17 @@ return {
             },
           },
         },
+        -- Simple servers - use lspconfig defaults
         svelte = {},
         tinymist = {},
         emmet_ls = {},
+        prismals = {}, -- Prisma ORM
+        eslint = {}, -- JavaScript/TypeScript linter
         nixd = {
           cmd = { "nixd" },
           filetypes = { "nix" },
-          root_dir = function(fname)
-            -- Ensure fname is a string path (not a buffer number)
-            if type(fname) ~= "string" then
-              fname = vim.api.nvim_buf_get_name(fname)
-            end
-            return lspconfig.util.root_pattern(".git", "flake.nix", "shell.nix")(fname)
-              or lspconfig.util.find_git_ancestor(fname)
-              or vim.fn.getcwd()
-          end,
-          single_file_support = true,
+          -- Custom: Added shell.nix (lspconfig default: flake.nix, default.nix, .git)
+          root_markers = { { "flake.nix", "shell.nix" }, ".git" },
           flags = {
             debounce_text_changes = 150,
           },
@@ -182,9 +185,8 @@ return {
             },
           },
         },
-        -- Add other servers with basic setup
         rust_analyzer = {
-          single_file_support = true,
+          -- Use lspconfig defaults: Cargo.toml, rust-project.json, .git
           settings = {
             ["rust-analyzer"] = {
               cargo = {
@@ -208,12 +210,7 @@ return {
           },
         },
         pylsp = {
-          single_file_support = true,
-          root_dir = function(fname)
-            return lspconfig.util.root_pattern("pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git")(
-              fname
-            )
-          end,
+          -- Use lspconfig defaults: pyproject.toml, setup.py, setup.cfg, requirements.txt, Pipfile, .git
           settings = {
             pylsp = {
               plugins = {
@@ -234,7 +231,8 @@ return {
           },
         },
         gopls = {
-          single_file_support = true,
+          -- Custom: Added go.work for multi-module workspaces (lspconfig default: go.mod, .git)
+          root_markers = { { "go.mod", "go.work" }, ".git" },
           settings = {
             gopls = {
               experimentalWorkspaceModule = true, -- Multi-module workspace support
@@ -256,16 +254,10 @@ return {
             },
           },
         },
-        -- Use vtsls with minimal configuration for better performance
         vtsls = {
-          root_dir = function(fname)
-            -- Strict root pattern - prioritize package.json and tsconfig.json
-            -- Fall back to .git to avoid indexing from home directory
-            local util = require("lspconfig.util")
-            return util.root_pattern("package.json", "tsconfig.json", "jsconfig.json")(fname)
-              or util.root_pattern(".git")(fname)
-          end,
-          single_file_support = false, -- Disable to prevent LSP from starting without project root
+          -- Custom: Explicit markers to prevent unwanted activation (matches lspconfig defaults)
+          -- NOTE: single_file_support is intentionally NOT disabled here to allow flexibility
+          root_markers = { { "package.json", "tsconfig.json", "jsconfig.json" }, ".git" },
           filetypes = {
             "javascript",
             "javascriptreact",
@@ -308,19 +300,36 @@ return {
             },
           },
         },
+        -- Simple servers - use lspconfig defaults
         html = {},
-        dockerls = {},
-        docker_compose_language_service = {},
-        ruff = {},
-        tailwindcss = {
-          root_dir = function(...)
-            return require("lspconfig.util").root_pattern(".git")(...)
-          end,
-        },
-        taplo = {},
         jsonls = {},
         sqlls = {},
-        terraformls = {},
+        taplo = {},
+        bashls = {},
+        cssls = {},
+        graphql = {},
+
+        -- Servers with specific project detection needs
+        dockerls = {
+          -- Custom: Detect Docker projects specifically
+          root_markers = { { "Dockerfile", "docker-compose.yml", "docker-compose.yaml" }, ".git" },
+        },
+        docker_compose_language_service = {
+          -- Custom: Detect Docker Compose projects
+          root_markers = { { "docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml" }, ".git" },
+        },
+        ruff = {
+          -- Custom: Python linter with specific config detection
+          root_markers = { { "pyproject.toml", "ruff.toml", ".ruff.toml" }, ".git" },
+        },
+        tailwindcss = {
+          -- Custom: Prevent false positives - only activate with tailwind config
+          root_markers = { { "tailwind.config.js", "tailwind.config.ts", "tailwind.config.cjs" }, ".git" },
+        },
+        terraformls = {
+          -- Custom: Infrastructure as code project detection
+          root_markers = { { ".terraform", "terraform.tfvars" }, ".git" },
+        },
         yamlls = {
           settings = {
             yaml = {
@@ -333,10 +342,9 @@ return {
             },
           },
         },
-        bashls = {},
-        graphql = {},
-        cssls = {},
-        texlab = {},
+        texlab = {
+          -- Use lspconfig defaults for LaTeX projects
+        },
       }
 
       -- Define servers that are installed via Nix and should not be managed by Mason
@@ -345,7 +353,12 @@ return {
         -- Add other servers installed via Nix here
       }
 
-      -- Filter out servers installed via Nix
+      -- Filter out servers installed via Nix to create Mason's ensure_installed list
+      -- This automatically includes all servers from the 'servers' table except Nix-managed ones
+      -- Current Mason-managed servers: ts_ls→vtsls, html, cssls, tailwindcss, svelte,
+      --   lua_ls, graphql, emmet_ls, prismals, pylsp, eslint, rust_analyzer, gopls,
+      --   dockerls, docker_compose_language_service, ruff, terraformls, yamlls,
+      --   jsonls, sqlls, taplo, bashls, texlab, tinymist
       local mason_servers = {}
       for server_name, _ in pairs(servers) do
         if not nix_installed_servers[server_name] then
@@ -354,9 +367,11 @@ return {
       end
 
       -- Setup mason-lspconfig: ensure servers are installed. We'll configure via vim.lsp.config
+      -- mason-lspconfig bridges mason.nvim (package manager) with nvim-lspconfig
+      -- It automatically installs LSP servers listed in ensure_installed using mason.nvim
       require("mason-lspconfig").setup({
         ensure_installed = vim.tbl_keys(mason_servers),
-        automatic_installation = false,
+        automatic_installation = false, -- We control installation explicitly
         -- Explicitly prevent stylua from being configured as an LSP
         -- (it's a formatter, not an LSP server)
         handlers = {
@@ -370,11 +385,17 @@ return {
         },
       })
 
-      -- Configure all servers using lspconfig's setup function
-      -- This automatically handles filetype detection and attachment
+      -- Configure all servers using vim.lsp.config (new 0.11+ API)
+      -- This defines the configurations but doesn't start them yet
       for server_name, cfg in pairs(servers) do
         cfg.capabilities = vim.tbl_deep_extend("force", {}, capabilities, cfg.capabilities or {})
-        lspconfig[server_name].setup(cfg)
+        vim.lsp.config(server_name, cfg)
+      end
+
+      -- Enable all configured LSP servers
+      -- This tells Neovim to automatically start these servers when appropriate filetypes are opened
+      for server_name, _ in pairs(servers) do
+        vim.lsp.enable(server_name)
       end
 
       -- Prevent nixd from attaching to shell scripts with nix shebangs
