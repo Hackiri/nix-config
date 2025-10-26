@@ -13,6 +13,7 @@ return {
     event = { "BufReadPre", "BufNewFile" }, -- Load LSP when opening files
     dependencies = {
       "saghen/blink.cmp",
+      "mason-org/mason.nvim",
       -- Useful status updates for LSP
       {
         "j-hui/fidget.nvim",
@@ -392,11 +393,10 @@ return {
         vim.lsp.config(server_name, cfg)
       end
 
-      -- Enable all configured LSP servers
+      -- Enable all configured LSP servers at once
       -- This tells Neovim to automatically start these servers when appropriate filetypes are opened
-      for server_name, _ in pairs(servers) do
-        vim.lsp.enable(server_name)
-      end
+      -- Using vim.lsp.enable() with a list is more efficient than individual calls
+      vim.lsp.enable(vim.tbl_keys(servers))
 
       -- Prevent nixd from attaching to shell scripts with nix shebangs
       -- (This section can be removed if not needed - currently it does nothing)

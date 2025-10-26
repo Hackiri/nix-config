@@ -1,6 +1,24 @@
 -- fzf-lua: Fast and customizable fuzzy finder
 -- LazyVim 14.x+ default picker (replaces telescope.nvim)
 -- Docs: https://github.com/ibhagwan/fzf-lua
+--
+-- Key advantages over Telescope (from https://git.ramboe.io/YouTube/ciao-telescope-i-dont-need-you-anymore):
+--   1. Exact string matching support (--exact flag)
+--   2. Multi-stage filtering workflow via quickfix
+--   3. Better composability with native Vim workflows
+--   4. More transparent configuration
+--
+-- Multi-stage filtering workflow:
+--   1. <leader>fg - Start live_grep search
+--   2. Type your search pattern
+--   3. <ctrl-q> - Send all results to quickfix list
+--   4. <ctrl-g> or <leader>fq - Open quickfix in fzf to filter further
+--   5. Repeat step 4 to progressively narrow down results
+--
+-- Exact matching:
+--   - <leader>fF - Find files with exact match (no fuzzy)
+--   - <leader>fG - Live grep with exact match
+--   - Or add '--exact' flag inline: search for 'pattern --exact'
 
 return {
   "ibhagwan/fzf-lua",
@@ -10,13 +28,16 @@ return {
   keys = {
     -- Files
     { "<leader>ff", "<cmd>FzfLua files<cr>", desc = "Find Files" },
+    { "<leader>fF", "<cmd>FzfLua files fzf_opts={['--exact']=''}<cr>", desc = "Find Files (Exact Match)" },
     { "<leader>fg", "<cmd>FzfLua live_grep<cr>", desc = "Find Text (Live Grep)" },
+    { "<leader>fG", "<cmd>FzfLua live_grep fzf_opts={['--exact']=''}<cr>", desc = "Find Text (Exact Match)" },
     { "<leader>fw", "<cmd>FzfLua grep_cword<cr>", desc = "Find Word Under Cursor" },
     { "<leader>fv", "<cmd>FzfLua grep_visual<cr>", mode = "v", desc = "Find Visual Selection" },
     { "<leader>fh", "<cmd>FzfLua help_tags<cr>", desc = "Find Help" },
     { "<leader>fo", "<cmd>FzfLua oldfiles<cr>", desc = "Find Recent Files" },
     { "<leader>fb", "<cmd>FzfLua buffers<cr>", desc = "Find Buffers" },
     { "<leader>fr", "<cmd>FzfLua resume<cr>", desc = "Resume Last Search" },
+    { "<leader>fp", "<cmd>FzfLua builtin<cr>", desc = "FzfLua Pickers (Builtin)" },
 
     -- Git
     { "<leader>fgf", "<cmd>FzfLua git_files<cr>", desc = "Find Git Files" },
@@ -62,6 +83,10 @@ return {
     { "<leader>fz", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling Suggestions" },
     { "<leader>fc", "<cmd>FzfLua commands<cr>", desc = "Find Commands" },
     { "<leader>fb", "<cmd>FzfLua buffers<cr>", desc = "Find Buffers" },
+
+    -- Quickfix (for multi-stage filtering workflow)
+    { "<leader>fq", "<cmd>FzfLua quickfix<cr>", desc = "Find in Quickfix" },
+    { "<C-g>", "<cmd>FzfLua quickfix<cr>", desc = "Filter Quickfix with fzf" },
   },
   opts = function()
     local actions = require("fzf-lua.actions")
@@ -119,11 +144,15 @@ return {
           ["<C-u>"] = "preview-page-up",
         },
         fzf = {
-          ["ctrl-q"] = "select-all+accept",
+          ["ctrl-q"] = "select-all+accept", -- Send all to quickfix
           ["ctrl-u"] = "unix-line-discard",
           ["ctrl-a"] = "beginning-of-line",
           ["ctrl-e"] = "end-of-line",
           ["alt-a"] = "toggle-all",
+          -- Multi-stage filtering workflow (from article):
+          -- 1. Use live_grep to find results
+          -- 2. Press ctrl-q to send to quickfix
+          -- 3. Use :FzfLua quickfix to filter further
         },
       },
 
@@ -299,6 +328,23 @@ return {
       -- Jumps
       jumps = {
         prompt = "Jumps❯ ",
+      },
+
+      -- Quickfix configuration
+      -- Article workflow: live_grep -> ctrl-q (send to qf) -> ctrl-g (filter qf with fzf)
+      quickfix = {
+        prompt = "Quickfix❯ ",
+        file_icons = true,
+        git_icons = true,
+        color_icons = true,
+      },
+
+      -- Location list configuration
+      loclist = {
+        prompt = "Location List❯ ",
+        file_icons = true,
+        git_icons = true,
+        color_icons = true,
       },
     }
   end,
