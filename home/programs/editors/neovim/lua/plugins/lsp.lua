@@ -506,19 +506,23 @@ return {
   -- Override LazyVim LSP keymaps to prevent window reuse on goto definition
   {
     "neovim/nvim-lspconfig",
-    opts = function()
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
-      vim.list_extend(keys, {
-        {
-          "gd",
-          function()
-            -- DO NOT REUSE WINDOW - opens in new split/window
-            require("fzf-lua").lsp_definitions({ jump_to_single_result = true, reuse_win = false })
-          end,
-          desc = "Goto Definition",
-          has = "definition",
+    opts = {
+      servers = {
+        -- Apply this keymap to all LSP servers
+        ["*"] = {
+          keys = {
+            {
+              "gd",
+              function()
+                -- DO NOT REUSE WINDOW - opens in new split/window
+                require("fzf-lua").lsp_definitions({ jump_to_single_result = true, reuse_win = false })
+              end,
+              desc = "Goto Definition",
+              has = "definition",
+            },
+          },
         },
-      })
-    end,
+      },
+    },
   },
 }
