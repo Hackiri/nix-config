@@ -2,7 +2,7 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
     # Media and document processing
-    imagemagick # Image manipulation programs
+    # imagemagick - Moved to neovim/default.nix (only needed for Neovim plugins)
     ghostscript # PostScript and PDF interpreter
 
     #--------------------------------------------------

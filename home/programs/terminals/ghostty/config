@@ -7,8 +7,9 @@ custom-shader = shaders/bloom025.glsl
 # Disable shader animation loop to reduce CPU usage
 custom-shader-animation = false
 
-# Launch tmux-sessionizer on startup, fallback to tmux attach/new, then zsh
-command = zsh --login -c "if command -v tmux-sessionizer >/dev/null 2>&1; then tmux-sessionizer $HOME || (tmux attach 2>/dev/null || tmux); else exec zsh; fi"
+# Launch zsh (manually run 'tmux-sessionizer' or 'tmux' if you want tmux)
+# To auto-attach tmux, use: zsh --login -c "tmux attach 2>/dev/null || tmux"
+command = zsh --login
 
 # Horizontal padding: left=4pt, right=2pt
 window-padding-x = 4,2

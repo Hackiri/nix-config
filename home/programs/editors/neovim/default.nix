@@ -1,8 +1,6 @@
 {
-  config,
   lib,
   pkgs,
-  inputs,
   ...
 }: {
   programs.neovim = {
@@ -22,8 +20,12 @@
         pylatexenc # Provides latex2text for render-markdown.nvim
       ];
 
-    # Add jsregexp for LuaSnip transformations
-    extraLuaPackages = ps: with ps; [jsregexp];
+    # Add Lua packages for Neovim plugins
+    extraLuaPackages = ps:
+      with ps; [
+        jsregexp # For LuaSnip transformations
+        magick # For image.nvim and other image manipulation plugins
+      ];
 
     extraPackages = with pkgs;
       [
