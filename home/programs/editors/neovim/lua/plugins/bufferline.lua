@@ -288,13 +288,7 @@ return {
 
         -- Offsets
         offsets = {
-          {
-            filetype = "neo-tree",
-            text = "File Explorer",
-            highlight = "Directory",
-            text_align = "center",
-            separator = true,
-          },
+          -- Removed neo-tree offset since we're using Snacks explorer + mini.files + Oil
         },
       },
     })

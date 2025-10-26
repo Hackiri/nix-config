@@ -29,6 +29,9 @@ return {
         enabled = true,
         exclude = { "latex" },
       },
+      explorer = {
+        enabled = true,
+      },
       zen = {
         enabled = true,
       },
@@ -220,6 +223,20 @@ return {
           require("snacks").picker.files()
         end,
         desc = "Find Files (Snacks Picker)",
+      },
+      {
+        "<leader>e",
+        function()
+          require("snacks").explorer()
+        end,
+        desc = "Explorer (Snacks)",
+      },
+      {
+        "<leader>E",
+        function()
+          require("snacks").explorer({ cwd = vim.fn.expand("%:p:h") })
+        end,
+        desc = "Explorer (Current File Dir)",
       },
       {
         "<leader><space>",

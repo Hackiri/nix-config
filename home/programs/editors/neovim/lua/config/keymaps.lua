@@ -169,7 +169,7 @@ map("n", "<leader>sR", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>\>/gI<Left><Left><Left>]],
 
 -- Misc Operations
 -- Note: Plugin-specific keymaps are defined in their respective plugin files:
---   - File explorer: lua/plugins/neo-tree.lua
+--   - File explorers: lua/plugins/snacks.lua, lua/plugins/mini-files.lua, lua/plugins/oil.lua
 --   - Fuzzy finder: lua/plugins/fzf-lua.lua
 --   - Git operations: lua/plugins/gitsigns.lua and lua/plugins/lazygit.lua
 --   - LSP operations: lua/plugins/lsp.lua (in LspAttach autocmd)
