@@ -389,33 +389,6 @@ return {
         end
       end, { desc = "Mason Tools Update" })
 
-      -- Toggle virtual text diagnostics (Neovim 0.11+ feature)
-      vim.keymap.set("n", "<leader>dv", function()
-        local current_config = vim.diagnostic.config()
-        local virtual_text = current_config.virtual_text
-
-        if virtual_text == false then
-          -- Enable virtual text
-          vim.diagnostic.config({
-            virtual_text = {
-              prefix = "●",
-              format = function(diagnostic)
-                local code = diagnostic.code and string.format("[%s]", diagnostic.code) or ""
-                return string.format("%s %s", code, diagnostic.message)
-              end,
-              source = "if_many",
-              spacing = 2,
-              only_current_line = false,
-            },
-          })
-          vim.notify("Virtual text diagnostics enabled", vim.log.levels.INFO)
-        else
-          -- Disable virtual text
-          vim.diagnostic.config({ virtual_text = false })
-          vim.notify("Virtual text diagnostics disabled", vim.log.levels.INFO)
-        end
-      end, { desc = "Toggle virtual text diagnostics" })
-
       -- LSP Attach Keybindings
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),

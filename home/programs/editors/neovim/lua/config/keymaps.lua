@@ -8,9 +8,11 @@ end
 
 -- Quick Exits and Navigation
 map("i", "kj", "<ESC>", { desc = "Exit insert mode" })
-map({ "n", "v" }, "<M-h>", "^", { desc = "Go to line start" })
-map({ "n", "v" }, "<M-l>", "$", { desc = "Go to line end" })
-map("v", "<M-l>", "$h", { desc = "Go to line end minus one" })
+map("n", "<M-h>", "^", { desc = "Go to line start" })
+map("n", "<M-l>", "$", { desc = "Go to line end" })
+-- Visual mode: go to line start/end (minus one for end to avoid newline)
+map("v", "<M-h>", "^", { desc = "Go to line start" })
+map("v", "<M-l>", "$h", { desc = "Go to line end (minus one)" })
 
 -- Quick Save & Quit
 map("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
@@ -37,14 +39,15 @@ map("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Move buffer to new tab" })
 -- fzf-lua (<leader>f prefix) - Override LazyVim defaults
 -- Note: These keymaps load immediately to override LazyVim's Snacks picker defaults
 -- The plugin config is in lua/plugins/fzf-lua.lua
-map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files" })
-map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Find Text (Live Grep)" })
-map("n", "<leader>fw", "<cmd>FzfLua grep_cword<CR>", { desc = "Find Word Under Cursor" })
-map("v", "<leader>fv", "<cmd>FzfLua grep_visual<CR>", { desc = "Find Visual Selection" })
-map("n", "<leader>fh", "<cmd>FzfLua help_tags<CR>", { desc = "Find Help" })
-map("n", "<leader>fo", "<cmd>FzfLua oldfiles<CR>", { desc = "Find Recent Files" })
-map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Find Buffers" })
-map("n", "<leader>fr", "<cmd>FzfLua resume<CR>", { desc = "Resume Last Search" })
+-- Using `nowait = true` on frequently-used mappings to reduce timeout lag
+map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files", nowait = true })
+map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Find Text (Live Grep)", nowait = true })
+map("n", "<leader>fw", "<cmd>FzfLua grep_cword<CR>", { desc = "Find Word Under Cursor", nowait = true })
+map("v", "<leader>fv", "<cmd>FzfLua grep_visual<CR>", { desc = "Find Visual Selection", nowait = true })
+map("n", "<leader>fh", "<cmd>FzfLua help_tags<CR>", { desc = "Find Help", nowait = true })
+map("n", "<leader>fo", "<cmd>FzfLua oldfiles<CR>", { desc = "Find Recent Files", nowait = true })
+map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Find Buffers", nowait = true })
+map("n", "<leader>fr", "<cmd>FzfLua resume<CR>", { desc = "Resume Last Search", nowait = true })
 map("n", "<leader>fc", "<cmd>FzfLua commands<CR>", { desc = "Find Commands" })
 map("n", "<leader>fk", "<cmd>FzfLua keymaps<CR>", { desc = "Find Keymaps" })
 map("n", "<leader>fm", "<cmd>FzfLua marks<CR>", { desc = "Find Marks" })
@@ -72,13 +75,13 @@ map("n", "<leader>fws", "<cmd>FzfLua lsp_workspace_symbols<CR>", { desc = "Find 
 map("n", "<leader>fwd", "<cmd>FzfLua diagnostics_workspace<CR>", { desc = "Find Workspace Diagnostics" })
 
 -- Buffer Management
-map("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer" })
-map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer" })
-map("n", "<leader>bx", ":bdelete<CR>", { desc = "Close buffer" })
+map("n", "<leader>bn", "<cmd>bnext<CR>", { desc = "Next buffer" })
+map("n", "<leader>bp", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
+map("n", "<leader>bx", "<cmd>bdelete<CR>", { desc = "Close buffer" })
 
 -- Quick Buffer Navigation
-map("n", "<Tab>", ":bnext<CR>", { desc = "Next buffer" })
-map("n", "<S-Tab>", ":bprevious<CR>", { desc = "Previous buffer" })
+map("n", "<Tab>", "<cmd>bnext<CR>", { desc = "Next buffer" })
+map("n", "<S-Tab>", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
 
 -- Neovim 0.11+ Default LSP Keymaps
 -- Override the built-in gr* mappings to use FzfLua for better UI
@@ -91,7 +94,8 @@ map("n", "grt", "<cmd>FzfLua lsp_typedefs<cr>", { desc = "LSP Type Definition" }
 map("n", "gO", "<cmd>FzfLua lsp_document_symbols<cr>", { desc = "LSP Document Symbols" })
 
 -- Signature help in insert mode (Neovim 0.11+ default)
-map("i", "<C-s>", vim.lsp.buf.signature_help, { desc = "LSP Signature Help" })
+-- Using <C-k> instead of <C-s> to avoid terminal flow control (XOFF) conflicts
+map("i", "<C-k>", vim.lsp.buf.signature_help, { desc = "LSP Signature Help" })
 
 -- Diagnostics Navigation (LSP-independent)
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
