@@ -14,18 +14,6 @@ return {
     dependencies = {
       "saghen/blink.cmp",
       "mason-org/mason.nvim",
-      -- Useful status updates for LSP
-      {
-        "j-hui/fidget.nvim",
-        version = "*",
-        opts = {
-          notification = {
-            window = {
-              winblend = 0,
-            },
-          },
-        },
-      },
       -- Automatically install LSPs and related tools to stdpath for neovim
       { "mason-org/mason-lspconfig.nvim", version = "2.*" }, -- LazyVim 15.x requires v2.x
       { "WhoIsSethDaniel/mason-tool-installer.nvim", version = "*" },
