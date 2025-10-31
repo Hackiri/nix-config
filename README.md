@@ -263,6 +263,35 @@ nxdev        # Enter development shell
 nix flake update  # Update flake inputs
 ```
 
+### Pre-commit Hooks
+
+This configuration uses [git-hooks.nix](https://github.com/cachix/git-hooks.nix) to automatically run code formatters and linters before commits:
+
+**Enabled hooks:**
+- `alejandra` - Nix code formatter
+- `deadnix` - Remove unused Nix code
+- `statix` - Nix linter
+- `stylua` - Lua formatter
+
+**Troubleshooting:**
+
+If you encounter an error like:
+```
+.git/hooks/pre-commit: No such file or directory
+```
+
+This means the pre-commit hooks reference stale Nix store paths. Regenerate them:
+
+```bash
+# Regenerate hooks without entering shell
+nix develop --command true
+
+# Or enter the devShell which will regenerate hooks automatically
+nix develop
+```
+
+The hooks are automatically installed when you enter the development shell and will run on every commit.
+
 #### **Quick Navigation**
 ```bash
 dots         # cd ~/nix-config

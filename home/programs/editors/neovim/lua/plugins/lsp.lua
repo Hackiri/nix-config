@@ -32,28 +32,6 @@ return {
         relativePatternSupport = false,
       }
 
-      local lspconfig = require("lspconfig")
-
-      -- Stylua is a FORMATTER, not an LSP server.
-      -- Mason might try to start it as LSP which causes "exit code 2" error.
-      -- We format Lua via conform.nvim instead.
-      -- Aggressively prevent stylua from being started as an LSP server.
-
-      -- Method 1: Disable in lspconfig if it exists
-      pcall(function()
-        require("lspconfig.configs").stylua = nil
-      end)
-
-      -- Method 2: Override vim.lsp.start to block stylua
-      local original_lsp_start = vim.lsp.start
-      vim.lsp.start = function(config, opts)
-        if config and (config.name == "stylua" or config.cmd and config.cmd[1] and config.cmd[1]:match("stylua")) then
-          -- Silently refuse to start stylua as LSP
-          return nil
-        end
-        return original_lsp_start(config, opts)
-      end
-
       -- Configure servers using vim.lsp.config with root_markers
       -- This uses the new Neovim 0.11+ API which is simpler and more maintainable
       --
@@ -176,6 +154,7 @@ return {
         },
         rust_analyzer = {
           -- Use lspconfig defaults: Cargo.toml, rust-project.json, .git
+          cmd = { "rust-analyzer" },
           settings = {
             ["rust-analyzer"] = {
               cargo = {
@@ -221,6 +200,7 @@ return {
         },
         gopls = {
           -- Custom: Added go.work for multi-module workspaces (lspconfig default: go.mod, .git)
+          cmd = { "gopls" },
           root_markers = { { "go.mod", "go.work" }, ".git" },
           settings = {
             gopls = {
@@ -246,6 +226,7 @@ return {
         vtsls = {
           -- Custom: Explicit markers to prevent unwanted activation (matches lspconfig defaults)
           -- NOTE: single_file_support is intentionally NOT disabled here to allow flexibility
+          cmd = { "vtsls", "--stdio" },
           root_markers = { { "package.json", "tsconfig.json", "jsconfig.json" }, ".git" },
           filetypes = {
             "javascript",
@@ -301,10 +282,12 @@ return {
         -- Servers with specific project detection needs
         dockerls = {
           -- Custom: Detect Docker projects specifically
+          cmd = { "docker-langserver", "--stdio" },
           root_markers = { { "Dockerfile", "docker-compose.yml", "docker-compose.yaml" }, ".git" },
         },
         docker_compose_language_service = {
           -- Custom: Detect Docker Compose projects
+          cmd = { "docker-compose-langserver", "--stdio" },
           root_markers = { { "docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml" }, ".git" },
         },
         ruff = {
@@ -361,17 +344,6 @@ return {
       require("mason-lspconfig").setup({
         ensure_installed = vim.tbl_keys(mason_servers),
         automatic_installation = false, -- We control installation explicitly
-        -- Explicitly prevent stylua from being configured as an LSP
-        -- (it's a formatter, not an LSP server)
-        handlers = {
-          -- Default handler for all servers
-          function(server_name)
-            -- Skip stylua - it's not an LSP server
-            if server_name == "stylua" then
-              return
-            end
-          end,
-        },
       })
 
       -- Configure all servers using vim.lsp.config (new 0.11+ API)
@@ -417,6 +389,33 @@ return {
         end
       end, { desc = "Mason Tools Update" })
 
+      -- Toggle virtual text diagnostics (Neovim 0.11+ feature)
+      vim.keymap.set("n", "<leader>dv", function()
+        local current_config = vim.diagnostic.config()
+        local virtual_text = current_config.virtual_text
+
+        if virtual_text == false then
+          -- Enable virtual text
+          vim.diagnostic.config({
+            virtual_text = {
+              prefix = "●",
+              format = function(diagnostic)
+                local code = diagnostic.code and string.format("[%s]", diagnostic.code) or ""
+                return string.format("%s %s", code, diagnostic.message)
+              end,
+              source = "if_many",
+              spacing = 2,
+              only_current_line = false,
+            },
+          })
+          vim.notify("Virtual text diagnostics enabled", vim.log.levels.INFO)
+        else
+          -- Disable virtual text
+          vim.diagnostic.config({ virtual_text = false })
+          vim.notify("Virtual text diagnostics disabled", vim.log.levels.INFO)
+        end
+      end, { desc = "Toggle virtual text diagnostics" })
+
       -- LSP Attach Keybindings
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
@@ -451,8 +450,7 @@ return {
           end, "[L]SP [W]orkspace [L]ist Folders")
 
           -- Format on save if the client supports it
-          -- Skip stylua (it's a formatter, not an LSP) and other non-LSP formatters
-          if client and client.name ~= "stylua" and client.supports_method("textDocument/formatting") then
+          if client and client.supports_method("textDocument/formatting") then
             vim.api.nvim_create_autocmd("BufWritePre", {
               group = vim.api.nvim_create_augroup("format_on_save" .. event.buf, { clear = true }),
               buffer = event.buf,
