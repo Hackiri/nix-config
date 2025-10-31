@@ -3,7 +3,6 @@ return {
   event = "VeryLazy", -- Load after initial UI is rendered
   dependencies = {
     "nvim-tree/nvim-web-devicons",
-    "nvim-lua/lsp-status.nvim", -- For LSP status
     "folke/trouble.nvim", -- For symbol statusline integration
   },
   config = function()
@@ -107,6 +106,7 @@ return {
       lock = "",
       dots = "󰇘",
       recording = "󰑋",
+      copilot = "",
     }
 
     -- Cache system for improved performance
@@ -114,6 +114,7 @@ return {
       branch = "",
       branch_color = nil,
       file_permissions = { perms = "", color = colors.green },
+      lsp_clients = {},
     }
 
     -- Set up autocmds for cache updates
@@ -122,7 +123,9 @@ return {
         -- Update git branch
         local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null"):gsub("\n", "")
         cache.branch = (branch ~= "") and branch or ""
-        cache.branch_color = (cache.branch == "live") and { fg = colors.red1, gui = "bold" } or nil
+        cache.branch_color = (cache.branch == "live" or cache.branch == "main" or cache.branch == "master")
+            and { fg = colors.red1, gui = "bold" }
+          or nil
       end,
     })
 
@@ -139,6 +142,14 @@ return {
           perms = permissions,
           color = (owner_permissions == "rwx") and colors.green or colors.gray1,
         }
+      end,
+    })
+
+    -- Update LSP clients cache
+    vim.api.nvim_create_autocmd({ "LspAttach", "LspDetach", "BufEnter" }, {
+      callback = function()
+        local buf_clients = vim.lsp.get_clients({ bufnr = 0 })
+        cache.lsp_clients = buf_clients
       end,
     })
 
@@ -241,12 +252,75 @@ return {
       }
     end
 
-    -- LSP status component configuration
-    local lsp_status = {
-      "lsp_status",
-      icon = icons.lsp_client,
-      show_name = true, -- Set to false to hide client names and show only status icons
-    }
+    -- NEW: LSP Clients component with count and color
+    local function get_lsp_clients()
+      local buf_clients = vim.lsp.get_clients({ bufnr = 0 })
+      if #buf_clients == 0 then
+        return ""
+      end
+
+      local client_names = {}
+      for _, client in ipairs(buf_clients) do
+        table.insert(client_names, client.name)
+      end
+
+      -- Show count and first client name
+      if #client_names == 1 then
+        return icons.lsp_client .. " " .. client_names[1]
+      else
+        return icons.lsp_client .. " " .. client_names[1] .. " (+" .. (#client_names - 1) .. ")"
+      end
+    end
+
+    local function has_lsp_clients()
+      return #vim.lsp.get_clients({ bufnr = 0 }) > 0
+    end
+
+    -- NEW: Copilot status (if using copilot)
+    local function get_copilot_status()
+      local copilot_ok, copilot_status = pcall(function()
+        return require("copilot.api").status.data.status
+      end)
+
+      if not copilot_ok then
+        return ""
+      end
+
+      if copilot_status == "Normal" then
+        return icons.copilot
+      elseif copilot_status == "InProgress" then
+        return icons.copilot .. " …"
+      else
+        return ""
+      end
+    end
+
+    local function has_copilot()
+      local ok = pcall(require, "copilot")
+      return ok
+    end
+
+    -- NEW: Improved DAP status
+    local function get_dap_status()
+      local dap_ok, dap = pcall(require, "dap")
+      if not dap_ok then
+        return ""
+      end
+
+      local session = dap.session()
+      if session then
+        return " DEBUGGING"
+      end
+      return ""
+    end
+
+    local function has_dap_session()
+      local dap_ok, dap = pcall(require, "dap")
+      if not dap_ok then
+        return false
+      end
+      return dap.session() ~= nil
+    end
 
     -- Component configurations
     local mode = {
@@ -389,7 +463,7 @@ return {
     require("lualine").setup({
       options = {
         icons_enabled = true,
-        theme = "catppuccin-mocha", -- Changed to use specific catppuccin flavor
+        theme = "auto", -- Auto-detect from colorscheme
         component_separators = { left = "", right = "" },
         section_separators = { left = "", right = "" },
         disabled_filetypes = {
@@ -441,11 +515,12 @@ return {
             cond = trouble_symbols.has,
             color = { fg = colors.cyan, gui = "italic" },
           },
-          -- Built-in LSP status with progress indicators
-          vim.tbl_extend("force", lsp_status, {
+          -- NEW: LSP clients with count
+          {
+            get_lsp_clients,
             color = { fg = colors.blue, gui = "bold" },
-            cond = hide_in_width,
-          }),
+            cond = has_lsp_clients,
+          },
           -- Word count for text files
           {
             get_word_count,
@@ -461,12 +536,26 @@ return {
             separator = { left = "", right = "" },
             padding = 1,
           },
+          -- NEW: DAP debugging status
+          {
+            get_dap_status,
+            color = { fg = "#ffffff", bg = colors.orange, gui = "bold" },
+            separator = { left = "", right = "" },
+            padding = 1,
+            cond = has_dap_session,
+          },
           -- Search count
           { "searchcount", cond = hide_in_small_window },
           -- Selection count
           { "selectioncount", cond = hide_in_small_window },
         },
         lualine_x = {
+          -- NEW: Copilot status
+          {
+            get_copilot_status,
+            cond = has_copilot,
+            color = { fg = colors.green, gui = "bold" },
+          },
           -- Lazy status with icon
           {
             function()

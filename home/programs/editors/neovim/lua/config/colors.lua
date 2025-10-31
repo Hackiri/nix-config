@@ -12,7 +12,7 @@ M.colors = {
   color21 = "#4b314c", -- Markdown heading 4 - color01
   color22 = "#1e2b00", -- Markdown heading 5 - color05
   color23 = "#2d1c08", -- Markdown heading 6 - color08
-  color26 = "#0D1116", -- Markdown heading foreground (usually color10)
+  color26 = "#101010", -- Markdown heading foreground (usually color10)
 
   -- Primary colors
   color04 = "#987afb",
@@ -24,7 +24,7 @@ M.colors = {
   color06 = "#05ff23",
 
   -- Background and UI colors
-  color10 = "#0D1116", -- Terminal and neovim background
+  color10 = "#101010", -- Terminal and neovim background
   color17 = "#141b22", -- Lualine across, 1 color to the right of background
   color07 = "#141b22", -- Markdown codeblock, 2 to the right of background
   color25 = "#232e3b", -- Background of inactive tmux pane, 3 to the right
