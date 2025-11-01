@@ -48,7 +48,6 @@ map("n", "<leader>fo", "<cmd>FzfLua oldfiles<CR>", { desc = "Find Recent Files",
 map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Find Buffers", nowait = true })
 map("n", "<leader>fr", "<cmd>FzfLua resume<CR>", { desc = "Resume Last Search", nowait = true })
 map("n", "<leader>fp", "<cmd>FzfLua builtin<CR>", { desc = "FzfLua Pickers (Builtin)" })
-map("n", "<leader>fc", "<cmd>FzfLua commands<CR>", { desc = "Find Commands" })
 map("n", "<leader>fk", "<cmd>FzfLua keymaps<CR>", { desc = "Find Keymaps" })
 map("n", "<leader>fm", "<cmd>FzfLua marks<CR>", { desc = "Find Marks" })
 map("n", "<leader>fj", "<cmd>FzfLua jumps<CR>", { desc = "Find Jump List" })

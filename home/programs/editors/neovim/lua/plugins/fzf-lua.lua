@@ -27,7 +27,12 @@ return {
   cmd = "FzfLua",
   dependencies = {
     -- fzf-lua extensions
-    "phanen/fzf-lua-extra", -- No setup needed, just load it
+    {
+      "phanen/fzf-lua-extra",
+      dependencies = {
+        "nvim-mini/mini.visits", -- Required for visits picker
+      },
+    },
     {
       "drop-stones/fzf-lua-grep-context",
       config = function()
@@ -50,7 +55,6 @@ return {
 
         require("fzf-lua-grep-context").setup({
           contexts = contexts,
-          default_contexts = {},
           toggle_key = "<C-t>",
         })
       end,
@@ -66,7 +70,6 @@ return {
     { "<leader>fv", "<cmd>FzfLua grep_visual<cr>", mode = "v", desc = "Find Visual Selection" },
     { "<leader>fh", "<cmd>FzfLua help_tags<cr>", desc = "Find Help" },
     { "<leader>fo", "<cmd>FzfLua oldfiles<cr>", desc = "Find Recent Files" },
-    { "<leader>fb", "<cmd>FzfLua buffers<cr>", desc = "Find Buffers" },
     { "<leader>fr", "<cmd>FzfLua resume<cr>", desc = "Resume Last Search" },
     { "<leader>fp", "<cmd>FzfLua builtin<cr>", desc = "FzfLua Pickers (Builtin)" },
 
@@ -187,11 +190,9 @@ return {
         width = 0.87,
         row = 0.5,
         col = 0.5,
-        border = "rounded",
         preview = {
           layout = "horizontal",
           horizontal = "right:60%",
-          scrollbar = "border",
           delay = 50,
           wrap = "wrap", -- Wrap long lines in preview
         },
@@ -256,24 +257,22 @@ return {
       -- File picker configuration
       files = {
         prompt = "Files❯ ",
+        -- Use rg for faster file finding with sort by modified time
         cmd = "rg --files --sortr=modified --hidden --glob '!.git'",
         git_icons = true,
         file_icons = true,
         color_icons = true,
-        find_opts = [[-type f -not -path '*/\.git/*' -printf '%P\n']],
-        rg_opts = "--color=never --files --hidden --follow -g '!.git'",
-        fd_opts = "--color=never --type f --hidden --follow --exclude .git",
       },
 
       -- Grep configuration
       grep = {
         prompt = "Grep❯ ",
         input_prompt = "Grep For❯ ",
+        -- Add --hidden and --max-columns to defaults
         cmd = "rg --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --hidden",
         git_icons = true,
         file_icons = true,
         color_icons = true,
-        rg_opts = "--hidden --column --line-number --no-heading --color=always --smart-case -g '!.git'",
         rg_glob = true, -- Enable passing flags to ripgrep
         -- Usage: search for 'pattern -- -F' to pass -F (fixed string) flag to rg
         rg_glob_fn = function(query, opts)
