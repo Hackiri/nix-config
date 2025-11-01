@@ -51,7 +51,7 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.coding.yanky" }, -- Advanced yank history with picker
     { import = "lazyvim.plugins.extras.editor.mini-diff" }, -- Inline git diff visualization
     { import = "lazyvim.plugins.extras.editor.mini-move" }, -- Move lines/blocks with Alt+hjkl
-    { import = "lazyvim.plugins.extras.editor.illuminate" }, -- Highlight word references
+    -- { import = "lazyvim.plugins.extras.editor.illuminate" }, -- Highlight word references (disabled - Neovim 0.11 compatibility issue)
     { import = "lazyvim.plugins.extras.util.project" }, -- Project-based directory switching
     { import = "lazyvim.plugins.extras.editor.refactoring" }, -- Code refactoring operations
 
