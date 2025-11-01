@@ -25,6 +25,37 @@ return {
   -- Use latest version for Neovim 0.11.3 treesitter compatibility
   version = false,
   cmd = "FzfLua",
+  dependencies = {
+    -- fzf-lua extensions
+    "phanen/fzf-lua-extra", -- No setup needed, just load it
+    {
+      "drop-stones/fzf-lua-grep-context",
+      config = function()
+        -- Define reusable grep contexts
+        local contexts = {
+          -- Language-specific contexts
+          lua = { name = "Lua Files", icon = "", glob = "*.lua" },
+          nix = { name = "Nix Files", icon = "", glob = "*.nix" },
+          typescript = { name = "TypeScript/React", icon = "", glob = "*.{ts,tsx,js,jsx}" },
+          python = { name = "Python Files", icon = "", glob = "*.py" },
+          go = { name = "Go Files", icon = "", glob = "*.go" },
+          rust = { name = "Rust Files", icon = "", glob = "*.rs" },
+          markdown = { name = "Markdown Files", icon = "", glob = "*.md" },
+          config = { name = "Config Files", icon = "", glob = "*.{json,yaml,yml,toml,conf}" },
+          -- Exclude contexts
+          no_tests = { name = "Exclude Tests", icon = "", glob = "!**/*test*" },
+          no_node_modules = { name = "Exclude node_modules", icon = "", glob = "!**/node_modules/**" },
+          no_build = { name = "Exclude Build/Dist", icon = "", glob = "!{**/dist/**,**/build/**,**/target/**,result}" },
+        }
+
+        require("fzf-lua-grep-context").setup({
+          contexts = contexts,
+          default_contexts = {},
+          toggle_key = "<C-t>",
+        })
+      end,
+    },
+  },
   keys = {
     -- Files
     { "<leader>ff", "<cmd>FzfLua files<cr>", desc = "Find Files" },
@@ -87,6 +118,52 @@ return {
     -- Quickfix (for multi-stage filtering workflow)
     { "<leader>fq", "<cmd>FzfLua quickfix<cr>", desc = "Find in Quickfix" },
     { "<C-g>", "<cmd>FzfLua quickfix<cr>", desc = "Filter Quickfix with fzf" },
+
+    -- fzf-lua-extra keymaps
+    {
+      "<leader>fV",
+      function()
+        require("fzf-lua-extra").visits()
+      end,
+      desc = "Find Visits (Frequent Files)",
+    },
+    {
+      "<leader>fL",
+      function()
+        require("fzf-lua-extra").lazy()
+      end,
+      desc = "Find Lazy Plugins",
+    },
+    {
+      "<leader>fgh",
+      function()
+        require("fzf-lua-extra").hunks()
+      end,
+      desc = "Find Git Hunks",
+    },
+    {
+      "<leader>fgl",
+      function()
+        require("fzf-lua-extra").git_log()
+      end,
+      desc = "Find Git Log (Enhanced)",
+    },
+    {
+      "<leader>fP",
+      function()
+        require("fzf-lua-extra").ps()
+      end,
+      desc = "Find Processes",
+    },
+
+    -- fzf-lua-grep-context keymaps
+    {
+      "<leader>fgx",
+      function()
+        require("fzf-lua-grep-context").select_contexts()
+      end,
+      desc = "Select Grep Contexts",
+    },
   },
   opts = function()
     local actions = require("fzf-lua.actions")
@@ -353,5 +430,23 @@ return {
 
     -- Register fzf-lua as the default UI select
     require("fzf-lua").register_ui_select()
+
+    -- Integrate grep-context with fzf-lua grep commands
+    -- This allows using <C-t> to toggle contexts during grep
+    local has_grep_context, grep_context = pcall(require, "fzf-lua-grep-context")
+    if has_grep_context then
+      -- Override grep keymaps to use context-aware versions
+      vim.keymap.set("n", "<leader>fg", function()
+        grep_context.live_grep()
+      end, { desc = "Live Grep (with contexts)" })
+
+      vim.keymap.set("n", "<leader>fw", function()
+        grep_context.grep_cword()
+      end, { desc = "Grep Word (with contexts)" })
+
+      vim.keymap.set("v", "<leader>fv", function()
+        grep_context.grep_visual()
+      end, { desc = "Grep Visual (with contexts)" })
+    end
   end,
 }

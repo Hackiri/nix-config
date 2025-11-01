@@ -36,6 +36,7 @@ map("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Move buffer to new tab" })
 -- Note: These keymaps load immediately to override LazyVim's Snacks picker defaults
 -- The plugin config is in lua/plugins/fzf-lua.lua
 -- Using `nowait = true` on frequently-used mappings to reduce timeout lag
+-- Note: <leader>fg, <leader>fw, <leader>fv are overridden by fzf-lua-grep-context for context support
 map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files", nowait = true })
 map("n", "<leader>fF", "<cmd>FzfLua files fzf_opts={['--exact']=''}<CR>", { desc = "Find Files (Exact Match)" })
 map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Find Text (Live Grep)", nowait = true })
