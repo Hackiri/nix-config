@@ -14,10 +14,6 @@ map("n", "<M-l>", "$", { desc = "Go to line end" })
 map("v", "<M-h>", "^", { desc = "Go to line start" })
 map("v", "<M-l>", "$h", { desc = "Go to line end (minus one)" })
 
--- Quick Save & Quit
-map("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
-map("n", "<C-q>", "<cmd>q<CR>", { desc = "Quit file" })
-
 -- Search Improvements
 -- Note: Auto-nohlsearch is handled by autocmds.lua (auto-nohl with search count)
 map("n", "n", "nzzzv", { desc = "Next result and center" })
@@ -41,13 +37,16 @@ map("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Move buffer to new tab" })
 -- The plugin config is in lua/plugins/fzf-lua.lua
 -- Using `nowait = true` on frequently-used mappings to reduce timeout lag
 map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files", nowait = true })
+map("n", "<leader>fF", "<cmd>FzfLua files fzf_opts={['--exact']=''}<CR>", { desc = "Find Files (Exact Match)" })
 map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Find Text (Live Grep)", nowait = true })
+map("n", "<leader>fG", "<cmd>FzfLua live_grep fzf_opts={['--exact']=''}<CR>", { desc = "Find Text (Exact Match)" })
 map("n", "<leader>fw", "<cmd>FzfLua grep_cword<CR>", { desc = "Find Word Under Cursor", nowait = true })
 map("v", "<leader>fv", "<cmd>FzfLua grep_visual<CR>", { desc = "Find Visual Selection", nowait = true })
 map("n", "<leader>fh", "<cmd>FzfLua help_tags<CR>", { desc = "Find Help", nowait = true })
 map("n", "<leader>fo", "<cmd>FzfLua oldfiles<CR>", { desc = "Find Recent Files", nowait = true })
 map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Find Buffers", nowait = true })
 map("n", "<leader>fr", "<cmd>FzfLua resume<CR>", { desc = "Resume Last Search", nowait = true })
+map("n", "<leader>fp", "<cmd>FzfLua builtin<CR>", { desc = "FzfLua Pickers (Builtin)" })
 map("n", "<leader>fc", "<cmd>FzfLua commands<CR>", { desc = "Find Commands" })
 map("n", "<leader>fk", "<cmd>FzfLua keymaps<CR>", { desc = "Find Keymaps" })
 map("n", "<leader>fm", "<cmd>FzfLua marks<CR>", { desc = "Find Marks" })
@@ -74,32 +73,28 @@ map("n", "<leader>fs", "<cmd>FzfLua lsp_document_symbols<CR>", { desc = "Find Do
 map("n", "<leader>fws", "<cmd>FzfLua lsp_workspace_symbols<CR>", { desc = "Find Workspace Symbols" })
 map("n", "<leader>fwd", "<cmd>FzfLua diagnostics_workspace<CR>", { desc = "Find Workspace Diagnostics" })
 
--- Buffer Management
-map("n", "<leader>bn", "<cmd>bnext<CR>", { desc = "Next buffer" })
-map("n", "<leader>bp", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
-map("n", "<leader>bx", "<cmd>bdelete<CR>", { desc = "Close buffer" })
+-- fzf-lua Quickfix (for multi-stage filtering workflow)
+map("n", "<leader>fq", "<cmd>FzfLua quickfix<CR>", { desc = "Find in Quickfix" })
+map("n", "<C-g>", "<cmd>FzfLua quickfix<CR>", { desc = "Filter Quickfix with fzf" })
 
--- Quick Buffer Navigation
-map("n", "<Tab>", "<cmd>bnext<CR>", { desc = "Next buffer" })
-map("n", "<S-Tab>", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
+-- Buffer Navigation
+-- Using LazyVim defaults:
+--   <S-h> - Previous buffer
+--   <S-l> - Next buffer
+--   <leader>bd - Close buffer
+-- Note: LazyVim provides these by default, no custom keymaps needed
 
--- Neovim 0.11+ Default LSP Keymaps
--- Override the built-in gr* mappings to use FzfLua for better UI
--- These mappings are set by Neovim 0.11+ by default, but we override them here
-map("n", "grn", vim.lsp.buf.rename, { desc = "LSP Rename" })
-map("n", "grr", "<cmd>FzfLua lsp_references<cr>", { desc = "LSP References" })
-map("n", "gri", "<cmd>FzfLua lsp_implementations<cr>", { desc = "LSP Implementations" })
-map("n", "gra", vim.lsp.buf.code_action, { desc = "LSP Code Actions" })
-map("n", "grt", "<cmd>FzfLua lsp_typedefs<cr>", { desc = "LSP Type Definition" })
-map("n", "gO", "<cmd>FzfLua lsp_document_symbols<cr>", { desc = "LSP Document Symbols" })
+-- LSP & Diagnostics
+-- Using Neovim 0.11+ defaults:
+--   grn - LSP Rename
+--   grr - LSP References (we override to use FzfLua in lsp.lua)
+--   gri - LSP Implementations
+--   gra - LSP Code Actions
+--   gO - LSP Document Symbols
+--   [d, ]d - Diagnostic navigation (LazyVim default)
+-- Note: LSP keymaps are configured in lua/plugins/lsp.lua on_attach
 
--- Signature help in insert mode (Neovim 0.11+ default)
--- Using <C-k> instead of <C-s> to avoid terminal flow control (XOFF) conflicts
-map("i", "<C-k>", vim.lsp.buf.signature_help, { desc = "LSP Signature Help" })
-
--- Diagnostics Navigation (LSP-independent)
-map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
-map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+-- Diagnostic Toggles
 map("n", "<leader>dt", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle diagnostics" })
@@ -156,10 +151,9 @@ map(
 -- Code Navigation and Editing
 -- Note: Aerial outline toggle is now at <leader>o (defined in plugins/aerial.lua)
 -- Removed <leader>a mapping to prevent conflict with Avante AI prefix
+-- Note: Line movement (J/K) is handled by mini-move (Alt+hjkl in any direction)
 map("v", "<", "<gv", { desc = "Unindent line" })
 map("v", ">", ">gv", { desc = "Indent line" })
-map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move line down" })
-map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move line up" })
 
 -- Better delete and yank
 map("n", "x", '"_x', { desc = "Delete char without yank" })

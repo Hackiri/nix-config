@@ -45,23 +45,17 @@ require("lazy").setup({
   spec = {
     -- Import LazyVim plugins
     { "LazyVim/LazyVim", version = "*", import = "lazyvim.plugins" },
-    -- Explicitly enable specific plugins
 
-    -- Other plugin configurations
-    {
-      "nvim-telescope/telescope-fzf-native.nvim",
-      enabled = true,
-      version = "false", -- Use stable version tag instead of requiring Rust nightly
-      build = "mkdir -p build && cc -O3 -Wall -fpic -std=gnu99 -shared src/fzf.c -o build/libfzf.so",
-    },
-    -- Import user plugins
-    -- import any extras modules here
-    { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
-    -- Disabled to prevent duplicate <leader>ua keymaps
-    -- { import = "lazyvim.plugins.extras.ui.mini-animate" },
-    { import = "lazyvim.plugins.extras.formatting.prettier" },
-    -- { import = "lazyvim.plugins.extras.ai.codeium" }, -- Replaced with windsurf.vim plugin
-    -- Copilot is configured in plugins/copilot.lua
+    -- LazyVim Extras - Workflow Enhancements
+    { import = "lazyvim.plugins.extras.util.mini-hipatterns" }, -- Highlight hex colors, etc.
+    { import = "lazyvim.plugins.extras.coding.yanky" }, -- Advanced yank history with picker
+    { import = "lazyvim.plugins.extras.editor.mini-diff" }, -- Inline git diff visualization
+    { import = "lazyvim.plugins.extras.editor.mini-move" }, -- Move lines/blocks with Alt+hjkl
+    { import = "lazyvim.plugins.extras.editor.illuminate" }, -- Highlight word references
+    { import = "lazyvim.plugins.extras.util.project" }, -- Project-based directory switching
+    { import = "lazyvim.plugins.extras.editor.refactoring" }, -- Code refactoring operations
+
+    -- Your custom plugins
     { import = "plugins" },
     -- Import colorschemes from the colorschemes directory
     { import = "plugins.colorschemes" },
