@@ -14,7 +14,7 @@
   # Enable Kubernetes development profile
   profiles.kubernetes = {
     enable = true;
-    toolset = "devops"; # Options: "devops" or "complete"
+    toolset = "complete"; # Options: "devops" or "complete"
     includeLocalDev = true; # Include kind, tilt, kubeconform
   };
 

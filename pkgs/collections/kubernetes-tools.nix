@@ -14,6 +14,7 @@
     contextManagement = with pkgs; [
       kubectx # Fast context switching between clusters (includes kubens)
       kubecolor # Colorize kubectl output for better readability
+      kubelogin-oidc # OIDC authentication plugin for kubectl
     ];
 
     # Monitoring, logging, and debugging tools
