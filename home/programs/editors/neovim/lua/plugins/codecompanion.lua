@@ -2,6 +2,7 @@
 -- https://github.com/olimorris/codecompanion.nvim
 return {
   "olimorris/codecompanion.nvim",
+  tag = "v17.33.0", -- Pin to stable version to avoid breaking changes
   event = "VeryLazy", -- Load after UI is rendered to improve startup time
   dependencies = {
     "nvim-lua/plenary.nvim",
