@@ -8,7 +8,20 @@
     age # Simple, modern encryption tool
 
     #--------------------------------------------------
-    # Additional Security Tools (add as needed)
+    # Security Auditing & Analysis
     #--------------------------------------------------
+    lynis # Security auditing tool for Unix systems
+    trivy # Vulnerability scanner for containers and filesystems
+
+    #--------------------------------------------------
+    # Password & Credential Tools
+    #--------------------------------------------------
+    pwgen # Password generator
+    pass # Unix password manager (GPG-based)
+
+    #--------------------------------------------------
+    # Network Security
+    #--------------------------------------------------
+    nmap # Network exploration and security auditing
   ];
 }

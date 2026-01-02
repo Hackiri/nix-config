@@ -26,11 +26,39 @@ _: {
         NSWindowShouldDragOnGesture = true;
         NSAutomaticSpellingCorrectionEnabled = false;
       };
-      LaunchServices.LSQuarantine = false; # disables "Are you sure?" for new apps
+      # Security: Keep Gatekeeper enabled - shows warning for unverified apps
+      LaunchServices.LSQuarantine = true;
       loginwindow.GuestEnabled = false;
       finder.FXPreferredViewStyle = "Nlsv";
 
       CustomUserPreferences = {
+        #--------------------------------------------------
+        # Security & Privacy Settings
+        #--------------------------------------------------
+        # Require password immediately after sleep/screen saver
+        "com.apple.screensaver" = {
+          askForPassword = 1;
+          askForPasswordDelay = 0; # 0 = immediately
+        };
+
+        # Disable Siri data collection
+        "com.apple.assistant.support" = {
+          "Siri Data Sharing Opt-In Status" = 0;
+        };
+
+        # Disable crash reporter auto-submission
+        "com.apple.CrashReporter" = {
+          DialogType = "none";
+        };
+
+        # Prevent FileVault from being disabled (requires FileVault to be enabled first)
+        "com.apple.MCX" = {
+          dontAllowFDEDisable = true;
+        };
+
+        #--------------------------------------------------
+        # Finder Settings
+        #--------------------------------------------------
         "com.apple.finder" = {
           ShowExternalHardDrivesOnDesktop = true;
           ShowHardDrivesOnDesktop = false;

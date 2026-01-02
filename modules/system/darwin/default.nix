@@ -37,6 +37,17 @@
 
   # Configure activation scripts
   system.activationScripts = {
+    # Security: Enable macOS Application Firewall
+    firewall.text = ''
+      echo "Configuring macOS Firewall..." >&2
+      # Enable Application Firewall
+      /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+      # Enable Stealth Mode (don't respond to pings/probes from unauthorized apps)
+      /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on
+      # Enable logging
+      /usr/libexec/ApplicationFirewall/socketfilterfw --setloggingmode on
+    '';
+
     postActivation.text = ''
       # Add pam_reattach to enable TouchID for tmux
       sudo mkdir -p /usr/local/lib/pam
