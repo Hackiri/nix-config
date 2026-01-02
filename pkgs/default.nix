@@ -12,7 +12,7 @@
   # Convenience function to create a package set with all kubernetes tools
   kube-packages = pkgs.buildEnv {
     name = "kubernetes-packages";
-    paths = kubernetes-tools;
+    paths = kubernetes-tools.all; # Use .all to get the list of all packages
   };
 
   # Add more packages here as needed

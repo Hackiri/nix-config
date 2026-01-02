@@ -7,6 +7,12 @@
   ...
 }: {
   imports = [
+    # Packages: Core CLI tools (bat, eza, fd, fzf, ripgrep, etc.)
+    ../../packages/cli-essentials.nix
+
+    # Packages: Network essentials (curl, wget, cachix)
+    ../../packages/network.nix
+
     # Programs: Shell configuration and enhancements
     ../../programs/shells
 
@@ -19,26 +25,8 @@
     inherit username;
     stateVersion = "25.05";
 
-    # Essential cross-platform packages
+    # Essential cross-platform packages (beyond imported package files)
     packages = with pkgs; [
-      #--------------------------------------------------
-      # Core CLI Tools (universal)
-      #--------------------------------------------------
-      bat # Cat with syntax highlighting and Git integration
-      eza # Modern replacement for ls with colors and Git status
-      fd # Simple, fast alternative to find
-      fzf # Command-line fuzzy finder
-      jq # Lightweight JSON processor
-      tree # Display directories as trees
-      colordiff # Colorized diff output
-      zoxide # Smarter cd command that learns your habits
-
-      #--------------------------------------------------
-      # Network Essentials
-      #--------------------------------------------------
-      curl # Command line tool for transferring data with URLs
-      wget # Non-interactive network downloader
-
       #--------------------------------------------------
       # System Utilities
       #--------------------------------------------------
@@ -52,11 +40,6 @@
       unzip # Extract ZIP archives
       zip # Create ZIP archives
       gzip # GNU compression utility
-
-      #--------------------------------------------------
-      # Text Processing
-      #--------------------------------------------------
-      ripgrep # Fast text search tool (rg)
     ];
   };
 

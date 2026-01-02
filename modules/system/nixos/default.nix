@@ -1,8 +1,6 @@
 # NixOS system configuration
 {
-  config,
   lib,
-  pkgs,
   username,
   ...
 }: {

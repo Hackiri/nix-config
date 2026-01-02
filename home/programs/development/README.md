@@ -20,7 +20,8 @@ development/
 ├── direnv/
 │   └── default.nix    # Enhanced direnv with smart caching
 └── git/
-    └── git-hooks.nix  # Git hooks with error handling
+    ├── default.nix    # Basic git configuration (no sops dependency)
+    └── git-hooks.nix  # Git hooks with sops integration
 ```
 
 ## ✨ Key Features
@@ -44,12 +45,23 @@ layout rust                 # Rust projects with isolated target directory
 layout go                   # Go projects with isolated GOPATH
 ```
 
-### Git Configuration with Sops Integration
+### Git Configuration
 
-- **Secret Management**: User credentials managed via sops
-- **Enhanced Hooks**: Robust pre-commit, post-checkout, and post-merge hooks
-- **Error Handling**: Comprehensive validation and fallback mechanisms
-- **GPG Integration**: Automatic commit and tag signing
+Two git configurations are available:
+
+**`git/default.nix`** - Basic git (default, no sops dependency):
+
+- Standard git configuration with difftool/mergetool
+- GPG integration for commit signing
+- Works out of the box for new users
+
+**`git/git-hooks.nix`** - Git with sops integration (optional):
+
+- Secret Management: User credentials managed via sops
+- Enhanced Hooks: post-checkout and post-merge hooks for sops secrets
+- Error Handling: Comprehensive validation and fallback mechanisms
+
+To enable sops integration, import `base/git.nix` and `base/secrets.nix` in your host config.
 
 
 ## 🛠️ Usage Examples
@@ -172,8 +184,8 @@ helm version --client
 - [direnv Documentation](https://direnv.net/)
 - [Nix Flakes](https://nixos.wiki/wiki/Flakes)
 - [sops-nix](https://github.com/Mic92/sops-nix)
-- [Kubernetes Tools](../../../pkgs/kubernetes-tools.nix)
-- [Development Tools](../../../pkgs/dev-tools.nix)
+- [Kubernetes Tools](../../../pkgs/collections/kubernetes-tools.nix)
+- [Development Tools](../../../pkgs/scripts/dev-tools.nix)
 
 ## 🤝 Contributing
 

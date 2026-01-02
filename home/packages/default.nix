@@ -28,6 +28,6 @@
 # ./utilities.nix      - Media and document processing (imagemagick, ghostscript)
 # ./web-dev.nix        - Web development tools (httpie, curl, grpcurl, caddy)
 # This is a placeholder module that does nothing
-{pkgs, ...}: {
+_: {
   # No imports - packages are imported directly in profile files
 }

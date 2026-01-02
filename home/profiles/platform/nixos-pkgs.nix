@@ -1,50 +1,25 @@
-# Home Manager config for NixOS
-{
-  config,
-  pkgs,
-  ...
-}: {
-  # NixOS-specific packages
+# NixOS-specific packages - only available or needed on Linux
+#
+# Platform Differences from Darwin:
+# ---------------------------------
+# - xclip/xsel: X11 clipboard utilities (macOS uses reattach-to-user-namespace)
+# - XDG: Linux desktop specification (macOS uses different conventions)
+# - gpg-agent: Linux service management (macOS uses launchd)
+#
+# Note: No window manager configured here (darwin has AeroSpace)
+# Note: GUI apps installed via nixpkgs (darwin uses Homebrew)
+# Note: System services in modules/system/nixos/ (darwin in modules/system/darwin/)
+{pkgs, ...}: {
   home.packages = with pkgs; [
-    # Linux-specific utilities
-    xclip # X11 clipboard utility
-    xsel # X11 selection utility
+    # X11 clipboard utilities (equivalent to macOS clipboard integration)
+    xclip
+    xsel
 
-    # Linux desktop applications
-    # firefox           # Web browser (if not using system-wide)
-    # thunderbird       # Email client
-
-    # Linux development tools
-    # gdb               # GNU debugger
-    # valgrind          # Memory debugging tool
+    # Uncomment as needed:
+    # gdb       # GNU debugger (Linux-specific debugging)
+    # valgrind  # Memory debugging tool (Linux-only)
   ];
 
-  # NixOS-specific configurations
-  # Enable services that are Linux-specific
-  services = {
-    # gpg-agent = {
-    #   enable = true;
-    #   defaultCacheTtl = 1800;
-    #   enableSshSupport = true;
-    # };
-  };
-
-  # Linux-specific environment variables
-  home.sessionVariables = {
-    # BROWSER = "firefox";
-    # TERMINAL = "alacritty";
-  };
-
-  # XDG configuration (Linux desktop)
-  xdg = {
-    enable = true;
-    # mimeApps = {
-    #   enable = true;
-    #   defaultApplications = {
-    #     "text/html" = "firefox.desktop";
-    #     "x-scheme-handler/http" = "firefox.desktop";
-    #     "x-scheme-handler/https" = "firefox.desktop";
-    #   };
-    # };
-  };
+  # XDG configuration (Linux desktop standard)
+  xdg.enable = true;
 }

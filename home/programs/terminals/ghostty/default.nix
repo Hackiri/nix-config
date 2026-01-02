@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: {
+_: {
   # Ensure the config directory exists
   home.file = {
     # Main ghostty config file

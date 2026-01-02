@@ -20,9 +20,9 @@ nix-config/
 │   ├── mbp/                    # MacBook Pro
 │   └── desktop/                # NixOS Desktop
 ├── home/                       # Home Manager configurations
-│   ├── profiles/               # User profiles (minimal, development, desktop, darwin, nixos)
+│   ├── profiles/               # User profiles (base, features, platform)
 │   ├── programs/               # Program configurations (editors, terminals, shells, etc.)
-│   └── packages/               # Package collections (build-tools, languages, web-dev, etc.)
+│   └── packages/               # Package collections (cli-essentials, build-tools, languages, etc.)
 ├── modules/                    # System modules
 │   ├── system/                 # System configurations (darwin, nixos)
 │   ├── services/               # Service configurations
@@ -74,7 +74,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
 3. **Configure Your System**
 
-   **Edit `flake.nix` (lines 164-170)** - This is the ONLY required edit to start:
+   **Edit `flake.nix` (lines 157-163)** - This is the ONLY required edit to start:
 
    ```nix
    darwinConfigurations = {
@@ -94,87 +94,42 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    **Optional:** Customize host-specific settings in `hosts/mbp/configuration.nix` and `hosts/mbp/home.nix` later
 
-4. **Choose Your Profile Setup**
+4. **Install nix-darwin**
 
-   **Option A: Skip Secrets (Recommended for first-time users)**
-   
-   Comment out the secrets & git profile in `home/profiles/development.nix`:
-   ```nix
-   # ../base/git.nix
-   # ../base/secrets.nix
+   ```bash
+   # Install nix-darwin with your customized configuration
+   nix run nix-darwin -- switch --flake .
    ```
-   
-   Configure Git manually after installation:
+
+   After installation, configure Git manually:
+
    ```bash
    git config --global user.name "Your Name"
    git config --global user.email "your-email@example.com"
-   git config --global user.signingkey "YOUR_GPG_KEY_ID"
    ```
 
-5. **Install nix-darwin**
+5. **Set Up SOPS Secrets (Optional)**
 
-```bash
-# Install nix-darwin with your customized configuration
-nix run nixpkgs#nix-darwin -- switch --flake .
-```
+   By default, the configuration uses basic Git without sops. To enable sops-encrypted Git credentials:
 
-6. **Set Up Authentication and Secrets**
+   a. **Enable sops in your host config** (`hosts/mbp/home.nix`):
 
-   a. **Generate SSH Key for GitHub**
-
-   ```bash
-   # Generate SSH key
-   ssh-keygen -t ed25519 -C "your-email@example.com"
-
-   # Add SSH key to GitHub
-   cat ~/.ssh/id_ed25519.pub
-   # Copy the output and add it to GitHub Settings > SSH and GPG keys > New SSH key
+   ```nix
+   imports = [
+     ../../home/profiles/platform/darwin.nix
+     ../../home/profiles/base/git.nix      # Add this
+     ../../home/profiles/base/secrets.nix  # Add this
+   ];
    ```
 
-   b. **Generate GPG Key for Commit Signing**
+   b. **Generate age key:**
 
    ```bash
-   # Generate GPG key
-   gpg --full-generate-key
-   # Choose: (9) ECC (sign and encrypt)
-   # Choose: (1) Curve 25519
-   # Enter your name and email when prompted
-
-   # Export public key for GitHub
-   gpg --armor --export YOUR_KEY_ID
-   # Copy the output and add it to GitHub Settings > SSH and GPG keys > New GPG key
-   ```
-
-   c. **Set Up SOPS for Secrets Management (Optional - Only if using secrets.nix profile)**
-
-   **What you can store in secrets:**
-   - Git credentials (username, email, GPG signing key)
-   - API tokens and keys (GitHub, OpenAI, AWS, etc.)
-   - SSH private keys
-   - Database passwords
-   - Environment-specific credentials
-   - Any sensitive configuration values
-
-   **Optional Setup steps:**
-
-   ```bash
-   # Generate age key for SOPS
-   age-keygen > ~/.config/sops/age/keys.txt
-
-   # Create age key directories
    mkdir -p ~/.config/sops/age
-   mkdir -p ~/Library/Application\ Support/sops/age
-
-   # Copy age key to both locations
-   cp ~/.config/sops/age/keys.txt ~/Library/Application\ Support/sops/age/keys.txt
-
-   # Get the public key from the generated file
-   grep "KEY"  ~/.config/sops/age/keys.txt
+   age-keygen > ~/.config/sops/age/keys.txt
    ```
 
-   d. **Update SOPS Configuration (Optional)**
-
-   Update `.sops.yaml` with your new age public key:
+   c. **Update `.sops.yaml`** with your public key (from the generated file):
 
    ```yaml
    keys:
@@ -186,28 +141,15 @@ nix run nixpkgs#nix-darwin -- switch --flake .
              - *main-key
    ```
 
-   e. **Create Encrypted Secrets File (Optional)**
+   d. **Create and encrypt secrets:**
 
    ```bash
-   # Example: Create secrets file with your information
    cat > secrets/secrets.yaml << EOF
-   # Git configuration
    git-userName: your-username
    git-userEmail: your-email@example.com
    git-signingKey: YOUR_GPG_KEY_ID
-   
-   # API tokens (examples)
-   github-token: ghp_your_token_here
-   openai-api-key: sk-your_key_here
-   
-   # SSH keys
-   ssh-private-key: |
-     -----BEGIN OPENSSH PRIVATE KEY-----
-     your_key_content_here
-     -----END OPENSSH PRIVATE KEY-----
    EOF
 
-   # Encrypt the secrets file
    sops -e -i secrets/secrets.yaml
    ```
 
@@ -304,12 +246,13 @@ vi           # nvim (Neovim)
 Detailed documentation for specific components:
 
 ### Core Configuration
-- **[Home Manager Profiles](home/profiles/README.md)** - User profile system (minimal, development, desktop, darwin, nixos)
-- **[Custom Packages](pkgs/README.md)** - Custom Nix packages and development tools
+
+- **[Home Manager Profiles](home/profiles/README.md)** - Layered profile system (base → features → platform)
+- **[Custom Packages](pkgs/README.md)** - Custom Nix packages, Kubernetes tools, and dev-tools
 
 ### Programs
-- **[Zsh Configuration](home/programs/shells/zsh/README.md)** - Comprehensive Zsh setup with FZF keybindings and aliases
-- **[Development Tools](home/programs/development/README.md)** - Direnv and Git configuration
-- **[Kubernetes Tools](home/programs/kubernetes/README.md)** - Kubernetes toolsets and utilities
-- **[Neovim Configuration](home/programs/editors/neovim/Docs/README.md)** - Enhanced Neovim setup with v12 features
-- **[Neovim Snippets](home/programs/editors/neovim/lua/snippets/README.md)** - Custom code snippets
+
+- **[Zsh Configuration](home/programs/shells/zsh/README.md)** - Zsh setup with FZF keybindings, aliases, and Oh My Zsh
+- **[Development Tools](home/programs/development/README.md)** - Direnv layouts and Git configuration (basic or sops)
+- **[Kubernetes Tools](home/programs/kubernetes/README.md)** - Kubernetes toolsets (minimal, admin, devops, complete)
+- **[Neovim Snippets](home/programs/editors/neovim/lua/snippets/README.md)** - LuaSnip snippets for multiple languages

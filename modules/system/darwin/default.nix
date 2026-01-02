@@ -1,6 +1,5 @@
 # Darwin system configuration
 {
-  config,
   lib,
   pkgs,
   system,

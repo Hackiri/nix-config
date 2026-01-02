@@ -8,7 +8,8 @@ This directory contains the layered profile system for Home Manager configuratio
 profiles/
 ├── base/                    # Foundation profiles
 │   ├── minimal.nix         # Essential cross-platform tools
-│   └── secrets.nix         # Optional sops-nix secrets management
+│   ├── git.nix             # Git with sops hooks (optional)
+│   └── secrets.nix         # Sops-nix secrets management (optional)
 ├── features/               # Feature-specific profiles
 │   ├── development.nix     # Development tools and environments
 │   ├── desktop.nix         # GUI applications and desktop tools
@@ -52,31 +53,52 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 **Used by**: All other profiles  
 **Imports**: Programs (shells, utilities/btop)
 
-#### `base/secrets.nix` - Secrets Management Profile
-**Purpose**: Git hooks with sops-nix encrypted secrets integration  
+#### `base/git.nix` - Git with Sops Integration (Optional)
+
+**Purpose**: Git with sops-nix encrypted secrets hooks
+
 **Includes**:
+
 - Git with post-checkout/post-merge hooks that read from sops secrets
-- SOPS utilities and shell aliases
 - GPG configuration for commit signing
 
 **Requirements**:
+
 - Age key at `~/.config/sops/age/keys.txt`
 - Encrypted `secrets/secrets.yaml` with your age public key
-- Git credentials stored in sops secrets
 
-**Usage**: 
-- **New users**: Comment out `../base/secrets.nix` import in `features/development.nix` until you set up sops
-- **Advanced users**: Keep uncommented and follow README section 6c for setup
+**Usage**: Import in your host config along with `secrets.nix` for full sops integration:
 
-**Standalone**: Can be imported independently if you only need secrets management
+```nix
+# hosts/mbp/home.nix
+imports = [
+  ../../home/profiles/platform/darwin.nix
+  ../../home/profiles/base/git.nix      # Sops git hooks
+  ../../home/profiles/base/secrets.nix  # Sops utilities
+];
+```
+
+#### `base/secrets.nix` - Sops Utilities (Optional)
+
+**Purpose**: SOPS CLI utilities and shell aliases
+
+**Includes**:
+
+- SOPS utilities
+- Shell aliases for secret management
+
+**Standalone**: Can be imported independently
 
 ---
 
 ### Feature Profiles
 
 #### `features/development.nix` - Development Profile
-**Purpose**: Comprehensive development environment  
+
+**Purpose**: Comprehensive development environment
+
 **Includes**:
+
 - Text editors (Neovim, Emacs, Neovide)
 - Development tools (Git with basic config, direnv)
 - Kubernetes tools and configuration
@@ -87,12 +109,14 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 - Programming language runtimes
 - Web development tools
 - Security tools
-- **Optional**: Secrets profile (can be commented out)
 
-**Inherits from**: `base/minimal.nix`  
-**Optionally imports**: `base/secrets.nix` (comment out if not using sops)  
-**Used by**: `features/desktop.nix`  
-**Imports**: 
+**Git Configuration**: Uses basic git by default (no sops dependency). For sops-encrypted git credentials, import `base/git.nix` and `base/secrets.nix` in your host config.
+
+**Inherits from**: `base/minimal.nix`
+**Used by**: `features/desktop.nix`
+
+**Imports**:
+
 - Programs: editors, development, kubernetes, terminals, utilities
 - Packages: build-tools, code-quality, databases, languages, network, security, terminals, web-dev, custom
 
@@ -108,17 +132,36 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 - Packages: desktop, utilities
 
 #### `features/kubernetes.nix` - Kubernetes Development Profile
-**Purpose**: Kubernetes engineer workflow with remote cluster management  
+
+**Purpose**: Kubernetes engineer workflow with remote cluster management
+
 **Includes**:
+
 - Kubernetes CLI tools (kubectl, helm, kustomize, kubectx)
 - GitOps tools (argocd, flux)
 - Container tools (skopeo, dive, crane)
-- Local development (kind, tilt, kubeconform)
+- Local development (kind, tilt, kubeconform) when `includeLocalDev = true`
 - Cloud provider CLIs (AWS, GCP, Azure)
 
 **Configuration Options**:
-- `toolset`: "devops" (default) or "complete"
-- `includeLocalDev`: Enable local Kubernetes development tools
+
+```nix
+profiles.kubernetes = {
+  enable = true;
+  toolset = "complete";  # minimal, admin, operations, devops, security-focused, mesh, or complete
+  includeLocalDev = true;
+};
+```
+
+**Toolset Options**:
+
+- `minimal`: Core tools only (kubectl, helm, kustomize, kubectx, kubecolor)
+- `admin`: Cluster administration (core + observability + security)
+- `operations`: Production cluster management
+- `devops`: CI/CD and GitOps workflows
+- `security-focused`: Cluster security auditing
+- `mesh`: Service mesh management
+- `complete`: All available tools (default)
 
 **Standalone**: Can be imported independently for Kubernetes-only setups
 
@@ -152,62 +195,6 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 **Platform**: NixOS (Linux)
 **Imports**:
 - Platform: platform/nixos-pkgs.nix
-
----
-
-## Legacy Profiles (Deprecated)
-
-### `kube-dev.nix` - Kubernetes Development Profile (DEPRECATED)
-**Purpose**: Kubernetes engineer workflow with configurable toolsets
-**Includes**:
-- Remote cluster management tools (kubectl, helm, kubectx, kubecolor)
-- GitOps and CI/CD tools (ArgoCD, Flux, Skaffold, Tekton)
-- Infrastructure as Code (Terraform, Pulumi, Ansible)
-- Cloud provider CLIs (AWS, GCP, Azure)
-- Local development cluster tools (kind, tilt, kubeconform)
-- K9s terminal UI with custom configuration
-- 60+ kubectl/helm shell aliases
-- Neovim Kubernetes snippets
-
-**Standalone profile**: Can be imported into any configuration
-**Configuration options**:
-```nix
-profiles.kube-dev = {
-  enable = true;
-  toolset = "devops";      # Options: "devops" or "complete"
-  includeLocalDev = true;  # Include kind, tilt, kubeconform
-};
-```
-
-**Toolset options**:
-- `devops`: CI/CD and GitOps workflows (recommended for remote clusters)
-  - Core: kubectl, helm, kustomize, kubectx, kubecolor
-  - GitOps: argocd, flux, skaffold, tekton
-  - IaC: terraform, pulumi, ansible
-  - Cloud: AWS, GCP, Azure CLIs
-  - Containers: skopeo, dive, crane
-  - CNI: cilium-cli
-  - Distributions: talosctl, k0sctl
-
-- `complete`: All available Kubernetes tools (includes observability, security, service mesh)
-  - Everything in devops + k9s, stern, popeye, kube-bench, istio, linkerd, helm plugins, etc.
-
-**Usage example**:
-```nix
-# hosts/mbp/home.nix
-{
-  imports = [
-    ../../home/profiles/darwin.nix
-    ../../home/profiles/kube-dev.nix
-  ];
-
-  profiles.kube-dev = {
-    enable = true;
-    toolset = "devops";
-    includeLocalDev = true;
-  };
-}
-```
 
 ---
 
@@ -319,7 +306,10 @@ Profiles are imported via host-specific home configurations:
 # hosts/mbp/home.nix
 {
   imports = [
-    ../../home/profiles/darwin.nix  # macOS profile
+    ../../home/profiles/platform/darwin.nix  # macOS profile
+    # Optional: Add for sops integration
+    # ../../home/profiles/base/git.nix
+    # ../../home/profiles/base/secrets.nix
   ];
 }
 ```
@@ -328,7 +318,7 @@ Profiles are imported via host-specific home configurations:
 # hosts/desktop/home.nix
 {
   imports = [
-    ../../home/profiles/nixos.nix  # NixOS profile
+    ../../home/profiles/platform/nixos.nix  # NixOS profile
   ];
 }
 ```

@@ -1,8 +1,4 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+_: {
   programs.yazi = {
     enable = true;
     enableZshIntegration = true;

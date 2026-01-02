@@ -1,7 +1,5 @@
 # Shared user configuration
 {
-  config,
-  lib,
   pkgs,
   username,
   ...

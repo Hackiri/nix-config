@@ -1,5 +1,5 @@
 # Build tools, compilers, and core development utilities
-# (Renamed from dev-tools.nix to avoid confusion with pkgs/dev-tools.nix script)
+# Note: CLI essentials (bat, eza, fd, fzf, etc.) are in cli-essentials.nix
 {pkgs, ...}: {
   home.packages = with pkgs; [
     #--------------------------------------------------
@@ -18,29 +18,9 @@
     # Note: git managed via programs.git
     lazygit # Simple terminal UI for git commands
     gh # GitHub CLI for managing GitHub repos
-
-    #--------------------------------------------------
-    # Search and Navigation Tools
-    #--------------------------------------------------
-    # Note: ripgrep installed system-wide
-    fd # Simple, fast and user-friendly alternative to find
-    fzf # Command-line fuzzy finder
-    zoxide # Smarter cd command that learns your habits
-
-    #--------------------------------------------------
-    # Text Processing and Display
-    #--------------------------------------------------
-    bat # Cat clone with syntax highlighting
-    eza # Modern replacement for ls
-    colordiff # Wrapper for diff with colorized output
-    jq # Lightweight JSON processor
-
-    #--------------------------------------------------
-    # File and Directory Management
-    #--------------------------------------------------
-    tree # List directory contents in a tree-like format
+    meld # Visual diff and merge tool (used by git difftool/mergetool)
 
     # Note: direnv managed via programs.direnv
-    # Note: Shell enhancements and other tools in separate package files
+    # Note: CLI essentials (bat, eza, fd, fzf, ripgrep, etc.) in cli-essentials.nix
   ];
 }

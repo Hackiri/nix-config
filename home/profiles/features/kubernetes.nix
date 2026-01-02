@@ -1,6 +1,6 @@
 # Kubernetes Development Profile
 # Purpose: Kubernetes engineer workflow with remote cluster management and local development
-# This profile can be imported standalone or added to existing profiles for Kubernetes capabilities.
+# This profile wraps programs.kube and adds local development tools.
 #
 # Usage:
 #   imports = [ ../../home/profiles/features/kubernetes.nix ];
@@ -8,7 +8,7 @@
 # Configuration:
 #   profiles.kubernetes = {
 #     enable = true;
-#     toolset = "devops";  # or "complete"
+#     toolset = "complete";  # minimal, admin, operations, devops, security-focused, mesh, or complete
 #     includeLocalDev = true;
 #   };
 {
@@ -23,21 +23,17 @@ in {
     enable = mkEnableOption "Kubernetes development profile";
 
     toolset = mkOption {
-      type = types.enum ["devops" "complete"];
-      default = "devops";
+      type = types.enum ["minimal" "admin" "operations" "devops" "security-focused" "mesh" "complete"];
+      default = "complete";
       description = ''
-        Kubernetes toolset to install:
-
-        - devops: CI/CD and GitOps workflows (recommended for remote cluster management)
-          Includes: kubectl, helm, kustomize, kubectx, kubecolor, argocd, flux,
-          skaffold, tekton, terraform, pulumi, ansible, cloud CLIs (AWS/GCP/Azure),
-          container tools (skopeo, dive, crane), CNI management (cilium-cli),
-          and K8s distributions (talosctl, k0sctl)
-
-        - complete: All available Kubernetes tools
-          Includes: devops + observability (k9s, stern, popeye), security (kube-bench,
-          kubesec), service mesh (istio, linkerd), helm plugins (helm-diff, helm-secrets),
-          kubectl plugins (krew, kubectl-neat), and all extensions
+        Kubernetes toolset to install (see programs.kube.toolset for details):
+        - minimal: Core tools only (kubectl, helm, kustomize, kubectx, kubecolor)
+        - admin: For cluster administration (core + observability + security)
+        - operations: For production cluster management
+        - devops: For CI/CD and GitOps workflows
+        - security-focused: For cluster security auditing
+        - mesh: For service mesh management
+        - complete: All available tools
       '';
     };
 

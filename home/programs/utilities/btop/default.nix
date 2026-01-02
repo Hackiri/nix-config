@@ -1,11 +1,5 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-# NOT COMPLETE
-{
+# Btop - system resource monitor with vim keys and rosepine theme
+_: {
   programs.btop = {
     enable = true;
 

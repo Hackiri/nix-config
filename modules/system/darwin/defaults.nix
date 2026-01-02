@@ -1,10 +1,5 @@
 # macOS system defaults and preferences
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: {
+_: {
   # Add ability to used TouchID for sudo authentication
   security.pam.services.sudo_local.touchIdAuth = true;
 

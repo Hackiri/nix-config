@@ -1,10 +1,5 @@
 # Shared Nix configuration for all systems
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: {
+_: {
   # Nix configuration
   nix = {
     # Disable nix-darwin's Nix management when using Determinate Nix

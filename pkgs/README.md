@@ -54,25 +54,28 @@ A curated collection of Kubernetes and cloud-native tools organized by function.
 
 **Tool Categories:**
 - **Core**: kubectl, helm, kustomize
-- **Context Management**: kubectx, kubecolor
-- **Observability**: stern, k9s, popeye, kubectl-tree
-- **Security**: kube-bench, kube-hunter, kubesec
+- **Context Management**: kubectx, kubecolor, kubelogin-oidc
+- **Observability**: stern, k9s, popeye, kubectl-tree, kubectl-who-can
+- **Security**: kube-bench, kube-hunter, kubesec, falco
 - **GitOps**: argocd, flux, skaffold, tektoncd-cli
 - **Service Mesh**: istioctl, linkerd, cilium-cli
-- **Local Development**: kind, minikube, k3d, tilt
-- **Container Tools**: docker, podman, buildah, skopeo, dive, crane
+- **Containers**: skopeo, dive, crane
 - **Infrastructure as Code**: terraform, terragrunt, pulumi, ansible
-- **Cloud CLIs**: awscli2, google-cloud-sdk, azure-cli
+- **Cloud CLIs**: awscli2, google-cloud-sdk, azure-cli, doctl
+- **Distributions**: talosctl, rke2, k0sctl
+- **Helm Extensions**: helm-diff, helm-secrets, helm-git, helm-docs
+- **Dev Utils**: jq, yq-go, curl, wget, httpie, grpcurl, hey
 
 **Predefined Tool Sets:**
 ```nix
 # Access specific tool sets
-kubernetesTools.sets.minimal      # Basic K8s operations
-kubernetesTools.sets.developer    # Local development
-kubernetesTools.sets.operations   # Cluster management
-kubernetesTools.sets.devops       # CI/CD and GitOps
-kubernetesTools.sets.security-focused  # Security tools
-kubernetesTools.sets.complete     # Everything
+kubernetesTools.sets.minimal          # Basic K8s operations (core + context)
+kubernetesTools.sets.admin            # Cluster administration
+kubernetesTools.sets.operations       # Production cluster management
+kubernetesTools.sets.devops           # CI/CD and GitOps workflows
+kubernetesTools.sets.security-focused # Security auditing tools
+kubernetesTools.sets.mesh             # Service mesh management
+kubernetesTools.sets.complete         # All available tools
 ```
 
 #### `devshell/` - Enhanced Development Environments
@@ -177,31 +180,29 @@ dev-tools clean
 # Add to your home-manager configuration
 {
   home.packages = with (import ./pkgs { inherit pkgs; }); [
-    # Get the developer-focused K8s tools
+    # Get the DevOps-focused K8s tools
     (pkgs.buildEnv {
-      name = "k8s-dev-tools";
-      paths = kubernetes-tools.sets.developer;
+      name = "k8s-devops-tools";
+      paths = kubernetes-tools.sets.devops;
     })
   ];
 }
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Package Organization
 
 ```
 pkgs/
-├── README.md              # This documentation
-├── default.nix           # Package collection exports
-├── dev-tools.nix         # Smart development assistant
-├── kubernetes-tools.nix  # K8s ecosystem tools
-├── devshell/             # Development environments
-│   ├── default.nix       # Environment builder
-│   ├── config.nix        # Feature configuration
-│   └── devshell.sh       # Shell script
-└── scripts/              # Additional utility scripts
-    └── default.nix       # Script collection
+├── README.md                        # This documentation
+├── default.nix                      # Package collection exports
+├── collections/
+│   └── kubernetes-tools.nix         # K8s ecosystem tools
+└── scripts/
+    ├── default.nix                  # Script collection
+    ├── dev-tools.nix                # Smart development assistant
+    └── devshell/                    # Development environments
 ```
 
 ### Design Principles
@@ -233,11 +234,15 @@ Tools are organized for easy selection:
 
 ```nix
 # Access specific categories
-kubernetesTools.core           # Essential tools
-kubernetesTools.security       # Security-focused tools
-kubernetesTools.observability  # Monitoring and debugging
-kubernetesTools.gitops         # GitOps and CI/CD
-kubernetesTools.localDev       # Local development tools
+kubernetesTools.core              # Essential tools (kubectl, helm, kustomize)
+kubernetesTools.contextManagement # Context switching (kubectx, kubecolor)
+kubernetesTools.observability     # Monitoring and debugging (stern, k9s, popeye)
+kubernetesTools.security          # Security auditing (kube-bench, kube-hunter)
+kubernetesTools.gitops            # GitOps and CI/CD (argocd, flux, skaffold)
+kubernetesTools.serviceMesh       # Service mesh (istioctl, linkerd, cilium-cli)
+kubernetesTools.containers        # Container tools (skopeo, dive, crane)
+kubernetesTools.iac               # Infrastructure as Code (terraform, pulumi)
+kubernetesTools.cloudClis         # Cloud provider CLIs (aws, gcloud, azure)
 ```
 
 ### Development Environment Customization
