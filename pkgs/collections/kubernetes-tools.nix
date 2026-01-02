@@ -139,6 +139,7 @@
       httpie # Human-friendly HTTP client
       grpcurl # gRPC client
       hey # HTTP load testing tool
+      gettext
     ];
 
     # All tools combined for convenience (remote cluster focused)
