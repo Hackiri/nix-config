@@ -19,7 +19,6 @@ local ensureInstalled = {
   dataFormats = {
     "json",
     "json5",
-    "jsonc",
     "toml",
     "xml", -- macOS `.plist` are also `.xml`
     "yaml",
@@ -82,6 +81,9 @@ return {
 
     -- use bash parser for zsh files
     vim.treesitter.language.register("bash", "zsh")
+
+    -- use json parser for jsonc files (jsonc parser has download issues)
+    vim.treesitter.language.register("json", "jsonc")
 
     -- auto-start highlights & indentation
     vim.api.nvim_create_autocmd("FileType", {
