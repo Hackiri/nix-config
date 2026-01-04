@@ -7,7 +7,6 @@
   shellAliases = import ./aliases.nix;
   fzfGit = import ./fzf-git.nix {};
   fzfKubectl = import ./fzf-kubectl.nix {};
-  fzfTalos = import ./fzf-talos.nix {};
   fzfCilium = import ./fzf-cilium.nix {};
   dollar = "$";
   theme = {
@@ -206,9 +205,6 @@ in {
 
         # Kubectl FZF Integration (imported from fzf-kubectl.nix)
         ${fzfKubectl}
-
-        # Talos FZF Integration (imported from fzf-talos.nix)
-        ${fzfTalos}
 
         # Cilium FZF Integration (imported from fzf-cilium.nix)
         ${fzfCilium}

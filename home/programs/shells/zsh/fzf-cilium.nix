@@ -1,6 +1,7 @@
 # Cilium Integration with FZF
 # Interactive cilium operations using fuzzy finder
-# Keybindings: Ctrl+C followed by Ctrl+[key]
+# Commands: cfp (pods), cfs (status), cft (test), cfe (endpoints), cfm (monitor),
+#           cfl (policies), cfv (services), cfu (hubble-ui), cfo (observe), cfh (health), cfd (debug)
 _: ''
   # Cilium Integration Helper Functions
 
@@ -14,9 +15,9 @@ _: ''
     fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
   }
 
-  # Cilium Pod Selector (^c^p)
+  # Cilium Pod Selector - cfp
   # Browse and select Cilium pods
-  _cp() {
+  cfp() {
     is_cilium_available || return
     local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
 
@@ -28,58 +29,65 @@ _: ''
     awk '{print $1}'
   }
 
-  # Cilium Status (^c^s)
+  # Cilium Status - cfs
   # Interactive Cilium status viewer
-  _cs() {
+  cfs() {
     is_cilium_available || return
     echo "=== Cilium Status ==="
     cilium status --wait 2>/dev/null || echo "Unable to fetch Cilium status"
   }
 
-  # Cilium Connectivity Test (^c^t)
+  # Cilium Connectivity Test - cft
   # Run Cilium connectivity tests
-  _ct() {
+  cft() {
     is_cilium_available || return
     echo "Running Cilium connectivity test..."
     echo "This may take several minutes..."
     cilium connectivity test
   }
 
-  # Cilium Endpoint Selector (^c^e)
+  # Cilium Endpoint Selector - cfe
   # Browse Cilium endpoints with detailed info
-  _ce() {
+  cfe() {
     is_cilium_available || return
-    local pod
-    pod="$(_cp)"
-    if [ -n "$pod" ]; then
-      local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
+    local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
 
-      kubectl exec -n "$namespace" "$pod" -c cilium-agent -- cilium endpoint list -o json 2>/dev/null |
-      jq -r '.[] | [.id, .status.state, .status.identity.id, (.status.policy.realized.policy-enabled // "N/A")] | @tsv' |
-      fzf-cilium --ansi --header-lines=0 \
-        --preview "kubectl exec -n $namespace $pod -c cilium-agent -- cilium endpoint get {1} 2>/dev/null" \
-        --header "Endpoints on pod: $pod" \
-        --preview-window right:60% |
-      awk '{print $1}'
+    local pod
+    pod="$(kubectl get pods -n "$namespace" -l k8s-app=cilium --no-headers -o custom-columns=":metadata.name,:status.phase,:spec.nodeName" |
+    fzf-cilium --ansi \
+      --preview "kubectl exec -n $namespace {1} -c cilium-agent -- cilium endpoint list 2>/dev/null || echo 'Unable to fetch endpoints'" \
+      --header "Select Cilium pod to view endpoints" \
+      --preview-window right:60% |
+    awk '{print $1}')"
+
+    if [ -n "$pod" ]; then
+      kubectl exec -n "$namespace" "$pod" -c cilium-agent -- cilium endpoint list
     fi
   }
 
-  # Cilium Monitor (^c^m)
+  # Cilium Monitor - cfm
   # Start Cilium monitor on selected pod
-  _cm() {
+  cfm() {
     is_cilium_available || return
+    local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
+
     local pod
-    pod="$(_cp)"
+    pod="$(kubectl get pods -n "$namespace" -l k8s-app=cilium --no-headers -o custom-columns=":metadata.name,:status.phase,:spec.nodeName" |
+    fzf-cilium --ansi \
+      --preview "kubectl exec -n $namespace {1} -c cilium-agent -- cilium status --brief 2>/dev/null || echo 'Unable to fetch status'" \
+      --header "Select Cilium pod to monitor" \
+      --preview-window right:60% |
+    awk '{print $1}')"
+
     if [ -n "$pod" ]; then
-      local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
       echo "Starting Cilium monitor on $pod..."
       kubectl exec -n "$namespace" "$pod" -c cilium-agent -- cilium monitor
     fi
   }
 
-  # Cilium Policy Selector (^c^l)
+  # Cilium Policy Selector - cfl
   # Browse and view Cilium network policies
-  _cl() {
+  cfl() {
     is_cilium_available || return
     local namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     namespace="''${namespace:-default}"
@@ -91,47 +99,31 @@ _: ''
       --preview-window right:60%
   }
 
-  # Cilium Service Map (^c^v)
-  # View service dependencies and connectivity
-  _cv() {
+  # Cilium Service Map - cfv
+  # View cluster-wide service map (auto-selects first pod)
+  cfv() {
     is_cilium_available || return
-    local pod
-    pod="$(_cp)"
+    local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
+    local pod="$(kubectl get pods -n "$namespace" -l k8s-app=cilium --no-headers -o custom-columns=":metadata.name" 2>/dev/null | head -1)"
+
     if [ -n "$pod" ]; then
-      local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
-      echo "Service map from $pod:"
       kubectl exec -n "$namespace" "$pod" -c cilium-agent -- cilium service list
+    else
+      echo "No Cilium pods found"
     fi
   }
 
-  # Cilium BPF Map Selector (^c^b)
-  # Browse and inspect BPF maps
-  _cb() {
-    is_cilium_available || return
-    local pod
-    pod="$(_cp)"
-    if [ -n "$pod" ]; then
-      local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
-
-      kubectl exec -n "$namespace" "$pod" -c cilium-agent -- cilium bpf map list 2>/dev/null |
-      fzf-cilium --ansi \
-        --preview "kubectl exec -n $namespace $pod -c cilium-agent -- cilium bpf map get {1} 2>/dev/null || echo 'Map details unavailable'" \
-        --header "BPF maps on pod: $pod" \
-        --preview-window right:60%
-    fi
-  }
-
-  # Cilium Hubble UI (^c^u)
+  # Cilium Hubble UI - cfu
   # Open Hubble UI with port-forward
-  _cu() {
+  cfu() {
     is_cilium_available || return
     echo "Starting Hubble UI port-forward on localhost:12000..."
     cilium hubble ui
   }
 
-  # Cilium Hubble Observe (^c^o)
+  # Cilium Hubble Observe - cfo
   # Interactive Hubble flow observation
-  _co() {
+  cfo() {
     is_cilium_available || return
     echo "=== Hubble Flow Observation ==="
     echo "Filter options:"
@@ -166,9 +158,9 @@ _: ''
     esac
   }
 
-  # Cilium Health Check (^c^h)
+  # Cilium Health Check - cfh
   # Quick health overview of Cilium
-  _ch() {
+  cfh() {
     is_cilium_available || return
     echo "=== Cilium Health Overview ==="
     echo "\n--- Cilium Status ---"
@@ -177,14 +169,21 @@ _: ''
     cilium connectivity test --test-concurrency=1 --single-node=1 2>/dev/null | head -20 || echo "Quick connectivity check unavailable"
   }
 
-  # Cilium Debug Info (^c^d)
+  # Cilium Debug Info - cfd
   # Gather debug information from Cilium pod
-  _cdebug() {
+  cfd() {
     is_cilium_available || return
+    local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
+
     local pod
-    pod="$(_cp)"
+    pod="$(kubectl get pods -n "$namespace" -l k8s-app=cilium --no-headers -o custom-columns=":metadata.name,:status.phase,:spec.nodeName" |
+    fzf-cilium --ansi \
+      --preview "echo '=== Version ===' && kubectl exec -n $namespace {1} -c cilium-agent -- cilium version 2>/dev/null && echo && echo '=== Status ===' && kubectl exec -n $namespace {1} -c cilium-agent -- cilium status --brief 2>/dev/null" \
+      --header "Select Cilium pod for debug info" \
+      --preview-window right:60% |
+    awk '{print $1}')"
+
     if [ -n "$pod" ]; then
-      local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
       echo "=== Debug Info from $pod ==="
       echo "\n--- Cilium Version ---"
       kubectl exec -n "$namespace" "$pod" -c cilium-agent -- cilium version 2>/dev/null
@@ -194,19 +193,4 @@ _: ''
       kubectl get events -n "$namespace" --field-selector involvedObject.name="$pod" --sort-by='.lastTimestamp' | tail -10
     fi
   }
-
-  # Function to bind all Cilium helper functions to keyboard shortcuts
-  bind-cilium-helper() {
-    local c
-    for c in $@; do
-      eval "fzf-c$c-widget() { local result=\$(_c$c | join-lines); zle reset-prompt; LBUFFER+=\$result }"
-      eval "zle -N fzf-c$c-widget"
-      eval "bindkey '^c^$c' fzf-c$c-widget"
-    done
-  }
-
-  # Bind Cilium helper functions
-  # p=pods, s=status, t=connectivity-test, e=endpoints, m=monitor, l=policies, v=service-map, b=bpf-maps, u=hubble-ui, o=hubble-observe, h=health, debug=debug
-  bind-cilium-helper p s t e m l v b u o h debug
-  unset -f bind-cilium-helper
 ''

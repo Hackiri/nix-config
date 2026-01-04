@@ -1,6 +1,7 @@
 # Kubernetes/kubectl Integration with FZF
 # Interactive kubectl operations using fuzzy finder
-# Keybindings: Ctrl+K followed by Ctrl+[key]
+# Commands: kfp (pods), kfn (namespace), kfc (context), kfl (logs),
+#           kfe (exec), kfs (services), kfd (deployments), kfx (delete), kff (port-forward)
 _: ''
   # Kubernetes/kubectl Integration Helper Functions
 
@@ -14,9 +15,9 @@ _: ''
     fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
   }
 
-  # Kubectl Pod Selector (^k^p)
+  # Kubectl Pod Selector - kfp
   # Shows pods with details and allows selection
-  _kp() {
+  kfp() {
     is_kubectl_available || return
     local namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     namespace="''${namespace:-default}"
@@ -24,14 +25,14 @@ _: ''
     kubectl get pods -n "$namespace" --no-headers -o custom-columns=":metadata.name,:status.phase,:spec.containers[*].name" |
     fzf-kube --ansi --multi \
       --preview "kubectl describe pod {1} -n $namespace" \
-      --header "Namespace: $namespace (Use ^k^n to change)" \
+      --header "Namespace: $namespace (Use kfn to change)" \
       --preview-window right:60% |
     awk '{print $1}'
   }
 
-  # Kubectl Namespace Selector (^k^n)
+  # Kubectl Namespace Selector - kfn
   # Browse and switch namespaces with resource preview
-  _kn() {
+  kfn() {
     is_kubectl_available || return
     local selected_ns
     selected_ns="$(kubectl get namespaces --no-headers -o custom-columns=":metadata.name,:status.phase,:metadata.creationTimestamp" |
@@ -47,9 +48,9 @@ _: ''
     fi
   }
 
-  # Kubectl Context Selector (^k^c)
+  # Kubectl Context Selector - kfc
   # Browse and switch kubernetes contexts
-  _kc() {
+  kfc() {
     is_kubectl_available || return
     local selected_context
     selected_context="$(kubectl config get-contexts --no-headers -o name |
@@ -64,9 +65,9 @@ _: ''
     fi
   }
 
-  # Kubectl Logs Viewer (^k^l)
+  # Kubectl Logs Viewer - kfl
   # Interactive pod log viewer with follow option
-  _kl() {
+  kfl() {
     is_kubectl_available || return
     local namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     namespace="''${namespace:-default}"
@@ -85,9 +86,9 @@ _: ''
     fi
   }
 
-  # Kubectl Exec into Pod (^k^e)
+  # Kubectl Exec into Pod - kfe
   # Interactive pod shell access
-  _ke() {
+  kfe() {
     is_kubectl_available || return
     local namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     namespace="''${namespace:-default}"
@@ -113,9 +114,9 @@ _: ''
     fi
   }
 
-  # Kubectl Service Selector (^k^s)
+  # Kubectl Service Selector - kfs
   # Browse services with endpoint information
-  _ks() {
+  kfs() {
     is_kubectl_available || return
     local namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     namespace="''${namespace:-default}"
@@ -128,9 +129,9 @@ _: ''
     awk '{print $1}'
   }
 
-  # Kubectl Deployment Selector (^k^d)
+  # Kubectl Deployment Selector - kfd
   # Browse deployments with replica status
-  _kd() {
+  kfd() {
     is_kubectl_available || return
     local namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     namespace="''${namespace:-default}"
@@ -143,9 +144,9 @@ _: ''
     awk '{print $1}'
   }
 
-  # Kubectl Delete Resource (^k^x)
+  # Kubectl Delete Resource - kfx
   # Interactive resource deletion with confirmation
-  _kx() {
+  kfx() {
     is_kubectl_available || return
     local namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     namespace="''${namespace:-default}"
@@ -170,9 +171,9 @@ _: ''
     fi
   }
 
-  # Kubectl Port Forward (^k^f)
+  # Kubectl Port Forward - kff
   # Interactive port forwarding setup
-  _kf() {
+  kff() {
     is_kubectl_available || return
     local namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     namespace="''${namespace:-default}"
@@ -193,23 +194,4 @@ _: ''
       fi
     fi
   }
-
-  # Function to bind all kubectl helper functions to keyboard shortcuts
-  # Creates widgets and binds them to ctrl-k + ctrl-[key] combinations
-  bind-kubectl-helper() {
-    local c
-    for c in $@; do
-      # Create widget function that calls the corresponding _k[key] function
-      eval "fzf-k$c-widget() { local result=\$(_k$c | join-lines); zle reset-prompt; LBUFFER+=\$result }"
-      # Register the widget with ZLE (Zsh Line Editor)
-      eval "zle -N fzf-k$c-widget"
-      # Bind widget to ctrl-k + ctrl-[key]
-      eval "bindkey '^k^$c' fzf-k$c-widget"
-    done
-  }
-
-  # Bind kubectl helper functions
-  # p=pods, n=namespace, c=context, l=logs, e=exec, s=services, d=deployments, x=delete, f=port-forward
-  bind-kubectl-helper p n c l e s d x f
-  unset -f bind-kubectl-helper
 ''
