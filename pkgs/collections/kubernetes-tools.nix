@@ -75,7 +75,7 @@
 
     # Infrastructure as Code
     iac = with pkgs; [
-      terraform # Infrastructure as code tool
+      opentofu # Infrastructure as code tool (open-source Terraform fork)
       terragrunt # Terraform wrapper for DRY configurations
       pulumi-bin # Modern infrastructure as code
       ansible # Configuration management and orchestration

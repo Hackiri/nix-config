@@ -66,6 +66,10 @@
   docker = "podman";
   "docker-compose" = "podman-compose";
 
+  # Terraform alias for OpenTofu (open-source fork)
+  terraform = "tofu";
+  tf = "tofu";
+
   # Get resource information
   kgps = "kubectl get pods --sort-by=.metadata.name";
   kgsvc = "kubectl get svc --sort-by=.metadata.name";
