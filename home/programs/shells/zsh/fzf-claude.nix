@@ -56,7 +56,7 @@ _: ''
       --preview '
         session_id=$(echo {} | cut -d"|" -f2 | tr -d " ")
         project_dir=$(echo "$PWD" | sed "s|/|-|g" | sed "s|^-||")
-        file="$HOME/.claude/projects/-$project_dir/${session_id}"*.jsonl
+        file="$HOME/.claude/projects/-$project_dir/''${session_id}"*.jsonl
         if [[ -f $file ]]; then
           jq -r "select(.type == \"user\" or .type == \"assistant\") | \"\n[\(.type | ascii_upcase)]:\n\(.content)\"" $file 2>/dev/null | head -100
         fi
@@ -83,7 +83,7 @@ _: ''
       --preview-window right:60%:wrap \
       --preview "
         session_id=\$(echo {} | cut -d'|' -f1 | tr -d ' ')
-        file=\$(find \"$CLAUDE_DIR/projects\" -name \"\${session_id}*.jsonl\" -type f 2>/dev/null | head -1)
+        file=\$(find \"$CLAUDE_DIR/projects\" -name \"''${session_id}*.jsonl\" -type f 2>/dev/null | head -1)
         if [[ -f \"\$file\" ]]; then
           rg --color=always -C 2 \"$query\" \"\$file\" 2>/dev/null | head -50
         fi
