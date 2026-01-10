@@ -12,20 +12,16 @@
     #--------------------------------------------------
     # Python Ecosystem
     #--------------------------------------------------
-    python312 # Python 3.12 programming language
-    python312Packages.pip # Python package manager
+    python313 # Python 3.13 programming language
+    python313Packages.pip # Python package manager
+    python313Packages.pynvim # Python client for Neovim
     uv # Fast Python package installer and resolver
 
-    # Python development tools
-    python312Packages.pytest # Testing framework
-    python312Packages.pylint # Linter
-    python312Packages.pynvim # Python client for Neovim
-
-    # Python utilities
-    python3Packages.pygments # Syntax highlighting (pygmentize)
-    python3Packages.markdown # Markdown processing
-    python3Packages.tabulate # Pretty-print tabular data
-    python3Packages.pylatexenc # LaTeX to text converter
+    # Python utilities (pytest/pylint provided by devshell)
+    python313Packages.pygments # Syntax highlighting (pygmentize)
+    python313Packages.markdown # Markdown processing
+    python313Packages.tabulate # Pretty-print tabular data
+    python313Packages.pylatexenc # LaTeX to text converter
 
     #--------------------------------------------------
     # Go

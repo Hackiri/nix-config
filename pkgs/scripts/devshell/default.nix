@@ -139,7 +139,6 @@
       # Version control
       git
       git-lfs
-      #gh
       lazygit
 
       # Nix tools

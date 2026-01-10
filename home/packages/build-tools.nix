@@ -17,7 +17,6 @@
     #--------------------------------------------------
     # Note: git managed via programs.git
     lazygit # Simple terminal UI for git commands
-    gh # GitHub CLI for managing GitHub repos
     meld # Visual diff and merge tool (used by git difftool/mergetool)
 
     # Note: direnv managed via programs.direnv
