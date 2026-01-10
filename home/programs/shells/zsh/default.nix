@@ -8,6 +8,7 @@
   fzfGit = import ./fzf-git.nix {};
   fzfKubectl = import ./fzf-kubectl.nix {};
   fzfCilium = import ./fzf-cilium.nix {};
+  fzfClaude = import ./fzf-claude.nix {};
   dollar = "$";
   theme = {
     colors = {
@@ -56,6 +57,22 @@
   };
 in {
   home = {
+    # Ripgrep configuration file
+    file.".ripgreprc".text = ''
+      --smart-case
+      --hidden
+      --glob=!.git/*
+      --glob=!node_modules/*
+      --glob=!.direnv/*
+      --glob=!target/*
+      --glob=!dist/*
+      --glob=!.next/*
+      --glob=!__pycache__/*
+      --glob=!.venv/*
+      --max-columns=200
+      --max-columns-preview
+    '';
+
     sessionVariables = {
       KREW_ROOT = "${config.home.homeDirectory}/.krew";
       PATH = "${config.home.homeDirectory}/.config/emacs/bin:${config.home.homeDirectory}/.krew/bin:${config.home.homeDirectory}/bin:${config.home.homeDirectory}/.local/bin:$PATH";
@@ -153,6 +170,9 @@ in {
         # Set GPG_TTY for Git commit signing
         export GPG_TTY=$(tty)
 
+        # Ripgrep configuration (smart-case, ignore common dirs)
+        export RIPGREP_CONFIG_PATH="${config.home.homeDirectory}/.ripgreprc"
+
         # FZF configuration
         export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
         export FZF_DEFAULT_OPTS="--height 50% -1 --layout=reverse --multi"
@@ -208,6 +228,9 @@ in {
 
         # Cilium FZF Integration (imported from fzf-cilium.nix)
         ${fzfCilium}
+
+        # Claude Code FZF Integration (imported from fzf-claude.nix)
+        ${fzfClaude}
 
         # Source oh-my-zsh first (before Starship)
         if [ -f "$ZSH/oh-my-zsh.sh" ]; then

@@ -77,28 +77,22 @@
   kgpojson = "kubectl get pods -o json";
   kgnodes = "kubectl get nodes -o wide";
 
-  # Create, apply, and edit resources
-  kapp = "kubectl apply -f";
-  kedit = "kubectl edit";
+  # Create, apply, and edit resources (ka and ke defined above)
   kset = "kubectl set";
 
   # Delete resources
   kdel = "kubectl delete";
   kdelall = "kubectl delete all --all";
 
-  # Logs and events
-  klogs = "kubectl logs";
+  # Logs and events (kl defined above)
   kevents = "kubectl get events --sort-by=.metadata.creationTimestamp";
 
-  # Exec into containers and debugging
-  kexec = "kubectl exec -it";
-  kdescribe = "kubectl describe";
+  # Exec into containers and debugging (kx and kd defined above)
   kshell = "kubectl exec -it -- /bin/sh";
 
-  # Manage contexts and namespaces
+  # Manage contexts and namespaces (kns defined above)
   kusectx = "kubectl config use-context";
   kgctx = "kubectl config get-contexts";
-  knschange = "kubectl config set-context --current --namespace";
 
   # Deployment management
   kroll = "kubectl rollout restart";
@@ -134,6 +128,12 @@
   gpush = "git push";
   glast = "git log -1 HEAD";
 
+  # Git diff with delta (uses delta via gitconfig)
+  gd = "git diff";
+  gds = "git diff --staged";
+  gdw = "git diff --word-diff";
+  gdn = "git diff --name-only";
+
   # System and utility commands (macOS uses launchctl, not systemctl)
   edit = "emacsclient -n -c";
   ednix = "emacsclient -nw ~/nix-config/flake.nix";
@@ -147,29 +147,40 @@
 
   # FZF combinations
   vif = "nvim $(fzf -m --preview=\"bat --color=always {}\")";
-  fcd = "cd $(find . -type d | fzf --preview='eza --tree --level=1 --color=always {}')";
+  fcd = "cd $(fd --type d | fzf --preview='eza --tree --level=1 --color=always {}')";
   fh = "history 0 | fzf --tac --tiebreak=index";
   fkill = "ps aux | fzf --multi | awk '{print $2}' | xargs kill -9";
   fenv = "env | fzf";
   frg = "rg --color=always --line-number --no-heading --smart-case \"\" | fzf --ansi --preview=\"bat --color=always {1} --highlight-line {2}\"";
-  cat = "bat";
+  # eza aliases (defined directly to avoid flag conflicts from chaining)
   ls = "eza --icons -l -T -L=1";
-  l = "ls -l";
-  ll = "ls -alh";
-  lsa = "ls -a";
-  lstree = "ls -R | tree";
+  l = "eza --icons -l";
+  ll = "eza --icons -la";
+  lsa = "eza --icons -la";
+  lstree = "eza --icons -T";
   clr = "clear";
   hist = "history | grep";
-  diff = "colordiff";
-  find = "fd";
-  grep = "rg";
-  ps = "procs";
-  top = "btm";
-  du = "dust";
-  df = "duf";
+
+  # Modern tool aliases
+  cdiff = "colordiff";
+  prs = "procs";
   lg = "lazygit";
   j = "zoxide";
   md = "glow";
+
+  # Claude Code workflow aliases
+  loc = "tokei";
+  codestats = "tokei --sort code";
+  bench = "hyperfine";
+  benchw = "hyperfine --warmup 3";
+  watch = "watchexec";
+  watchr = "watchexec --restart";
+  watchc = "watchexec --clear";
+
+  # Enhanced ripgrep
+  rgf = "rg --files | rg";
+  rgi = "rg -i";
+  rgl = "rg -l";
 
   # Networking and system monitoring
   psg = "ps aux | grep";

@@ -23,5 +23,15 @@
     #--------------------------------------------------
     jq # Lightweight JSON processor
     colordiff # Colorized diff output
+
+    #--------------------------------------------------
+    # Claude Code Workflow Tools
+    #--------------------------------------------------
+    delta # Syntax-highlighted git diffs
+    tokei # Fast code statistics
+    hyperfine # Command benchmarking
+    watchexec # File watcher for dev workflows
+    tldr # Simplified man pages
+    sd # Simpler sed alternative
   ];
 }

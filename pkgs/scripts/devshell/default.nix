@@ -139,7 +139,7 @@
       # Version control
       git
       git-lfs
-      gh
+      #gh
       lazygit
 
       # Nix tools
@@ -162,6 +162,14 @@
       neovim
       bat
       less
+
+      # Claude Code workflow tools
+      delta # Syntax-highlighted git diffs
+      tokei # Code statistics
+      hyperfine # Benchmarking
+      watchexec # File watcher
+      tldr # Simplified man pages
+      sd # Simpler sed alternative
 
       # Network tools
       curl
