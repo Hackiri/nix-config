@@ -11,15 +11,10 @@
       # Start AeroSpace at login
       start-at-login = true
 
-      # Startup commands - can be used for external integrations
-      after-login-command = []
-      # Uncomment and modify for external tool integration:
-      # after-startup-command = ['exec-and-forget sketchybar']
-
-      # Workspace change notifications - useful for status bar integration
-      # exec-on-workspace-change = ['/bin/bash', '-c',
-      #   'echo "Workspace changed to $AEROSPACE_FOCUSED_WORKSPACE"'
-      # ]
+      # Recommended macOS settings for better window management (run once in terminal):
+      # defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
+      # defaults write -g NSWindowShouldDragOnGesture -bool true
+      # defaults write com.apple.spaces spans-displays -bool true && killall SystemUIServer
 
       # Normalization settings
       enable-normalization-flatten-containers = true
@@ -56,6 +51,13 @@
         { monitor.secondary = 10 },
         10,
       ]
+
+      # Workspace-to-monitor assignments (multi-monitor setup)
+      [workspace-to-monitor-force-assignment]
+      T = 'main'           # Terminal on main monitor
+      E = 'main'           # Editor on main monitor
+      B = 'secondary'      # Browser on secondary
+      M = 'secondary'      # Media on secondary
 
       # Main mode bindings
       [mode.main.binding]
@@ -115,6 +117,9 @@
       alt-shift-f = 'fullscreen'
       alt-shift-m = 'macos-native-fullscreen'
 
+      # Enter resize mode (allows hjkl resizing without holding modifiers)
+      alt-r = 'mode resize'
+
       # Workspace management - keeping numeric for compatibility
       alt-1 = 'workspace 1'
       alt-2 = 'workspace 2'
@@ -134,13 +139,6 @@
       alt-t = 'workspace T' # for terminal shell
       alt-v = 'workspace V'
 
-      # Named workspaces for common use cases (optional alternative)
-      # alt-p = 'workspace P'  # Personal/Projects
-      # alt-c = 'workspace C'  # Code/Communication
-      # alt-m = 'workspace M'  # Media/Music
-      # alt-t = 'workspace T'  # Terminal/Tools
-      # alt-w = 'workspace W'  # Web/Work
-
       # Move windows to workspaces
       alt-shift-1 = 'move-node-to-workspace 1'
       alt-shift-2 = 'move-node-to-workspace 2'
@@ -151,9 +149,18 @@
       alt-shift-7 = 'move-node-to-workspace 7'
       alt-shift-8 = 'move-node-to-workspace 8'
       alt-shift-9 = 'move-node-to-workspace 9'
+      alt-shift-b = 'move-node-to-workspace B'
+      alt-shift-e = 'move-node-to-workspace E'
+      ctrl-alt-f = 'move-node-to-workspace F'  # alt-shift-f is fullscreen
+      ctrl-alt-m = 'move-node-to-workspace M'  # alt-shift-m is macos-native-fullscreen
+      alt-shift-n = 'move-node-to-workspace N'
+      alt-shift-p = 'move-node-to-workspace P'
+      alt-shift-t = 'move-node-to-workspace T'
+      alt-shift-v = 'move-node-to-workspace V'
 
       # Workspace navigation - enhanced with back-and-forth
-      alt-enter = 'workspace-back-and-forth'
+      # Balance window sizes (repurposed from duplicate workspace-back-and-forth)
+      alt-enter = 'balance-sizes'
       alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
       # Enter service mode
@@ -178,6 +185,17 @@
       alt-shift-j = ['join-with down', 'mode main']
       alt-shift-k = ['join-with up', 'mode main']
       alt-shift-l = ['join-with right', 'mode main']
+
+      # Resize mode - allows quick resizing without holding modifier keys
+      [mode.resize.binding]
+      h = 'resize width -50'
+      j = 'resize height +50'
+      k = 'resize height -50'
+      l = 'resize width +50'
+      minus = 'resize smart -50'
+      equal = 'resize smart +50'
+      enter = 'mode main'
+      esc = 'mode main'
 
       # Window detection rules - organized by workspace
 
@@ -298,32 +316,60 @@
       run = 'move-node-to-workspace P'
 
       # Floating windows (utilities and system apps)
+      # check-further-callbacks allows floating windows to still be moved to workspaces
       [[on-window-detected]]
       if.app-name-regex-substring = 'Shottr'
+      check-further-callbacks = true
       run = 'layout floating'
 
       [[on-window-detected]]
       if.app-id = 'com.apple.systempreferences'
+      check-further-callbacks = true
       run = 'layout floating'
 
       [[on-window-detected]]
       if.app-id = 'com.apple.ActivityMonitor'
+      check-further-callbacks = true
       run = 'layout floating'
 
       [[on-window-detected]]
       if.app-id = 'com.apple.archiveutility'
+      check-further-callbacks = true
       run = 'layout floating'
 
       [[on-window-detected]]
       if.app-id = 'com.apple.calculator'
+      check-further-callbacks = true
+      run = 'layout floating'
+
+      [[on-window-detected]]
+      if.app-id = 'com.apple.Preview'
+      check-further-callbacks = true
+      run = 'layout floating'
+
+      [[on-window-detected]]
+      if.app-id = 'com.apple.TextEdit'
+      check-further-callbacks = true
+      run = 'layout floating'
+
+      [[on-window-detected]]
+      if.app-id = 'com.apple.QuickTimePlayerX'
+      check-further-callbacks = true
       run = 'layout floating'
 
       [[on-window-detected]]
       if.app-name-regex-substring = '(?i)settings'
+      check-further-callbacks = true
       run = 'layout floating'
 
       [[on-window-detected]]
       if.app-name-regex-substring = '(?i)preference'
+      check-further-callbacks = true
+      run = 'layout floating'
+
+      [[on-window-detected]]
+      if.window-title-regex-substring = '(?i)dialog|alert|popup'
+      check-further-callbacks = true
       run = 'layout floating'
     '';
   };
