@@ -162,7 +162,7 @@ disabled = false
 show_always = false
 
 [directory]
-home_symbol = " "
+home_symbol = ""
 truncation_length = 2
 truncation_symbol = " "
 read_only = " 󰌾"
@@ -221,7 +221,7 @@ style = "italic dimmed yellow"
 
 [kubernetes]
 disabled = false
-format = ' [☸ $context⎪$namespace](bold purple)'
+format = ' [$symbol$context⎪$namespace](bold purple)'
 symbol = "☸ "
 
 [kubernetes.context_aliases]
@@ -339,6 +339,11 @@ disabled = true
 format = " [aws](italic) [$symbol $profile $region]($style)"
 style = "bold blue"
 symbol = "󰸏 "
+
+[gcloud]
+format = ' [$symbol$account(@$domain)(\($region\))]($style)'
+symbol = "☁️"
+style = "bold blue"
 
 [buf]
 symbol = "󰛦 "

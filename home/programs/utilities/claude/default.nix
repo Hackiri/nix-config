@@ -6,15 +6,35 @@
     text = ''
       #!/usr/bin/env bash
       # Claude Code rich status line script
-      # Displays: Directory [git] | Model ⚡Context% [style] -- VIM MODE --
+      # Displays: Directory [git] | Model ⚡Context% | Xk/Xk tokens | Xk ctx [style] -- VIM MODE --
 
       input=$(cat)
 
       # Parse JSON input using jq
-      model=$(echo "$input" | ${pkgs.jq}/bin/jq -r '.model // "unknown"')
-      context=$(echo "$input" | ${pkgs.jq}/bin/jq -r '.contextPercentage // 0')
-      output_style=$(echo "$input" | ${pkgs.jq}/bin/jq -r '.outputStyle // "default"')
-      vim_mode=$(echo "$input" | ${pkgs.jq}/bin/jq -r '.vimMode // ""')
+      JQ="${pkgs.jq}/bin/jq"
+      model=$(echo "$input" | $JQ -r '.model // "unknown"')
+      context=$(echo "$input" | $JQ -r '.contextPercentage // 0')
+      output_style=$(echo "$input" | $JQ -r '.outputStyle // "default"')
+      vim_mode=$(echo "$input" | $JQ -r '.vimMode // ""')
+
+      # Parse token and context info
+      input_tokens=$(echo "$input" | $JQ -r '.context_window.total_input_tokens // 0')
+      output_tokens=$(echo "$input" | $JQ -r '.context_window.total_output_tokens // 0')
+      context_size=$(echo "$input" | $JQ -r '.context_window.context_window_size // 0')
+
+      # Format token count (1234 -> 1k, 12345 -> 12k)
+      format_tokens() {
+        local n=$1
+        if (( n >= 1000 )); then
+          printf "%.0fk" "$(echo "scale=1; $n/1000" | ${pkgs.bc}/bin/bc)"
+        else
+          echo "$n"
+        fi
+      }
+
+      input_fmt=$(format_tokens "$input_tokens")
+      output_fmt=$(format_tokens "$output_tokens")
+      ctx_fmt=$(format_tokens "$context_size")
 
       # Current directory with ~ abbreviation
       cwd=$(pwd | sed "s|^$HOME|~|")
@@ -75,8 +95,14 @@
         vim_indicator=" -- $vim_mode --"
       fi
 
+      # Build token info section
+      token_info=""
+      if [[ "$input_tokens" != "0" && "$input_tokens" != "null" ]]; then
+        token_info=" | ''${input_fmt}/''${output_fmt} tokens | ''${ctx_fmt} ctx"
+      fi
+
       # Build the status line with dimmed style for consistency
-      echo -e "''${dim}$cwd$git_info | $model_short ⚡''${reset}''${context_color}$context_pct%''${reset}''${dim}$style_info$vim_indicator''${reset}"
+      echo -e "''${dim}$cwd$git_info | $model_short ⚡''${reset}''${context_color}$context_pct%''${reset}''${dim}$token_info$style_info$vim_indicator''${reset}"
     '';
   };
 }
