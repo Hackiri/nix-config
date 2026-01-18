@@ -5,6 +5,11 @@
 }: {
   # Note: sops and age packages are now installed via home/packages/security.nix
 
+  # Fix sops-nix launchd service PATH (needed for getconf to find DARWIN_USER_TEMP_DIR)
+  launchd.agents."sops-nix" = {
+    config.EnvironmentVariables.PATH = lib.mkForce "/usr/bin:/bin:/usr/sbin:/sbin";
+  };
+
   # Create the sops age directory
   home.file.".config/sops/.keep".text = "";
 

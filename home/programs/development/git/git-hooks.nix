@@ -22,63 +22,37 @@
     log_info "Setting up git configuration from sops secrets..."
 
     # Check if sops secret files exist and are readable
-    secrets_dir="${config.home.homeDirectory}/.config/git"
-
-    if [[ ! -f "${config.sops.secrets.git-userName.path}" ]]; then
-      log_error "Git username secret not found at ${config.sops.secrets.git-userName.path}"
-      exit 1
+    # Use warnings instead of errors to avoid breaking plugin updates (e.g., LazyVim)
+    if [[ ! -f "${config.sops.secrets.git-userName.path}" ]] ||
+       [[ ! -f "${config.sops.secrets.git-userEmail.path}" ]] ||
+       [[ ! -f "${config.sops.secrets.git-signingKey.path}" ]]; then
+      log_warning "Sops secrets not found, skipping git config setup"
+      log_warning "Run 'PATH=/usr/bin:/bin sops-install-secrets' or rebuild home-manager to decrypt secrets"
+      exit 0
     fi
 
-    if [[ ! -f "${config.sops.secrets.git-userEmail.path}" ]]; then
-      log_error "Git email secret not found at ${config.sops.secrets.git-userEmail.path}"
-      exit 1
+    # Read and apply secrets
+    if username=$(cat "${config.sops.secrets.git-userName.path}" 2>/dev/null) &&
+       email=$(cat "${config.sops.secrets.git-userEmail.path}" 2>/dev/null) &&
+       signingkey=$(cat "${config.sops.secrets.git-signingKey.path}" 2>/dev/null); then
+
+      # Validate that secrets are not empty
+      if [[ -z "$username" ]] || [[ -z "$email" ]] || [[ -z "$signingkey" ]]; then
+        log_warning "Some git secrets are empty, skipping git config setup"
+        exit 0
+      fi
+
+      # Apply git configuration
+      git config user.name "$username" || { log_warning "Failed to set git user.name"; exit 0; }
+      git config user.email "$email" || { log_warning "Failed to set git user.email"; exit 0; }
+      git config user.signingkey "$signingkey" || { log_warning "Failed to set git user.signingkey"; exit 0; }
+
+      log_success "Git configuration updated successfully!"
+      log_info "User: $username <$email>"
+      log_info "Signing key: $signingkey"
+    else
+      log_warning "Failed to read sops secrets, git config may be incomplete"
     fi
-
-    if [[ ! -f "${config.sops.secrets.git-signingKey.path}" ]]; then
-      log_error "Git signing key secret not found at ${config.sops.secrets.git-signingKey.path}"
-      exit 1
-    fi
-
-    # Read secrets with error handling
-    if ! username=$(cat "${config.sops.secrets.git-userName.path}" 2>/dev/null); then
-      log_error "Failed to read git username from sops secret"
-      exit 1
-    fi
-
-    if ! email=$(cat "${config.sops.secrets.git-userEmail.path}" 2>/dev/null); then
-      log_error "Failed to read git email from sops secret"
-      exit 1
-    fi
-
-    if ! signingkey=$(cat "${config.sops.secrets.git-signingKey.path}" 2>/dev/null); then
-      log_error "Failed to read git signing key from sops secret"
-      exit 1
-    fi
-
-    # Validate that secrets are not empty
-    if [[ -z "$username" ]]; then
-      log_error "Git username is empty"
-      exit 1
-    fi
-
-    if [[ -z "$email" ]]; then
-      log_error "Git email is empty"
-      exit 1
-    fi
-
-    if [[ -z "$signingkey" ]]; then
-      log_error "Git signing key is empty"
-      exit 1
-    fi
-
-    # Apply git configuration
-    git config user.name "$username" || { log_error "Failed to set git user.name"; exit 1; }
-    git config user.email "$email" || { log_error "Failed to set git user.email"; exit 1; }
-    git config user.signingkey "$signingkey" || { log_error "Failed to set git user.signingkey"; exit 1; }
-
-    log_success "Git configuration updated successfully!"
-    log_info "User: $username <$email>"
-    log_info "Signing key: $signingkey"
   '';
 
   postMergeHook = pkgs.writeShellScript "post-merge-hook" ''
