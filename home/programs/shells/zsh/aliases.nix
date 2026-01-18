@@ -153,7 +153,7 @@
   fenv = "env | fzf";
   frg = "rg --color=always --line-number --no-heading --smart-case \"\" | fzf --ansi --preview=\"bat --color=always {1} --highlight-line {2}\"";
   # eza aliases (defined directly to avoid flag conflicts from chaining)
-  ls = "eza --icons -l -T -L=1";
+  lse = "eza --icons -l -T -L=1";
   l = "eza --icons -l";
   ll = "eza --icons -la";
   lsa = "eza --icons -la";
@@ -173,9 +173,9 @@
   codestats = "tokei --sort code";
   bench = "hyperfine";
   benchw = "hyperfine --warmup 3";
-  watch = "watchexec";
-  watchr = "watchexec --restart";
-  watchc = "watchexec --clear";
+  we = "watchexec";
+  wer = "watchexec --restart";
+  wec = "watchexec --clear";
 
   # Enhanced ripgrep
   rgf = "rg --files | rg";
