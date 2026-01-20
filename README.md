@@ -1,6 +1,6 @@
 # Nix Configuration
 
-A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager integration.
+A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager integration. Based on **nixpkgs 25.11**.
 
 ## Features
 
