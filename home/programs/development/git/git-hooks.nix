@@ -128,7 +128,7 @@ in {
       signByDefault = true;
     };
 
-    extraConfig = {
+    settings = {
       pull.rebase = "true";
       diff.guitool = "meld";
       difftool.meld.path = "${pkgs.meld}/bin/meld";

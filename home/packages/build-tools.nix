@@ -7,7 +7,7 @@
     #--------------------------------------------------
     gnumake # Build automation tool
     gcc # GNU Compiler Collection
-    lldb_17 # Next generation debugger
+    lldb # Next generation debugger
     cmake # Cross-platform build system generator
     libtool # Generic library support script
     pkg-config # Helper tool for compiling applications

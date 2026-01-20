@@ -30,9 +30,9 @@
         ++ lib.optionals (lib.hasAttr "poetry" pkgs) [
           poetry # Poetry is now a top-level package
         ]
-        ++ lib.optionals (lib.hasAttr "python-lsp-server" pkgs.python3Packages) [
-          python3Packages.python-lsp-server
-        ]);
+        # Note: python-lsp-server removed due to flaky test in 1.13.2, fixed in 1.14.0
+        # Will be restored when 25.11 gets the fix
+        );
 
     rust = with pkgs;
       lib.optionals features.rust ([
@@ -193,8 +193,8 @@
     ++ lib.optionals (lib.hasAttr "eza" pkgs) [
       eza # Modern ls replacement
     ]
-    ++ lib.optionals (lib.hasAttr "du-dust" pkgs) [
-      du-dust # Intuitive du replacement
+    ++ lib.optionals (lib.hasAttr "dust" pkgs) [
+      dust # Intuitive du replacement
     ]
     ++ lib.optionals (lib.hasAttr "gnutar" pkgs) [
       gnutar # GNU tar archiver

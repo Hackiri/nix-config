@@ -2,14 +2,14 @@
   description = "Multi-system Nix flake (nix-darwin, NixOS, etc.)";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
-    nix-darwin.url = "github:lnl7/nix-darwin/nix-darwin-25.05";
+    nix-darwin.url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs-darwin";
 
-    home-manager.url = "github:nix-community/home-manager/release-25.05";
+    home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs-darwin";
 
     # Emacs overlay for native compilation support
@@ -55,8 +55,8 @@
         import nixpkgs {
           inherit system;
           overlays = [
-            overlay
             inputs.emacs-overlay.overlays.default
+            overlay  # Our overlay comes last to override emacs-overlay's emacs-git
           ];
           config = {allowUnfree = true;};
         };
@@ -89,6 +89,9 @@
                 users.${username} = import ./hosts/${name}/home.nix;
                 sharedModules = [
                   sops-nix.homeManagerModules.sops
+                  # Disable manual JSON generation to avoid builtins.toFile warning
+                  # See: https://github.com/nix-community/home-manager/issues/7935
+                  {manual.json.enable = false;}
                 ];
               };
             }
@@ -146,6 +149,9 @@
                 users.${username} = import ./hosts/${name}/home.nix;
                 sharedModules = [
                   sops-nix.homeManagerModules.sops
+                  # Disable manual JSON generation to avoid builtins.toFile warning
+                  # See: https://github.com/nix-community/home-manager/issues/7935
+                  {manual.json.enable = false;}
                 ];
               };
             }

@@ -142,9 +142,6 @@
   eterm = "emacsclient -nw -e '(vterm)'";
   sgrep = "rg -M 200 --hidden";
 
-  # pnpm commands
-  task-master = "pnpm task-master";
-
   # FZF combinations
   vif = "nvim $(fzf -m --preview=\"bat --color=always {}\")";
   fcd = "cd $(fd --type d | fzf --preview='eza --tree --level=1 --color=always {}')";
@@ -203,7 +200,7 @@
   aliaslist = "cat ~/.bash_aliases | grep alias";
 
   # AI tools
-  ai = "aichat";
+  mcpl = "mcpl --config ~/.config/mcpl/mcp.json";
 
   # nix-darwin directory shortcuts
   dots = "cd ~/nix-config";

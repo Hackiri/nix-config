@@ -94,9 +94,7 @@
       ++ lib.optionals (lib.hasAttr "http-server" pkgs.nodePackages) [
         nodePackages.http-server # Simple HTTP server
       ]
-      ++ lib.optionals (lib.hasAttr "live-server" pkgs.nodePackages) [
-        nodePackages.live-server # Live-reloading HTTP server
-      ];
+;
 
     # Image and media tools
     media = with pkgs;
@@ -418,10 +416,7 @@
 
       case "$server_type" in
         auto)
-          if command -v ${pkgs.nodePackages.live-server}/bin/live-server >/dev/null 2>&1 && has_files "*.html"; then
-            log_info "Using live-server for HTML development"
-            ${pkgs.nodePackages.live-server}/bin/live-server --port="$port" --no-browser
-          elif command -v ${pkgs.caddy}/bin/caddy >/dev/null 2>&1; then
+          if command -v ${pkgs.caddy}/bin/caddy >/dev/null 2>&1; then
             log_info "Using Caddy server"
             ${pkgs.caddy}/bin/caddy file-server --listen ":$port" --browse
           else
@@ -434,9 +429,6 @@
           ;;
         caddy)
           ${pkgs.caddy}/bin/caddy file-server --listen ":$port" --browse
-          ;;
-        live)
-          ${pkgs.nodePackages.live-server}/bin/live-server --port="$port" --no-browser
           ;;
         *)
           log_error "Unknown server type: $server_type"

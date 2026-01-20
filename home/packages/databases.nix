@@ -6,7 +6,7 @@
     #--------------------------------------------------
     postgresql # PostgreSQL client tools (psql, pg_dump, etc.)
     sqlite # SQLite database engine and CLI
-    mysql-client # MySQL/MariaDB client tools
+    mariadb.client # MySQL/MariaDB client tools
 
     #--------------------------------------------------
     # NoSQL Databases

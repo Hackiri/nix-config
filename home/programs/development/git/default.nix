@@ -23,7 +23,7 @@
       # key = "YOUR_GPG_KEY_ID";
     };
 
-    extraConfig = {
+    settings = {
       pull.rebase = "true";
       diff.guitool = "meld";
       difftool.meld.path = "${pkgs.meld}/bin/meld";

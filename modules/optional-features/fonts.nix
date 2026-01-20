@@ -29,7 +29,7 @@
           # System fonts
           noto-fonts
           noto-fonts-cjk-sans
-          noto-fonts-emoji
+          noto-fonts-color-emoji
           nerd-fonts.symbols-only
         ]
         ++ config.features.fonts.extraFonts;

@@ -1,8 +1,9 @@
 # Emacs overlay configuration
 # This overlay provides custom Emacs configurations and packages
 final: prev: {
-  # Emacs git/unstable version - main package used throughout config
-  emacs-git = prev.emacs-unstable.override {
+  # Emacs stable version - main package used throughout config
+  # Note: emacs-unstable from emacs-overlay has build issues with 25.11, using stable emacs
+  emacs-git = prev.emacs.override {
     # Enable native compilation for better performance
     withNativeCompilation = true;
     # Enable tree-sitter support
@@ -14,7 +15,7 @@ final: prev: {
     withXwidgets = prev.stdenv.isLinux;
   };
   # Custom Emacs configurations (alternative build)
-  emacs-custom = prev.emacs-unstable.override {
+  emacs-custom = prev.emacs.override {
     # Enable native compilation for better performance
     withNativeCompilation = true;
     # Enable tree-sitter support
@@ -27,7 +28,7 @@ final: prev: {
   };
 
   # Emacs with daemon support optimized
-  emacs-daemon = prev.emacs-unstable.override {
+  emacs-daemon = prev.emacs.override {
     withNativeCompilation = true;
     withTreeSitter = true;
     withGTK3 = prev.stdenv.isLinux;
