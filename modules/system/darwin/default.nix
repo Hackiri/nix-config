@@ -25,6 +25,10 @@
   features.fonts.enable = true;
   services.homebrew.enable = true;
 
+  # Disable doc output to avoid builtins.toFile warning with options.json
+  # Man pages and info pages remain enabled (their defaults)
+  documentation.doc.enable = false;
+
   # System configuration
   system = {
     stateVersion = 6;
