@@ -3,8 +3,8 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 add_newline = true
-command_timeout = 2000
-scan_timeout = 10
+command_timeout = 1000
+scan_timeout = 30
 continuation_prompt = "[▸▹ ](dimmed white)"
 
 format = """
@@ -83,7 +83,6 @@ $bun\
 $conda\
 $meson\
 $spack\
-$memory_usage\
 $aws\
 $gcloud\
 $openstack\
@@ -192,13 +191,6 @@ ssh_only = true
 format = " 󰩟[$localipv4](bold magenta)"
 disabled = false
 
-[time]
-disabled = false
-format = '[[ 󰥔 $time ]($style)]($style)'
-time_format = "%I:%M %p"
-utc_time_offset = "local"
-style = "italic dimmed white"
-
 [battery]
 format = "[ $percentage $symbol]($style)"
 full_symbol = "󰁹"
@@ -221,6 +213,9 @@ style = "italic dimmed yellow"
 
 [kubernetes]
 disabled = false
+detect_files = ["k8s", "Chart.yaml", "helmfile.yaml", "kustomization.yaml"]
+detect_folders = ["k8s", "kube", "helm", "charts"]
+detect_extensions = []
 format = ' [$symbol$context⎪$namespace](bold purple)'
 symbol = "☸ "
 
@@ -327,12 +322,12 @@ style = "bold yellow"
 version_format = "${raw}"
 
 [typst]
-format = " [ts](italic) [${symbol}${version}]($style)"
+format = " [typst](italic) [${symbol}${version}]($style)"
 symbol = "󰛦 "
 style = "bold blue"
 version_format = "${raw}"
-detect_extensions = ["ts", "tsx", "mts", "cts"]
-detect_files = ["tsconfig.json"]
+detect_extensions = ["typ"]
+detect_files = ["typst.toml"]
 
 [aws]
 disabled = true
@@ -408,4 +403,5 @@ unknown_msg = '[◌](bold dimmed yellow)'
 [spack]
 symbol = "◇ "
 format = " spack [$symbol$environment]($style)"
+
 

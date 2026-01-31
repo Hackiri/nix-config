@@ -60,6 +60,7 @@
 
           # Development tools
           "visual-studio-code"
+          "podman-desktop"
 
           # Terminal emulators
           "iterm2"
