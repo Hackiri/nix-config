@@ -39,6 +39,7 @@
           "podman" # Podman
           "wordnet" # Wordnet dictionary
           "gh" # GitHub CLI
+          "coreutils" # GNU coreutils (provides grealpath for yazi.nvim)
         ]
         ++ config.services.homebrew.extraBrews;
 

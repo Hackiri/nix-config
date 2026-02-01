@@ -57,10 +57,6 @@
         python311Packages.ruff # Python linter and formatter (CLI)
         templ # Go template formatter
       ]
-      ++ lib.optionals pkgs.stdenv.isLinux [
-        # GNU coreutils for yazi.nvim (provides grealpath) - NixOS only
-        coreutils
-      ]
       ++ lib.optionals pkgs.stdenv.isDarwin [
         pngpaste # For img-clip.nvim clipboard image pasting (macOS only)
       ];
