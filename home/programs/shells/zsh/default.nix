@@ -10,51 +10,6 @@
   fzfCilium = import ./fzf-cilium.nix {};
   fzfClaude = import ./fzf-claude.nix {};
   dollar = "$";
-  theme = {
-    colors = {
-      # Base colors
-      bg = "#1a1b26";
-      bg_dark = "#16161e";
-      bg_highlight = "#292e42";
-      terminal_black = "#414868";
-      fg = "#c0caf5";
-      fg_dark = "#a9b1d6";
-      fg_gutter = "#3b4261";
-
-      # UI elements
-      dark3 = "#545c7e";
-      comment = "#565f89";
-
-      # Blues
-      blue0 = "#3d59a1";
-      blue = "#7aa2f7";
-      cyan = "#7dcfff";
-      blue1 = "#2ac3de";
-      blue2 = "#0db9d7";
-      blue5 = "#89ddff";
-      blue6 = "#b4f9f8";
-      blue7 = "#394b70";
-
-      # Purples and pinks
-      magenta = "#bb9af7";
-      magenta2 = "#ff007c";
-      purple = "#9d7cd8";
-
-      # Warm colors
-      orange = "#ff9e64";
-      yellow = "#e0af68";
-
-      # Greens
-      green = "#9ece6a";
-      green1 = "#73daca";
-      green2 = "#41a6b5";
-      teal = "#1abc9c";
-
-      # Reds
-      red = "#f7768e";
-      red1 = "#db4b4b";
-    };
-  };
 in {
   home = {
     # Ripgrep configuration file
@@ -83,7 +38,6 @@ in {
       TERM = "xterm-256color";
       # oh-my-zsh configuration
       ZSH = "${pkgs.oh-my-zsh}/share/oh-my-zsh";
-      ZSH_CUSTOM = "${config.home.homeDirectory}/.oh-my-zsh/custom";
       ZSH_CACHE_DIR = "${config.home.homeDirectory}/.cache/oh-my-zsh";
       # fzf configuration
       FZF_BASE = "${pkgs.fzf}/share/fzf";
@@ -124,14 +78,9 @@ in {
         package = pkgs.oh-my-zsh;
         theme = ""; # Disabled theme to use Starship instead
         plugins = [
-          "git"
           "sudo"
-          "direnv"
           "extract"
           "colored-man-pages"
-          "kubectl"
-          "docker"
-          "docker-compose"
           "macos"
           "jsontools"
         ];
@@ -221,13 +170,19 @@ in {
         }
 
         # Git FZF Integration (imported from fzf-git.nix)
-        ${fzfGit}
+        if command -v git &>/dev/null; then
+          ${fzfGit}
+        fi
 
         # Kubectl FZF Integration (imported from fzf-kubectl.nix)
-        ${fzfKubectl}
+        if command -v kubectl &>/dev/null; then
+          ${fzfKubectl}
+        fi
 
         # Cilium FZF Integration (imported from fzf-cilium.nix)
-        ${fzfCilium}
+        if command -v cilium &>/dev/null; then
+          ${fzfCilium}
+        fi
 
         # Claude Code FZF Integration (imported from fzf-claude.nix)
         ${fzfClaude}

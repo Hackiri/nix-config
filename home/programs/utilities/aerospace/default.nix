@@ -29,7 +29,6 @@
 
       # Mouse follows focus settings
       on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
-      on-focus-changed = ['move-mouse window-lazy-center']
 
       # Automatically unhide macOS hidden apps
       automatically-unhide-macos-hidden-apps = true
@@ -56,20 +55,22 @@
       [workspace-to-monitor-force-assignment]
       T = 'main'           # Terminal on main monitor
       E = 'main'           # Editor on main monitor
+      P = 'main'           # Productivity on main monitor
       B = 'secondary'      # Browser on secondary
       M = 'secondary'      # Media on secondary
+      V = 'secondary'      # Video on secondary
 
       # Main mode bindings
       [mode.main.binding]
       # Launch applications
       alt-shift-enter = 'exec-and-forget open -na ghostty'
       cmd-shift-enter = 'exec-and-forget open -na alacritty'
-      ctrl-shift-b = 'exec-and-forget open -a "Brave Browser"'
-      ctrl-shift-t = 'exec-and-forget open -a "Telegram"'
-      ctrl-shift-f = 'exec-and-forget open -a Finder'
-      ctrl-shift-n = 'exec-and-forget open -a Notion'
-      ctrl-shift-o = 'exec-and-forget open -a Obsidian'
-      ctrl-shift-v = 'exec-and-forget open -na neovide'
+      ctrl-alt-b = 'exec-and-forget open -a "Brave Browser"'
+      ctrl-alt-t = 'exec-and-forget open -a "Telegram"'
+      ctrl-alt-f = 'exec-and-forget open -a Finder'
+      ctrl-alt-n = 'exec-and-forget open -a Notion'
+      ctrl-alt-o = 'exec-and-forget open -a Obsidian'
+      ctrl-alt-v = 'exec-and-forget open -na neovide'
 
       # Window management
       alt-q = "close"
@@ -120,19 +121,9 @@
       # Enter resize mode (allows hjkl resizing without holding modifiers)
       alt-r = 'mode resize'
 
-      # Workspace management - keeping numeric for compatibility
-      alt-1 = 'workspace 1'
-      alt-2 = 'workspace 2'
-      alt-3 = 'workspace 3'
-      alt-4 = 'workspace 4'
-      alt-5 = 'workspace 5'
-      alt-6 = 'workspace 6'
-      alt-7 = 'workspace 7'
-      alt-8 = 'workspace 8'
-      alt-9 = 'workspace 9'
+      # Workspace management - letter-based for semantic clarity
       alt-b = 'workspace B' # for browser
       alt-e = 'workspace E' #
-      alt-f = 'workspace F' # for finder
       alt-m = 'workspace M' #
       alt-n = 'workspace N' # for notes
       alt-p = 'workspace P'
@@ -140,18 +131,8 @@
       alt-v = 'workspace V'
 
       # Move windows to workspaces
-      alt-shift-1 = 'move-node-to-workspace 1'
-      alt-shift-2 = 'move-node-to-workspace 2'
-      alt-shift-3 = 'move-node-to-workspace 3'
-      alt-shift-4 = 'move-node-to-workspace 4'
-      alt-shift-5 = 'move-node-to-workspace 5'
-      alt-shift-6 = 'move-node-to-workspace 6'
-      alt-shift-7 = 'move-node-to-workspace 7'
-      alt-shift-8 = 'move-node-to-workspace 8'
-      alt-shift-9 = 'move-node-to-workspace 9'
       alt-shift-b = 'move-node-to-workspace B'
       alt-shift-e = 'move-node-to-workspace E'
-      ctrl-alt-f = 'move-node-to-workspace F'  # alt-shift-f is fullscreen
       ctrl-alt-m = 'move-node-to-workspace M'  # alt-shift-m is macos-native-fullscreen
       alt-shift-n = 'move-node-to-workspace N'
       alt-shift-p = 'move-node-to-workspace P'
@@ -301,10 +282,11 @@
       if.app-id = 'com.loom.desktop'
       run = 'move-node-to-workspace V'
 
-      # Workspace F - Finder (floating)
+      # Finder (floating, no dedicated workspace)
       [[on-window-detected]]
       if.app-id = 'com.apple.finder'
-      run = ['layout floating', 'move-node-to-workspace F']
+      check-further-callbacks = true
+      run = 'layout floating'
 
       # Workspace P - Productivity/Tools
       [[on-window-detected]]

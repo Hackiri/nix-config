@@ -136,6 +136,7 @@ _: ''
 
     # Create a temporary file for the commit message
     local temp_msg="$(mktemp)"
+    trap "rm -f '$temp_msg'" EXIT INT TERM
     echo "# Write your commit message (first line is the subject)
   #
   # Changes to be committed:
@@ -150,7 +151,8 @@ _: ''
         git commit -F "$temp_msg"
       fi
     }
-    rm "$temp_msg"
+    rm -f "$temp_msg"
+    trap - EXIT INT TERM
   }
 
   # Bind git helper functions

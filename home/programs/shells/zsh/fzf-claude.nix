@@ -33,7 +33,8 @@ _: ''
   # Search Sessions for Current Project (^c^s)
   # Browse sessions in current project directory
   _claude_sessions() {
-    local project_dir=$(echo "$PWD" | sed 's|/|-|g' | sed 's|^-||')
+    local project_dir="''${PWD//\//-}"
+    project_dir="''${project_dir#-}"
     local sessions_dir="$CLAUDE_DIR/projects/-$project_dir"
 
     [[ -d "$sessions_dir" ]] || { echo "No Claude sessions for this project"; return 1; }

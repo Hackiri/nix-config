@@ -75,7 +75,7 @@ _: ''
     local selected
     selected="$(kubectl get pods -n "$namespace" --no-headers -o custom-columns=":metadata.name,:spec.containers[*].name" |
     fzf-kube --ansi \
-      --preview "kubectl logs {1} -n $namespace --tail=50 2>/dev/null || echo 'No logs available'" \
+      --preview "kubectl logs {1} -n $namespace --tail=100 2>/dev/null || echo 'No logs available'" \
       --header 'Select pod to view logs (Enter=tail, Ctrl-F=follow)' \
       --bind "ctrl-f:execute(kubectl logs {1} -n $namespace -f)+abort" \
       --preview-window right:60%)"
