@@ -6,8 +6,7 @@
     # Features: Development environment (includes minimal)
     ./development.nix
 
-    # Packages: Desktop applications and media tools
-    ../../packages/desktop.nix
+    # Packages: Desktop utilities
     ../../packages/utilities.nix
   ];
 

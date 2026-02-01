@@ -68,7 +68,7 @@ base/minimal.nix
 ├── programs/utilities/btop/            # System monitoring
 └── Direct packages:
     ├── bat, eza, fd, fzf, jq, tree
-    ├── curl, wget
+    ├── wget
     ├── vim, neofetch, htop
     └── unzip, zip, gzip, ripgrep
 ```
@@ -157,7 +157,6 @@ features/desktop.nix
 │   └── features/development.nix        # Includes all dev tools
 │
 └── Packages:
-    ├── packages/desktop.nix            # GUI apps, browsers, etc.
     └── packages/utilities.nix          # Desktop utilities
 ```
 
@@ -386,7 +385,6 @@ home/packages/
 ├── build-tools.nix              # Make, cmake, gcc, cargo-make, etc.
 ├── code-quality.nix             # Linters, formatters (alejandra, shellcheck, etc.)
 ├── databases.nix                # PostgreSQL, MySQL, Redis clients, etc.
-├── desktop.nix                  # GUI apps, browsers, media players
 ├── languages.nix                # Python, Node, Go, Rust, Java, etc.
 ├── network.nix                  # Network debugging, DNS tools
 ├── security.nix                 # Password managers, encryption tools

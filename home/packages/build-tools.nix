@@ -19,7 +19,15 @@
     lazygit # Simple terminal UI for git commands
     meld # Visual diff and merge tool (used by git difftool/mergetool)
 
-    # Note: direnv managed via programs.direnv
-    # Note: CLI essentials (bat, eza, fd, fzf, ripgrep, etc.) in cli-essentials.nix
+    delta # Syntax-highlighted git diffs
+    colordiff # Colorized diff output
+
+    #--------------------------------------------------
+    # Developer Workflow Tools
+    #--------------------------------------------------
+    hyperfine # Command benchmarking
+    watchexec # File watcher for dev workflows
+    tldr # Simplified man pages
+    sd # Simpler sed alternative
   ];
 }

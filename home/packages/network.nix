@@ -4,7 +4,6 @@
     #--------------------------------------------------
     # HTTP/Web Tools
     #--------------------------------------------------
-    curl # Command line tool for transferring data with URLs
     wget # Non-interactive network downloader
 
     #--------------------------------------------------

@@ -10,7 +10,7 @@
     # Packages: Core CLI tools (bat, eza, fd, fzf, ripgrep, etc.)
     ../../packages/cli-essentials.nix
 
-    # Packages: Network essentials (curl, wget, cachix)
+    # Packages: Network essentials (wget, cachix)
     ../../packages/network.nix
 
     # Programs: Shell configuration and enhancements
@@ -33,7 +33,6 @@
       #--------------------------------------------------
       # System Utilities
       #--------------------------------------------------
-      vim # Basic text editor (for minimal systems)
       neofetch # System information tool
       htop # Interactive process viewer
 
@@ -49,17 +48,5 @@
   # Essential programs that work everywhere
   programs = {
     home-manager.enable = true;
-
-    # Direnv for automatic environment loading
-    direnv = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-
-    # Git basic configuration (can be extended in development profile)
-    git = {
-      enable = true;
-      # Basic settings that apply everywhere - specific config in development profile
-    };
   };
 }

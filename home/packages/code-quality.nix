@@ -13,6 +13,9 @@
     # Language-specific formatters
     stylua # Opinionated Lua code formatter
 
+    # Code statistics
+    tokei # Fast code statistics
+
     # Note: pre-commit hooks are now managed by git-hooks.nix in flake.nix
     # The tools above are still available for standalone use
   ];

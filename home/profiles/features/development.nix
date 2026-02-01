@@ -41,7 +41,6 @@
     ../../packages/code-quality.nix
     ../../packages/databases.nix
     ../../packages/languages.nix
-    ../../packages/network.nix
     ../../packages/security.nix
     ../../packages/terminals.nix
     ../../packages/web-dev.nix
