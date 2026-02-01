@@ -13,9 +13,6 @@
     # Packages: Network essentials (wget, cachix)
     ../../packages/network.nix
 
-    # Programs: Shell configuration and enhancements
-    ../../programs/shells
-
     # Programs: Security hardening (SSH, etc.)
     ../../programs/security
 

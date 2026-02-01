@@ -19,6 +19,9 @@
     # Base: Foundation layer (minimal tools)
     ../base/minimal.nix
 
+    # Programs: Shell configuration and enhancements (zsh, starship, bash)
+    ../../programs/shells
+
     # Git: Basic configuration (no sops dependency)
     # For sops-encrypted git, import base/git.nix in your host config instead
     ../../programs/development/git/default.nix
