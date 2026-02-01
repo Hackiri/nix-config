@@ -6,7 +6,7 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 
 - **Cross-platform**: Works on both macOS and NixOS
 - **Modular architecture**: Organized system, service, and user configurations
-- **Profile-based**: Development, minimal, and desktop user profiles
+- **Profile-based**: Layered user profiles (minimal → development → desktop → platform)
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains
 
@@ -20,9 +20,9 @@ nix-config/
 │   ├── mbp/                    # MacBook Pro
 │   └── desktop/                # NixOS Desktop
 ├── home/                       # Home Manager configurations
-│   ├── profiles/               # User profiles (base, features, platform)
-│   ├── programs/               # Program configurations (editors, terminals, shells, etc.)
-│   └── packages/               # Package collections (cli-essentials, build-tools, languages, etc.)
+│   ├── profiles/               # Layered user profiles (base, features, platform)
+│   ├── programs/               # Program configurations (editors, shells, terminals, etc.)
+│   └── packages/               # Package collections (cli-essentials, build-tools, etc.)
 ├── modules/                    # System modules
 │   ├── system/                 # System configurations (darwin, nixos)
 │   ├── services/               # Service configurations
@@ -151,6 +151,21 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    EOF
 
    sops -e -i secrets/secrets.yaml
+   ```
+
+   **Example use cases for sops:**
+
+   - **Git credentials** — Encrypt your name, email, and GPG signing key so they're never stored in plaintext in the repo. Git hooks automatically read from sops-decrypted secrets on checkout and merge.
+   - **API tokens** — Store tokens for services (GitHub, cloud providers) as sops secrets and reference them in shell environment or program configs.
+   - **SSH keys** — Manage SSH private keys as encrypted secrets that are decrypted at activation time by sops-nix.
+   - **Shared configs across machines** — Commit encrypted secrets to the repo and decrypt on each machine with its own age key. Each host only needs its age key to access all shared secrets.
+
+   **Convenience aliases** (available when `base/secrets.nix` is imported):
+
+   ```bash
+   sops-edit secrets/secrets.yaml   # Decrypt, edit in $EDITOR, re-encrypt
+   sops-encrypt secrets/new.yaml    # Encrypt a file in-place
+   sops-decrypt secrets/secrets.yaml # Print decrypted contents to stdout
    ```
 
 ## Usage

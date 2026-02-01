@@ -64,13 +64,13 @@ The profile system uses a three-layer architecture:
 
 ```
 base/minimal.nix
-├── programs/shells/                    # Zsh, shell enhancements
-├── programs/utilities/btop/            # System monitoring
+├── packages/cli-essentials.nix        # bat, eza, fd, fzf, ripgrep, jq
+├── packages/network.nix               # wget, cachix
+├── programs/security/                 # SSH hardening
+├── programs/utilities/btop/           # System monitoring
 └── Direct packages:
-    ├── bat, eza, fd, fzf, jq, tree
-    ├── wget
-    ├── vim, neofetch, htop
-    └── unzip, zip, gzip, ripgrep
+    ├── neofetch, htop
+    └── unzip, zip, gzip
 ```
 
 #### `base/git.nix` (Git with Sops Hooks - Optional)
@@ -107,6 +107,7 @@ features/development.nix
 │   └── base/minimal.nix                # Foundation (always)
 │
 ├── Programs:
+│   ├── programs/shells/                # Zsh, starship, bash
 │   ├── programs/editors/               # Neovim, Emacs, etc.
 │   ├── programs/development/           # Direnv + basic Git (default)
 │   ├── programs/kubernetes/            # Kubernetes tools module
@@ -118,7 +119,6 @@ features/development.nix
     ├── packages/code-quality.nix       # Linters, formatters
     ├── packages/databases.nix          # DB clients, Redis, etc.
     ├── packages/languages.nix          # Python, Node, Go, Rust, etc.
-    ├── packages/network.nix            # Network tools
     ├── packages/security.nix           # Security utilities
     ├── packages/terminals.nix          # Terminal utilities
     ├── packages/web-dev.nix            # Web development tools
@@ -132,9 +132,9 @@ development.nix
   ↓
   ├─→ minimal.nix (always)
   │     ↓
-  │     ├─→ programs/shells
-  │     └─→ programs/utilities/btop
+  │     └─→ programs/utilities/btop, programs/security
   │
+  ├─→ programs/shells (zsh, starship, bash)
   └─→ programs/development/git/default.nix (basic Git, no sops)
 
 For sops integration, add to your host config:
@@ -224,9 +224,9 @@ platform/darwin.nix
   │     │     ↓
   │     │     ├─→ base/minimal.nix (always)
   │     │     │     ↓
-  │     │     │     ├─→ programs/shells
-  │     │     │     └─→ programs/utilities/btop
+  │     │     │     └─→ programs/utilities/btop, programs/security
   │     │     │
+  │     │     ├─→ programs/shells (zsh, starship, bash)
   │     │     ├─→ programs/development/git/default.nix (basic Git)
   │     │     │
   │     │     └─→ [all development programs & packages]
@@ -400,10 +400,10 @@ home/packages/
 
 | Profile | Includes |
 | ------- | -------- |
-| **base/minimal** | Shells, btop, essential CLI tools |
+| **base/minimal** | CLI essentials, network tools, btop, SSH |
 | **base/git** | Git with sops hooks (optional, import in host config) |
 | **base/secrets** | Sops CLI utilities (optional, import in host config) |
-| **features/development** | minimal + basic Git + all dev tools |
+| **features/development** | minimal + shells + basic Git + all dev tools |
 | **features/desktop** | development + GUI apps |
 | **features/kubernetes** | Standalone K8s module |
 | **platform/darwin** | desktop + macOS packages + aerospace |
