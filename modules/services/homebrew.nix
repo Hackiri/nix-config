@@ -21,37 +21,28 @@
   };
 
   config = lib.mkIf config.services.homebrew.enable {
-    # Homebrew configuration
     homebrew = {
       enable = true;
       onActivation = {
-        cleanup = "zap"; # Uninstall packages not in Brewfile
+        cleanup = "uninstall"; # Remove packages not in config (preserves app data)
         autoUpdate = true;
         upgrade = true;
       };
-      global.autoUpdate = true;
 
-      # Homebrew brews (CLI tools)
+      # CLI tools that work better with Homebrew than Nix on macOS
       brews =
         [
-          # CLI tools that work better with Homebrew than Nix on macOS
           "mas" # Mac App Store CLI
           "bitwarden-cli" # Password manager CLI
           "webp" # WebP image format
           "podman-compose" # Podman Compose
           "podman" # Podman
           "wordnet" # Wordnet dictionary
-          "coreutils" # GNU coreutils for yazi.nvim (provides grealpath)
-          "gh" # GitHub CLI for managing GitHub repos
+          "gh" # GitHub CLI
         ]
         ++ config.services.homebrew.extraBrews;
 
-      # Homebrew taps (repositories)
-      taps = [
-        # Add custom taps here if needed
-      ];
-
-      # Homebrew casks (GUI applications)
+      # GUI applications
       casks =
         [
           # Browsers
@@ -67,7 +58,6 @@
           "ghostty"
 
           # Productivity
-          "rectangle" # Window management
           "raycast" # Spotlight replacement
           "shottr" # Screenshot tool
 
@@ -83,7 +73,7 @@
           # Utilities
           "obsidian" # Note-taking
           "hammerspoon" # Automation
-          "pika" # color picker
+          "pika" # Color picker
 
           # Creative
           "blender"

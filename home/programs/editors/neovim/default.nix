@@ -16,6 +16,7 @@
     # Add pynvim for Python support and pylatexenc for render-markdown LaTeX support
     extraPython3Packages = ps:
       with ps; [
+        pip # Required by mason.nvim
         pynvim
         pylatexenc # Provides latex2text for render-markdown.nvim
       ];

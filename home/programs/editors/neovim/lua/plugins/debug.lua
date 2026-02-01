@@ -22,7 +22,7 @@ return {
     -- Configure other debug adapters
     dap.adapters.lldb = {
       type = "executable",
-      command = vim.fn.systemlist("which lldb-vscode")[1],
+      command = vim.fn.systemlist("which lldb-dap")[1],
       name = "lldb",
     }
 

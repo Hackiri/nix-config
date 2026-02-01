@@ -26,8 +26,13 @@ local ensureInstalled = {
   content = {
     "css",
     "html",
+    "latex",
     "markdown",
     "markdown_inline",
+    "norg",
+    "scss",
+    "typst",
+    "vue",
   },
   specialFiletypes = {
     "diff",
