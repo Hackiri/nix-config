@@ -44,82 +44,31 @@
     # Security: Enable macOS Application Firewall
     firewall.text = ''
       echo "Configuring macOS Firewall..." >&2
-      # Enable Application Firewall
-      /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
-      # Enable Stealth Mode (don't respond to pings/probes from unauthorized apps)
-      /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on
-      # Enable logging
-      /usr/libexec/ApplicationFirewall/socketfilterfw --setloggingmode on
+      /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on || echo "Warning: Failed to enable firewall" >&2
+      /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on || echo "Warning: Failed to enable stealth mode" >&2
+      /usr/libexec/ApplicationFirewall/socketfilterfw --setloggingmode on || echo "Warning: Failed to enable firewall logging" >&2
     '';
 
     postActivation.text = ''
-      # Add pam_reattach to enable TouchID for tmux
+      # Add pam_reattach to enable TouchID for tmux sessions
+      echo "Configuring pam_reattach for TouchID in tmux..." >&2
       sudo mkdir -p /usr/local/lib/pam
-      sudo cp ${pkgs.pam-reattach}/lib/pam/pam_reattach.so /usr/local/lib/pam/
+      sudo cp ${pkgs.pam-reattach}/lib/pam/pam_reattach.so /usr/local/lib/pam/ || echo "Warning: Failed to copy pam_reattach.so" >&2
 
-      # Add pam_reattach to sudo config if not already present
       if ! grep -q "pam_reattach.so" /etc/pam.d/sudo; then
         sudo sed -i "" '2i\
       auth    optional    pam_reattach.so
-      ' /etc/pam.d/sudo
+      ' /etc/pam.d/sudo || echo "Warning: Failed to configure pam_reattach in /etc/pam.d/sudo" >&2
       fi
     '';
 
-    # Add Podman Docker compatibility setup
+    # Podman Docker compatibility: symlinks only (no systemd, no PATH manipulation)
     podmanDockerCompat.text = ''
-            # Set up Podman for Docker compatibility
-            echo "Setting up Podman for Docker compatibility..." >&2
-
-            # Create Docker compatibility symlinks
-            mkdir -p $HOME/.local/bin
-            ln -sf $(which podman) $HOME/.local/bin/docker
-            ln -sf $(which podman-compose) $HOME/.local/bin/docker-compose
-
-            # Ensure the bin directory is in PATH
-            if ! grep -q "$HOME/.local/bin" $HOME/.zshrc; then
-              echo 'export PATH="$HOME/.local/bin:$PATH"' >> $HOME/.zshrc
-            fi
-
-            # Set up Docker socket compatibility
-            mkdir -p $HOME/.docker
-
-            # Create systemd user directory if it doesn't exist
-            mkdir -p $HOME/.config/systemd/user
-
-            # Create the service file for podman socket
-            cat > $HOME/.config/systemd/user/podman.socket << EOF
-      [Unit]
-      Description=Podman API Socket
-      Documentation=man:podman-system-service(1)
-
-      [Socket]
-      ListenStream=%t/podman/podman.sock
-      SocketMode=0660
-
-      [Install]
-      WantedBy=sockets.target
-      EOF
-
-            # Create the service file
-            cat > $HOME/.config/systemd/user/podman.service << EOF
-      [Unit]
-      Description=Podman API Service
-      Requires=podman.socket
-      After=podman.socket
-      Documentation=man:podman-system-service(1)
-
-      [Service]
-      Type=simple
-      ExecStart=/usr/local/bin/podman system service --time=0
-
-      [Install]
-      WantedBy=default.target
-      EOF
-
-            # Add Docker environment variables to zshrc if not already present
-            if ! grep -q "DOCKER_HOST" $HOME/.zshrc; then
-              echo 'export DOCKER_HOST="unix://$HOME/.local/share/containers/podman/machine/qemu/podman.sock"' >> $HOME/.zshrc
-            fi
+      echo "Setting up Podman Docker compatibility symlinks..." >&2
+      mkdir -p $HOME/.local/bin
+      ln -sf $(which podman) $HOME/.local/bin/docker 2>/dev/null || true
+      ln -sf $(which podman-compose) $HOME/.local/bin/docker-compose 2>/dev/null || true
+      mkdir -p $HOME/.docker
     '';
   };
 

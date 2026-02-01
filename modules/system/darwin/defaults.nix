@@ -7,7 +7,6 @@ _: {
   system = {
     # Keyboard
     keyboard.enableKeyMapping = true;
-    keyboard.remapCapsLockToEscape = false;
 
     defaults = {
       NSGlobalDomain = {
@@ -70,7 +69,6 @@ _: {
           DisableAllAnimations = true;
           NewWindowTarget = "PfDe";
           NewWindowTargetPath = "file://$\{HOME\}/Desktop/";
-          AppleShowAllExtensions = true;
           FXEnableExtensionChangeWarning = false;
           ShowStatusBar = true;
           ShowPathbar = true;
@@ -111,7 +109,6 @@ _: {
         "com.google.Chrome" = {
           AppleEnableSwipeNavigateWithScrolls = true;
           DisablePrintPreview = true;
-          PMPrintingExpandedStateForPrint2 = true;
         };
         "com.apple.SoftwareUpdate" = {
           AutomaticCheckEnabled = true;

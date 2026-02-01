@@ -31,6 +31,22 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  # Podman with Docker compatibility
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true; # Create docker alias
+    dockerSocket.enable = true; # Emulate Docker socket
+    defaultNetwork.settings.dns_enabled = true;
+  };
+
+  # Add podman users to the podman group
+  users.users.${username}.extraGroups = ["podman"];
+
+  # Ensure ~/.local/bin is in PATH
+  environment.sessionVariables = {
+    PATH = ["$HOME/.local/bin"];
+  };
+
   # Security configuration
   security = {
     sudo = {
