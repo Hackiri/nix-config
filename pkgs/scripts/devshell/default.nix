@@ -10,7 +10,8 @@
   # Enhanced language-specific packages with better tooling
   languagePackages = {
     python = with pkgs;
-      lib.optionals features.python ([
+      lib.optionals features.python (
+        [
           # Core Python
           python3
           python3Packages.pip
@@ -32,7 +33,7 @@
         ]
         # Note: python-lsp-server removed due to flaky test in 1.13.2, fixed in 1.14.0
         # Will be restored when 25.11 gets the fix
-        );
+      );
 
     rust = with pkgs;
       lib.optionals features.rust ([

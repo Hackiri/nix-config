@@ -93,8 +93,7 @@
       ]
       ++ lib.optionals (lib.hasAttr "http-server" pkgs.nodePackages) [
         nodePackages.http-server # Simple HTTP server
-      ]
-;
+      ];
 
     # Image and media tools
     media = with pkgs;
