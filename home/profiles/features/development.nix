@@ -16,6 +16,9 @@
 #   ];
 {...}: {
   imports = [
+    # Feature options (composable enable flags for package collections)
+    ./options.nix
+
     # Base: Foundation layer (minimal tools)
     ../base/minimal.nix
 

@@ -1,8 +1,4 @@
-{
-  lib,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   programs.neovim = {
     enable = true;
     plugins = with pkgs.vimPlugins; [];
@@ -28,37 +24,34 @@
         magick # For image.nvim and other image manipulation plugins
       ];
 
-    extraPackages = with pkgs;
-      [
-        tree-sitter
-        fzf
-        vscode-js-debug
-        # For LuaSnip transformations (Lua 5.1 required)
-        lua51Packages.lua
-        lua51Packages.luarocks
-        luajit
+    extraPackages = with pkgs; [
+      tree-sitter
+      fzf
+      vscode-js-debug
+      # For LuaSnip transformations (Lua 5.1 required)
+      lua51Packages.lua
+      lua51Packages.luarocks
+      luajit
 
-        # Build tools for native extensions
-        cmake
-        gcc
-        gnumake
+      # Build tools for native extensions
+      cmake
+      gcc
+      gnumake
 
-        # Image and document rendering tools
-        imagemagick # Provides magick/convert for image conversion
-        ghostscript # Provides gs for PDF rendering
-        tectonic # LaTeX rendering
-        mermaid-cli # Provides mmdc for Mermaid diagrams
+      # Image and document rendering tools
+      imagemagick # Provides magick/convert for image conversion
+      ghostscript # Provides gs for PDF rendering
+      tectonic # LaTeX rendering
+      mermaid-cli # Provides mmdc for Mermaid diagrams
 
-        # Formatters and linters for conform.nvim and diagnostics
-        nodePackages.prettier # JavaScript/TypeScript/CSS/HTML/JSON/YAML/Markdown formatter
-        stylua # Lua formatter
-        shfmt # Shell script formatter
-        shellcheck # Shell script linter
-        python311Packages.ruff # Python linter and formatter (CLI)
-        templ # Go template formatter
-      ]
-      ++ lib.optionals pkgs.stdenv.isDarwin [
-      ];
+      # Formatters and linters for conform.nvim and diagnostics
+      nodePackages.prettier # JavaScript/TypeScript/CSS/HTML/JSON/YAML/Markdown formatter
+      stylua # Lua formatter
+      shfmt # Shell script formatter
+      shellcheck # Shell script linter
+      python311Packages.ruff # Python linter and formatter (CLI)
+      templ # Go template formatter
+    ];
 
     extraLuaConfig = ''
       -- Set leader key before lazy

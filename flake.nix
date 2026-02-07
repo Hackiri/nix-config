@@ -56,10 +56,30 @@
           inherit system;
           overlays = [
             inputs.emacs-overlay.overlays.default
-            overlay  # Our overlay comes last to override emacs-overlay's emacs-git
+            overlay # Our overlay comes last to override emacs-overlay's emacs-git
           ];
           config = {allowUnfree = true;};
         };
+
+      # Shared home-manager configuration for all system types
+      mkHomeManagerConfig = {
+        name,
+        username,
+      }: {
+        home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          backupFileExtension = "backup";
+          extraSpecialArgs = {inherit inputs username;};
+          users.${username} = import ./hosts/${name}/home.nix;
+          sharedModules = [
+            sops-nix.homeManagerModules.sops
+            # Disable manual JSON generation to avoid builtins.toFile warning
+            # See: https://github.com/nix-community/home-manager/issues/7935
+            {manual.json.enable = false;}
+          ];
+        };
+      };
 
       # Function to create a Darwin system configuration
       mkDarwin = {
@@ -80,21 +100,7 @@
 
             # Home Manager integration
             home-manager.darwinModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                backupFileExtension = "backup";
-                extraSpecialArgs = {inherit inputs username;};
-                users.${username} = import ./hosts/${name}/home.nix;
-                sharedModules = [
-                  sops-nix.homeManagerModules.sops
-                  # Disable manual JSON generation to avoid builtins.toFile warning
-                  # See: https://github.com/nix-community/home-manager/issues/7935
-                  {manual.json.enable = false;}
-                ];
-              };
-            }
+            (mkHomeManagerConfig {inherit name username;})
 
             # Homebrew integration
             nix-homebrew.darwinModules.nix-homebrew
@@ -140,21 +146,7 @@
 
             # Home Manager integration
             home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                backupFileExtension = "backup";
-                extraSpecialArgs = {inherit inputs username;};
-                users.${username} = import ./hosts/${name}/home.nix;
-                sharedModules = [
-                  sops-nix.homeManagerModules.sops
-                  # Disable manual JSON generation to avoid builtins.toFile warning
-                  # See: https://github.com/nix-community/home-manager/issues/7935
-                  {manual.json.enable = false;}
-                ];
-              };
-            }
+            (mkHomeManagerConfig {inherit name username;})
           ];
           specialArgs = {inherit inputs system username;};
         };
@@ -215,12 +207,15 @@
       # Development shells with pre-commit hooks
       devShells = forAllSystems (system: let
         pkgs = pkgsForSystem system;
-      in {
-        default = pkgs.mkShell {
-          inherit (self.checks.${system}.pre-commit-check) shellHook;
-          buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
-        };
-      });
+        langShells = import ./lib/devshells.nix {inherit pkgs;};
+      in
+        {
+          default = pkgs.mkShell {
+            inherit (self.checks.${system}.pre-commit-check) shellHook;
+            buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
+          };
+        }
+        // langShells);
 
       # Make custom packages available as apps
       apps = forAllSystems (system: let
@@ -246,5 +241,25 @@
           };
         };
       });
+
+      # Project templates for quick project bootstrapping
+      templates = {
+        node = {
+          path = ./templates/node;
+          description = "Node.js project with devShell and direnv";
+        };
+        python = {
+          path = ./templates/python;
+          description = "Python project with devShell and direnv";
+        };
+        rust = {
+          path = ./templates/rust;
+          description = "Rust project with devShell and direnv";
+        };
+        go = {
+          path = ./templates/go;
+          description = "Go project with devShell and direnv";
+        };
+      };
     };
 }

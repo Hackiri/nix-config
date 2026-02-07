@@ -1,10 +1,3 @@
-{pkgs ? import <nixpkgs> {}}:
-pkgs.mkShell {
-  buildInputs = with pkgs; [
-    pre-commit
-    alejandra
-    deadnix
-    statix
-    stylua
-  ];
-}
+# Flake-compat shim: provides the flake's default devShell for non-flake users
+# Usage: nix-shell (without flakes) or direnv
+(builtins.getFlake (toString ./.)).devShells.${builtins.currentSystem}.default

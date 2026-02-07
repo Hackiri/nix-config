@@ -9,6 +9,10 @@
     ../shared/nix.nix
     ../shared/users.nix
 
+    # NixOS-specific modules
+    ./podman.nix
+    ./security.nix
+
     # Optional feature modules
     ../../optional-features/fonts.nix
   ];
@@ -31,27 +35,8 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
-  # Podman with Docker compatibility
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true; # Create docker alias
-    dockerSocket.enable = true; # Emulate Docker socket
-    defaultNetwork.settings.dns_enabled = true;
-  };
-
-  # Add podman users to the podman group
-  users.users.${username}.extraGroups = ["podman"];
-
   # Ensure ~/.local/bin is in PATH
   environment.sessionVariables = {
     PATH = ["$HOME/.local/bin"];
-  };
-
-  # Security configuration
-  security = {
-    sudo = {
-      wheelNeedsPassword = false;
-      execWheelOnly = true; # Only allow wheel group to use sudo
-    };
   };
 }

@@ -1,23 +1,30 @@
 # Database client tools and utilities
-{pkgs, ...}: {
-  home.packages = with pkgs; [
-    #--------------------------------------------------
-    # Relational Databases
-    #--------------------------------------------------
-    postgresql # PostgreSQL client tools (psql, pg_dump, etc.)
-    sqlite # SQLite database engine and CLI
-    mariadb.client # MySQL/MariaDB client tools
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
+  config = lib.mkIf config.features.development.packages.databases.enable {
+    home.packages = with pkgs; [
+      #--------------------------------------------------
+      # Relational Databases
+      #--------------------------------------------------
+      postgresql # PostgreSQL client tools (psql, pg_dump, etc.)
+      sqlite # SQLite database engine and CLI
+      mariadb.client # MySQL/MariaDB client tools
 
-    #--------------------------------------------------
-    # NoSQL Databases
-    #--------------------------------------------------
-    redis # Redis client (redis-cli)
-    mongodb-tools # MongoDB client tools (mongosh, mongodump, etc.)
+      #--------------------------------------------------
+      # NoSQL Databases
+      #--------------------------------------------------
+      redis # Redis client (redis-cli)
+      mongodb-tools # MongoDB client tools (mongosh, mongodump, etc.)
 
-    #--------------------------------------------------
-    # Database Management Tools
-    #--------------------------------------------------
-    # pgcli # PostgreSQL CLI with autocomplete (optional)
-    # mycli # MySQL CLI with autocomplete (optional)
-  ];
+      #--------------------------------------------------
+      # Database Management Tools
+      #--------------------------------------------------
+      # pgcli # PostgreSQL CLI with autocomplete (optional)
+      # mycli # MySQL CLI with autocomplete (optional)
+    ];
+  };
 }

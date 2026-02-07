@@ -13,11 +13,30 @@
 # To add packages to your configuration, import the specific .nix file in the
 # appropriate profile (minimal.nix, development.nix, or desktop.nix).
 #
+# OPTION-GATED PACKAGES:
+# ----------------------
+# Package collections imported by development.nix are gated behind feature options
+# defined in home/profiles/features/options.nix. All options default to true for
+# backward compatibility. To disable a package collection in a host's home.nix:
+#
+#   features.development.packages.databases.enable = false;
+#   features.development.packages.security.enable = false;
+#
+# Available options:
+#   features.development.packages.buildTools.enable  - Build tools and compilers
+#   features.development.packages.codeQuality.enable - Linters and formatters
+#   features.development.packages.databases.enable   - Database client tools
+#   features.development.packages.languages.enable   - Programming language runtimes
+#   features.development.packages.security.enable    - Security and encryption tools
+#   features.development.packages.terminals.enable   - Terminal applications
+#   features.development.packages.webDev.enable      - Web development tools
+#   features.development.packages.custom.enable      - Custom overlay packages
+#
 # Available Package Collections:
 # ------------------------------
 # ./build-tools.nix    - Build tools, compilers, and core dev utilities
 # ./code-quality.nix   - Linters, formatters, and code analysis tools
-# ./custom/            - Custom overlay packages
+# ./custom.nix         - Custom overlay packages
 # ./databases.nix      - Database client tools (psql, redis-cli, mongosh, etc.)
 # ./desktop.nix        - Desktop applications and GUI tools
 # ./languages.nix      - Programming language runtimes (Node, Python, Go, Rust, etc.)
@@ -27,7 +46,6 @@
 # ./terminals.nix      - Terminal applications and tools (tmuxinator, moreutils)
 # ./utilities.nix      - Media and document processing (imagemagick, ghostscript)
 # ./web-dev.nix        - Web development tools (httpie, curl, grpcurl, caddy)
-# This is a placeholder module that does nothing
 _: {
   # No imports - packages are imported directly in profile files
 }
