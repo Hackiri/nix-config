@@ -422,17 +422,6 @@ return {
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
           end, "[L]SP [W]orkspace [L]ist Folders")
 
-          -- Format on save if the client supports it
-          if client and client.supports_method("textDocument/formatting") then
-            vim.api.nvim_create_autocmd("BufWritePre", {
-              group = vim.api.nvim_create_augroup("format_on_save" .. event.buf, { clear = true }),
-              buffer = event.buf,
-              callback = function()
-                vim.lsp.buf.format({ async = false })
-              end,
-            })
-          end
-
           -- Document highlight DISABLED - using Snacks.words instead
           -- Snacks.words provides better performance and doesn't cause cursor lag
           -- if client and client.server_capabilities.documentHighlightProvider then

@@ -150,7 +150,7 @@ map(
 
 -- Code Navigation and Editing
 -- Note: Aerial outline toggle is now at <leader>o (defined in plugins/aerial.lua)
--- Removed <leader>a mapping to prevent conflict with Avante AI prefix
+-- Note: <leader>aa and <leader>am are used for alt-file navigation (see below)
 -- Note: Line movement (J/K) is handled by mini-move (Alt+hjkl in any direction)
 map("v", "<", "<gv", { desc = "Unindent line" })
 map("v", ">", ">gv", { desc = "Indent line" })

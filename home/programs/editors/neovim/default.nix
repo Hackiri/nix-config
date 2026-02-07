@@ -58,7 +58,6 @@
         templ # Go template formatter
       ]
       ++ lib.optionals pkgs.stdenv.isDarwin [
-        pngpaste # For img-clip.nvim clipboard image pasting (macOS only)
       ];
 
     extraLuaConfig = ''

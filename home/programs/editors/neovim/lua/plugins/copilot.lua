@@ -5,9 +5,9 @@ return {
     event = "InsertEnter", -- Load when entering insert mode
     opts = {
       suggestion = {
-        enabled = false,
+        enabled = true,
         auto_trigger = true,
-        hide_during_completion = vim.g.ai_cmp,
+        hide_during_completion = true,
         keymap = {
           accept = false, -- handled by nvim-cmp / blink.cmp
           next = "<M-]>",
@@ -15,20 +15,6 @@ return {
         },
       },
       panel = { enabled = false },
-      filetypes = {
-        markdown = true,
-        help = true,
-        -- html = true,
-        -- css = true,
-        -- javascript = true,
-        -- typescript = true,
-        -- javascriptreact = true,
-        -- typescriptreact = true,
-        -- json = true,
-        -- yaml = true,
-        -- markdown = true,
-        -- help = true,
-      },
     },
   },
   {
@@ -37,9 +23,8 @@ return {
     enabled = vim.g.neovim_mode ~= "skitty",
     opts = function(_, opts)
       opts = opts or {}
-      opts.model = _G.COPILOT_MODEL
       local user = (vim.env.USER or "User"):gsub("^%l", string.upper)
-      opts.question_header = string.format(" %s (%s) ", user, opts.model)
+      opts.question_header = string.format(" %s ", user)
       opts.mappings = {
         close = { normal = "<Esc>", insert = "<Esc>" },
         reset = { normal = "", insert = "" },
