@@ -217,8 +217,8 @@ in {
         GenericName=Text Editor
         Comment=Edit text
         MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
-        Exec=${pkgs.emacs30}/bin/emacs %F
-        Icon=${pkgs.emacs30}/share/icons/hicolor/scalable/apps/emacs.svg
+        Exec=${pkgs.emacs-git}/bin/emacs %F
+        Icon=${pkgs.emacs-git}/share/icons/hicolor/scalable/apps/emacs.svg
         Type=Application
         Terminal=false
         Categories=Development;TextEditor;
@@ -234,8 +234,8 @@ in {
         GenericName=Text Editor
         Comment=Emacs with Doom configuration
         MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
-        Exec=${pkgs.emacs30}/bin/emacs %F
-        Icon=${pkgs.emacs30}/share/icons/hicolor/scalable/apps/emacs.svg
+        Exec=${pkgs.emacs-git}/bin/emacs %F
+        Icon=${pkgs.emacs-git}/share/icons/hicolor/scalable/apps/emacs.svg
         Type=Application
         Terminal=false
         Categories=Development;TextEditor;
@@ -259,7 +259,7 @@ in {
 
                   # Define applications to copy/symlink
                   apps=(
-                    "${pkgs.emacs30}/Applications/Emacs.app"
+                    "${pkgs.emacs-git}/Applications/Emacs.app"
                   )
 
                   # Define target directory
@@ -305,7 +305,7 @@ in {
         export EMACSDIR="$HOME/.config/emacs"
         export DOOMDIR="$HOME/.config/doom"
         export PATH="$EMACSDIR/bin:$PATH"
-        exec "${pkgs.emacs30}/bin/emacs"
+        exec "${pkgs.emacs-git}/bin/emacs"
         EOF
                   chmod +x "$doom_launcher"
                   echo "Created Doom Emacs launcher script at '$doom_launcher'"

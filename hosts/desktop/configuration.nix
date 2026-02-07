@@ -1,6 +1,5 @@
 {
   pkgs,
-  system,
   username,
   ...
 }: {
@@ -37,7 +36,6 @@
   };
 
   # Enable sound with pipewire
-  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
 
   # Services configuration
@@ -45,15 +43,16 @@
     # Enable the X11 windowing system
     xserver = {
       enable = true;
-      # Enable the GNOME Desktop Environment
-      displayManager.gdm.enable = true;
-      desktopManager.gnome.enable = true;
       # Configure keymap in X11
       xkb = {
         layout = "us";
         variant = "";
       };
     };
+
+    # Desktop environment and display manager (moved from services.xserver in 24.11/25.11)
+    displayManager.gdm.enable = true;
+    desktopManager.gnome.enable = true;
 
     # Enable CUPS to print documents
     printing.enable = true;

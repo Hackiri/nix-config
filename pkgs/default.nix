@@ -1,5 +1,5 @@
 # This file exports all custom packages
-{pkgs ? import <nixpkgs> {}}: rec {
+{pkgs}: rec {
   # Development tools script
   dev-tools = import ./scripts/dev-tools.nix {inherit pkgs;};
 

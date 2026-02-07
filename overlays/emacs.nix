@@ -1,29 +1,20 @@
 # Emacs overlay configuration
 # This overlay provides custom Emacs configurations and packages
+# Note: emacs-gtk3 is marked broken in nixpkgs 25.11; use pgtk on Linux instead.
 final: prev: {
   # Emacs stable version - main package used throughout config
-  # Note: emacs-unstable from emacs-overlay has build issues with 25.11, using stable emacs
   emacs-git = prev.emacs.override {
-    # Enable native compilation for better performance
     withNativeCompilation = true;
-    # Enable tree-sitter support
     withTreeSitter = true;
-    # macOS specific optimizations
+    # macOS: native Cocoa GUI; Linux: pure GTK (Wayland-native, replaces broken GTK3)
     withNS = prev.stdenv.isDarwin;
-    # Linux specific features
-    withGTK3 = prev.stdenv.isLinux;
-    withXwidgets = prev.stdenv.isLinux;
+    withPgtk = prev.stdenv.isLinux;
   };
   # Custom Emacs configurations (alternative build)
   emacs-custom = prev.emacs.override {
-    # Enable native compilation for better performance
     withNativeCompilation = true;
-    # Enable tree-sitter support
     withTreeSitter = true;
-    # Enable additional features
-    withGTK3 = prev.stdenv.isLinux;
-    withXwidgets = prev.stdenv.isLinux;
-    # macOS specific optimizations
+    withPgtk = prev.stdenv.isLinux;
     withNS = prev.stdenv.isDarwin;
   };
 
@@ -31,16 +22,15 @@ final: prev: {
   emacs-daemon = prev.emacs.override {
     withNativeCompilation = true;
     withTreeSitter = true;
-    withGTK3 = prev.stdenv.isLinux;
+    withPgtk = prev.stdenv.isLinux;
     withNS = prev.stdenv.isDarwin;
   };
 
-  # Lightweight Emacs for quick editing
+  # Lightweight Emacs for quick editing (no GUI toolkit)
   emacs-light = prev.emacs.override {
     withNativeCompilation = false;
     withTreeSitter = false;
-    withX = false;
-    withGTK2 = false;
+    withPgtk = false;
     withGTK3 = false;
   };
 

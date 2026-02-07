@@ -30,7 +30,7 @@
       #--------------------------------------------------
       # System Utilities
       #--------------------------------------------------
-      neofetch # System information tool
+      fastfetch # System information tool
       htop # Interactive process viewer
 
       #--------------------------------------------------
