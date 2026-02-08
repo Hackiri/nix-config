@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-25.11-darwin";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
@@ -11,11 +11,10 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs-darwin";
 
     home-manager.url = "github:nix-community/home-manager/release-25.11";
-    # NOTE: follows nixpkgs-darwin (unstable) for both darwin and NixOS.
-    # This only affects home-manager's internal lib/module evaluation since
-    # useGlobalPkgs = true means packages come from each system's own pkgs.
-    # A proper fix would require separate home-manager inputs per platform.
-    home-manager.inputs.nixpkgs.follows = "nixpkgs-darwin";
+    # Follows stable nixpkgs — matches home-manager release-25.11's target.
+    # Only affects HM's internal lib/module evaluation since useGlobalPkgs = true
+    # means actual packages come from each system's own pkgs (stable or unstable).
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Emacs overlay for native compilation support
     emacs-overlay.url = "github:nix-community/emacs-overlay";
@@ -46,8 +45,11 @@
 
   outputs = inputs: let
     overlay = import ./overlays;
-    mkPkgs = system:
-      import inputs.nixpkgs {
+
+    # Build pkgs from a specific nixpkgs source with shared overlays.
+    # Darwin uses nixpkgs-darwin (unstable), NixOS uses nixpkgs (stable).
+    mkPkgs = nixpkgsSrc: system:
+      import nixpkgsSrc {
         inherit system;
         overlays = [
           inputs.emacs-overlay.overlays.default
@@ -55,6 +57,12 @@
         ];
         config = {allowUnfree = true;};
       };
+
+    # Select the correct nixpkgs source for a given system
+    nixpkgsFor = system:
+      if builtins.match ".*-darwin" system != null
+      then inputs.nixpkgs-darwin
+      else inputs.nixpkgs;
   in
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-darwin" "aarch64-darwin" "x86_64-linux"];
@@ -66,7 +74,7 @@
         ...
       }: {
         # Configure pkgs with overlays and allowUnfree
-        _module.args.pkgs = mkPkgs system;
+        _module.args.pkgs = mkPkgs (nixpkgsFor system) system;
 
         # Git pre-commit hooks checks
         checks.pre-commit-check = inputs.git-hooks.lib.${system}.run {
@@ -126,7 +134,7 @@
         }:
           inputs.nix-darwin.lib.darwinSystem {
             inherit system;
-            pkgs = mkPkgs system;
+            pkgs = mkPkgs inputs.nixpkgs-darwin system;
             modules = [
               ./hosts/${name}/configuration.nix
               inputs.sops-nix.darwinModules.sops
@@ -162,7 +170,7 @@
         }:
           inputs.nixpkgs.lib.nixosSystem {
             inherit system;
-            pkgs = mkPkgs system;
+            pkgs = mkPkgs inputs.nixpkgs system;
             modules = [
               ./hosts/${name}/configuration.nix
               inputs.sops-nix.nixosModules.sops

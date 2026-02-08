@@ -33,7 +33,7 @@
 
   # Nix utilities
   nxsearch = "nix search nixpkgs"; # Search packages
-  nxrepl = "nix repl '<nixpkgs>'"; # Interactive nix REPL
+  nxrepl = "nix repl --expr 'import <nixpkgs> {}'"; # Interactive nix REPL
   nxdev = "nix develop .#"; # Enter dev shell
 
   # Kubernetes aliases

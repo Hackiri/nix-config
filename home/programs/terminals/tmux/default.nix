@@ -104,7 +104,7 @@ in {
 
   programs.tmux = {
     enable = true;
-    shell = "/bin/zsh";
+    shell = "${pkgs.zsh}/bin/zsh";
     terminal = "tmux-256color";
     historyLimit = 1000000;
     keyMode = "vi";

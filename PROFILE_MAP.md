@@ -156,8 +156,8 @@ features/desktop.nix
 ├── Profiles:
 │   └── features/development.nix        # Includes all dev tools
 │
-└── Packages:
-    └── packages/utilities.nix          # Desktop utilities
+└── Imports:
+    └── features/development.nix        # Includes all dev tools
 ```
 
 **Import Chain**:
@@ -389,7 +389,6 @@ home/packages/
 ├── network.nix                  # Network debugging, DNS tools
 ├── security.nix                 # Password managers, encryption tools
 ├── terminals.nix                # Terminal utilities, multiplexers
-├── utilities.nix                # General desktop utilities
 ├── web-dev.nix                  # Web development tools
 └── custom.nix                   # Custom packages from /pkgs/
 ```

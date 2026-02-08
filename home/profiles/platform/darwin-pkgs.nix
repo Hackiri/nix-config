@@ -11,9 +11,8 @@
 # System defaults are configured via nix-darwin (see modules/system/darwin/defaults.nix)
 {pkgs, ...}: {
   home.packages = with pkgs; [
-    # macOS clipboard and tmux integration
-    pam-reattach # Enables Touch ID support in tmux
-    reattach-to-user-namespace # macOS clipboard integration for tmux
+    # macOS clipboard integration for tmux
+    reattach-to-user-namespace
 
     # macOS utilities
     mkalias # Tool for creating macOS aliases

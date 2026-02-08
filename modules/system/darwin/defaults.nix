@@ -1,7 +1,10 @@
 # macOS system defaults and preferences
 _: {
   # Add ability to used TouchID for sudo authentication
-  security.pam.services.sudo_local.touchIdAuth = true;
+  security.pam.services.sudo_local = {
+    touchIdAuth = true;
+    reattach = true; # Enable pam-reattach for Touch ID in tmux
+  };
 
   # macOS configuration
   system = {
@@ -28,7 +31,34 @@ _: {
       # Security: Keep Gatekeeper enabled - shows warning for unverified apps
       LaunchServices.LSQuarantine = true;
       loginwindow.GuestEnabled = false;
-      finder.FXPreferredViewStyle = "Nlsv";
+      # Finder — use native typed options where available
+      finder = {
+        FXPreferredViewStyle = "Nlsv";
+        ShowExternalHardDrivesOnDesktop = true;
+        ShowHardDrivesOnDesktop = false;
+        ShowMountedServersOnDesktop = false;
+        ShowRemovableMediaOnDesktop = true;
+        _FXSortFoldersFirst = true;
+        FXDefaultSearchScope = "SCcf";
+        NewWindowTarget = "Other";
+        NewWindowTargetPath = "file://$\{HOME\}/Desktop/";
+        FXEnableExtensionChangeWarning = false;
+        ShowStatusBar = true;
+        ShowPathbar = true;
+      };
+
+      # Dock — use native typed options
+      dock = {
+        autohide = false;
+        launchanim = false;
+        static-only = false;
+        show-recents = false;
+        show-process-indicators = true;
+        orientation = "left";
+        tilesize = 36;
+        minimize-to-application = true;
+        mineffect = "scale";
+      };
 
       CustomUserPreferences = {
         #--------------------------------------------------
@@ -56,22 +86,10 @@ _: {
         };
 
         #--------------------------------------------------
-        # Finder Settings
+        # Finder extras (not covered by typed options)
         #--------------------------------------------------
         "com.apple.finder" = {
-          ShowExternalHardDrivesOnDesktop = true;
-          ShowHardDrivesOnDesktop = false;
-          ShowMountedServersOnDesktop = false;
-          ShowRemovableMediaOnDesktop = true;
-          _FXSortFoldersFirst = true;
-          # When performing a search, search the current folder by default
-          FXDefaultSearchScope = "SCcf";
           DisableAllAnimations = true;
-          NewWindowTarget = "PfDe";
-          NewWindowTargetPath = "file://$\{HOME\}/Desktop/";
-          FXEnableExtensionChangeWarning = false;
-          ShowStatusBar = true;
-          ShowPathbar = true;
           WarnOnEmptyTrash = false;
         };
         "com.apple.desktopservices" = {
@@ -79,18 +97,12 @@ _: {
           DSDontWriteNetworkStores = true;
           DSDontWriteUSBStores = true;
         };
+
+        # Dock extras (not covered by typed options)
         "com.apple.dock" = {
-          autohide = false;
-          launchanim = false;
-          static-only = false;
-          show-recents = false;
-          show-process-indicators = true;
-          orientation = "left";
-          tilesize = 36;
-          minimize-to-application = true;
-          mineffect = "scale";
           enable-window-tool = false;
         };
+
         "com.apple.ActivityMonitor" = {
           OpenMainWindow = true;
           IconType = 5;

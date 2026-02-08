@@ -248,8 +248,8 @@ imports = [
 3. Import in `development.nix`
 
 ### To add desktop-specific packages:
-1. Add to `../packages/utilities.nix`
-2. Ensure imported in `desktop.nix`
+1. Add to the appropriate package file in `../packages/`
+2. Ensure imported in `development.nix`
 
 ### To add platform-specific packages:
 → Add to `platform/darwin.nix` or `platform/nixos.nix`
@@ -267,7 +267,6 @@ Package collections are in `../packages/`:
 - `network.nix` - Network tools (wget, cachix)
 - `security.nix` - Security tools (sops, age)
 - `terminals.nix` - Terminal tools (tmuxinator, moreutils)
-- `utilities.nix` - Media processing (imagemagick, ghostscript)
 - `web-dev.nix` - Web dev tools (httpie, curl, grpcurl, caddy)
 
 ---

@@ -81,8 +81,7 @@ in {
       # K9s configuration
       export K9S_CONFIG_DIR="$HOME/.config/k9s"
 
-      # Krew (kubectl plugin manager) path
-      export PATH="${config.home.homeDirectory}/.krew/bin:$PATH"
+      # Krew PATH is set via home.sessionPath in zsh/default.nix
     '';
 
     # Add bash completion if bash is enabled

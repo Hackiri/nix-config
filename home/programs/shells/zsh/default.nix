@@ -51,9 +51,6 @@ in {
 
     packages = with pkgs; [
       oh-my-zsh
-      zsh-autosuggestions
-      zsh-syntax-highlighting
-      zsh-history-substring-search
     ];
   };
 
