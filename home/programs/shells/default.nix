@@ -1,7 +1,7 @@
 {...}: {
   imports = [
-    (./. + "/bash")
-    (./. + "/zsh")
-    (./. + "/starship")
+    ./bash
+    ./zsh
+    ./starship
   ];
 }

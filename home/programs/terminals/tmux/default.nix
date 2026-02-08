@@ -1,8 +1,9 @@
 {
+  config,
   pkgs,
-  username,
   ...
 }: let
+  homeDir = config.home.homeDirectory;
   tmux_config = builtins.readFile ./tmux.conf;
 
   truncate_path = pkgs.writeScriptBin "truncate_path" ''
@@ -10,7 +11,7 @@
 
     path="$1"
     max_length="''${2:-50}"  # Default to 50 if not specified
-    user_home="/Users/${username}"
+    user_home="${homeDir}"
 
     # Exit if no path is provided
     if [ -z "$path" ]; then
@@ -45,7 +46,11 @@
       selected=$1
     elif [[ $# -eq 0 ]]; then
       # Use 'find' to list directories in specified paths and 'fzf' for interactive selection
-      selected=$(find ~/github "$HOME/Library/Mobile Documents/com~apple~CloudDocs/github" "/System/Volumes/Data/mnt" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | ${pkgs.fzf}/bin/fzf)
+      selected=$(find ~/github ${
+      if pkgs.stdenv.isDarwin
+      then ''"$HOME/Library/Mobile Documents/com~apple~CloudDocs/github" "/System/Volumes/Data/mnt"''
+      else ""
+    } -mindepth 1 -maxdepth 1 -type d 2>/dev/null | ${pkgs.fzf}/bin/fzf)
     elif [[ $# -eq 2 ]]; then
       # Use the second argument as the directory path for the find command
       dir_to_search="$2"

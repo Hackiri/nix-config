@@ -44,7 +44,18 @@
     };
   };
 
-  outputs = inputs:
+  outputs = inputs: let
+    overlay = import ./overlays;
+    mkPkgs = system:
+      import inputs.nixpkgs {
+        inherit system;
+        overlays = [
+          inputs.emacs-overlay.overlays.default
+          overlay
+        ];
+        config = {allowUnfree = true;};
+      };
+  in
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-darwin" "aarch64-darwin" "x86_64-linux"];
 
@@ -53,18 +64,9 @@
         system,
         self',
         ...
-      }: let
-        overlay = import ./overlays;
-      in {
+      }: {
         # Configure pkgs with overlays and allowUnfree
-        _module.args.pkgs = import inputs.nixpkgs {
-          inherit system;
-          overlays = [
-            inputs.emacs-overlay.overlays.default
-            overlay
-          ];
-          config = {allowUnfree = true;};
-        };
+        _module.args.pkgs = mkPkgs system;
 
         # Git pre-commit hooks checks
         checks.pre-commit-check = inputs.git-hooks.lib.${system}.run {
@@ -98,19 +100,6 @@
       };
 
       flake = let
-        overlay = import ./overlays;
-
-        # Create a pkgs for a given system with our overlays
-        pkgsForSystem = system:
-          import inputs.nixpkgs {
-            inherit system;
-            overlays = [
-              inputs.emacs-overlay.overlays.default
-              overlay
-            ];
-            config = {allowUnfree = true;};
-          };
-
         # Shared home-manager configuration for all system types
         mkHomeManagerConfig = {
           name,
@@ -137,7 +126,7 @@
         }:
           inputs.nix-darwin.lib.darwinSystem {
             inherit system;
-            pkgs = pkgsForSystem system;
+            pkgs = mkPkgs system;
             modules = [
               ./hosts/${name}/configuration.nix
               inputs.sops-nix.darwinModules.sops
@@ -173,7 +162,7 @@
         }:
           inputs.nixpkgs.lib.nixosSystem {
             inherit system;
-            pkgs = pkgsForSystem system;
+            pkgs = mkPkgs system;
             modules = [
               ./hosts/${name}/configuration.nix
               inputs.sops-nix.nixosModules.sops

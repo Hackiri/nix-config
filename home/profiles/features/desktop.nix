@@ -5,9 +5,6 @@
   imports = [
     # Features: Development environment (includes minimal)
     ./development.nix
-
-    # Packages: Desktop utilities
-    ../../packages/utilities.nix
   ];
 
   # Enable and configure neovide GUI editor

@@ -31,7 +31,13 @@
   };
 
   # Enable common services
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitRootLogin = "no";
+      PasswordAuthentication = false;
+    };
+  };
 
   # Enable networking
   networking.networkmanager.enable = true;

@@ -1,7 +1,7 @@
 {...}: {
   imports = [
-    (./. + "/alacritty")
-    (./. + "/ghostty")
-    (./. + "/tmux")
+    ./alacritty
+    ./ghostty
+    ./tmux
   ];
 }

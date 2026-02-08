@@ -7,9 +7,6 @@ final: prev: let
   emacsOverlay = import ./emacs.nix;
 in
   {
-    # Add all custom packages to the 'custom' namespace
-    custom = customPkgs;
-
     inherit (customPkgs) kube-packages;
 
     # Override nodejs to skip tests (network tests fail in sandbox)

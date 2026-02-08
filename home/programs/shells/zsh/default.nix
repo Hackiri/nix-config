@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  shellAliases = import ./aliases.nix;
+  shellAliases = import ./aliases.nix {inherit (pkgs.stdenv) isDarwin;};
   fzfGit = import ./fzf-git.nix {};
   fzfKubectl = import ./fzf-kubectl.nix {};
   fzfCilium = import ./fzf-cilium.nix {};
@@ -28,9 +28,15 @@ in {
       --max-columns-preview
     '';
 
+    sessionPath = [
+      "${config.home.homeDirectory}/.config/emacs/bin"
+      "${config.home.homeDirectory}/.krew/bin"
+      "${config.home.homeDirectory}/bin"
+      "${config.home.homeDirectory}/.local/bin"
+    ];
+
     sessionVariables = {
       KREW_ROOT = "${config.home.homeDirectory}/.krew";
-      PATH = "${config.home.homeDirectory}/.config/emacs/bin:${config.home.homeDirectory}/.krew/bin:${config.home.homeDirectory}/bin:${config.home.homeDirectory}/.local/bin:$PATH";
       EDITOR = "nvim";
       VISUAL = "nvim";
       LANG = "en_US.UTF-8";

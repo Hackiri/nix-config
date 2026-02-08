@@ -25,9 +25,9 @@
       enable = true;
       onActivation = {
         cleanup = "uninstall"; # Remove packages not in config (preserves app data)
-        # NOTE: autoUpdate = true means brew formulas/casks update on every darwin-rebuild switch,
-        # independent of flake.lock pins. Set to false for fully reproducible builds.
-        autoUpdate = true;
+        # Disabled for reproducibility -- brew updates are independent of flake.lock pins.
+        # Run `brew update` manually when you want to update formulas/casks.
+        autoUpdate = false;
         upgrade = true;
       };
 
@@ -40,9 +40,7 @@
           "podman-compose" # Podman Compose
           "podman" # Podman
           "wordnet" # Wordnet dictionary
-          "gh" # GitHub CLI
           "coreutils" # GNU coreutils (provides grealpath for yazi.nvim)
-          "gettext" # GNU internationalization utilities
         ]
         ++ config.services.homebrew.extraBrews;
 
