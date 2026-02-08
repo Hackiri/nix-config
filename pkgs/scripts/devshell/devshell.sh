@@ -15,7 +15,7 @@ fi
 
 # Detect shell type (for future use)
 SHELL_TYPE="bash"
-if [ -n "$ZSH_VERSION" ]; then
+if [ -n "${ZSH_VERSION:-}" ]; then
   SHELL_TYPE="zsh"
 fi
 export SHELL_TYPE
@@ -30,16 +30,16 @@ show_welcome() {
   for lang in "${LANGUAGES[@]}"; do
     case "$lang" in
       python)
-        echo "🐍 Python environment: $VENV_DIR"
+        echo "🐍 Python environment: ${VENV_DIR:-}"
         ;;
       go)
-        echo "🐹 Go environment: $GOPATH"
+        echo "🐹 Go environment: ${GOPATH:-}"
         ;;
       node)
-        echo "📦 Node environment: $NODE_PATH"
+        echo "📦 Node environment: ${NODE_PATH:-}"
         ;;
       rust)
-        echo "⚙️  Rust environment: $CARGO_HOME"
+        echo "⚙️  Rust environment: ${CARGO_HOME:-}"
         ;;
     esac
   done
@@ -91,10 +91,10 @@ for lang in "${LANGUAGES[@]}"; do
       PYTHON_BIN=$(command -v python3 2>/dev/null)
       if [ -n "$PYTHON_BIN" ]; then
         PYTHON_VERSION=$($PYTHON_BIN --version 2>&1 | cut -d' ' -f2 | cut -d'.' -f1-2)
-        export PYTHONPATH="$HOME/.local/lib/python$PYTHON_VERSION/site-packages:$PYTHONPATH"
+        export PYTHONPATH="$HOME/.local/lib/python$PYTHON_VERSION/site-packages:${PYTHONPATH:-}"
         export VENV_DIR="$HOME/.local/lib/python$PYTHON_VERSION/site-packages"
       else
-        export PYTHONPATH="$HOME/.local/lib/python3.12/site-packages:$PYTHONPATH"
+        export PYTHONPATH="$HOME/.local/lib/python3.12/site-packages:${PYTHONPATH:-}"
         export VENV_DIR="$HOME/.local/lib/python3.12/site-packages"
       fi
       ;;
@@ -125,10 +125,10 @@ show_welcome
 
 # If this script is sourced, keep the shell open
 # If run directly, start a new shell
-if [ -n "$BASH_VERSION" ] && [ "${BASH_SOURCE[0]}" != "${0}" ]; then
+if [ -n "${BASH_VERSION:-}" ] && [ "${BASH_SOURCE[0]:-}" != "${0}" ]; then
   # Script is being sourced in bash, do nothing
   :
-elif [ -n "$ZSH_VERSION" ] && [ "$ZSH_EVAL_CONTEXT" = "toplevel:file" ]; then
+elif [ -n "${ZSH_VERSION:-}" ] && [ "${ZSH_EVAL_CONTEXT:-}" = "toplevel:file" ]; then
   # Script is being sourced in zsh, do nothing
   :
 else
