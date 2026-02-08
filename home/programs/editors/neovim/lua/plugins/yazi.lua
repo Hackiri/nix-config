@@ -27,5 +27,7 @@ return {
     keymaps = {
       show_help = "<f1>",
     },
+    -- Use Nix's GNU realpath instead of Homebrew's grealpath on macOS
+    resolve_relative_path_application = "realpath",
   },
 }
