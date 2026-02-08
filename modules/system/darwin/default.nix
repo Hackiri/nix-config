@@ -14,7 +14,6 @@
     ./nix.nix
     ./defaults.nix
     ./security.nix
-    ./podman.nix
 
     # Optional feature modules
     ../../optional-features/fonts.nix
