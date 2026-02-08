@@ -10,8 +10,7 @@ in
     # Add all custom packages to the 'custom' namespace
     custom = customPkgs;
 
-    # Use inherit syntax to avoid warnings
-    inherit (customPkgs) dev-tools devshell kube-packages;
+    inherit (customPkgs) kube-packages;
 
     # Override nodejs to skip tests (network tests fail in sandbox)
     nodejs = prev.nodejs.overrideAttrs (_: {

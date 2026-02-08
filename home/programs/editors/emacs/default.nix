@@ -128,11 +128,17 @@ in {
           if [ -d "$EMACSDIR" ]; then
             "$MV_BIN" "$EMACSDIR" "$EMACSDIR.bak-$("$DATE_BIN" +%Y%m%d%H%M%S)"
           fi
-          "$GIT_BIN" clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
+
+          # Check network connectivity before attempting clone
+          if "$GIT_BIN" ls-remote --exit-code https://github.com/doomemacs/doomemacs HEAD >/dev/null 2>&1; then
+            "$GIT_BIN" clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
+          else
+            echo "Warning: Cannot reach github.com - skipping Doom Emacs install (no network)"
+          fi
 
           if [ ! -f "$EMACSDIR/bin/doom" ]; then
-            echo "Error: Doom Emacs installation failed - doom binary not found"
-            exit 1
+            echo "Warning: Doom Emacs installation incomplete - doom binary not found"
+            echo "You can install manually: git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs"
           fi
         else
           echo "Doom Emacs already installed at $EMACSDIR"
@@ -185,20 +191,27 @@ in {
         "$CHMOD_BIN" -R u+w "$DOOMDIR" || echo "Warning: Could not set permissions on $DOOMDIR"
         "$CHMOD_BIN" +x "$EMACSDIR/bin/doom" || echo "Warning: Could not make doom binary executable"
 
-        # Run Doom sync to ensure all packages are installed
-        echo "Running doom sync to ensure all packages are installed..."
+        # Run Doom sync to ensure all packages are installed (only if doom is available)
+        if [ -f "$EMACSDIR/bin/doom" ]; then
+          echo "Running doom sync to ensure all packages are installed..."
 
-        # Make sure we have the right environment for doom sync
-        export EMACSLOADPATH=""
+          # Make sure we have the right environment for doom sync
+          export EMACSLOADPATH=""
 
-        # Run doom sync with proper error handling
-        if "$EMACSDIR/bin/doom" sync -e; then
-          echo "Doom sync completed successfully!"
+          # Run doom sync with timeout to prevent hanging during activation
+          if timeout 300 "$EMACSDIR/bin/doom" sync -e; then
+            echo "Doom sync completed successfully!"
+          else
+            SYNC_EXIT_CODE=$?
+            if [ "$SYNC_EXIT_CODE" -eq 124 ]; then
+              echo "Warning: Doom sync timed out after 5 minutes"
+            else
+              echo "Warning: Doom sync failed with exit code $SYNC_EXIT_CODE"
+            fi
+            echo "You can try running '$EMACSDIR/bin/doom sync' manually or '$EMACSDIR/bin/doom doctor' to diagnose."
+          fi
         else
-          SYNC_EXIT_CODE=$?
-          echo "Warning: Doom sync failed with exit code $SYNC_EXIT_CODE"
-          echo "This might be due to missing dependencies or network issues."
-          echo "You can try running '$EMACSDIR/bin/doom doctor' to diagnose the problem."
+          echo "Skipping doom sync - Doom Emacs not installed yet"
         fi
       '';
 
@@ -337,70 +350,45 @@ in {
     ];
 
     packages = with pkgs; [
-      # Core dependencies for Doom Emacs
-      git
+      # Doom Emacs needs ripgrep with PCRE2 support (profiles provide plain ripgrep)
       (ripgrep.override {withPCRE2 = true;})
-      fd
-      findutils
-      gnugrep
-      gnused
-      coreutils
 
-      # Additional Emacs packages
+      # Emacs icon fonts
       emacs-all-the-icons-fonts
-
-      # Development tools
-      nixfmt-classic
-
-      # Language servers and formatters
-      nodePackages.prettier
-      nodePackages.typescript-language-server
 
       # Font support
       fontconfig
-      emacs-all-the-icons-fonts
       jetbrains-mono
       nerd-fonts.jetbrains-mono
 
-      # Additional dependencies
+      # Emacs-specific dependencies
       gnutls
       zstd
       sqlite
       editorconfig-core-c
       imagemagick
 
-      # Additional dependencies recommended for Doom Emacs
-      coreutils # For GNU ls (gls)
-      pandoc # For markdown processing
-      shellcheck # For shell script checking
-      aspell # For spell checking
+      # Doom Emacs tools
+      pandoc # Markdown processing
+      aspell # Spell checking
       aspellDicts.en # English dictionary
-      graphviz # For org-roam graph visualization
+      graphviz # Org-roam graph visualization
 
-      # Build tools needed by Doom for compiling some packages
-      cmake
-      gnumake
-      gcc
-      libtool
+      # Language servers and formatters (emacs-specific)
+      nixfmt-classic
+      nodePackages.prettier
+      nodePackages.typescript-language-server
 
-      # Additional useful tools for Doom
-      unzip
-      zip
-      gzip
-
-      # Python development tools
+      # Python development tools (emacs-specific)
       python3Packages.black
       python3Packages.pyflakes
       python3Packages.isort
       pipenv
-      python3Packages.pytest # nose is deprecated, use pytest instead
+      python3Packages.pytest
 
-      # Web development tools
+      # Web development tools (emacs-specific)
       nodePackages.stylelint
       nodePackages.js-beautify
-
-      # Shell formatting
-      shfmt
     ];
   };
 }

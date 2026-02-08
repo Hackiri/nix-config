@@ -46,6 +46,5 @@
     ../../packages/security.nix
     ../../packages/terminals.nix
     ../../packages/web-dev.nix
-    ../../packages/custom.nix # Custom packages from /pkgs/
   ];
 }

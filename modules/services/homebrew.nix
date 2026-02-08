@@ -25,6 +25,8 @@
       enable = true;
       onActivation = {
         cleanup = "uninstall"; # Remove packages not in config (preserves app data)
+        # NOTE: autoUpdate = true means brew formulas/casks update on every darwin-rebuild switch,
+        # independent of flake.lock pins. Set to false for fully reproducible builds.
         autoUpdate = true;
         upgrade = true;
       };

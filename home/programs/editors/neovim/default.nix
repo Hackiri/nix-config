@@ -26,17 +26,11 @@
 
     extraPackages = with pkgs; [
       tree-sitter
-      fzf
       vscode-js-debug
       # For LuaSnip transformations (Lua 5.1 required)
       lua51Packages.lua
       lua51Packages.luarocks
       luajit
-
-      # Build tools for native extensions
-      cmake
-      gcc
-      gnumake
 
       # Image and document rendering tools
       imagemagick # Provides magick/convert for image conversion
@@ -44,11 +38,9 @@
       tectonic # LaTeX rendering
       mermaid-cli # Provides mmdc for Mermaid diagrams
 
-      # Formatters and linters for conform.nvim and diagnostics
+      # Neovim-specific formatters (not in profiles)
       nodePackages.prettier # JavaScript/TypeScript/CSS/HTML/JSON/YAML/Markdown formatter
-      stylua # Lua formatter
       shfmt # Shell script formatter
-      shellcheck # Shell script linter
       python311Packages.ruff # Python linter and formatter (CLI)
       templ # Go template formatter
     ];

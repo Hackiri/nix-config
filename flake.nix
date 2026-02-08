@@ -81,8 +81,7 @@
         packages = let
           customPkgs = import ./pkgs {inherit pkgs;};
         in {
-          inherit (customPkgs) dev-tools kube-packages;
-          devshell = customPkgs.devshell.script;
+          inherit (customPkgs) kube-packages;
         };
 
         # Development shells with pre-commit hooks
@@ -96,28 +95,6 @@
             };
           }
           // langShells;
-
-        # Custom packages as runnable apps
-        apps = let
-          customPkgs = import ./pkgs {inherit pkgs;};
-        in {
-          dev-tools = {
-            type = "app";
-            program = "${customPkgs.dev-tools}/bin/dev-tools";
-            meta = {
-              description = "Development tools helper script";
-              mainProgram = "dev-tools";
-            };
-          };
-          devshell = {
-            type = "app";
-            program = "${customPkgs.devshell.script}/bin/devshell";
-            meta = {
-              description = "Development shell environment";
-              mainProgram = "devshell";
-            };
-          };
-        };
       };
 
       flake = let

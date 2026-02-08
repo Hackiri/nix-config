@@ -123,60 +123,13 @@ in {
       enable = true;
     };
 
-    xdg.configFile."neovide/config.toml" = {
-      source = pkgs.writeText "neovide-config.toml" ''
-        fork = ${
-          if cfg.settings.fork
-          then "true"
-          else "false"
-        }
-        frame = "${cfg.settings.frame}"
-        idle = ${
-          if cfg.settings.idle
-          then "true"
-          else "false"
-        }
-        maximized = ${
-          if cfg.settings.maximized
-          then "true"
-          else "false"
-        }
-        no-multigrid = ${
-          if cfg.settings.noMultigrid
-          then "true"
-          else "false"
-        }
-        srgb = ${
-          if cfg.settings.srgb
-          then "true"
-          else "false"
-        }
-        tabs = ${
-          if cfg.settings.tabs
-          then "true"
-          else "false"
-        }
-        theme = "${cfg.settings.theme}"
-        title-hidden = ${
-          if cfg.settings.titleHidden
-          then "true"
-          else "false"
-        }
-        vsync = ${
-          if cfg.settings.vsync
-          then "true"
-          else "false"
-        }
-        wsl = ${
-          if cfg.settings.wsl
-          then "true"
-          else "false"
-        }
-
-        [font]
-        normal = ${builtins.toJSON cfg.settings.font.normal}
-        size = ${toString cfg.settings.font.size}
-      '';
+    xdg.configFile."neovide/config.toml".source = (pkgs.formats.toml {}).generate "neovide-config" {
+      inherit (cfg.settings) fork frame idle maximized srgb tabs theme vsync wsl;
+      no-multigrid = cfg.settings.noMultigrid;
+      title-hidden = cfg.settings.titleHidden;
+      font = {
+        inherit (cfg.settings.font) normal size;
+      };
     };
   };
 }

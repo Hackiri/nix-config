@@ -1,0 +1,78 @@
+k9s:
+  body:
+    fgColor: dodgerblue
+    bgColor: black
+    logoColor: blue
+  prompt:
+    fgColor: green
+    bgColor: black
+    suggestColor: white
+  info:
+    fgColor: lightskyblue
+    sectionColor: steelblue
+  dialog:
+    fgColor: white
+    bgColor: steelblue
+    buttonFgColor: black
+    buttonBgColor: aqua
+    buttonFocusFgColor: yellow
+    buttonFocusBgColor: hotpink
+    labelFgColor: orange
+    fieldFgColor: white
+  frame:
+    border:
+      fgColor: dodgerblue
+      focusColor: aliceblue
+    menu:
+      fgColor: white
+      keyColor: hotpink
+      numKeyColor: fuchsia
+    crumbs:
+      fgColor: white
+      bgColor: steelblue
+      activeColor: orange
+    status:
+      newColor: lightyellow
+      modifyColor: greenyellow
+      addColor: dodgerblue
+      errorColor: lightcoral
+      highlightcolor: orange
+      killColor: mediumpurple
+      completedColor: lightsteelblue
+    title:
+      fgColor: aqua
+      bgColor: white
+      highlightColor: orange
+      counterColor: slateblue
+      filterColor: slategray
+  views:
+    charts:
+      bgColor: default
+      defaultDialColors:
+        - steelblue
+        - orange
+      defaultChartColors:
+        - steelblue
+        - orange
+    table:
+      fgColor: steelblue
+      bgColor: default
+      cursorFgColor: black
+      cursorBgColor: aqua
+      markColor: darkslateblue
+    xray:
+      fgColor: steelblue
+      bgColor: default
+      cursorColor: aqua
+      graphicColor: darkslateblue
+      showIcons: false
+    yaml:
+      keyColor: steelblue
+      colonColor: blue
+      valueColor: royalblue
+    logs:
+      fgColor: white
+      bgColor: default
+      indicator:
+        fgColor: dodgerblue
+        bgColor: default

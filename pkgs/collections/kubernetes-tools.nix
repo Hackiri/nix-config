@@ -1,4 +1,4 @@
-{pkgs ? import <nixpkgs> {}}: let
+{pkgs}: let
   inherit (pkgs) lib;
 
   # Organized Kubernetes tool categories for better maintainability
