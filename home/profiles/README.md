@@ -45,7 +45,7 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 **Includes**:
 - Basic CLI tools (bat, eza, fd, fzf, jq, ripgrep, tree, zoxide)
 - Network essentials (curl, wget)
-- System utilities (vim, htop, neofetch)
+- System utilities (htop, fastfetch)
 - File processing (zip, unzip, gzip)
 - Shell configuration (zsh with oh-my-zsh)
 - Essential utilities (btop)
@@ -101,7 +101,6 @@ imports = [
 
 - Text editors (Neovim, Emacs, Neovide)
 - Development tools (Git with basic config, direnv)
-- Kubernetes tools and configuration
 - Terminal emulators (Alacritty, Ghostty, Tmux)
 - Build tools and compilers
 - Code quality tools (linters, formatters)
@@ -117,8 +116,8 @@ imports = [
 
 **Imports**:
 
-- Programs: editors, development, kubernetes, terminals, utilities
-- Packages: build-tools, code-quality, databases, languages, network, security, terminals, web-dev, custom
+- Programs: editors, development (direnv), shells, terminals, utilities
+- Packages: build-tools, code-quality, databases, languages, security, terminals, web-dev
 
 #### `features/desktop.nix` - Desktop Profile
 **Purpose**: GUI applications and desktop environment tools  
@@ -129,7 +128,7 @@ imports = [
 **Inherits from**: `features/development.nix` (which includes `base/minimal.nix`)  
 **Used by**: `platform/darwin.nix`, `platform/nixos.nix`  
 **Imports**:
-- Packages: desktop, utilities
+- Packages: utilities
 
 #### `features/kubernetes.nix` - Kubernetes Development Profile
 
@@ -148,20 +147,11 @@ imports = [
 ```nix
 profiles.kubernetes = {
   enable = true;
-  toolset = "complete";  # minimal, admin, operations, devops, security-focused, mesh, or complete
-  includeLocalDev = true;
+  includeLocalDev = true;  # Include kind, tilt, kubeconform (default: true)
 };
 ```
 
-**Toolset Options**:
-
-- `minimal`: Core tools only (kubectl, helm, kustomize, kubectx, kubecolor)
-- `admin`: Cluster administration (core + observability + security)
-- `operations`: Production cluster management
-- `devops`: CI/CD and GitOps workflows
-- `security-focused`: Cluster security auditing
-- `mesh`: Service mesh management
-- `complete`: All available tools (default)
+**Note**: k9s configuration is managed via separate YAML files (`k9s/config.yml`, `k9s/skin.yml`).
 
 **Standalone**: Can be imported independently for Kubernetes-only setups
 
@@ -258,7 +248,7 @@ imports = [
 3. Import in `development.nix`
 
 ### To add desktop-specific packages:
-1. Add to `../packages/desktop.nix` or `../packages/utilities.nix`
+1. Add to `../packages/utilities.nix`
 2. Ensure imported in `desktop.nix`
 
 ### To add platform-specific packages:
@@ -270,31 +260,28 @@ imports = [
 
 Package collections are in `../packages/`:
 - `build-tools.nix` - Compilers, build systems, dev tools
+- `cli-essentials.nix` - Core CLI tools (bat, eza, fd, fzf, ripgrep, etc.)
 - `code-quality.nix` - Linters, formatters, analyzers
-- `custom/` - Custom overlay packages
 - `databases.nix` - Database clients (psql, redis-cli, etc.)
-- `desktop.nix` - GUI applications
 - `languages.nix` - Language runtimes (Node, Python, Go, etc.)
-- `network.nix` - Network tools (cachix)
+- `network.nix` - Network tools (wget, cachix)
 - `security.nix` - Security tools (sops, age)
-- `system.nix` - System utilities
 - `terminals.nix` - Terminal tools (tmuxinator, moreutils)
 - `utilities.nix` - Media processing (imagemagick, ghostscript)
 - `web-dev.nix` - Web dev tools (httpie, curl, grpcurl, caddy)
-
-See `../packages/default.nix` for complete documentation.
 
 ---
 
 ## Program Configurations
 
 Program-specific configurations are in `../programs/`:
-- `development/` - Git, direnv
+- `development/` - Direnv
 - `editors/` - Neovim, Emacs, Neovide
-- `kubernetes/` - Kubernetes tools
 - `shells/` - Zsh, oh-my-zsh
 - `terminals/` - Alacritty, Ghostty, Tmux
 - `utilities/` - AeroSpace, btop, yazi, sops
+
+Kubernetes configuration is in `features/kubernetes.nix` (not under `programs/`).
 
 ---
 

@@ -7,9 +7,8 @@ This directory contains enhanced Nix configurations for development tools and en
 The development configuration is organized into focused modules:
 
 - **`direnv/`** - Enhanced direnv configuration with intelligent caching and multi-language support
-- **`git/`** - Robust git configuration with sops-managed secrets and enhanced hooks
 
-For Kubernetes tools and configuration, see `../kubernetes/`
+Git configuration is in `git/` but imported separately via `features/development.nix`. Kubernetes configuration is in `home/profiles/features/kubernetes.nix`.
 
 ## 📁 Directory Structure
 
@@ -109,23 +108,6 @@ Git hooks are automatically installed via the git template system:
 - **post-checkout**: Updates git config from sops secrets
 - **post-merge**: Refreshes git config after merges
 
-### Kubernetes Shell Integration
-
-Enhanced shell completions and aliases are automatically configured:
-
-```bash
-# Kubecolor integration
-alias kubectl="kubecolor"
-
-# Helm completions
-source <(helm completion zsh)
-
-# Additional kubectl aliases (via oh-my-zsh kubectl plugin)
-k get pods    # kubectl get pods
-kgp          # kubectl get pods
-kdp          # kubectl describe pods
-```
-
 ## 🚨 Troubleshooting
 
 ### Direnv Issues
@@ -144,14 +126,6 @@ If git hooks fail:
 2. Verify age key: `ls ~/.config/sops/age/keys.txt`
 3. Test sops decryption: `sops -d secrets/secrets.yaml`
 
-### Kubernetes Tools
-
-If kubectl completions don't work:
-
-1. Verify oh-my-zsh kubectl plugin is enabled
-2. Check kubecolor installation: `which kubecolor`
-3. Reload shell configuration: `source ~/.zshrc`
-
 ## 🔄 Updates and Maintenance
 
 ### Updating Direnv Layouts
@@ -166,26 +140,12 @@ Git configuration is automatically refreshed on checkout and merge. To manually 
 git config --get user.name   # Should show your configured name
 ```
 
-### Kubernetes Tools Updates
-
-Tools are updated with your Nix configuration. To see available tools:
-
-```bash
-# List all kubernetes tools
-nix-env -qaP -A nixpkgs.kubernetes-tools
-
-# Check installed versions
-kubectl version --client
-helm version --client
-```
-
 ## 📚 Related Documentation
 
 - [direnv Documentation](https://direnv.net/)
 - [Nix Flakes](https://nixos.wiki/wiki/Flakes)
 - [sops-nix](https://github.com/Mic92/sops-nix)
 - [Kubernetes Tools](../../../pkgs/collections/kubernetes-tools.nix)
-- [Development Tools](../../../pkgs/scripts/dev-tools.nix)
 
 ## 🤝 Contributing
 

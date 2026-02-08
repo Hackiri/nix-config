@@ -14,10 +14,10 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 
 ```
 nix-config/
-├── flake.nix                   # Main flake configuration
+├── flake.nix                   # Main flake configuration (flake-parts)
 ├── flake.lock                  # Flake input locks
 ├── hosts/                      # Host-specific configurations
-│   ├── mbp/                    # MacBook Pro
+│   ├── mbp/                    # MacBook Pro (darwin)
 │   └── desktop/                # NixOS Desktop
 ├── home/                       # Home Manager configurations
 │   ├── profiles/               # Layered user profiles (base, features, platform)
@@ -26,12 +26,13 @@ nix-config/
 ├── modules/                    # System modules
 │   ├── system/                 # System configurations (darwin, nixos)
 │   ├── services/               # Service configurations
-│   ├── optional-features/      # Optional features
-│   └── hardware/               # Hardware-specific modules
+│   └── optional-features/      # Optional features
+├── lib/                        # Shared library functions
+│   └── devshells.nix           # Language-specific development shells
 ├── overlays/                   # Nixpkgs overlays
-├── pkgs/                       # Custom packages
+├── pkgs/                       # Custom packages (kubernetes-tools)
+├── templates/                  # Project templates (node, python, rust, go)
 ├── secrets/                    # Encrypted secrets (sops-nix)
-├── shell.nix                   # Development shell
 └── stylua.toml                 # Stylua configuration
 ```
 
@@ -256,6 +257,48 @@ files        # Open yazi file manager
 vi           # nvim (Neovim)
 ```
 
+## Architecture
+
+The configuration uses a layered profile system for Home Manager:
+
+```
+base/            Shared foundations (shell, git, core programs)
+  └─ features/   Optional feature sets, gated by options
+       ├─ development.nix   Dev tools, editors, language packages
+       ├─ desktop.nix       GUI applications and desktop programs
+       └─ kubernetes.nix    Kubernetes tooling (tool set selection)
+           └─ platform/     Platform-specific settings (darwin, nixos)
+```
+
+Profiles are composed via `mkHomeManagerConfig` in `flake.nix`. Feature flags in `home/profiles/features/` use `lib.mkEnableOption` to gate package groups.
+
+## Development Shells
+
+Language-specific development environments are available as flake outputs (defined in `lib/devshells.nix`):
+
+```bash
+nix develop .#node      # Node.js, Yarn, pnpm, Bun, TypeScript, Prettier
+nix develop .#python    # Python 3.13, uv, pip, Ruff, mypy, pytest
+nix develop .#rust      # rustc, Cargo, rustfmt, Clippy, rust-analyzer
+nix develop .#go        # Go, gopls, golangci-lint, Delve
+```
+
+The default `nix develop` shell provides Nix tooling (formatters, linters, pre-commit hooks).
+
+## Project Templates
+
+Scaffold a new project with a ready-made `flake.nix`:
+
+```bash
+# Initialize a new project from a template
+nix flake init -t ~/nix-config#node
+nix flake init -t ~/nix-config#python
+nix flake init -t ~/nix-config#rust
+nix flake init -t ~/nix-config#go
+```
+
+Each template provides a self-contained `flake.nix` with the same tooling as the corresponding development shell, so new projects work independently from this config.
+
 ## Documentation
 
 Detailed documentation for specific components:
@@ -263,11 +306,10 @@ Detailed documentation for specific components:
 ### Core Configuration
 
 - **[Home Manager Profiles](home/profiles/README.md)** - Layered profile system (base → features → platform)
-- **[Custom Packages](pkgs/README.md)** - Custom Nix packages, Kubernetes tools, and dev-tools
+- **[Custom Packages](pkgs/README.md)** - Kubernetes tools collection
 
 ### Programs
 
 - **[Zsh Configuration](home/programs/shells/zsh/README.md)** - Zsh setup with FZF keybindings, aliases, and Oh My Zsh
 - **[Development Tools](home/programs/development/README.md)** - Direnv layouts and Git configuration (basic or sops)
-- **[Kubernetes Tools](home/programs/kubernetes/README.md)** - Kubernetes toolsets (minimal, admin, devops, complete)
 - **[Neovim Snippets](home/programs/editors/neovim/lua/snippets/README.md)** - LuaSnip snippets for multiple languages
