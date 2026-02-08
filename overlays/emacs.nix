@@ -2,29 +2,17 @@
 # This overlay provides custom Emacs configurations and packages
 # Note: emacs-gtk3 is marked broken in nixpkgs 25.11; use pgtk on Linux instead.
 final: prev: {
-  # Emacs stable version - main package used throughout config
+  # Main Emacs build - native compilation + tree-sitter
+  # macOS: native Cocoa GUI; Linux: pure GTK (Wayland-native, replaces broken GTK3)
   emacs-git = prev.emacs.override {
     withNativeCompilation = true;
     withTreeSitter = true;
-    # macOS: native Cocoa GUI; Linux: pure GTK (Wayland-native, replaces broken GTK3)
     withNS = prev.stdenv.isDarwin;
     withPgtk = prev.stdenv.isLinux;
   };
-  # Custom Emacs configurations (alternative build)
-  emacs-custom = prev.emacs.override {
-    withNativeCompilation = true;
-    withTreeSitter = true;
-    withPgtk = prev.stdenv.isLinux;
-    withNS = prev.stdenv.isDarwin;
-  };
-
-  # Emacs with daemon support optimized
-  emacs-daemon = prev.emacs.override {
-    withNativeCompilation = true;
-    withTreeSitter = true;
-    withPgtk = prev.stdenv.isLinux;
-    withNS = prev.stdenv.isDarwin;
-  };
+  # Aliases for backward compatibility
+  emacs-custom = final.emacs-git;
+  emacs-daemon = final.emacs-git;
 
   # Lightweight Emacs for quick editing (no GUI toolkit)
   emacs-light = prev.emacs.override {

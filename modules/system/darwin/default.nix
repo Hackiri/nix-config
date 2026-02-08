@@ -11,6 +11,7 @@
     ../shared/users.nix
 
     # Darwin-specific modules
+    ./nix.nix
     ./defaults.nix
     ./security.nix
     ./podman.nix

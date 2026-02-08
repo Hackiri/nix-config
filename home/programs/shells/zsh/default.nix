@@ -77,13 +77,14 @@ in {
         enable = true;
         package = pkgs.oh-my-zsh;
         theme = ""; # Disabled theme to use Starship instead
-        plugins = [
-          "sudo"
-          "extract"
-          "colored-man-pages"
-          "macos"
-          "jsontools"
-        ];
+        plugins =
+          [
+            "sudo"
+            "extract"
+            "colored-man-pages"
+            "jsontools"
+          ]
+          ++ lib.optionals pkgs.stdenv.isDarwin ["macos"];
       };
 
       initContent = ''

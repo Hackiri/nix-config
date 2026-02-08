@@ -10,6 +10,7 @@
     ../shared/users.nix
 
     # NixOS-specific modules
+    ./nix.nix
     ./podman.nix
     ./security.nix
 

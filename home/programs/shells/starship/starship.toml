@@ -394,7 +394,7 @@ format = " nim [$symbol($version )]($style)"
 
 [nix_shell]
 style = 'bold italic dimmed blue'
-symbol = '󱄅'
+symbol = '🐚'
 format = '[$symbol nix⎪$state⎪]($style) [$name](italic dimmed white)'
 impure_msg = '[⌽](bold dimmed red)'
 pure_msg = '[⌾](bold dimmed green)'

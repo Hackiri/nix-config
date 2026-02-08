@@ -16,9 +16,6 @@
 #   ];
 {...}: {
   imports = [
-    # Feature options (composable enable flags for package collections)
-    ./options.nix
-
     # Base: Foundation layer (minimal tools)
     ../base/minimal.nix
 
@@ -34,7 +31,6 @@
 
     # Programs: Development tools and configurations
     ../../programs/development
-    ../../programs/kubernetes
 
     # Programs: Terminal emulators and multiplexers
     ../../programs/terminals

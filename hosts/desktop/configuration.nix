@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   username,
   ...
@@ -9,6 +10,19 @@
 
     # Import improved NixOS modules
     ../../modules/system/nixos
+  ];
+
+  # Prevent accidental deployment with placeholder UUIDs from hardware-configuration.nix
+  assertions = let
+    hasPlaceholder = s: builtins.match ".*REPLACE-WITH-YOUR.*" s != null;
+    devices =
+      map (fs: fs.device or "") (builtins.attrValues config.fileSystems)
+      ++ map (sw: sw.device or "") config.swapDevices;
+  in [
+    {
+      assertion = !(builtins.any hasPlaceholder devices);
+      message = "hosts/desktop/hardware-configuration.nix contains placeholder UUIDs — replace with actual values from `nixos-generate-config` before deploying";
+    }
   ];
 
   # Bootloader

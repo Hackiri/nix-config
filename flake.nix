@@ -11,6 +11,10 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs-darwin";
 
     home-manager.url = "github:nix-community/home-manager/release-25.11";
+    # NOTE: follows nixpkgs-darwin (unstable) for both darwin and NixOS.
+    # This only affects home-manager's internal lib/module evaluation since
+    # useGlobalPkgs = true means packages come from each system's own pkgs.
+    # A proper fix would require separate home-manager inputs per platform.
     home-manager.inputs.nixpkgs.follows = "nixpkgs-darwin";
 
     # Emacs overlay for native compilation support
