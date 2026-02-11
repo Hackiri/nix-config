@@ -1,14 +1,8 @@
-# Git configuration with optional sops-integrated hooks
-# This file imports git-hooks.nix which requires sops secrets to be configured.
+# Git configuration with sops-integrated hooks (LEGACY)
 #
-# To use WITHOUT sops (basic Git only):
-#   Comment out this import in features/development.nix and import
-#   ../../programs/development/git/default.nix directly instead.
-#
-# To use WITH sops hooks (recommended):
-#   1. Keep this import in features/development.nix
-#   2. Also import base/secrets.nix for sops utilities
-#   3. Set up age key and secrets as described in base/secrets.nix
+# NOTE: This file is superseded by features/sops.nix which consolidates all
+#       sops configuration behind a single feature flag (profiles.sops.enable).
+#       Kept for reference only — new setups should use features/sops.nix instead.
 {...}: {
   imports = [
     # Git configuration with sops-integrated hooks

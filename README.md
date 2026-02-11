@@ -111,16 +111,17 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
 5. **Set Up SOPS Secrets (Optional)**
 
-   By default, the configuration uses basic Git without sops. To enable sops-encrypted Git credentials:
+   By default, the configuration uses basic Git without sops (`profiles.sops.enable` defaults to `false`), so cloning works out of the box. To enable sops-encrypted Git credentials:
 
    a. **Enable sops in your host config** (`hosts/mbp/home.nix`):
 
    ```nix
    imports = [
      ../../home/profiles/platform/darwin.nix
-     ../../home/profiles/base/git.nix      # Add this
-     ../../home/profiles/base/secrets.nix  # Add this
+     ../../home/profiles/features/sops.nix  # Add this
    ];
+
+   profiles.sops.enable = true;
    ```
 
    b. **Generate age key:**
@@ -161,7 +162,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    - **SSH keys** — Manage SSH private keys as encrypted secrets that are decrypted at activation time by sops-nix.
    - **Shared configs across machines** — Commit encrypted secrets to the repo and decrypt on each machine with its own age key. Each host only needs its age key to access all shared secrets.
 
-   **Convenience aliases** (available when `base/secrets.nix` is imported):
+   **Convenience aliases** (available when `profiles.sops.enable = true`):
 
    ```bash
    sops-edit secrets/secrets.yaml   # Decrypt, edit in $EDITOR, re-encrypt

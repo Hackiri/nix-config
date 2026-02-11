@@ -6,15 +6,14 @@
   imports = [
     ../../home/profiles/platform/darwin.nix # Darwin-specific profile (includes desktop -> development -> minimal chain)
     ../../home/profiles/features/kubernetes.nix # Kubernetes development profile
-
-    # Sops-encrypted git credentials (requires age key setup)
-    # Remove these two imports for basic git without sops dependency
-    ../../home/profiles/base/git.nix # Git with sops hooks
-    ../../home/profiles/base/secrets.nix # Sops CLI utilities
+    ../../home/profiles/features/sops.nix # SOPS encrypted secrets (requires age key setup)
   ];
 
   # Platform-specific home directory
   home.homeDirectory = "/Users/${username}";
+
+  # Enable SOPS encrypted secrets management
+  profiles.sops.enable = true;
 
   # Enable Kubernetes development profile
   profiles.kubernetes = {

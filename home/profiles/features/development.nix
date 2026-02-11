@@ -6,14 +6,15 @@
 # Git Configuration:
 # ------------------
 # By default, uses basic git (no sops dependency, works out of the box).
-# For sops-encrypted git credentials, also import ../base/git.nix in your host config.
+# For sops-encrypted git credentials, import features/sops.nix and set
+# profiles.sops.enable = true in your host config.
 #
 # Example (hosts/mbp/home.nix):
 #   imports = [
 #     ../../home/profiles/platform/darwin.nix
-#     ../../home/profiles/base/git.nix      # Add this for sops git
-#     ../../home/profiles/base/secrets.nix  # Add this for sops utilities
+#     ../../home/profiles/features/sops.nix  # Add this
 #   ];
+#   profiles.sops.enable = true;
 {...}: {
   imports = [
     # Base: Foundation layer (minimal tools)
