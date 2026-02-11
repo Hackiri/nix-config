@@ -6,11 +6,11 @@
 }: {
   imports = [
     # Shared system modules
-    ../shared/nix.nix
+    ../shared/nix-index.nix
     ../shared/users.nix
 
     # NixOS-specific modules
-    ./nix.nix
+    ./nix-settings.nix
     ./podman.nix
     ./security.nix
 
@@ -21,7 +21,7 @@
   # Enable features
   features.fonts.enable = true;
 
-  # Disable command-not-found to avoid conflicts with nix-index (from shared/nix.nix)
+  # Disable command-not-found to avoid conflicts with nix-index (from shared/nix-index.nix)
   programs.command-not-found.enable = lib.mkForce false;
 
   # NixOS-specific user configuration

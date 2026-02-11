@@ -7,12 +7,12 @@
 }: {
   imports = [
     # Shared system modules
-    ../shared/nix.nix
+    ../shared/nix-index.nix
     ../shared/users.nix
 
     # Darwin-specific modules
-    ./nix.nix
-    ./defaults.nix
+    ./nix-daemon.nix
+    ./preferences.nix
     ./security.nix
 
     # Optional feature modules
