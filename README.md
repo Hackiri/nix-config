@@ -95,6 +95,23 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    **Optional:** Customize host-specific settings in `hosts/mbp/configuration.nix` and `hosts/mbp/home.nix` later
 
+   **Disable SOPS (if you haven't set up age keys yet):**
+
+   The default `hosts/mbp/home.nix` has SOPS enabled. If you don't have an age key, disable it before building to avoid activation errors:
+
+   ```nix
+   # In hosts/mbp/home.nix — comment out or remove the sops import and enable line:
+   imports = [
+     ../../home/profiles/platform/darwin.nix
+     ../../home/profiles/features/kubernetes.nix
+     # ../../home/profiles/features/sops.nix  # Remove or comment out
+   ];
+
+   # profiles.sops.enable = true;  # Remove or comment out
+   ```
+
+   You can re-enable SOPS later by following step 5.
+
 4. **Install nix-darwin**
 
    ```bash
@@ -111,7 +128,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
 5. **Set Up SOPS Secrets (Optional)**
 
-   By default, the configuration uses basic Git without sops (`profiles.sops.enable` defaults to `false`), so cloning works out of the box. To enable sops-encrypted Git credentials:
+   The `mbp` host config ships with SOPS enabled. If you disabled it in step 3, follow these steps when you're ready to enable sops-encrypted Git credentials:
 
    a. **Enable sops in your host config** (`hosts/mbp/home.nix`):
 
