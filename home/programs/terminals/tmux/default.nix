@@ -45,12 +45,17 @@
       # Use the provided argument as the selected directory
       selected=$1
     elif [[ $# -eq 0 ]]; then
-      # Use 'find' to list directories in specified paths and 'fzf' for interactive selection
-      selected=$(find ~/github ${
+      # Use TMUX_SESSIONIZER_DIRS env var if set, otherwise use platform defaults
+      if [[ -n "$TMUX_SESSIONIZER_DIRS" ]]; then
+        IFS=' ' read -ra search_dirs <<< "$TMUX_SESSIONIZER_DIRS"
+      else
+        search_dirs=(~/github ${
       if pkgs.stdenv.isDarwin
       then ''"$HOME/Library/Mobile Documents/com~apple~CloudDocs/github" "/System/Volumes/Data/mnt"''
       else ""
-    } -mindepth 1 -maxdepth 1 -type d 2>/dev/null | ${pkgs.fzf}/bin/fzf)
+    })
+      fi
+      selected=$(find "''${search_dirs[@]}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | ${pkgs.fzf}/bin/fzf)
     elif [[ $# -eq 2 ]]; then
       # Use the second argument as the directory path for the find command
       dir_to_search="$2"
@@ -117,6 +122,10 @@ in {
       better-mouse-mode
       yank
       sensible
+      resurrect
+      continuum
+      tmux-thumbs # Quick pattern-copy from terminal (prefix+Space)
+      fzf-tmux-url # Quick URL opening from terminal (prefix+u)
     ];
 
     extraConfig = ''

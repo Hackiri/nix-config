@@ -182,19 +182,20 @@
       fi
 
       # ============================================================================
-      # COST CALCULATION (Claude API Pricing Jan 2025)
+      # COST CALCULATION (Claude API Pricing — updated Feb 2026)
+      # Models: opus-4/4.6, sonnet-4/4.5/3.5, haiku-4.5/3.5
       # ============================================================================
       session_cost=""
       if [[ "$SHOW_COST" == "true" ]]; then
         # Pricing per million tokens
         case "$model_id" in
-          *opus-4*)
+          *opus-4-6*|*opus-4*)
             input_price=15.00; output_price=75.00
             cache_write_price=18.75; cache_read_price=1.50 ;;
-          *sonnet-4*|*sonnet-3-5*)
+          *sonnet-4-5*|*sonnet-4*|*sonnet-3-5*)
             input_price=3.00; output_price=15.00
             cache_write_price=3.75; cache_read_price=0.30 ;;
-          *haiku-3-5*|*haiku*)
+          *haiku-4-5*|*haiku-3-5*|*haiku*)
             input_price=0.80; output_price=4.00
             cache_write_price=1.00; cache_read_price=0.08 ;;
           *)
