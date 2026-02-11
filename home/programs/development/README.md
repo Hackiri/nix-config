@@ -2,28 +2,28 @@
 
 This directory contains enhanced Nix configurations for development tools and environments, designed for maximum productivity and reliability.
 
-## 🚀 Overview
+## Overview
 
 The development configuration is organized into focused modules:
 
 - **`direnv/`** - Enhanced direnv configuration with intelligent caching and multi-language support
+- **`git/`** - Basic Git configuration (no sops dependency)
 
-Git configuration is in `git/` but imported separately via `features/development.nix`. Kubernetes configuration is in `home/profiles/features/kubernetes.nix`.
+SOPS-enhanced Git (hooks, GPG, aliases) is in `home/profiles/features/sops.nix`, gated by `profiles.sops.enable`.
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 development/
 ├── README.md           # This documentation
-├── default.nix        # Main module imports
+├── default.nix        # Main module imports (direnv only)
 ├── direnv/
 │   └── default.nix    # Enhanced direnv with smart caching
 └── git/
-    ├── default.nix    # Basic git configuration (no sops dependency)
-    └── git-hooks.nix  # Git hooks with sops integration
+    └── default.nix    # Basic git configuration (no sops dependency)
 ```
 
-## ✨ Key Features
+## Key Features
 
 ### Enhanced direnv Configuration
 
@@ -54,16 +54,16 @@ Two git configurations are available:
 - GPG integration for commit signing
 - Works out of the box for new users
 
-**`git/git-hooks.nix`** - Git with sops integration (optional):
+**`home/profiles/features/sops.nix`** - Git with sops integration (optional):
 
 - Secret Management: User credentials managed via sops
 - Enhanced Hooks: post-checkout and post-merge hooks for sops secrets
 - Error Handling: Comprehensive validation and fallback mechanisms
 
-To enable sops integration, import `base/git.nix` and `base/secrets.nix` in your host config.
+To enable sops integration, set `profiles.sops.enable = true` in your host config.
 
 
-## 🛠️ Usage Examples
+## Usage Examples
 
 ### Setting up a Python Project
 
@@ -90,7 +90,7 @@ To enable sops integration, import `base/git.nix` and `base/secrets.nix` in your
 2. The layout will auto-detect your package manager (npm, yarn, pnpm, bun)
 
 
-## 🔧 Configuration
+## Configuration
 
 ### Direnv Settings
 
@@ -100,15 +100,14 @@ The direnv configuration includes optimized settings in `~/.config/direnv/direnv
 - `strict_env = true` - Enhanced security
 - `load_dotenv = true` - Automatic .env file loading
 
-### Git Hooks
+### Git Hooks (SOPS mode only)
 
-Git hooks are automatically installed via the git template system:
+When `profiles.sops.enable = true`, git hooks are installed via the git template system:
 
-- **pre-commit**: Runs pre-commit hooks with timeout protection
 - **post-checkout**: Updates git config from sops secrets
 - **post-merge**: Refreshes git config after merges
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Direnv Issues
 
@@ -118,7 +117,7 @@ If direnv environments fail to load:
 2. Verify flake.nix syntax: `nix flake check`
 3. Clear cache: `rm -rf ~/.cache/direnv/layouts/<project>`
 
-### Git Hook Issues
+### Git Hook Issues (SOPS mode)
 
 If git hooks fail:
 
@@ -126,37 +125,9 @@ If git hooks fail:
 2. Verify age key: `ls ~/.config/sops/age/keys.txt`
 3. Test sops decryption: `sops -d secrets/secrets.yaml`
 
-## 🔄 Updates and Maintenance
-
-### Updating Direnv Layouts
-
-When you modify direnv layouts, existing projects will automatically detect changes and rebuild their environments on next access.
-
-### Refreshing Git Configuration
-
-Git configuration is automatically refreshed on checkout and merge. To manually refresh:
-
-```bash
-git config --get user.name   # Should show your configured name
-```
-
-## 📚 Related Documentation
+## Related Documentation
 
 - [direnv Documentation](https://direnv.net/)
 - [Nix Flakes](https://nixos.wiki/wiki/Flakes)
 - [sops-nix](https://github.com/Mic92/sops-nix)
 - [Kubernetes Tools](../../../pkgs/collections/kubernetes-tools.nix)
-
-## 🤝 Contributing
-
-When adding new development tools or configurations:
-
-1. Follow the existing modular structure
-2. Add comprehensive error handling
-3. Include documentation and examples
-4. Test with multiple project types
-5. Consider performance implications
-
----
-
-*This configuration is designed to provide a robust, efficient, and user-friendly development environment while maintaining the flexibility and reproducibility that Nix provides.*

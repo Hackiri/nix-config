@@ -1,6 +1,6 @@
 # Development tools and configurations
-# Note: Git configuration is in base/git.nix (imported via features/development.nix)
-# This ensures no conflicts and makes Git truly optional.
+# Note: Basic git is in programs/development/git/default.nix (imported by features/development.nix)
+# Note: Sops-enhanced git is in home/profiles/features/sops.nix (gated by profiles.sops.enable)
 {...}: {
   imports = [
     ./direnv

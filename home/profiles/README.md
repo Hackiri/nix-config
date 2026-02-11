@@ -7,13 +7,12 @@ This directory contains the layered profile system for Home Manager configuratio
 ```
 profiles/
 ├── base/                    # Foundation profiles
-│   ├── minimal.nix         # Essential cross-platform tools
-│   ├── git.nix             # Git with sops hooks (optional)
-│   └── secrets.nix         # Sops-nix secrets management (optional)
+│   └── minimal.nix         # Essential cross-platform tools
 ├── features/               # Feature-specific profiles
 │   ├── development.nix     # Development tools and environments
 │   ├── desktop.nix         # GUI applications and desktop tools
-│   └── kubernetes.nix      # Kubernetes tooling and workflows
+│   ├── kubernetes.nix      # Kubernetes tooling and workflows
+│   └── sops.nix            # SOPS encrypted secrets (gated by profiles.sops.enable)
 ├── platform/               # Platform-specific profiles
 │   ├── darwin.nix          # macOS complete profile
 │   ├── nixos.nix           # NixOS complete profile
@@ -41,7 +40,7 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 ### Base Profiles
 
 #### `base/minimal.nix` - Foundation Profile
-**Purpose**: Essential cross-platform tools available everywhere  
+**Purpose**: Essential cross-platform tools available everywhere
 **Includes**:
 - Basic CLI tools (bat, eza, fd, fzf, jq, ripgrep, tree, zoxide)
 - Network essentials (curl, wget)
@@ -50,44 +49,8 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 - Shell configuration (zsh with oh-my-zsh)
 - Essential utilities (btop)
 
-**Used by**: All other profiles  
+**Used by**: All other profiles
 **Imports**: Programs (shells, utilities/btop)
-
-#### `base/git.nix` - Git with Sops Integration (Optional)
-
-**Purpose**: Git with sops-nix encrypted secrets hooks
-
-**Includes**:
-
-- Git with post-checkout/post-merge hooks that read from sops secrets
-- GPG configuration for commit signing
-
-**Requirements**:
-
-- Age key at `~/.config/sops/age/keys.txt`
-- Encrypted `secrets/secrets.yaml` with your age public key
-
-**Usage**: Import in your host config along with `secrets.nix` for full sops integration:
-
-```nix
-# hosts/mbp/home.nix
-imports = [
-  ../../home/profiles/platform/darwin.nix
-  ../../home/profiles/base/git.nix      # Sops git hooks
-  ../../home/profiles/base/secrets.nix  # Sops utilities
-];
-```
-
-#### `base/secrets.nix` - Sops Utilities (Optional)
-
-**Purpose**: SOPS CLI utilities and shell aliases
-
-**Includes**:
-
-- SOPS utilities
-- Shell aliases for secret management
-
-**Standalone**: Can be imported independently
 
 ---
 
@@ -109,7 +72,7 @@ imports = [
 - Web development tools
 - Security tools
 
-**Git Configuration**: Uses basic git by default (no sops dependency). For sops-encrypted git credentials, import `base/git.nix` and `base/secrets.nix` in your host config.
+**Git Configuration**: Uses basic git by default (no sops dependency). For sops-encrypted git credentials, import `features/sops.nix` and set `profiles.sops.enable = true` in your host config.
 
 **Inherits from**: `base/minimal.nix`
 **Used by**: `features/desktop.nix`
@@ -120,13 +83,13 @@ imports = [
 - Packages: build-tools, code-quality, databases, languages, security, terminals, web-dev
 
 #### `features/desktop.nix` - Desktop Profile
-**Purpose**: GUI applications and desktop environment tools  
+**Purpose**: GUI applications and desktop environment tools
 **Includes**:
 - Desktop applications
 - Media processing tools (imagemagick, ghostscript)
 
-**Inherits from**: `features/development.nix` (which includes `base/minimal.nix`)  
-**Used by**: `platform/darwin.nix`, `platform/nixos.nix`  
+**Inherits from**: `features/development.nix` (which includes `base/minimal.nix`)
+**Used by**: `platform/darwin.nix`, `platform/nixos.nix`
 **Imports**:
 - Packages: utilities
 
@@ -155,19 +118,40 @@ profiles.kubernetes = {
 
 **Standalone**: Can be imported independently for Kubernetes-only setups
 
+#### `features/sops.nix` - SOPS Encrypted Secrets
+
+**Purpose**: Gate all sops-nix configuration behind a single feature flag
+
+**Includes**:
+
+- Git post-checkout/post-merge hooks that read from sops secrets
+- GPG configuration for commit signing
+- SOPS shell aliases (sops-edit, sops-encrypt, sops-decrypt)
+- launchd service PATH fix (Darwin)
+
+**Configuration**:
+
+```nix
+profiles.sops.enable = true;
+```
+
+**Prerequisites**:
+- Age key at `~/.config/sops/age/keys.txt`
+- Encrypted `secrets/secrets.yaml` with your age public key
+
 ---
 
 ### Platform Profiles
 
 #### `platform/darwin.nix` - macOS Profile
-**Purpose**: macOS-specific configuration entry point  
+**Purpose**: macOS-specific configuration entry point
 **Includes**:
 - All tools from desktop → development → minimal chain
 - macOS-specific packages and settings
 - macOS window management (AeroSpace)
 
-**Inherits from**: `features/desktop.nix`  
-**Platform**: macOS (Darwin)  
+**Inherits from**: `features/desktop.nix`
+**Platform**: macOS (Darwin)
 **Imports**:
 - Platform: platform/darwin-pkgs.nix
 - Programs: utilities/aerospace
@@ -274,11 +258,11 @@ Package collections are in `../packages/`:
 ## Program Configurations
 
 Program-specific configurations are in `../programs/`:
-- `development/` - Direnv
+- `development/` - Direnv, basic Git
 - `editors/` - Neovim, Emacs, Neovide
 - `shells/` - Zsh, oh-my-zsh
 - `terminals/` - Alacritty, Ghostty, Tmux
-- `utilities/` - AeroSpace, btop, yazi, sops
+- `utilities/` - AeroSpace, btop, Claude, yazi
 
 Kubernetes configuration is in `features/kubernetes.nix` (not under `programs/`).
 
@@ -293,10 +277,9 @@ Profiles are imported via host-specific home configurations:
 {
   imports = [
     ../../home/profiles/platform/darwin.nix  # macOS profile
-    # Optional: Add for sops integration
-    # ../../home/profiles/base/git.nix
-    # ../../home/profiles/base/secrets.nix
+    ../../home/profiles/features/sops.nix    # Optional: SOPS secrets
   ];
+  profiles.sops.enable = true;  # Enable when age key is set up
 }
 ```
 

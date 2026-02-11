@@ -8,7 +8,7 @@
   ];
 
   # Enable and configure neovide GUI editor
-  modules.neovide = {
+  profiles.neovide = {
     enable = true;
     settings = {
       # Window settings

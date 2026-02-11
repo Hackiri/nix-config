@@ -24,7 +24,7 @@
     ../../programs/shells
 
     # Git: Basic configuration (no sops dependency)
-    # For sops-encrypted git, import base/git.nix in your host config instead
+    # For sops-encrypted git, import features/sops.nix and set profiles.sops.enable = true
     ../../programs/development/git/default.nix
 
     # Programs: Text editors and IDEs

@@ -4,9 +4,9 @@
   pkgs,
   ...
 }: let
-  cfg = config.modules.neovide;
+  cfg = config.profiles.neovide;
 in {
-  options.modules.neovide = {
+  options.profiles.neovide = {
     enable = lib.mkEnableOption "neovide";
 
     package = lib.mkOption {

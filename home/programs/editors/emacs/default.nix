@@ -6,8 +6,6 @@
 }: let
   emacs-enabled = config.programs.emacs.enable;
 in {
-  imports = [];
-
   # Emacs daemon service for macOS
   services.emacs = {
     enable = emacs-enabled;
@@ -155,7 +153,7 @@ in {
         echo "Copying custom Doom Emacs configuration from nix-config to ~/.config/doom..."
 
         # Copy configuration files
-        CONFIG_SOURCE="${config.home.homeDirectory}/nix-config/home/programs/editors/emacs/doom.d"
+        CONFIG_SOURCE="${./doom.d}"
 
         # Copy init.el
         if [ -f "$CONFIG_SOURCE/init.el" ]; then

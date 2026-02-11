@@ -1,6 +1,6 @@
 # Basic Git configuration without sops-nix integration
 # Use this for a simple Git setup without encrypted secrets.
-# For sops-integrated Git with hooks, use git-hooks.nix instead.
+# For sops-integrated Git with hooks, use home/profiles/features/sops.nix instead.
 {pkgs, ...}: {
   # GPG configuration
   programs.gpg = {

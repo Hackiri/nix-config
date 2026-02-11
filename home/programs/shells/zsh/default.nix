@@ -55,7 +55,7 @@ in {
   };
 
   programs = {
-    # yazi, lazygit, fzf, and bat have been moved to their own modules in /nix/modules/home-manager/
+    # yazi, lazygit, fzf, and bat are configured in home/programs/utilities/
 
     zsh = {
       enable = true;

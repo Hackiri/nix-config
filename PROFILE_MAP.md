@@ -25,7 +25,8 @@ The profile system uses a three-layer architecture:
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         HOST CONFIGURATIONS                         │
 │    (hosts/mbp/home.nix, hosts/desktop/home.nix)                     │
-│    Optional: + base/git.nix + base/secrets.nix for sops            │
+│    Optional: + features/sops.nix (profiles.sops.enable = true)     │
+│    Optional: + features/kubernetes.nix (profiles.kubernetes.enable) │
 └─────────────────────────────────┬───────────────────────────────────┘
                                   │
                     ┌─────────────┴─────────────┐
@@ -73,26 +74,6 @@ base/minimal.nix
     └── unzip, zip, gzip
 ```
 
-#### `base/git.nix` (Git with Sops Hooks - Optional)
-**Purpose**: Git configuration with sops-integrated hooks
-
-**Note**: This is NOT imported by default. Import it in your host config if you want sops integration.
-
-```
-base/git.nix
-└── programs/development/git/git-hooks.nix
-```
-
-#### `base/secrets.nix` (Sops Utilities - Optional)
-**Purpose**: Sops command-line utilities for encrypted secrets management
-
-**Note**: Only needed if using `base/git.nix` for sops integration.
-
-```
-base/secrets.nix
-└── programs/utilities/sops-nix/sops.nix  # Sops utilities only
-```
-
 ---
 
 ### Layer 2: Features Profiles
@@ -110,9 +91,8 @@ features/development.nix
 │   ├── programs/shells/                # Zsh, starship, bash
 │   ├── programs/editors/               # Neovim, Emacs, etc.
 │   ├── programs/development/           # Direnv + basic Git (default)
-│   ├── programs/kubernetes/            # Kubernetes tools module
 │   ├── programs/terminals/             # Tmux, Alacritty, etc.
-│   └── programs/utilities/             # Btop, yazi (NOT sops)
+│   └── programs/utilities/             # Btop, claude, yazi
 │
 └── Packages:
     ├── packages/build-tools.nix        # Make, cmake, gcc, etc.
@@ -121,8 +101,7 @@ features/development.nix
     ├── packages/languages.nix          # Python, Node, Go, Rust, etc.
     ├── packages/security.nix           # Security utilities
     ├── packages/terminals.nix          # Terminal utilities
-    ├── packages/web-dev.nix            # Web development tools
-    └── packages/custom.nix             # Custom /pkgs/ packages
+    └── packages/web-dev.nix            # Web development tools
 ```
 
 **Import Chain (Default Configuration)**:
@@ -138,29 +117,13 @@ development.nix
   └─→ programs/development/git/default.nix (basic Git, no sops)
 
 For sops integration, add to your host config:
-  ├─→ base/git.nix (Git with sops hooks)
-  │     ↓
-  │     └─→ programs/development/git/git-hooks.nix
-  │
-  └─→ base/secrets.nix (sops CLI utilities)
-        ↓
-        └─→ programs/utilities/sops-nix/sops.nix
+  └─→ features/sops.nix (profiles.sops.enable = true)
+      Provides: git hooks, gpg, sops aliases, launchd fix
 ```
 
 #### `features/desktop.nix`
 
 **Purpose**: GUI applications and desktop environment
-
-```text
-features/desktop.nix
-├── Profiles:
-│   └── features/development.nix        # Includes all dev tools
-│
-└── Imports:
-    └── features/development.nix        # Includes all dev tools
-```
-
-**Import Chain**:
 
 ```text
 desktop.nix
@@ -189,6 +152,23 @@ features/kubernetes.nix
 
 **Note**: This is a standalone module that can be imported separately. It does NOT inherit from minimal/development.
 
+#### `features/sops.nix` (Standalone)
+
+**Purpose**: SOPS encrypted secrets management (optional add-on)
+
+```text
+features/sops.nix
+├── Options:
+│   └── profiles.sops.enable
+│
+└── Provides (when enabled):
+    ├── sops-nix secrets (git-userName, git-userEmail, git-signingKey)
+    ├── Git post-checkout/post-merge hooks
+    ├── GPG configuration
+    ├── Shell aliases (sops-edit, sops-encrypt, sops-decrypt)
+    └── launchd service PATH fix (Darwin)
+```
+
 ---
 
 ### Layer 3: Platform Profiles
@@ -210,11 +190,11 @@ platform/darwin.nix
 │       ├── reattach-to-user-namespace
 │       └── aerospace
 │
-���── Programs:
+└── Programs:
     └── programs/utilities/aerospace/   # macOS window manager
 ```
 
-**Full Import Chain (Default Configuration)**:
+**Full Import Chain**:
 ```
 platform/darwin.nix
   ↓
@@ -237,8 +217,7 @@ platform/darwin.nix
   └─→ programs/utilities/aerospace
 
 For sops integration, add to host config:
-  ├─→ base/git.nix
-  └─→ base/secrets.nix
+  └─→ features/sops.nix (profiles.sops.enable = true)
 ```
 
 #### `platform/nixos.nix` (Linux)
@@ -258,18 +237,6 @@ platform/nixos.nix
         └── XDG configuration
 ```
 
-**Full Import Chain**:
-
-```text
-platform/nixos.nix
-  ↓
-  ├─→ features/desktop.nix
-  │     ↓
-  │     └─→ [same as darwin above, with basic Git]
-  │
-  └─→ platform/nixos-pkgs.nix
-```
-
 ---
 
 ## Host Configurations
@@ -280,10 +247,10 @@ platform/nixos.nix
 hosts/mbp/home.nix
 ├── platform/darwin.nix                 # Full macOS stack
 ├── features/kubernetes.nix             # Additional K8s tools
-├── base/git.nix                        # Optional: sops git hooks
-├── base/secrets.nix                    # Optional: sops utilities
+├── features/sops.nix                   # SOPS secrets (profiles.sops.enable = true)
 └── Configuration:
-    └── profiles.kubernetes.enable = true
+    ├── profiles.kubernetes.enable = true
+    └── profiles.sops.enable = true
 ```
 
 **Complete Import Tree**:
@@ -297,7 +264,7 @@ hosts/mbp/home.nix
   │
   ├─→ features/kubernetes.nix           # Standalone K8s module
   │
-  └─→ base/git.nix + base/secrets.nix   # Optional sops integration
+  └─→ features/sops.nix                 # SOPS secrets (gated by profiles.sops.enable)
 ```
 
 ### `hosts/desktop/home.nix` (NixOS Desktop)
@@ -326,20 +293,16 @@ hosts/desktop/home.nix
 ```
 home/programs/
 ├── development/
-│   ├── default.nix              → git/default.nix + direnv
+│   ├── default.nix              → Aggregator: direnv
 │   ├── git/
-│   │   ├── default.nix          → Basic Git config
-│   │   └── git-hooks.nix        → Git + sops hooks (imported via base/git.nix)
+│   │   └── default.nix          → Basic Git config (no sops)
 │   └── direnv/
 │
 ├── editors/
 │   ├── default.nix              → All editor configs
 │   ├── neovim/
 │   ├── emacs/
-│   └── ...
-│
-├── kubernetes/
-│   └── default.nix              → Kubernetes tools module
+│   └── neovide/                 → Gated by profiles.neovide.enable
 │
 ├── shells/
 │   ├── default.nix              → Zsh + shell enhancements
@@ -353,28 +316,26 @@ home/programs/
 │   └── ...
 │
 └── utilities/
-    ├── default.nix              → btop + yazi (NOT sops!)
+    ├── default.nix              → btop + claude + yazi
     ├── btop/
+    ├── claude/
     ├── yazi/
-    ├── sops-nix/
-    │   └── sops.nix             → Only imported via base/secrets.nix
-    └── aerospace/               → macOS window manager
+    └── aerospace/               → macOS window manager (imported by platform/darwin.nix)
 ```
 
 ### Key Points
 
-1. **`programs/utilities/default.nix`** does NOT import sops (only btop + yazi)
-2. **`programs/development/default.nix`** imports basic Git + direnv
-3. **Git configuration is modular** with TWO options:
+1. **`programs/utilities/default.nix`** imports btop, claude, yazi
+2. **`programs/development/default.nix`** imports direnv only
+3. **Git configuration**:
    - **Default**: `programs/development/git/default.nix` (basic Git, no sops)
-   - **Optional**: `base/git.nix` → git-hooks.nix (with sops integration, add in host config)
-4. **`base/secrets.nix`** only imports sops CLI utilities (optional, only needed with base/git.nix)
+   - **SOPS-enhanced**: `features/sops.nix` (gated by `profiles.sops.enable`)
 
 This ensures:
 
 - **Works out of the box**: New users get basic Git without needing sops setup
-- **No conflicts**: Only ONE Git configuration is imported at a time
-- **Truly optional**: Sops can be added later in host config when ready
+- **No conflicts**: Basic git and sops git config merge cleanly via home-manager
+- **Truly optional**: SOPS can be toggled with a single boolean
 
 ---
 
@@ -389,8 +350,7 @@ home/packages/
 ├── network.nix                  # Network debugging, DNS tools
 ├── security.nix                 # Password managers, encryption tools
 ├── terminals.nix                # Terminal utilities, multiplexers
-├── web-dev.nix                  # Web development tools
-└── custom.nix                   # Custom packages from /pkgs/
+└── web-dev.nix                  # Web development tools
 ```
 
 ---
@@ -400,24 +360,42 @@ home/packages/
 | Profile | Includes |
 | ------- | -------- |
 | **base/minimal** | CLI essentials, network tools, btop, SSH |
-| **base/git** | Git with sops hooks (optional, import in host config) |
-| **base/secrets** | Sops CLI utilities (optional, import in host config) |
 | **features/development** | minimal + shells + basic Git + all dev tools |
-| **features/desktop** | development + GUI apps |
-| **features/kubernetes** | Standalone K8s module |
+| **features/desktop** | development + GUI apps + neovide |
+| **features/kubernetes** | Standalone K8s module (profiles.kubernetes.enable) |
+| **features/sops** | SOPS secrets, git hooks, GPG, aliases (profiles.sops.enable) |
 | **platform/darwin** | desktop + macOS packages + aerospace |
 | **platform/nixos** | desktop + Linux packages + XDG |
-| **hosts/mbp** | darwin + kubernetes + sops (optional) |
+| **hosts/mbp** | darwin + kubernetes + sops |
 | **hosts/desktop** | nixos |
 
 ### Git Configuration Options
 
-Basic Git is now the default in `features/development.nix`. For sops integration, add imports in your host config:
+Basic Git is the default in `features/development.nix`. SOPS integration is gated by `profiles.sops.enable`:
 
-| Option | Where to Import | Features | Use Case |
-| ------ | --------------- | -------- | -------- |
+| Option | How to Enable | Features | Use Case |
+| ------ | ------------- | -------- | -------- |
 | **Basic** (default) | Included in development.nix | Basic Git, no sops | Works out of the box |
-| **Sops** (optional) | Host config (e.g., hosts/mbp/home.nix) | Git with sops hooks | Encrypted credentials |
+| **SOPS** (optional) | `profiles.sops.enable = true` | Git with sops hooks, GPG, aliases | Encrypted credentials |
+
+---
+
+## Option Namespaces
+
+All home-manager feature flags use the `profiles.*` namespace:
+
+| Option | File | Purpose |
+| ------ | ---- | ------- |
+| `profiles.kubernetes.enable` | `features/kubernetes.nix` | Kubernetes tooling |
+| `profiles.sops.enable` | `features/sops.nix` | SOPS encrypted secrets |
+| `profiles.neovide.enable` | `programs/editors/neovide/default.nix` | Neovide GUI editor |
+
+System-level options use separate namespaces:
+
+| Option | File | Purpose |
+| ------ | ---- | ------- |
+| `features.fonts.enable` | `modules/optional-features/fonts.nix` | System fonts |
+| `services.homebrew.enable` | `modules/services/homebrew.nix` | Homebrew integration |
 
 ---
 
@@ -425,7 +403,7 @@ Basic Git is now the default in `features/development.nix`. For sops integration
 
 1. **Modular**: Each profile has a clear, single responsibility
 2. **Works Out of the Box**: Basic Git by default, no sops setup required
-3. **Optional Sops**: Add sops in host config when ready
+3. **Optional SOPS**: Toggle with `profiles.sops.enable = true` when ready
 4. **No Duplication**: Each module imported exactly once
 5. **Platform-Specific**: Clear separation of Darwin vs NixOS
 6. **Feature-Rich**: Desktop inherits all development tools
