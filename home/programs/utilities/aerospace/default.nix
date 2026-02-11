@@ -20,15 +20,16 @@
       enable-normalization-flatten-containers = true
       enable-normalization-opposite-orientation-for-nested-containers = true
 
-      # Accordion layout settings
-      accordion-padding = 0
+      # Accordion padding (px visible behind stacked windows, 0 = invisible)
+      accordion-padding = 30
 
       # Default root container settings
       default-root-container-layout = 'tiles'
       default-root-container-orientation = 'auto'
 
-      # Mouse follows focus settings
+      # Mouse follows focus (lazy = only moves if cursor is outside target)
       on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+      on-focus-changed = ['move-mouse window-lazy-center']
 
       # Automatically unhide macOS hidden apps
       automatically-unhide-macos-hidden-apps = true
@@ -37,7 +38,7 @@
       [key-mapping]
       preset = 'qwerty'
 
-      # Enhanced gaps settings with better defaults
+      # Gaps settings
       [gaps]
       inner.horizontal = 10
       inner.vertical = 10
@@ -51,41 +52,49 @@
         10,
       ]
 
+      # Optional: uncomment to enable JankyBorders for focused-window highlighting
+      # after-startup-command = [
+      #   'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=3.0'
+      # ]
+
       # Workspace-to-monitor assignments (multi-monitor setup)
       [workspace-to-monitor-force-assignment]
-      T = 'main'           # Terminal on main monitor
-      E = 'main'           # Editor on main monitor
-      P = 'main'           # Productivity on main monitor
-      B = 'secondary'      # Browser on secondary
-      M = 'secondary'      # Media on secondary
-      V = 'secondary'      # Video on secondary
+      T = 'main'           # Terminal
+      E = 'main'           # Editor
+      D = 'main'           # Dev tools (Docker, Postman, DB)
+      N = 'main'           # Notes & AI
+      P = 'main'           # Productivity
+      B = 'secondary'      # Browser
+      M = 'secondary'      # Media/messaging
+      V = 'secondary'      # Video
 
-      # Main mode bindings
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # Main mode
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       [mode.main.binding]
-      # Launch applications
+
+      # Quick terminal launch (most common action, stays in main mode)
       alt-shift-enter = 'exec-and-forget open -na ghostty'
-      cmd-shift-enter = 'exec-and-forget open -na alacritty'
-      ctrl-alt-b = 'exec-and-forget open -a "Brave Browser"'
-      ctrl-alt-t = 'exec-and-forget open -a "Telegram"'
-      ctrl-alt-f = 'exec-and-forget open -a Finder'
-      ctrl-alt-n = 'exec-and-forget open -a Notion'
-      ctrl-alt-o = 'exec-and-forget open -a Obsidian'
-      ctrl-alt-v = 'exec-and-forget open -na neovide'
 
       # Window management
-      alt-q = "close"
-      alt-shift-q = "close-all-windows-but-current"
+      alt-q = 'close'
+      alt-shift-q = 'close-all-windows-but-current'
       alt-slash = 'layout tiles horizontal vertical'
       alt-comma = 'layout accordion horizontal vertical'
       alt-period = 'layout floating tiling'
+      # Note: 'split' is incompatible with normalization-flatten-containers
+      # Use join-with in service mode (alt-shift-; then hjkl) for tree manipulation
 
-      # Focus movement - using alt+hjkl (won't conflict with neovim/neovide)
+      # Focus movement (alt+hjkl)
       alt-h = 'focus left'
       alt-j = 'focus down'
       alt-k = 'focus up'
       alt-l = 'focus right'
 
-      # Focus back-and-forth for quick workspace switching
+      # Toggle focus between last two windows
+      alt-f = 'focus-back-and-forth'
+
+      # Toggle between last two workspaces
       alt-tab = 'workspace-back-and-forth'
 
       # Focus monitors
@@ -94,19 +103,19 @@
       alt-up = 'focus-monitor up'
       alt-down = 'focus-monitor down'
 
-      # Window movement - using alt-shift to pair with focus
+      # Window movement (alt-shift+hjkl)
       alt-shift-h = 'move left'
       alt-shift-j = 'move down'
       alt-shift-k = 'move up'
       alt-shift-l = 'move right'
 
-      # Move to monitors
+      # Move window to monitors
       alt-shift-left = 'move-node-to-monitor left'
       alt-shift-right = 'move-node-to-monitor right'
       alt-shift-up = 'move-node-to-monitor up'
       alt-shift-down = 'move-node-to-monitor down'
 
-      # Resize windows (fine-grained and coarse)
+      # Resize windows (quick resize without entering resize mode)
       ctrl-alt-h = 'resize width -50'
       ctrl-alt-j = 'resize height +50'
       ctrl-alt-k = 'resize height -50'
@@ -114,60 +123,96 @@
       alt-shift-minus = 'resize smart -50'
       alt-shift-equal = 'resize smart +50'
 
-      # Fullscreen and maximize
+      # Fullscreen
       alt-shift-f = 'fullscreen'
       alt-shift-m = 'macos-native-fullscreen'
 
-      # Enter resize mode (allows hjkl resizing without holding modifiers)
-      alt-r = 'mode resize'
-
-      # Workspace management - letter-based for semantic clarity
-      alt-b = 'workspace B' # for browser
-      alt-e = 'workspace E' #
-      alt-m = 'workspace M' #
-      alt-n = 'workspace N' # for notes
+      # Workspace switching (letter = semantic name)
+      alt-b = 'workspace B'
+      alt-d = 'workspace D'
+      alt-e = 'workspace E'
+      alt-m = 'workspace M'
+      alt-n = 'workspace N'
       alt-p = 'workspace P'
-      alt-t = 'workspace T' # for terminal shell
+      alt-t = 'workspace T'
       alt-v = 'workspace V'
 
-      # Move windows to workspaces
+      # Workspace cycling
+      alt-leftSquareBracket = 'workspace prev --wrap-around'
+      alt-rightSquareBracket = 'workspace next --wrap-around'
+
+      # Move window to workspace
       alt-shift-b = 'move-node-to-workspace B'
+      alt-shift-d = 'move-node-to-workspace D'
       alt-shift-e = 'move-node-to-workspace E'
-      ctrl-alt-m = 'move-node-to-workspace M'  # alt-shift-m is macos-native-fullscreen
+      ctrl-alt-m = 'move-node-to-workspace M'  # alt-shift-m taken by native fullscreen
       alt-shift-n = 'move-node-to-workspace N'
       alt-shift-p = 'move-node-to-workspace P'
       alt-shift-t = 'move-node-to-workspace T'
       alt-shift-v = 'move-node-to-workspace V'
 
-      # Workspace navigation - enhanced with back-and-forth
-      # Balance window sizes (repurposed from duplicate workspace-back-and-forth)
+      # Balance and workspace management
       alt-enter = 'balance-sizes'
       alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
-      # Enter service mode
+      # Enter modes
+      alt-r = 'mode resize'
       alt-shift-semicolon = 'mode service'
+      alt-shift-space = 'mode launch'
 
-      # Service mode bindings
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # Launch mode (alt-shift-space) - app launching with single keypress
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      [mode.launch.binding]
+      # Terminals
+      g = ['exec-and-forget open -na ghostty', 'mode main']
+      a = ['exec-and-forget open -na alacritty', 'mode main']
+      # Editors
+      v = ['exec-and-forget open -na neovide', 'mode main']
+      e = ['exec-and-forget open -a Emacs', 'mode main']
+      c = ['exec-and-forget open -a "Visual Studio Code"', 'mode main']
+      # Browser
+      b = ['exec-and-forget open -a "Brave Browser"', 'mode main']
+      # Communication
+      t = ['exec-and-forget open -a Telegram', 'mode main']
+      s = ['exec-and-forget open -a Slack', 'mode main']
+      d = ['exec-and-forget open -a Discord', 'mode main']
+      z = ['exec-and-forget open -a zoom.us', 'mode main']
+      # Notes & productivity
+      n = ['exec-and-forget open -a Notion', 'mode main']
+      o = ['exec-and-forget open -a Obsidian', 'mode main']
+      # Utilities
+      f = ['exec-and-forget open -a Finder', 'mode main']
+      p = ['exec-and-forget open -a Postman', 'mode main']
+      # Exit
+      esc = 'mode main'
+      enter = 'mode main'
+
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # Service mode (alt-shift-;) - config, layout, and tree manipulation
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       [mode.service.binding]
-      # Reload config and exit service mode
+      # Reload config
       esc = ['reload-config', 'mode main']
-
-      # Reset layout
+      # Reset workspace layout tree
       r = ['flatten-workspace-tree', 'mode main']
-
-      # Toggle floating/tiling layout
+      # Toggle floating/tiling
       f = ['layout floating tiling', 'mode main']
-
       # Close all windows but current
       backspace = ['close-all-windows-but-current', 'mode main']
+      # Toggle AeroSpace on/off
+      e = ['enable toggle', 'mode main']
+      # Minimize window (macos-native-* must be last in command list)
+      m = ['mode main', 'macos-native-minimize']
+      # Join with adjacent windows (tree manipulation)
+      h = ['join-with left', 'mode main']
+      j = ['join-with down', 'mode main']
+      k = ['join-with up', 'mode main']
+      l = ['join-with right', 'mode main']
 
-      # Join with adjacent windows
-      alt-shift-h = ['join-with left', 'mode main']
-      alt-shift-j = ['join-with down', 'mode main']
-      alt-shift-k = ['join-with up', 'mode main']
-      alt-shift-l = ['join-with right', 'mode main']
-
-      # Resize mode - allows quick resizing without holding modifier keys
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # Resize mode (alt-r) - resize windows without holding modifiers
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       [mode.resize.binding]
       h = 'resize width -50'
       j = 'resize height +50'
@@ -175,10 +220,13 @@
       l = 'resize width +50'
       minus = 'resize smart -50'
       equal = 'resize smart +50'
+      b = ['balance-sizes', 'mode main']
       enter = 'mode main'
       esc = 'mode main'
 
-      # Window detection rules - organized by workspace
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # Window detection rules
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
       # Workspace B - Browsers
       [[on-window-detected]]
@@ -201,6 +249,10 @@
       if.app-id = 'company.thebrowser.Browser'
       run = 'move-node-to-workspace B'
 
+      [[on-window-detected]]
+      if.app-id = 'com.apple.Safari'
+      run = 'move-node-to-workspace B'
+
       # Workspace T - Terminals
       [[on-window-detected]]
       if.app-id = 'com.mitchellh.ghostty'
@@ -218,7 +270,15 @@
       if.app-id = 'net.kovidgoyal.kitty'
       run = 'move-node-to-workspace T'
 
-      # Workspace E - Editors (Code/Text)
+      [[on-window-detected]]
+      if.app-id = 'co.zeit.hyper'
+      run = 'move-node-to-workspace T'
+
+      [[on-window-detected]]
+      if.app-id = 'com.googlecode.iterm2'
+      run = 'move-node-to-workspace T'
+
+      # Workspace E - Editors
       [[on-window-detected]]
       if.app-id = 'com.microsoft.VSCode'
       run = 'move-node-to-workspace E'
@@ -235,7 +295,65 @@
       if.app-id = 'com.jetbrains.intellij'
       run = 'move-node-to-workspace E'
 
-      # Workspace N - Notes
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)^jetbrains'
+      run = 'move-node-to-workspace E'
+
+      [[on-window-detected]]
+      if.app-id = 'com.sublimetext.4'
+      run = 'move-node-to-workspace E'
+
+      [[on-window-detected]]
+      if.app-id = 'dev.zed.Zed'
+      run = 'move-node-to-workspace E'
+
+      [[on-window-detected]]
+      if.app-id = 'com.figma.Desktop'
+      run = 'move-node-to-workspace E'
+
+      # Workspace D - Dev tools (Docker, API clients, DB tools, Git GUIs)
+      [[on-window-detected]]
+      if.app-id = 'com.docker.docker'
+      run = 'move-node-to-workspace D'
+
+      [[on-window-detected]]
+      if.app-id = 'com.postmanlabs.mac'
+      run = 'move-node-to-workspace D'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)insomnia'
+      run = 'move-node-to-workspace D'
+
+      [[on-window-detected]]
+      if.app-id = 'com.tinyapp.TablePlus'
+      run = 'move-node-to-workspace D'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)dbeaver'
+      run = 'move-node-to-workspace D'
+
+      [[on-window-detected]]
+      if.app-id = 'com.DanPristupov.Fork'
+      run = 'move-node-to-workspace D'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)tower'
+      check-further-callbacks = true
+      run = 'move-node-to-workspace D'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)gitkraken'
+      run = 'move-node-to-workspace D'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)charles'
+      run = 'move-node-to-workspace D'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)proxyman'
+      run = 'move-node-to-workspace D'
+
+      # Workspace N - Notes & AI
       [[on-window-detected]]
       if.app-id = 'notion.id'
       run = 'move-node-to-workspace N'
@@ -250,6 +368,15 @@
 
       [[on-window-detected]]
       if.app-id = 'com.logseq.logseq'
+      run = 'move-node-to-workspace N'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)chatgpt'
+      run = 'move-node-to-workspace N'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)claude'
+      check-further-callbacks = true
       run = 'move-node-to-workspace N'
 
       # Workspace M - Media & Communication
@@ -273,6 +400,14 @@
       if.app-id = 'us.zoom.xos'
       run = 'move-node-to-workspace M'
 
+      [[on-window-detected]]
+      if.app-id = 'com.apple.FaceTime'
+      run = 'move-node-to-workspace M'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)microsoft teams'
+      run = 'move-node-to-workspace M'
+
       # Workspace V - Video/Recording
       [[on-window-detected]]
       if.app-id = 'com.obsproject.obs-studio'
@@ -281,12 +416,6 @@
       [[on-window-detected]]
       if.app-id = 'com.loom.desktop'
       run = 'move-node-to-workspace V'
-
-      # Finder (floating, no dedicated workspace)
-      [[on-window-detected]]
-      if.app-id = 'com.apple.finder'
-      check-further-callbacks = true
-      run = 'layout floating'
 
       # Workspace P - Productivity/Tools
       [[on-window-detected]]
@@ -297,8 +426,29 @@
       if.app-id = 'com.raycast.macos'
       run = 'move-node-to-workspace P'
 
+      [[on-window-detected]]
+      if.app-id = 'com.apple.iCal'
+      run = 'move-node-to-workspace P'
+
+      [[on-window-detected]]
+      if.app-id = 'com.apple.mail'
+      run = 'move-node-to-workspace P'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)linear'
+      check-further-callbacks = true
+      run = 'move-node-to-workspace P'
+
+      [[on-window-detected]]
+      if.app-name-regex-substring = '(?i)jira'
+      run = 'move-node-to-workspace P'
+
       # Floating windows (utilities and system apps)
-      # check-further-callbacks allows floating windows to still be moved to workspaces
+      [[on-window-detected]]
+      if.app-id = 'com.apple.finder'
+      check-further-callbacks = true
+      run = 'layout floating'
+
       [[on-window-detected]]
       if.app-name-regex-substring = 'Shottr'
       check-further-callbacks = true
@@ -340,6 +490,16 @@
       run = 'layout floating'
 
       [[on-window-detected]]
+      if.app-id = 'com.apple.Passwords'
+      check-further-callbacks = true
+      run = 'layout floating'
+
+      [[on-window-detected]]
+      if.app-id = 'com.apple.ScreenSharing'
+      check-further-callbacks = true
+      run = 'layout floating'
+
+      [[on-window-detected]]
       if.app-name-regex-substring = '(?i)settings'
       check-further-callbacks = true
       run = 'layout floating'
@@ -350,7 +510,7 @@
       run = 'layout floating'
 
       [[on-window-detected]]
-      if.window-title-regex-substring = '(?i)dialog|alert|popup'
+      if.window-title-regex-substring = '(?i)dialog|alert|popup|wizard'
       check-further-callbacks = true
       run = 'layout floating'
     '';
