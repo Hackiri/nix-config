@@ -55,6 +55,12 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.util.project" }, -- Project-based directory switching
     { import = "lazyvim.plugins.extras.editor.refactoring" }, -- Code refactoring operations
 
+    -- LazyVim Extras - AI
+    { import = "lazyvim.plugins.extras.ai.copilot" }, -- Copilot + blink-cmp source
+    { import = "lazyvim.plugins.extras.ai.copilot-chat" }, -- CopilotChat with defaults
+    { import = "lazyvim.plugins.extras.ai.avante" }, -- Cursor-like AI sidebar
+    { import = "lazyvim.plugins.extras.ai.sidekick" }, -- Next Edit Suggestions (by Folke)
+
     -- Your custom plugins
     { import = "plugins" },
     -- Import colorschemes from the colorschemes directory

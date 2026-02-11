@@ -14,13 +14,20 @@ return {
       lazy = true,
       opts = {},
     },
+    {
+      "fang2hou/blink-copilot",
+      opts = {
+        max_completions = 3,
+        max_attempts = 2,
+      },
+    },
   },
   ---@module 'blink.cmp'
   ---@type blink.cmp.Config
   opts = function(_, opts)
     -- Merge custom sources with the existing ones from lazyvim
     opts.sources = vim.tbl_deep_extend("force", opts.sources or {}, {
-      default = { "lsp", "path", "snippets", "buffer", "dadbod", "emoji", "dictionary" },
+      default = { "lsp", "copilot", "path", "snippets", "buffer", "dadbod", "emoji", "dictionary" },
       providers = {
         lsp = {
           name = "lsp",
@@ -120,6 +127,12 @@ return {
         },
         -- Dictionary completion using ripgrep - official approach
         -- https://github.com/Kaiser-Yang/blink-cmp-dictionary
+        copilot = {
+          name = "copilot",
+          module = "blink-copilot",
+          async = true,
+          score_offset = 75,
+        },
         dictionary = {
           module = "blink-cmp-dictionary",
           name = "Dict",

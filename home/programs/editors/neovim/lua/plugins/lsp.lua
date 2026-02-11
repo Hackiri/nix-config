@@ -164,7 +164,7 @@ return {
               procMacro = {
                 enable = true, -- Enable proc macro expansion in workspace
               },
-              checkOnSave = {
+              check = {
                 command = "clippy", -- Use clippy for workspace-wide diagnostics
               },
               workspace = {
@@ -204,7 +204,7 @@ return {
           root_markers = { { "go.mod", "go.work" }, ".git" },
           settings = {
             gopls = {
-              experimentalWorkspaceModule = true, -- Multi-module workspace support
+              -- experimentalWorkspaceModule removed (deprecated in recent gopls)
               analyses = {
                 unusedparams = true,
                 shadow = true,
@@ -378,9 +378,9 @@ return {
       }
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-      -- Provide keymaps for Mason Tools commands
-      vim.keymap.set("n", "<leader>cmt", "<cmd>MasonToolsInstall<cr>", { desc = "Mason Tools Install" })
-      vim.keymap.set("n", "<leader>cmu", function()
+      -- Provide keymaps for Mason Tools commands (under <leader>lm to avoid <leader>c Claude Code collision)
+      vim.keymap.set("n", "<leader>lmt", "<cmd>MasonToolsInstall<cr>", { desc = "Mason Tools Install" })
+      vim.keymap.set("n", "<leader>lmu", function()
         local ok, err = pcall(function()
           vim.cmd("MasonToolsInstall")
         end)
