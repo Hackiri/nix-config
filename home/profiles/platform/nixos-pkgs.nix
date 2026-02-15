@@ -11,6 +11,10 @@
 # Note: System services in modules/system/nixos/ (darwin in modules/system/darwin/)
 {pkgs, ...}: {
   home.packages = with pkgs; [
+    # GNU utilities (macOS uses Homebrew versions)
+    coreutils
+    gettext
+
     # X11 clipboard utilities (equivalent to macOS clipboard integration)
     xclip
     xsel

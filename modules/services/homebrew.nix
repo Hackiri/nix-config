@@ -41,6 +41,7 @@
           "podman" # Podman
           "wordnet" # Wordnet dictionary
           "coreutils" # GNU coreutils (provides grealpath for yazi.nvim)
+          "gettext" # GNU internationalization utilities
         ]
         ++ config.services.homebrew.extraBrews;
 

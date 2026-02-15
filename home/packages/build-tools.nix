@@ -11,8 +11,6 @@
     cmake # Cross-platform build system generator
     libtool # Generic library support script
     pkg-config # Helper tool for compiling applications
-    gettext # GNU internationalization utilities
-
     #--------------------------------------------------
     # Version Control and Git Tools
     #--------------------------------------------------
