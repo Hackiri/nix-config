@@ -132,6 +132,9 @@ in {
         git-signingKey = {
           path = "${config.home.homeDirectory}/.config/git/signingkey";
         };
+        ssh-config-srv696730 = {
+          path = "${config.home.homeDirectory}/.ssh/conf.d/srv696730";
+        };
       };
     };
 

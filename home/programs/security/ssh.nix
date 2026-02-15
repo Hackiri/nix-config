@@ -8,6 +8,10 @@ _: {
     enableDefaultConfig = false;
 
     # Security settings applied to all hosts
+    includes = [
+      "~/.ssh/conf.d/*"
+    ];
+
     matchBlocks."*" = {
       # Security: Hash hostnames in known_hosts to prevent information disclosure
       hashKnownHosts = true;
