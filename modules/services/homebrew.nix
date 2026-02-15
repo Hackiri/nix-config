@@ -42,6 +42,7 @@
           "wordnet" # Wordnet dictionary
           "coreutils" # GNU coreutils (provides grealpath for yazi.nvim)
           "gettext" # GNU internationalization utilities
+          "gh" # GitHub CLI
         ]
         ++ config.services.homebrew.extraBrews;
 

@@ -15,7 +15,6 @@
     # Version Control and Git Tools
     #--------------------------------------------------
     # Note: git managed via programs.git
-    gh # GitHub CLI
     lazygit # Simple terminal UI for git commands
     meld # Visual diff and merge tool (used by git difftool/mergetool)
 
