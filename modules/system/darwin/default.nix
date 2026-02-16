@@ -2,7 +2,6 @@
 {
   lib,
   system,
-  username,
   ...
 }: {
   imports = [
@@ -41,11 +40,4 @@
     hostPlatform = lib.mkDefault "${system}";
   };
 
-  # Home Manager configuration
-  home-manager.users.${username} = _: {
-    home.sessionPath = [
-      "/run/current-system/sw/bin"
-      "$HOME/.nix-profile/bin"
-    ];
-  };
 }
