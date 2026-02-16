@@ -5,7 +5,10 @@
   hostName ? "mbp",
   ...
 }: let
-  shellAliases = import ./aliases.nix {inherit (pkgs.stdenv) isDarwin; inherit hostName;};
+  shellAliases = import ./aliases.nix {
+    inherit (pkgs.stdenv) isDarwin;
+    inherit hostName;
+  };
   fzfGit = import ./fzf-git.nix {};
   fzfKubectl = import ./fzf-kubectl.nix {};
   fzfCilium = import ./fzf-cilium.nix {};
@@ -92,6 +95,9 @@ in {
       };
 
       initContent = ''
+        # Raise open file limit (macOS default 256 is too low for nix flake update)
+        ulimit -n 10240
+
         # Performance optimizations
         export DISABLE_AUTO_UPDATE="true"
         export DISABLE_MAGIC_FUNCTIONS="true"
