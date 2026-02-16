@@ -26,6 +26,10 @@ CLAUDE.md
 *.orig
 *.rej
 
+# Environment files (may contain secrets)
+.env
+.env.*
+
 # macOS
 .Spotlight-V100
 .Trashes

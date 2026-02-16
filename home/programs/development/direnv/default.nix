@@ -8,7 +8,7 @@ _: {
       # Configuration for direnv.toml
       warn_timeout = "10s"; # Increased timeout for complex environments
       strict_env = true; # More secure environment handling
-      load_dotenv = true; # Load .env files automatically
+      load_dotenv = false; # Opt-in via explicit 'dotenv' in .envrc
 
       # Global configuration
       global = {

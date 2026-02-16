@@ -153,7 +153,7 @@
                     "homebrew/homebrew-cask" = inputs.homebrew-cask;
                     "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
                   };
-                  mutableTaps = true;
+                  mutableTaps = false;
                 };
                 homebrew.caskArgs = {
                   appdir = "~/Applications";
