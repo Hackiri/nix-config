@@ -307,10 +307,12 @@ The default `nix develop` shell provides Nix tooling (formatters, linters, pre-c
 
 ### Automatic activation with direnv
 
-Instead of manually running `nix develop`, you can add a `.envrc` file to any project directory so the devShell activates automatically when you `cd` into it:
+**Auto-detect (recommended):** When you `cd` into a project with recognized markers (`package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, `Gemfile`, `composer.json`), a zsh hook prompts you to create a devShell. It generates `flake.nix` in `~/.cache/direnv-flakes/` and a `.envrc` pointing to it — no files added to the project.
+
+**Manual setup:** You can also create `.envrc` files yourself:
 
 ```bash
-# In your project directory:
+# Use a devShell from this config
 echo 'use flake ~/nix-config#rust' > .envrc
 direnv allow
 ```

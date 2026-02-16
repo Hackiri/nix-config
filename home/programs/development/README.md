@@ -6,7 +6,7 @@ This directory contains enhanced Nix configurations for development tools and en
 
 The development configuration is organized into focused modules:
 
-- **`direnv/`** - Enhanced direnv configuration with intelligent caching and multi-language support
+- **`direnv/`** - Direnv configuration with custom layout helpers (use_flake provided by nix-direnv)
 - **`git/`** - Basic Git configuration (no sops dependency)
 
 SOPS-enhanced Git (hooks, GPG, aliases) is in `home/profiles/features/sops.nix`, gated by `profiles.sops.enable`.
@@ -25,19 +25,18 @@ development/
 
 ## Key Features
 
-### Enhanced direnv Configuration
+### Direnv Configuration
 
-- **Smart Caching**: Flake environments are cached with hash-based invalidation
-- **Multi-Language Layouts**: Support for Python (Poetry), Node.js, Rust, and Go
-- **Robust Error Handling**: Comprehensive validation and error reporting
-- **Performance Optimized**: Faster subsequent loads with intelligent caching
+- **nix-direnv integration**: `use_flake` is provided by nix-direnv (GC roots, profile caching, fallback on failure)
+- **Custom layout helpers**: Support for Python (Poetry), Node.js, Rust, and Go
+- **Auto-detect hook**: A zsh chpwd hook detects project markers and offers to create `.envrc` + cached `flake.nix`
 
 #### Available Layouts
 
 ```bash
 # In your .envrc file:
-use flake                    # Standard flake environment
-use flake --impure          # Impure flake environment
+use flake                    # Flake environment (provided by nix-direnv)
+use flake /path/to/flake     # Remote flake reference (e.g. cache dir)
 layout poetry               # Python Poetry projects
 layout node                 # Node.js projects (auto-detects package manager)
 layout rust                 # Rust projects with isolated target directory
@@ -97,8 +96,8 @@ To enable sops integration, set `profiles.sops.enable = true` in your host confi
 The direnv configuration includes optimized settings in `~/.config/direnv/direnv.toml`:
 
 - `warn_timeout = "10s"` - Increased timeout for complex environments
-- `strict_env = true` - Enhanced security
-- `load_dotenv = true` - Automatic .env file loading
+- `strict_env = true` - More secure environment handling
+- `load_dotenv = false` - Opt-in via explicit `dotenv` in .envrc
 
 ### Git Hooks (SOPS mode only)
 
@@ -113,9 +112,9 @@ When `profiles.sops.enable = true`, git hooks are installed via the git template
 
 If direnv environments fail to load:
 
-1. Check the build log: `~/.cache/direnv/layouts/<project>/build.log`
+1. Run `nix-direnv-reload` from the project directory to force a cache rebuild
 2. Verify flake.nix syntax: `nix flake check`
-3. Clear cache: `rm -rf ~/.cache/direnv/layouts/<project>`
+3. Clear the direnv layout dir: `rm -rf "$(direnv_layout_dir)"` and re-enter the directory
 
 ### Git Hook Issues (SOPS mode)
 
