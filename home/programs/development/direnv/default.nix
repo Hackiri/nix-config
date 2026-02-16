@@ -17,95 +17,9 @@ _: {
       };
     };
 
-    # Enhanced stdlib with better error handling and performance
+    # Custom layout helpers (use_flake provided by nix-direnv via lib/hm-nix-direnv.sh)
     stdlib = ''
-      # Enhanced use_flake with better error handling and caching
-      # Compatible with strict_env (set -euo pipefail)
-      use_flake() {
-        watch_file flake.nix
-        watch_file flake.lock
-
-        # Create layout directory with better path handling
-        local layout_dir="''${XDG_CACHE_HOME:-$HOME/.cache}/direnv/layouts/$(pwd | sed 's|/|_|g')"
-        mkdir -p "$layout_dir"
-
-        # Parse arguments: extract --impure flag, pass rest to nix
-        local impure=""
-        local flake_ref="."
-
-        if [[ $# -gt 0 ]]; then
-          # First non-flag arg is the flake ref
-          case "$1" in
-            --impure) impure="--impure" ;;
-            *) flake_ref="$1" ;;
-          esac
-          shift || true
-          # Check remaining args for --impure
-          while [[ $# -gt 0 ]]; do
-            case "$1" in
-              --impure) impure="--impure" ;;
-              *) ;;
-            esac
-            shift || true
-          done
-        fi
-
-        # Check if flake.nix exists for local flake refs
-        if [[ "$flake_ref" == "." && ! -f flake.nix ]]; then
-          log_error "No flake.nix found in current directory"
-          return 1
-        fi
-
-        # Cache file for faster subsequent loads
-        local cache_file="$layout_dir/flake-env"
-        local flake_hash_file="$layout_dir/flake-hash"
-        local current_hash=""
-
-        # Generate hash of flake files for cache invalidation
-        if command -v sha256sum >/dev/null 2>&1; then
-          current_hash=$(cat flake.nix flake.lock 2>/dev/null | sha256sum | cut -d' ' -f1)
-        elif command -v shasum >/dev/null 2>&1; then
-          current_hash=$(cat flake.nix flake.lock 2>/dev/null | shasum -a 256 | cut -d' ' -f1)
-        else
-          current_hash=$(date +%s) # Fallback to timestamp
-        fi
-
-        # Check if cache is valid
-        local cached_hash=""
-        if [[ -f "$flake_hash_file" ]]; then
-          cached_hash=$(cat "$flake_hash_file")
-        fi
-
-        if [[ "$current_hash" != "$cached_hash" || ! -f "$cache_file" ]]; then
-          if [[ -n "$impure" ]]; then
-            log_status "Building impure flake environment..."
-          else
-            log_status "Building pure flake environment..."
-          fi
-
-          # Build environment with error handling
-          if ! nix print-dev-env $impure "$flake_ref" > "$cache_file" 2>"$layout_dir/build.log"; then
-            log_error "Failed to build flake environment. Check $layout_dir/build.log for details."
-            return 1
-          fi
-
-          # Save hash for cache validation
-          echo "$current_hash" > "$flake_hash_file"
-          log_status "Environment cached successfully"
-        else
-          log_status "Using cached flake environment"
-        fi
-
-        # Source the environment
-        if [[ -f "$cache_file" ]]; then
-          source "$cache_file"
-        else
-          log_error "Environment file not found: $cache_file"
-          return 1
-        fi
-      }
-
-      # Enhanced layout_poetry with better error handling
+      # Layout for Poetry projects
       layout_poetry() {
         if [[ ! -f pyproject.toml ]]; then
           log_error 'No pyproject.toml found. Use `poetry new` or `poetry init` to create one first.'
