@@ -59,6 +59,13 @@
       STATE_DIR="$HOME/.claude/statusline-state"
       mkdir -p "$STATE_DIR" 2>/dev/null
 
+      # Cleanup stale session files older than 24 hours (runs at most once per hour)
+      cleanup_marker="$STATE_DIR/.last-cleanup"
+      if [[ ! -f "$cleanup_marker" ]] || (( $(date +%s) - $(cat "$cleanup_marker" 2>/dev/null || echo 0) > 3600 )); then
+        find "$STATE_DIR" -name "session-*" -mtime +1 -delete 2>/dev/null &
+        date +%s > "$cleanup_marker"
+      fi
+
       # ============================================================================
       # SESSION DURATION TRACKING
       # ============================================================================
@@ -90,7 +97,8 @@
       block_emoji=""
       block_bar=""
       if [[ "$SHOW_BLOCK_TIMER" == "true" ]]; then
-        block_start_file="$STATE_DIR/session-''${session_id}-block-start"
+        # Global block timer — persists across sessions (tracks 5h usage window)
+        block_start_file="$STATE_DIR/global-block-start"
         current_time=''${current_time:-$(date +%s)}
         block_duration=18000  # 5 hours in seconds
 
