@@ -8,7 +8,7 @@
 # - reattach-to-user-namespace: macOS clipboard in tmux (Linux uses xclip/xsel)
 #
 # GUI applications are installed via Homebrew (see modules/services/homebrew.nix)
-# System defaults are configured via nix-darwin (see modules/system/darwin/defaults.nix)
+# System defaults are configured via nix-darwin (see modules/system/darwin/preferences.nix)
 {pkgs, ...}: {
   home.packages = with pkgs; [
     # macOS clipboard integration for tmux
