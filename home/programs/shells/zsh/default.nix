@@ -114,8 +114,8 @@ in {
           compinit -C -d "$ZSH_COMPDUMP"
         fi
 
-        # Initialize zoxide with cd as the command
-        eval "$(zoxide init zsh --cmd cd)"
+        # Initialize zoxide (use z/zi commands, don't override cd)
+        eval "$(zoxide init zsh)"
 
         # Initialize direnv
         eval "$(direnv hook zsh)"
