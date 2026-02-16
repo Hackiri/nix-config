@@ -142,31 +142,15 @@ in {
     };
 
     programs = {
-      # GPG configuration
-      gpg = {
-        enable = true;
-        settings = {
-          trust-model = "tofu+pgp";
-        };
-      };
-
-      # Git configuration using sops secrets (merges on top of basic git from development.nix)
+      # Git configuration: only sops-specific additions
+      # (base git settings like delta, difftool, mergetool, signing
+      #  are already defined in programs/development/git/default.nix)
       git = {
         enable = true;
         signing = {
           signByDefault = true;
         };
-
         settings = {
-          pull.rebase = "true";
-          diff.guitool = "meld";
-          difftool.meld.path = "${pkgs.meld}/bin/meld";
-          difftool.prompt = "false";
-          merge.tool = "meld";
-          mergetool.meld.path = "${pkgs.meld}/bin/meld";
-          commit.gpgsign = true;
-          tag.gpgsign = true;
-
           # Init template for sops hooks
           init.templateDir = "${config.home.homeDirectory}/.git-template";
         };
