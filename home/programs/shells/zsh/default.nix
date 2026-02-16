@@ -2,19 +2,16 @@
   config,
   lib,
   pkgs,
-  hostName ? "mbp",
   ...
-}: let
-  shellAliases = import ./aliases.nix {
-    inherit (pkgs.stdenv) isDarwin;
-    inherit hostName;
-  };
-  fzfGit = import ./fzf-git.nix {};
-  fzfKubectl = import ./fzf-kubectl.nix {};
-  fzfCilium = import ./fzf-cilium.nix {};
-  fzfClaude = import ./fzf-claude.nix {};
-  dollar = "$";
-in {
+}: {
+  imports = [
+    ./fzf-git.nix
+    ./fzf-kubectl.nix
+    ./fzf-cilium.nix
+    ./fzf-claude.nix
+    ./direnv-hook.nix
+  ];
+
   home = {
     # Ripgrep configuration file
     file.".ripgreprc".text = ''
@@ -63,7 +60,6 @@ in {
 
     zsh = {
       enable = true;
-      inherit shellAliases;
       enableCompletion = true;
 
       # Enable native plugins
@@ -169,33 +165,13 @@ in {
             # Directory preview with tree view
             cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
             # Preview environment variables with their values expanded
-            export|unset) fzf --preview 'eval "echo ${dollar}{}"' "$@" ;;
+            export|unset) fzf --preview 'eval "echo ''${}"' "$@" ;;
             # DNS lookup preview for SSH hosts
             ssh)          fzf --preview 'dig {}'                   "$@" ;;
             # Default preview using the global preview command
             *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
           esac
         }
-
-        # Git FZF Integration (imported from fzf-git.nix)
-        if command -v git &>/dev/null; then
-          ${fzfGit}
-        fi
-
-        # Kubectl FZF Integration (imported from fzf-kubectl.nix)
-        if command -v kubectl &>/dev/null; then
-          ${fzfKubectl}
-        fi
-
-        # Cilium FZF Integration (imported from fzf-cilium.nix)
-        if command -v cilium &>/dev/null; then
-          ${fzfCilium}
-        fi
-
-        # Claude Code FZF Integration (imported from fzf-claude.nix)
-        if command -v claude &>/dev/null; then
-          ${fzfClaude}
-        fi
 
         # Source oh-my-zsh first (before Starship)
         if [ -f "$ZSH/oh-my-zsh.sh" ]; then
