@@ -117,9 +117,6 @@ in {
         # Initialize zoxide (use z/zi commands, don't override cd)
         eval "$(zoxide init zsh)"
 
-        # Initialize direnv
-        eval "$(direnv hook zsh)"
-
         # Set GPG_TTY for Git commit signing
         export GPG_TTY=$(tty)
 
@@ -197,9 +194,6 @@ in {
         else
           echo "Warning: oh-my-zsh.sh not found at $ZSH/oh-my-zsh.sh"
         fi
-
-        # Initialize Starship prompt (must be after oh-my-zsh)
-        eval "$(starship init zsh)"
 
         # Basic configurations
         zstyle ':completion:*' matcher-list "" 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
