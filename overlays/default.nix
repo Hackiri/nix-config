@@ -7,8 +7,6 @@ final: prev: let
   emacsOverlay = import ./emacs.nix;
 in
   {
-    inherit (customPkgs) kube-packages;
-
     # Override nodejs to skip tests (network tests fail in sandbox)
     nodejs = prev.nodejs.overrideAttrs (_: {
       doCheck = false;
