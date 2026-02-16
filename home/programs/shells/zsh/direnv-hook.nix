@@ -100,6 +100,10 @@ _: {
             if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
               _direnv_gen_flake "''${detected[1]}"
               echo "use flake" > .envrc
+              # git add so Nix can see the flake
+              if git rev-parse --is-inside-work-tree &>/dev/null; then
+                git add flake.nix .envrc 2>/dev/null
+              fi
               echo "Created flake.nix + .envrc — run 'direnv allow' to activate"
             fi
             return
@@ -135,6 +139,10 @@ _: {
           if (( ''${#selected[@]} > 0 )); then
             _direnv_gen_flake "''${selected[@]}"
             echo "use flake" > .envrc
+            # git add so Nix can see the flake
+            if git rev-parse --is-inside-work-tree &>/dev/null; then
+              git add flake.nix .envrc 2>/dev/null
+            fi
             echo "Created flake.nix + .envrc — run 'direnv allow' to activate"
           fi
         }
