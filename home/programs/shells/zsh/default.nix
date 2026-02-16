@@ -186,7 +186,9 @@ in {
         fi
 
         # Claude Code FZF Integration (imported from fzf-claude.nix)
-        ${fzfClaude}
+        if command -v claude &>/dev/null; then
+          ${fzfClaude}
+        fi
 
         # Source oh-my-zsh first (before Starship)
         if [ -f "$ZSH/oh-my-zsh.sh" ]; then
