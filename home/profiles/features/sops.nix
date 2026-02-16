@@ -66,7 +66,6 @@
 
       log_success "Git configuration updated successfully!"
       log_info "User: $username <$email>"
-      log_info "Signing key: $signingkey"
     else
       log_warning "Failed to read sops secrets, git config may be incomplete"
     fi
@@ -125,15 +124,19 @@ in {
       secrets = {
         git-userName = {
           path = "${config.home.homeDirectory}/.config/git/username";
+          mode = "0400";
         };
         git-userEmail = {
           path = "${config.home.homeDirectory}/.config/git/email";
+          mode = "0400";
         };
         git-signingKey = {
           path = "${config.home.homeDirectory}/.config/git/signingkey";
+          mode = "0400";
         };
         ssh-config-srv696730 = {
           path = "${config.home.homeDirectory}/.ssh/conf.d/srv696730";
+          mode = "0600";
         };
       };
     };
@@ -196,6 +199,14 @@ in {
       # Create the sops age directory
       ".config/sops/.keep".text = "";
     };
+
+    # Enforce restrictive permissions on age key (Critical: prevents local reads)
+    home.activation.fixSopsPermissions = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      if [ -f "${config.home.homeDirectory}/.config/sops/age/keys.txt" ]; then
+        chmod 600 "${config.home.homeDirectory}/.config/sops/age/keys.txt"
+        chmod 700 "${config.home.homeDirectory}/.config/sops/age"
+      fi
+    '';
 
     # Fix sops-nix launchd service PATH (Darwin only)
     launchd.agents."sops-nix" = lib.mkIf pkgs.stdenv.isDarwin {
