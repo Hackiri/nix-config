@@ -18,6 +18,8 @@
 
     # Emacs overlay for native compilation support
     emacs-overlay.url = "github:nix-community/emacs-overlay";
+    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
+    emacs-overlay.inputs.nixpkgs-stable.follows = "nixpkgs";
 
     # Secrets management
     sops-nix.url = "github:Mic92/sops-nix";
