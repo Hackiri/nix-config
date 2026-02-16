@@ -1,19 +1,18 @@
 # Git Integration with FZF
 # Interactive git operations using fuzzy finder
-# Keybindings: Ctrl+G followed by Ctrl+[key]
+# Commands: gff (files), gfb (branches), gft (tags), gfh (history), gfr (remotes),
+#           gfs (stash), gfst (status), gfa (add), gfc (commit)
 _: {
   programs.zsh.initContent = ''
     if command -v git &>/dev/null; then
-      # Git Integration Helper Functions
-
       # Check if current directory is a git repository
       is_in_git_repo() {
         git rev-parse HEAD > /dev/null 2>&1
       }
 
-      # Git File Status Browser (^g^f)
+      # Git File Status Browser — gff
       # Shows modified/untracked files with diff preview
-      _gf() {
+      gff() {
         is_in_git_repo || return
         git -c color.status=always status --short |
         fzf-down -m --ansi --nth 2..,.. \
@@ -21,9 +20,9 @@ _: {
         cut -c4- | sed 's/.* -> //'
       }
 
-      # Git Branch Browser (^g^b)
+      # Git Branch Browser — gfb
       # Shows local and remote branches with commit history preview
-      _gb() {
+      gfb() {
         is_in_git_repo || return
         git branch -a --color=always | grep -v '/HEAD' | sort |
         fzf-down --ansi --multi --tac --preview-window right:70% \
@@ -32,19 +31,19 @@ _: {
         sed 's#^remotes/##'
       }
 
-      # Git Tag Browser (^g^t)
+      # Git Tag Browser — gft
       # Lists all tags with their details in preview
-      _gt() {
+      gft() {
         is_in_git_repo || return
         git tag --sort -version:refname |
         fzf-down --multi --preview-window right:70% \
           --preview 'git show --color=always {}'
       }
 
-      # Git History Browser (^g^h)
+      # Git History Browser — gfh
       # Interactive commit history with diff preview
       # Use ctrl-s to toggle sort order
-      _gh() {
+      gfh() {
         is_in_git_repo || return
         git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always |
         fzf-down --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
@@ -53,9 +52,9 @@ _: {
         grep -o "[a-f0-9]\{7,\}"
       }
 
-      # Git Remote Browser (^g^r)
+      # Git Remote Browser — gfr
       # Lists remotes with their commit history
-      _gr() {
+      gfr() {
         is_in_git_repo || return
         git remote -v | awk '{print $1 "\t" $2}' | uniq |
         fzf-down --tac \
@@ -63,40 +62,17 @@ _: {
         cut -d$'\t' -f1
       }
 
-      # Git Stash Browser (^g^s)
+      # Git Stash Browser — gfs
       # Browse and view stashed changes
-      _gs() {
+      gfs() {
         is_in_git_repo || return
         git stash list | fzf-down --reverse -d: --preview 'git show --color=always {1}' |
         cut -d: -f1
       }
 
-      # Helper function to join multiple selected items
-      # Used when multiple selections are made in FZF
-      join-lines() {
-        local item
-        while read item; do
-          echo -n "''${(q)item} "
-        done
-      }
-
-      # Function to bind all git helper functions to keyboard shortcuts
-      # Creates widgets and binds them to ctrl-g + ctrl-[key] combinations
-      bind-git-helper() {
-        local c
-        for c in $@; do
-          # Create widget function that calls the corresponding _g[key] function
-          eval "fzf-g$c-widget() { local result=\$(_g$c | join-lines); zle reset-prompt; LBUFFER+=\$result }"
-          # Register the widget with ZLE (Zsh Line Editor)
-          eval "zle -N fzf-g$c-widget"
-          # Bind widget to ctrl-g + ctrl-[key]
-          eval "bindkey '^g^$c' fzf-g$c-widget"
-        done
-      }
-
-      # Enhanced Git Status Browser (^g^st)
+      # Enhanced Git Status Browser — gfst
       # Interactive status view with detailed file information and actions
-      _gst() {
+      gfst() {
         is_in_git_repo || return
         git status --short | fzf-down --ansi \
           --preview 'git diff --color=always {2}' \
@@ -106,9 +82,9 @@ _: {
           --preview-window right:70%
       }
 
-      # Interactive Git Add (^g^a)
+      # Interactive Git Add — gfa
       # Multi-select files to stage with preview
-      _ga() {
+      gfa() {
         is_in_git_repo || return
         # Show both unstaged and untracked files
         git ls-files --modified --others --exclude-standard |
@@ -119,9 +95,9 @@ _: {
           --preview-window right:70%
       }
 
-      # Detailed Git Commit Browser (^g^c)
+      # Detailed Git Commit Browser — gfc
       # Interactive commit creation with template and preview
-      _gc() {
+      gfc() {
         is_in_git_repo || return
         # Show staged files with their diffs
         local staged_files="$(git diff --cached --name-only)"
@@ -150,11 +126,6 @@ _: {
         rm -f "$temp_msg"
         trap - EXIT INT TERM
       }
-
-      # Bind git helper functions
-      # f=files, b=branches, t=tags, r=remotes, h=history, s=stash, st=status, a=add, c=commit
-      bind-git-helper f b t r h s st a c
-      unset -f bind-git-helper
     fi
   '';
 }

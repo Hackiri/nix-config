@@ -1,15 +1,15 @@
 # Claude Code Integration with FZF
 # Interactive search through Claude Code chat history
-# Keybindings: Ctrl+C followed by Ctrl+[key]
+# Commands: clh (history), cls (sessions), clp (projects), clr (recent), claude-search
 _: {
   programs.zsh.initContent = ''
     if command -v claude &>/dev/null; then
       # Claude Code directory
       CLAUDE_DIR="$HOME/.claude"
 
-      # Search Global History (^c^h)
+      # Search Global History — clh
       # Browse all prompts across all projects
-      _claude_history() {
+      clh() {
         local history_file="$CLAUDE_DIR/history.jsonl"
         [[ -f "$history_file" ]] || { echo "No Claude history found"; return 1; }
 
@@ -27,9 +27,9 @@ _: {
         cut -d'|' -f3- | sed 's/^ *//'
       }
 
-      # Search Sessions for Current Project (^c^s)
+      # Search Sessions for Current Project — cls
       # Browse sessions in current project directory
-      _claude_sessions() {
+      cls() {
         local project_dir="''${PWD//\//-}"
         project_dir="''${project_dir#-}"
         local sessions_dir="$CLAUDE_DIR/projects/-$project_dir"
@@ -61,9 +61,9 @@ _: {
           '
       }
 
-      # Search All Conversations (^c^a)
+      # Search All Conversations — claude-search
       # Full-text search across all Claude conversations
-      _claude_search() {
+      claude-search() {
         local query="$1"
         [[ -z "$query" ]] && read -p "Search: " query
         [[ -z "$query" ]] && return 1
@@ -88,9 +88,9 @@ _: {
           "
       }
 
-      # Browse Projects (^c^p)
+      # Browse Projects — clp
       # List all projects with Claude conversations
-      _claude_projects() {
+      clp() {
         for d in "$CLAUDE_DIR/projects"/-*; do
           [[ -d "$d" ]] || continue
           local project=$(basename "$d" | sed 's/^-//' | tr '-' '/')
@@ -116,9 +116,9 @@ _: {
           '
       }
 
-      # Recent Conversations (^c^r)
+      # Recent Conversations — clr
       # Quick access to recent Claude conversations
-      _claude_recent() {
+      clr() {
         find "$CLAUDE_DIR/projects" -name "*.jsonl" ! -name "agent-*.jsonl" -type f -mtime -7 2>/dev/null |
         while read -r f; do
           local session_id=$(basename "$f" .jsonl)
@@ -144,35 +144,6 @@ _: {
             fi
           '
       }
-
-      # Helper function to join multiple selected items
-      join-claude-lines() {
-        local item
-        while read item; do
-          echo -n "''${(q)item} "
-        done
-      }
-
-      # Bind Claude helper functions to keyboard shortcuts
-      bind-claude-helper() {
-        local c
-        for c in $@; do
-          eval "fzf-claude-$c-widget() { local result=\$(_claude_$c | join-claude-lines); zle reset-prompt; LBUFFER+=\$result }"
-          eval "zle -N fzf-claude-$c-widget"
-          eval "bindkey '^c^$c' fzf-claude-$c-widget"
-        done
-      }
-
-      # Bind shortcuts:
-      # ^c^h = history (global prompts)
-      # ^c^s = sessions (current project)
-      # ^c^p = projects (all projects)
-      # ^c^r = recent (last 7 days)
-      bind-claude-helper h s p r
-      unset -f bind-claude-helper
-
-      # Alias for full-text search (not bound to key due to input requirement)
-      alias claude-search='_claude_search'
     fi
   '';
 }

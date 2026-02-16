@@ -175,7 +175,6 @@
       ll = "eza --icons -la";
       lsa = "eza --icons -la";
       lstree = "eza --icons -T";
-      clr = "clear";
       hist = "history | grep";
 
       # Modern tool aliases
