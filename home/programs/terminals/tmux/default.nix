@@ -98,8 +98,6 @@
     fi
   '';
 in {
-  imports = [];
-
   # Install custom tmux scripts and standard packages
   home.packages = [
     truncate_path # Custom path truncation script

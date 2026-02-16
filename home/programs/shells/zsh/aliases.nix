@@ -175,7 +175,6 @@
   cdiff = "colordiff";
   prs = "procs";
   lg = "lazygit";
-  j = "zoxide";
   md = "glow";
 
   # Claude Code workflow aliases
@@ -207,10 +206,6 @@
   files = "yazi";
   untar = "tar -xvf";
   fin = "fzf --bind 'enter:become(nvim {})'";
-
-  # Alias management
-  aliasadd = "echo 'alias $1=\"$2\"' >> ~/.bash_aliases && source ~/.bash_aliases";
-  aliaslist = "cat ~/.bash_aliases | grep alias";
 
   # AI tools
   mcpl = "mcpl --config ~/.config/mcpl/mcp.json";
