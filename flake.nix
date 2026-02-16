@@ -17,9 +17,11 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Emacs overlay for native compilation support
-    emacs-overlay.url = "github:nix-community/emacs-overlay";
-    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
-    emacs-overlay.inputs.nixpkgs-stable.follows = "nixpkgs";
+    emacs-overlay = {
+      url = "github:nix-community/emacs-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-stable.follows = "nixpkgs";
+    };
 
     # Secrets management
     sops-nix.url = "github:Mic92/sops-nix";
@@ -119,7 +121,10 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             backupFileExtension = "backup";
-            extraSpecialArgs = {inherit inputs username; hostName = name;};
+            extraSpecialArgs = {
+              inherit inputs username;
+              hostName = name;
+            };
             users.${username} = import ./hosts/${name}/home.nix;
             sharedModules = [
               inputs.sops-nix.homeManagerModules.sops

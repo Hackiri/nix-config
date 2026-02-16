@@ -114,7 +114,7 @@ in {
     # Use HM's programs.neovide with our custom TOML config
     programs.neovide = {
       enable = true;
-      package = cfg.package;
+      inherit (cfg) package;
     };
 
     xdg.configFile."neovide/config.toml".source = (pkgs.formats.toml {}).generate "neovide-config" {
