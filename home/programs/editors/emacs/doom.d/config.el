@@ -13,9 +13,9 @@ This is a compatibility shim for packages expecting this function in Emacs 31."
 
 ;; Note: Also using flymake instead of flycheck for better Emacs 31 compatibility
 
-;; User identity
-(setq user-full-name "hackiri"
-      user-mail-address "128340174+Hackiri@users.noreply.github.com")
+;; User identity (read from git config so it stays in sync with sops/manual config)
+(setq user-full-name (string-trim (shell-command-to-string "git config user.name"))
+      user-mail-address (string-trim (shell-command-to-string "git config user.email")))
 
 ;; Font settings
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 12)

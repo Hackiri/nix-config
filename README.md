@@ -317,6 +317,21 @@ nix flake init -t ~/nix-config#go
 
 Each template provides a self-contained `flake.nix` with the same tooling as the corresponding development shell, so new projects work independently from this config.
 
+## Troubleshooting
+
+### Homebrew Taps conflict after enabling `mutableTaps = false`
+
+If you see:
+```
+Error: An existing /usr/local/Homebrew/Library/Taps is in the way
+```
+
+Remove the existing taps so nix-darwin can manage them declaratively:
+```bash
+sudo rm -rf /usr/local/Homebrew/Library/Taps
+sudo darwin-rebuild switch --flake ~/nix-config#mbp
+```
+
 ## Documentation
 
 Detailed documentation for specific components:
