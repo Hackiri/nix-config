@@ -31,12 +31,25 @@ in {
         - kubeconform: Fast Kubernetes manifests validator
       '';
     };
+
+    toolSet = mkOption {
+      type = types.enum ["minimal" "admin" "operations" "devops" "complete"];
+      default = "admin";
+      description = ''
+        Which kubernetes tool set to install. Options:
+        - minimal: kubectl, helm, k9s
+        - admin: minimal + context/namespace tools, observability
+        - operations: admin + gitops, security scanning
+        - devops: operations + IaC tools (tofu, ansible)
+        - complete: everything including all cloud CLIs
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
     home = {
       packages =
-        kubernetesTools.sets.complete
+        kubernetesTools.sets.${cfg.toolSet}
         ++ lib.optionals cfg.includeLocalDev (
           with pkgs; [
             kind # Kubernetes in Docker - lightweight local clusters

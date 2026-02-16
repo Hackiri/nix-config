@@ -19,6 +19,7 @@
   profiles.kubernetes = {
     enable = true;
     includeLocalDev = true; # Include kind, tilt, kubeconform
+    toolSet = "complete"; # Full kubernetes tooling for primary workstation
   };
 
   # Host-specific packages
