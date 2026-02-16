@@ -78,6 +78,11 @@ _: {
             log_status "Building pure flake environment..."
           fi
 
+          # Default to current directory flake if no args given
+          if (( ''${#extra_args[@]} == 0 )); then
+            extra_args=(".")
+          fi
+
           # Build environment with error handling
           if ! nix print-dev-env $impure "''${extra_args[@]}" > "$cache_file" 2>"$layout_dir/build.log"; then
             log_error "Failed to build flake environment. Check $layout_dir/build.log for details."
