@@ -2,9 +2,10 @@
   config,
   lib,
   pkgs,
+  hostName ? "mbp",
   ...
 }: let
-  shellAliases = import ./aliases.nix {inherit (pkgs.stdenv) isDarwin;};
+  shellAliases = import ./aliases.nix {inherit (pkgs.stdenv) isDarwin; inherit hostName;};
   fzfGit = import ./fzf-git.nix {};
   fzfKubectl = import ./fzf-kubectl.nix {};
   fzfCilium = import ./fzf-cilium.nix {};

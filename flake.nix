@@ -119,7 +119,7 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             backupFileExtension = "backup";
-            extraSpecialArgs = {inherit inputs username;};
+            extraSpecialArgs = {inherit inputs username; hostName = name;};
             users.${username} = import ./hosts/${name}/home.nix;
             sharedModules = [
               inputs.sops-nix.homeManagerModules.sops
