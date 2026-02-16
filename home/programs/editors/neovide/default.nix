@@ -111,15 +111,10 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    home = {
-      packages = with pkgs; [
-        neovide
-      ];
-    };
-
-    # Enable neovide in home-manager
+    # Use HM's programs.neovide with our custom TOML config
     programs.neovide = {
       enable = true;
+      package = cfg.package;
     };
 
     xdg.configFile."neovide/config.toml".source = (pkgs.formats.toml {}).generate "neovide-config" {
