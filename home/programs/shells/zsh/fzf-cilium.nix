@@ -12,11 +12,6 @@ _: {
         command -v cilium > /dev/null 2>&1
       }
 
-      # Standard FZF configuration for cilium operations
-      fzf-cilium() {
-        fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
-      }
-
       # Cilium Pod Selector - cfp
       # Browse and select Cilium pods
       cfp() {
@@ -24,7 +19,7 @@ _: {
         local namespace="$(kubectl get pods -A -l k8s-app=cilium -o jsonpath='{.items[0].metadata.namespace}' 2>/dev/null || echo 'kube-system')"
 
         kubectl get pods -n "$namespace" -l k8s-app=cilium --no-headers -o custom-columns=":metadata.name,:status.phase,:spec.nodeName" |
-        fzf-cilium --ansi \
+        fzf-down --ansi \
           --preview "kubectl describe pod {1} -n $namespace" \
           --header "Cilium pods in namespace: $namespace" \
           --preview-window right:60% |
@@ -56,7 +51,7 @@ _: {
 
         local pod
         pod="$(kubectl get pods -n "$namespace" -l k8s-app=cilium --no-headers -o custom-columns=":metadata.name,:status.phase,:spec.nodeName" |
-        fzf-cilium --ansi \
+        fzf-down --ansi \
           --preview "kubectl exec -n $namespace {1} -c cilium-agent -- cilium endpoint list 2>/dev/null || echo 'Unable to fetch endpoints'" \
           --header "Select Cilium pod to view endpoints" \
           --preview-window right:60% |
@@ -75,7 +70,7 @@ _: {
 
         local pod
         pod="$(kubectl get pods -n "$namespace" -l k8s-app=cilium --no-headers -o custom-columns=":metadata.name,:status.phase,:spec.nodeName" |
-        fzf-cilium --ansi \
+        fzf-down --ansi \
           --preview "kubectl exec -n $namespace {1} -c cilium-agent -- cilium status --brief 2>/dev/null || echo 'Unable to fetch status'" \
           --header "Select Cilium pod to monitor" \
           --preview-window right:60% |
@@ -95,7 +90,7 @@ _: {
         namespace="''${namespace:-default}"
 
         kubectl get cnp,ccnp -A --no-headers -o custom-columns=":metadata.namespace,:metadata.name,:kind" 2>/dev/null |
-        fzf-cilium --ansi \
+        fzf-down --ansi \
           --preview "kubectl describe {3} {2} -n {1} 2>/dev/null" \
           --header 'Cilium Network Policies (CNP/CCNP)' \
           --preview-window right:60%
@@ -179,7 +174,7 @@ _: {
 
         local pod
         pod="$(kubectl get pods -n "$namespace" -l k8s-app=cilium --no-headers -o custom-columns=":metadata.name,:status.phase,:spec.nodeName" |
-        fzf-cilium --ansi \
+        fzf-down --ansi \
           --preview "echo '=== Version ===' && kubectl exec -n $namespace {1} -c cilium-agent -- cilium version 2>/dev/null && echo && echo '=== Status ===' && kubectl exec -n $namespace {1} -c cilium-agent -- cilium status --brief 2>/dev/null" \
           --header "Select Cilium pod for debug info" \
           --preview-window right:60% |

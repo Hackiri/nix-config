@@ -11,12 +11,6 @@ _: {
         git rev-parse HEAD > /dev/null 2>&1
       }
 
-      # Standard FZF configuration for git operations
-      # Creates a dropdown with preview toggle (ctrl-/)
-      fzf-down() {
-        fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
-      }
-
       # Git File Status Browser (^g^f)
       # Shows modified/untracked files with diff preview
       _gf() {

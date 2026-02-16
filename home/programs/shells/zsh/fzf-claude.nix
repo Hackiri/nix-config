@@ -7,11 +7,6 @@ _: {
       # Claude Code directory
       CLAUDE_DIR="$HOME/.claude"
 
-      # Standard FZF configuration for Claude operations
-      fzf-claude() {
-        fzf --height 70% --min-height 30 --border --bind ctrl-/:toggle-preview "$@"
-      }
-
       # Search Global History (^c^h)
       # Browse all prompts across all projects
       _claude_history() {
@@ -25,7 +20,7 @@ _: {
           local proj=$(basename "$project" 2>/dev/null || echo "unknown")
           printf "%s | %-20s | %s\n" "$date" "$proj" "$display"
         done |
-        fzf-claude --ansi --tac \
+        fzf-down --ansi --tac \
           --header 'Claude Code History - Enter to copy prompt' \
           --preview-window right:50%:wrap \
           --preview 'echo {} | cut -d"|" -f3-' |
@@ -53,7 +48,7 @@ _: {
           [[ -n "$first_msg" ]] && printf "%s | %s | %s\n" "$date" "''${session_id:0:8}" "$first_msg"
         done |
         sort -r |
-        fzf-claude --ansi \
+        fzf-down --ansi \
           --header 'Claude Sessions (Current Project) - Enter to view' \
           --preview-window right:60%:wrap \
           --preview '
@@ -81,7 +76,7 @@ _: {
           local matches=$(rg -c "$query" "$f" 2>/dev/null)
           printf "%s | %s | %s matches\n" "''${session_id:0:8}" "$project" "$matches"
         done |
-        fzf-claude --ansi \
+        fzf-down --ansi \
           --header "Search results for: $query" \
           --preview-window right:60%:wrap \
           --preview "
@@ -104,7 +99,7 @@ _: {
           printf "%s | %3s sessions | %s\n" "$last" "$count" "$project"
         done |
         sort -r |
-        fzf-claude --ansi \
+        fzf-down --ansi \
           --header 'Claude Projects - Enter to browse sessions' \
           --preview-window right:50%:wrap \
           --preview '
@@ -134,7 +129,7 @@ _: {
         done |
         sort -r |
         head -50 |
-        fzf-claude --ansi \
+        fzf-down --ansi \
           --header 'Recent Claude Conversations (Last 7 Days)' \
           --preview-window right:60%:wrap \
           --preview '

@@ -12,11 +12,6 @@ _: {
         command -v kubectl > /dev/null 2>&1
       }
 
-      # Standard FZF configuration for kubectl operations
-      fzf-kube() {
-        fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
-      }
-
       # Kubectl Pod Selector - kfp
       # Shows pods with details and allows selection
       kfp() {
@@ -25,7 +20,7 @@ _: {
         namespace="''${namespace:-default}"
 
         kubectl get pods -n "$namespace" --no-headers -o custom-columns=":metadata.name,:status.phase,:spec.containers[*].name" |
-        fzf-kube --ansi --multi \
+        fzf-down --ansi --multi \
           --preview "kubectl describe pod {1} -n $namespace" \
           --header "Namespace: $namespace (Use kfn to change)" \
           --preview-window right:60% |
@@ -38,7 +33,7 @@ _: {
         is_kubectl_available || return
         local selected_ns
         selected_ns="$(kubectl get namespaces --no-headers -o custom-columns=":metadata.name,:status.phase,:metadata.creationTimestamp" |
-        fzf-kube --ansi \
+        fzf-down --ansi \
           --preview "echo '=== Pods ===' && kubectl get pods -n {1} 2>/dev/null | head -20 && echo && echo '=== Services ===' && kubectl get svc -n {1} 2>/dev/null | head -10" \
           --header 'Select namespace to switch to' \
           --preview-window right:60% |
@@ -56,7 +51,7 @@ _: {
         is_kubectl_available || return
         local selected_context
         selected_context="$(kubectl config get-contexts --no-headers -o name |
-        fzf-kube --ansi \
+        fzf-down --ansi \
           --preview "kubectl config view --context={} --minify | bat --style=plain --color=always -l yaml" \
           --header 'Select context to switch to' \
           --preview-window right:60%)"
@@ -76,7 +71,7 @@ _: {
 
         local selected
         selected="$(kubectl get pods -n "$namespace" --no-headers -o custom-columns=":metadata.name,:spec.containers[*].name" |
-        fzf-kube --ansi \
+        fzf-down --ansi \
           --preview "kubectl logs {1} -n $namespace --tail=100 2>/dev/null || echo 'No logs available'" \
           --header 'Select pod to view logs (Enter=tail, Ctrl-F=follow)' \
           --bind "ctrl-f:execute(kubectl logs {1} -n $namespace -f)+abort" \
@@ -97,7 +92,7 @@ _: {
 
         local selected
         selected="$(kubectl get pods -n "$namespace" --no-headers -o custom-columns=":metadata.name,:status.phase,:spec.containers[*].name" |
-        fzf-kube --ansi \
+        fzf-down --ansi \
           --preview "kubectl describe pod {1} -n $namespace" \
           --header 'Select pod to exec into' \
           --preview-window right:60%)"
@@ -108,7 +103,7 @@ _: {
 
           # If multiple containers, let user select
           if [[ "$containers" == *","* ]]; then
-            local container="$(echo "$containers" | tr ',' '\n' | fzf-kube --header 'Select container')"
+            local container="$(echo "$containers" | tr ',' '\n' | fzf-down --header 'Select container')"
             kubectl exec -it "$pod" -n "$namespace" -c "$container" -- /bin/sh -c 'bash || ash || sh'
           else
             kubectl exec -it "$pod" -n "$namespace" -- /bin/sh -c 'bash || ash || sh'
@@ -124,7 +119,7 @@ _: {
         namespace="''${namespace:-default}"
 
         kubectl get svc -n "$namespace" --no-headers -o custom-columns=":metadata.name,:spec.type,:spec.clusterIP,:spec.ports[*].port" |
-        fzf-kube --ansi --multi \
+        fzf-down --ansi --multi \
           --preview "kubectl describe svc {1} -n $namespace && echo && echo '=== Endpoints ===' && kubectl get endpoints {1} -n $namespace" \
           --header "Services in namespace: $namespace" \
           --preview-window right:60% |
@@ -139,7 +134,7 @@ _: {
         namespace="''${namespace:-default}"
 
         kubectl get deployments -n "$namespace" --no-headers -o custom-columns=":metadata.name,:spec.replicas,:status.availableReplicas,:status.updatedReplicas" |
-        fzf-kube --ansi --multi \
+        fzf-down --ansi --multi \
           --preview "kubectl describe deployment {1} -n $namespace && echo && echo '=== Pods ===' && kubectl get pods -n $namespace -l app={1}" \
           --header "Deployments in namespace: $namespace" \
           --preview-window right:60% |
@@ -154,12 +149,12 @@ _: {
         namespace="''${namespace:-default}"
 
         echo "Select resource type to delete:"
-        local resource_type="$(echo -e "pod\ndeployment\nservice\nconfigmap\nsecret\ningress" | fzf-kube --header 'Select resource type')"
+        local resource_type="$(echo -e "pod\ndeployment\nservice\nconfigmap\nsecret\ningress" | fzf-down --header 'Select resource type')"
 
         if [ -n "$resource_type" ]; then
           local selected
           selected="$(kubectl get "$resource_type" -n "$namespace" --no-headers -o custom-columns=":metadata.name" |
-          fzf-kube --ansi --multi \
+          fzf-down --ansi --multi \
             --preview "kubectl describe $resource_type {1} -n $namespace" \
             --header "Select $resource_type to DELETE (TAB for multi-select)" \
             --preview-window right:60%)"
@@ -182,7 +177,7 @@ _: {
 
         local selected
         selected="$(kubectl get pods -n "$namespace" --no-headers -o custom-columns=":metadata.name,:spec.containers[*].ports" |
-        fzf-kube --ansi \
+        fzf-down --ansi \
           --preview "kubectl describe pod {1} -n $namespace" \
           --header 'Select pod for port forwarding' \
           --preview-window right:60%)"
