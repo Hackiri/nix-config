@@ -53,4 +53,23 @@
       echo "Go $(go version) dev environment"
     '';
   };
+
+  ruby = pkgs.mkShell {
+    packages = with pkgs; [
+      ruby_3_4
+    ];
+    shellHook = ''
+      echo "Ruby $(ruby --version) dev environment"
+    '';
+  };
+
+  php = pkgs.mkShell {
+    packages = with pkgs; [
+      php84
+      php84Packages.composer
+    ];
+    shellHook = ''
+      echo "PHP $(php --version | head -1) dev environment"
+    '';
+  };
 }

@@ -292,16 +292,39 @@ Profiles are composed via `mkHomeManagerConfig` in `flake.nix`. Feature flags in
 
 ## Development Shells
 
-Language-specific development environments are available as flake outputs (defined in `lib/devshells.nix`):
+Language-specific development environments are available as flake outputs (defined in `lib/devshells.nix`). Only Python is installed globally (required by Neovim); all other language toolchains are available exclusively through devShells:
 
 ```bash
 nix develop .#node      # Node.js, Yarn, pnpm, Bun, TypeScript, Prettier
 nix develop .#python    # Python 3.13, uv, pip, Ruff, mypy, pytest
 nix develop .#rust      # rustc, Cargo, rustfmt, Clippy, rust-analyzer
 nix develop .#go        # Go, gopls, golangci-lint, Delve
+nix develop .#ruby      # Ruby 3.4
+nix develop .#php       # PHP 8.4, Composer
 ```
 
 The default `nix develop` shell provides Nix tooling (formatters, linters, pre-commit hooks).
+
+### Automatic activation with direnv
+
+Instead of manually running `nix develop`, you can add a `.envrc` file to any project directory so the devShell activates automatically when you `cd` into it:
+
+```bash
+# In your project directory:
+echo 'use flake ~/nix-config#rust' > .envrc
+direnv allow
+```
+
+Replace `#rust` with any available shell (`#node`, `#go`, `#python`, `#ruby`, `#php`).
+
+If the project has its own `flake.nix` (e.g. from `nix flake init -t ~/nix-config#rust`), use:
+
+```bash
+echo 'use flake' > .envrc
+direnv allow
+```
+
+The environment loads/unloads automatically as you enter/leave the directory.
 
 ## Project Templates
 
