@@ -20,6 +20,7 @@ _: {
     # Enhanced stdlib with better error handling and performance
     stdlib = ''
       # Enhanced use_flake with better error handling and caching
+      # Compatible with strict_env (set -euo pipefail)
       use_flake() {
         watch_file flake.nix
         watch_file flake.lock
@@ -28,25 +29,29 @@ _: {
         local layout_dir="''${XDG_CACHE_HOME:-$HOME/.cache}/direnv/layouts/$(pwd | sed 's|/|_|g')"
         mkdir -p "$layout_dir"
 
-        # Parse arguments more robustly
+        # Parse arguments: extract --impure flag, pass rest to nix
         local impure=""
-        local extra_args=()
+        local flake_ref="."
 
-        while [[ $# -gt 0 ]]; do
-          case $1 in
-            --impure)
-              impure="--impure"
-              shift
-              ;;
-            *)
-              extra_args+=("$1")
-              shift
-              ;;
+        if [[ $# -gt 0 ]]; then
+          # First non-flag arg is the flake ref
+          case "$1" in
+            --impure) impure="--impure" ;;
+            *) flake_ref="$1" ;;
           esac
-        done
+          shift || true
+          # Check remaining args for --impure
+          while [[ $# -gt 0 ]]; do
+            case "$1" in
+              --impure) impure="--impure" ;;
+              *) ;;
+            esac
+            shift || true
+          done
+        fi
 
-        # Check if flake.nix exists
-        if [[ ! -f flake.nix ]]; then
+        # Check if flake.nix exists for local flake refs
+        if [[ "$flake_ref" == "." && ! -f flake.nix ]]; then
           log_error "No flake.nix found in current directory"
           return 1
         fi
@@ -54,7 +59,7 @@ _: {
         # Cache file for faster subsequent loads
         local cache_file="$layout_dir/flake-env"
         local flake_hash_file="$layout_dir/flake-hash"
-        local current_hash
+        local current_hash=""
 
         # Generate hash of flake files for cache invalidation
         if command -v sha256sum >/dev/null 2>&1; then
@@ -72,19 +77,14 @@ _: {
         fi
 
         if [[ "$current_hash" != "$cached_hash" || ! -f "$cache_file" ]]; then
-          if [[ -n $impure ]]; then
+          if [[ -n "$impure" ]]; then
             log_status "Building impure flake environment..."
           else
             log_status "Building pure flake environment..."
           fi
 
-          # Default to current directory flake if no args given
-          if (( ''${#extra_args[@]} == 0 )); then
-            extra_args=(".")
-          fi
-
           # Build environment with error handling
-          if ! nix print-dev-env $impure "''${extra_args[@]}" > "$cache_file" 2>"$layout_dir/build.log"; then
+          if ! nix print-dev-env $impure "$flake_ref" > "$cache_file" 2>"$layout_dir/build.log"; then
             log_error "Failed to build flake environment. Check $layout_dir/build.log for details."
             return 1
           fi
