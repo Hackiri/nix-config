@@ -12,6 +12,8 @@
     #--------------------------------------------------
     lynis # Security auditing tool for Unix systems
     trivy # Vulnerability scanner for containers and filesystems
+    vulnix # Nix vulnerability scanner (PKGS-7398)
+    clamav # On-demand malware scanning (HRDN-7230)
 
     #--------------------------------------------------
     # Password & Credential Tools

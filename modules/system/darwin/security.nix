@@ -9,4 +9,9 @@ _: {
     allowSigned = true;
     allowSignedApp = true;
   };
+
+  # Disable macOS built-in Apache httpd (HTTP-6640/6643)
+  system.activationScripts.postActivation.text = ''
+    /bin/launchctl disable system/org.apache.httpd 2>/dev/null || true
+  '';
 }
