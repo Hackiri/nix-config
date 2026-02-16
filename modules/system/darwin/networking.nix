@@ -1,11 +1,7 @@
 # Darwin networking configuration
-# Addresses: NETW-2705 (hostname), NAME-4404 (DNS), NAME-4028 (/etc/hosts)
+# Addresses: NAME-4404 (DNS), NAME-4028 (/etc/hosts)
 _: {
   networking = {
-    hostName = "mbp";
-    localHostName = "mbp";
-    computerName = "WM's MacBook Pro";
-
     # Backup DNS resolvers (Cloudflare + Quad9)
     dns = ["1.1.1.1" "9.9.9.9"];
 
@@ -21,8 +17,9 @@ _: {
   # Append hostname to /etc/hosts after networking activation restores it (NAME-4028)
   # nix-darwin lacks a stable networking.hosts option (GH #1035)
   system.activationScripts.postActivation.text = ''
-    if ! /usr/bin/grep -q 'mbp' /etc/hosts; then
-      printf '127.0.0.1\tmbp\n::1\t\tmbp\n' >> /etc/hosts
+    hn=$(/usr/sbin/scutil --get LocalHostName 2>/dev/null || hostname -s)
+    if ! /usr/bin/grep -q "$hn" /etc/hosts; then
+      printf '127.0.0.1\t%s\n::1\t\t%s\n' "$hn" "$hn" >> /etc/hosts
     fi
   '';
 }

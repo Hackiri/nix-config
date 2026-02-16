@@ -47,6 +47,26 @@ _: {
         ShowPathbar = true;
       };
 
+      # Trackpad — declare tap-to-click and gestures
+      trackpad = {
+        Clicking = true; # tap to click
+        TrackpadRightClick = true; # two-finger right click
+        TrackpadThreeFingerDrag = true;
+      };
+
+      # Screenshots — save to ~/Screenshots as PNG, no window shadows
+      screencapture = {
+        location = "~/Screenshots";
+        type = "png";
+        disable-shadow = true;
+      };
+
+      # Window Manager — disable Stage Manager (AeroSpace handles tiling)
+      WindowManager = {
+        GloballyEnabled = false;
+        EnableStandardClickToShowDesktop = false;
+      };
+
       # Dock — use native typed options
       dock = {
         autohide = false;
@@ -130,6 +150,91 @@ _: {
           AutomaticDownload = 1;
           # Install System data files & security updates
           CriticalUpdateInstall = 1;
+        };
+        # Disable Spotlight indexing (Raycast replaces Spotlight)
+        "com.apple.Spotlight" = {
+          orderedItems = [
+            {
+              enabled = false;
+              name = "APPLICATIONS";
+            }
+            {
+              enabled = false;
+              name = "MENU_SPOTLIGHT_SUGGESTIONS";
+            }
+            {
+              enabled = false;
+              name = "MENU_CONVERSION";
+            }
+            {
+              enabled = false;
+              name = "MENU_EXPRESSION";
+            }
+            {
+              enabled = false;
+              name = "MENU_DEFINITION";
+            }
+            {
+              enabled = false;
+              name = "SYSTEM_PREFS";
+            }
+            {
+              enabled = false;
+              name = "DOCUMENTS";
+            }
+            {
+              enabled = false;
+              name = "DIRECTORIES";
+            }
+            {
+              enabled = false;
+              name = "PRESENTATIONS";
+            }
+            {
+              enabled = false;
+              name = "SPREADSHEETS";
+            }
+            {
+              enabled = false;
+              name = "PDF";
+            }
+            {
+              enabled = false;
+              name = "MESSAGES";
+            }
+            {
+              enabled = false;
+              name = "CONTACT";
+            }
+            {
+              enabled = false;
+              name = "EVENT_TODO";
+            }
+            {
+              enabled = false;
+              name = "IMAGES";
+            }
+            {
+              enabled = false;
+              name = "BOOKMARKS";
+            }
+            {
+              enabled = false;
+              name = "MUSIC";
+            }
+            {
+              enabled = false;
+              name = "MOVIES";
+            }
+            {
+              enabled = false;
+              name = "FONTS";
+            }
+            {
+              enabled = false;
+              name = "MENU_OTHER";
+            }
+          ];
         };
       };
     };
