@@ -12,28 +12,28 @@
         # Darwin-specific network aliases
         ports = "sudo lsof -iTCP -sTCP:LISTEN -n -P";
         conns = "netstat -an | grep ESTABLISHED";
-        nixbuild = "sudo darwin-rebuild build --flake ~/nix-config#${hostName}"; # Build only
-        nixswitch = "sudo darwin-rebuild switch --flake ~/nix-config#${hostName}"; # Build and activate
-        nixcheck = "sudo darwin-rebuild check --flake ~/nix-config#${hostName}"; # Check configuration
-        nixdry = "sudo darwin-rebuild dry-build --flake ~/nix-config#${hostName}"; # Test build without making changes
-        nixedit = "sudo darwin-rebuild edit --flake ~/nix-config#${hostName}"; # Open configuration in $EDITOR
+        nixbuild = "sudo darwin-rebuild build --flake ~/nix-config\\#${hostName}"; # Build only
+        nixswitch = "sudo darwin-rebuild switch --flake ~/nix-config\\#${hostName}"; # Build and activate
+        nixcheck = "sudo darwin-rebuild check --flake ~/nix-config\\#${hostName}"; # Check configuration
+        nixdry = "sudo darwin-rebuild dry-build --flake ~/nix-config\\#${hostName}"; # Test build without making changes
+        nixedit = "sudo darwin-rebuild edit --flake ~/nix-config\\#${hostName}"; # Open configuration in $EDITOR
         nixlist = "sudo darwin-rebuild --list-generations"; # List all generations
         nixrollback = "sudo darwin-rebuild switch --rollback"; # Rollback to previous generation
-        nixtrace = "sudo darwin-rebuild switch --flake ~/nix-config#${hostName} --show-trace"; # Show trace for debugging
-        nixverbose = "sudo darwin-rebuild switch --flake ~/nix-config#${hostName} --verbose"; # Verbose output
+        nixtrace = "sudo darwin-rebuild switch --flake ~/nix-config\\#${hostName} --show-trace"; # Show trace for debugging
+        nixverbose = "sudo darwin-rebuild switch --flake ~/nix-config\\#${hostName} --verbose"; # Verbose output
       }
       else {
         # NixOS rebuild commands
         nixb = "sudo nixos-rebuild"; # Base command
-        nixbuild = "sudo nixos-rebuild build --flake ~/nix-config#${hostName}"; # Build only
-        nixswitch = "sudo nixos-rebuild switch --flake ~/nix-config#${hostName}"; # Build and activate
-        nixcheck = "sudo nixos-rebuild dry-build --flake ~/nix-config#${hostName}"; # Check configuration
-        nixdry = "sudo nixos-rebuild dry-build --flake ~/nix-config#${hostName}"; # Test build without making changes
-        nixedit = "sudo nixos-rebuild edit --flake ~/nix-config#${hostName}"; # Open configuration in $EDITOR
+        nixbuild = "sudo nixos-rebuild build --flake ~/nix-config\\#${hostName}"; # Build only
+        nixswitch = "sudo nixos-rebuild switch --flake ~/nix-config\\#${hostName}"; # Build and activate
+        nixcheck = "sudo nixos-rebuild dry-build --flake ~/nix-config\\#${hostName}"; # Check configuration
+        nixdry = "sudo nixos-rebuild dry-build --flake ~/nix-config\\#${hostName}"; # Test build without making changes
+        nixedit = "sudo nixos-rebuild edit --flake ~/nix-config\\#${hostName}"; # Open configuration in $EDITOR
         nixlist = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system"; # List all generations
         nixrollback = "sudo nixos-rebuild switch --rollback"; # Rollback to previous generation
-        nixtrace = "sudo nixos-rebuild switch --flake ~/nix-config#${hostName} --show-trace"; # Show trace for debugging
-        nixverbose = "sudo nixos-rebuild switch --flake ~/nix-config#${hostName} --verbose"; # Verbose output
+        nixtrace = "sudo nixos-rebuild switch --flake ~/nix-config\\#${hostName} --show-trace"; # Show trace for debugging
+        nixverbose = "sudo nixos-rebuild switch --flake ~/nix-config\\#${hostName} --verbose"; # Verbose output
       }
     )
     // {

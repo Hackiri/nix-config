@@ -1,6 +1,6 @@
 # Pure vim mode keybindings with cursor shape switching and custom widgets
-_: {
-  programs.zsh.initContent = ''
+{lib, ...}: {
+  programs.zsh.initContent = lib.mkBefore ''
     # Enable vim mode
     bindkey -v
     export KEYTIMEOUT=1
