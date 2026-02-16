@@ -41,7 +41,7 @@
       # Neovim-specific formatters (not in profiles)
       nodePackages.prettier # JavaScript/TypeScript/CSS/HTML/JSON/YAML/Markdown formatter
       shfmt # Shell script formatter
-      python311Packages.ruff # Python linter and formatter (CLI)
+      ruff # Python linter and formatter (CLI)
       templ # Go template formatter
     ];
 
