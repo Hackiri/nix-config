@@ -97,11 +97,29 @@
       tmux send-keys -t "$selected_name" "nvim" C-m
     fi
   '';
+
+  tmux-session-picker = pkgs.writeScriptBin "tmux-session-picker" ''
+    #!/usr/bin/env bash
+    session=$(tmux list-sessions -F "#{session_name}" \
+      | ${pkgs.fzf}/bin/fzf --preview "tmux capture-pane -ep -t {}")
+    [ -n "$session" ] && tmux switch-client -t "$session"
+  '';
+
+  tmux-session-kill = pkgs.writeScriptBin "tmux-session-kill" ''
+    #!/usr/bin/env bash
+    tmux list-sessions -F "#{session_name}" \
+      | ${pkgs.fzf}/bin/fzf --multi \
+      | while read -r session; do
+          tmux kill-session -t "$session"
+        done
+  '';
 in {
   # Install custom tmux scripts and standard packages
   home.packages = [
     truncate_path # Custom path truncation script
     tmux-sessionizer # Custom tmux session finder
+    tmux-session-picker # fzf session switcher with preview
+    tmux-session-kill # fzf batch session killer
   ];
   # Note: Standard tmux packages (tmuxinator, fzf, etc.) are in home/packages/terminals.nix
 
@@ -122,8 +140,8 @@ in {
       sensible
       resurrect
       continuum
-      tmux-thumbs # Quick pattern-copy from terminal (prefix+Space)
-      fzf-tmux-url # Quick URL opening from terminal (prefix+u)
+      tmux-thumbs # Quick pattern-copy from terminal (prefix+F)
+      fzf-tmux-url # Quick URL opening from terminal (prefix+U)
     ];
 
     extraConfig = ''
