@@ -5,7 +5,7 @@ return {
   version = "*",
   keys = {
     {
-      "<leader>th",
+      "<leader>bh",
       function()
         require("close_buffers").delete({ type = "hidden" })
       end,

@@ -12,6 +12,8 @@ return {
       { "jay-babu/mason-nvim-dap.nvim" },
       -- Python adapter
       { "mfussenegger/nvim-dap-python" },
+      -- Go adapter
+      { "leoluz/nvim-dap-go" },
     },
     keys = {
       {
@@ -138,8 +140,23 @@ return {
         return
       end
 
-      -- Set up UI
-      dapui.setup()
+      -- Set up UI with custom icons
+      dapui.setup({
+        icons = { expanded = "▾", collapsed = "▸", current_frame = "*" },
+        controls = {
+          icons = {
+            pause = "⏸",
+            play = "▶",
+            step_into = "⏎",
+            step_over = "⏭",
+            step_out = "⏮",
+            step_back = "b",
+            run_last = "▶▶",
+            terminate = "⏹",
+            disconnect = "⏏",
+          },
+        },
+      })
 
       -- Set up virtual text
       require("nvim-dap-virtual-text").setup({
@@ -172,16 +189,45 @@ return {
       -- Safely set up Python debugging
       local dap_python_ok, dap_python = pcall(require, "dap-python")
       if dap_python_ok then
-        -- Use Mason's debugpy installation
-        local mason_registry = require("mason-registry")
-        if mason_registry.is_installed("debugpy") then
-          local debugpy_path = mason_registry.get_package("debugpy"):get_install_path()
-          dap_python.setup(debugpy_path .. "/venv/bin/python")
+        -- Try Mason's debugpy installation first ($MASON/packages/ is the install root)
+        local mason_debugpy = vim.fn.expand("$MASON/packages/debugpy/venv/bin/python")
+        if vim.fn.executable(mason_debugpy) == 1 then
+          dap_python.setup(mason_debugpy)
         else
-          -- Fallback to system Python
           dap_python.setup(python_path)
-          vim.notify("Mason debugpy not found, using system Python", vim.log.levels.WARN)
         end
+      end
+
+      -- Go configuration
+      local dap_go_ok, dap_go = pcall(require, "dap-go")
+      if dap_go_ok then
+        dap_go.setup()
+      end
+
+      -- LLDB adapter for C/C++/Rust
+      local lldb_path = vim.fn.exepath("lldb-dap")
+      if lldb_path ~= "" then
+        dap.adapters.lldb = {
+          type = "executable",
+          command = lldb_path,
+          name = "lldb",
+        }
+
+        dap.configurations.cpp = {
+          {
+            name = "Launch",
+            type = "lldb",
+            request = "launch",
+            program = function()
+              return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+            end,
+            cwd = "${workspaceFolder}",
+            stopOnEntry = false,
+            args = {},
+          },
+        }
+        dap.configurations.c = dap.configurations.cpp
+        dap.configurations.rust = dap.configurations.cpp
       end
 
       -- JavaScript/TypeScript debugging with vscode-js-debug
@@ -203,16 +249,13 @@ return {
 
       -- Set up js-debug-adapter with multiple path finding strategies
       local function find_js_debug()
-        -- Strategy 1: Check if installed via Mason
-        local mason_registry = require("mason-registry")
-        if mason_registry.is_installed("js-debug-adapter") then
-          local js_debug_path = mason_registry.get_package("js-debug-adapter"):get_install_path()
-
-          -- Check common paths within the Mason installation
+        -- Strategy 1: Check if installed via Mason ($MASON/packages/)
+        local mason_path = vim.fn.expand("$MASON/packages/js-debug-adapter")
+        if vim.fn.isdirectory(mason_path) == 1 then
           local possible_paths = {
-            js_debug_path .. "/js-debug/src/dapDebugServer.js",
-            js_debug_path .. "/src/dapDebugServer.js",
-            js_debug_path .. "/out/src/dapDebugServer.js",
+            mason_path .. "/js-debug/src/dapDebugServer.js",
+            mason_path .. "/src/dapDebugServer.js",
+            mason_path .. "/out/src/dapDebugServer.js",
           }
 
           for _, path in ipairs(possible_paths) do
@@ -221,8 +264,7 @@ return {
             end
           end
 
-          -- Try to find the file in the installation directory
-          local found_files = vim.fn.glob(js_debug_path .. "/**/dapDebugServer.js", true, true)
+          local found_files = vim.fn.glob(mason_path .. "/**/dapDebugServer.js", true, true)
           if #found_files > 0 then
             return found_files[1]
           end
@@ -309,9 +351,8 @@ return {
       },
     },
     config = function()
-      -- This ensures dapui is properly loaded
-      local dapui = require("dapui")
-      dapui.setup()
+      -- Ensure dapui is properly loaded (setup handled in main dap config)
+      require("dapui")
     end,
   },
 

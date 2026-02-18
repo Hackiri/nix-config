@@ -293,27 +293,17 @@ return {
       },
     })
 
-    -- Keymaps
+    -- Custom keymaps (LazyVim provides: <leader>bp=pin, <leader>bP=delete-unpinned,
+    -- <S-h>/<S-l>=navigate, [b/]b=navigate, [B/]B=move, <leader>br/bl=close right/left)
     local map = vim.keymap.set
     local opts = { noremap = true, silent = true }
 
-    -- Navigate buffers
-    map("n", "<leader>bp", "<cmd>BufferLineCyclePrev<cr>", opts)
-    map("n", "<leader>bn", "<cmd>BufferLineCycleNext<cr>", opts)
-
-    -- Move buffers
-    map("n", "<leader>bP", "<cmd>BufferLineMovePrev<cr>", opts)
-    map("n", "<leader>bN", "<cmd>BufferLineMoveNext<cr>", opts)
-
-    -- Pin/unpin buffer
-    map("n", "<leader>bp", "<cmd>BufferLineTogglePin<cr>", opts)
-
-    -- Close buffers
+    -- Close buffers (vim-bbye for clean close)
     map("n", "<leader>bx", "<cmd>Bdelete!<cr>", opts) -- Close current buffer
     map("n", "<leader>bX", "<cmd>BufferLineCloseOthers<cr>", opts) -- Close other buffers
 
     -- Magic buffer-picking mode
-    map("n", "<leader>bl", "<cmd>BufferLinePick<cr>", opts)
+    map("n", "<leader>bk", "<cmd>BufferLinePick<cr>", opts)
 
     -- Sort by tabs or buffers
     map("n", "<leader>bb", "<cmd>BufferLineToggleMode<cr>", opts)

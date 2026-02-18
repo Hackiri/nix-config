@@ -209,11 +209,11 @@ return {
         desc = "Fast Rename Current File",
       },
       {
-        "<leader>dB",
+        "<leader>bD",
         function()
           require("snacks").bufdelete()
         end,
-        desc = "Delete or Close Buffer  (Confirm)",
+        desc = "Delete Buffer (Confirm)",
       },
 
       -- File Navigation
@@ -365,19 +365,6 @@ return {
       },
 
       -- Git
-      {
-        "<leader>gl",
-        function()
-          Snacks.picker.git_log({
-            finder = "git_log",
-            format = "git_log",
-            preview = "git_show",
-            confirm = "git_checkout",
-            layout = "vertical",
-          })
-        end,
-        desc = "Git Log",
-      },
       {
         "<M-b>",
         function()

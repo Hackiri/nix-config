@@ -6,7 +6,7 @@ return {
   "iamcco/markdown-preview.nvim",
   keys = {
     {
-      "<leader>mp",
+      "<leader>mP",
       ft = "markdown",
       "<cmd>MarkdownPreviewToggle<cr>",
       desc = "Markdown Preview",

@@ -113,7 +113,7 @@ return {
 
     -- System file explorer (macOS/Linux)
     {
-      "<leader>fF",
+      "<leader>Fe",
       function()
         require("genghis").showInSystemExplorer()
       end,

@@ -18,7 +18,7 @@ return {
       desc = "AI Explain Diagnostic",
     },
     {
-      "<leader>dw",
+      "<leader>dW",
       function()
         require("wtf").search()
       end,

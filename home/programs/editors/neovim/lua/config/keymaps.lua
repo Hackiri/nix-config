@@ -95,9 +95,7 @@ map("n", "<C-g>", "<cmd>FzfLua quickfix<CR>", { desc = "Filter Quickfix with fzf
 -- Note: LSP keymaps are configured in lua/plugins/lsp.lua on_attach
 
 -- Diagnostic Toggles
-map("n", "<leader>dt", function()
-  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
-end, { desc = "Toggle diagnostics" })
+-- Note: <leader>ud (LazyVim default) toggles diagnostics on/off
 
 -- Toggle virtual text diagnostics mode (all lines vs current line only)
 -- Neovim 0.11+ feature to reduce clutter

@@ -25,7 +25,7 @@ return {
   keys = {
     -- MOVE
     {
-      "<C-j>",
+      "]f",
       function()
         local move = require("nvim-treesitter-textobjects.move")
         move.goto_next_start("@function.outer", "textobjects")
@@ -33,7 +33,7 @@ return {
       desc = " Goto next function",
     },
     {
-      "<C-k>",
+      "[f",
       function()
         local move = require("nvim-treesitter-textobjects.move")
         move.goto_previous_start("@function.outer", "textobjects")
