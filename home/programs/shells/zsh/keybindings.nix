@@ -21,15 +21,12 @@
     }
     zle -N zle-line-init
 
-    # Prefix-based history search with arrow keys
-    # Type "git" then press Up to cycle through commands starting with "git"
-    autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
-    zle -N up-line-or-beginning-search
-    zle -N down-line-or-beginning-search
-    bindkey '^[[A' up-line-or-beginning-search   # Up arrow
-    bindkey '^[[B' down-line-or-beginning-search  # Down arrow
-    bindkey -M vicmd 'k' up-line-or-beginning-search
-    bindkey -M vicmd 'j' down-line-or-beginning-search
+    # History substring search (requires historySubstringSearch plugin)
+    # Type text then press Up/Down to search history for matching substrings
+    bindkey '^[[A' history-substring-search-up
+    bindkey '^[[B' history-substring-search-down
+    bindkey -M vicmd 'k' history-substring-search-up
+    bindkey -M vicmd 'j' history-substring-search-down
 
     # Accept and hold — run command but keep it on the line for re-execution
     bindkey '^\' accept-and-hold

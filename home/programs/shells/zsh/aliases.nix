@@ -27,8 +27,8 @@
         nixb = "sudo nixos-rebuild"; # Base command
         nixbuild = "sudo nixos-rebuild build --flake ~/nix-config\\#${hostName}"; # Build only
         nixswitch = "sudo nixos-rebuild switch --flake ~/nix-config\\#${hostName}"; # Build and activate
-        nixcheck = "sudo nixos-rebuild dry-build --flake ~/nix-config\\#${hostName}"; # Check configuration
-        nixdry = "sudo nixos-rebuild dry-build --flake ~/nix-config\\#${hostName}"; # Test build without making changes
+        nixcheck = "sudo nixos-rebuild dry-activate --flake ~/nix-config\\#${hostName}"; # Build and show what would change
+        nixdry = "sudo nixos-rebuild dry-build --flake ~/nix-config\\#${hostName}"; # Evaluate without building
         nixedit = "sudo nixos-rebuild edit --flake ~/nix-config\\#${hostName}"; # Open configuration in $EDITOR
         nixlist = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system"; # List all generations
         nixrollback = "sudo nixos-rebuild switch --rollback"; # Rollback to previous generation
@@ -59,10 +59,9 @@
       kgn = "kubectl get nodes";
       kgc = "kubectl get configmaps";
       kgsec = "kubectl get secrets";
-      kgaa = "kubectl get all -A";
+      kgaa = "kubectl get all -A"; # also covers kall
       kgpsn = "kubectl get pods --namespace";
       kdaa = "kubectl delete all --all -n";
-      krestartpo = "kubectl rollout restart deployment";
 
       # Helm aliases
       h = "helm";
@@ -123,7 +122,7 @@
       kfwd = "kubectl port-forward";
 
       # Useful lists and all-resources views
-      kall = "kubectl get all --all-namespaces";
+
       kga = "kubectl get all";
       ksvcns = "kubectl get svc -n";
 
@@ -173,7 +172,7 @@
       lse = "eza --icons -l -T -L=1";
       l = "eza --icons -l";
       ll = "eza --icons -la";
-      lsa = "eza --icons -la";
+
       lstree = "eza --icons -T";
       hist = "history | grep";
 
