@@ -129,7 +129,7 @@ in {
     terminal = "tmux-256color";
     historyLimit = 1000000;
     keyMode = "vi";
-    customPaneNavigationAndResize = true;
+    customPaneNavigationAndResize = false;
     escapeTime = 0;
     baseIndex = 1;
 
