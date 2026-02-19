@@ -368,6 +368,6 @@ Detailed documentation for specific components:
 
 ### Programs
 
-- **[Zsh Configuration](home/programs/shells/zsh/README.md)** - Zsh setup with FZF keybindings, aliases, and Oh My Zsh
+- **[Zsh Configuration](home/programs/shells/zsh/README.md)** - Zsh setup with vim mode, FZF commands, and aliases
 - **[Development Tools](home/programs/development/README.md)** - Direnv layouts and Git configuration (basic or sops)
 - **[Neovim Snippets](home/programs/editors/neovim/lua/snippets/README.md)** - LuaSnip snippets for multiple languages

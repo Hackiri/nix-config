@@ -46,7 +46,7 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 - Network essentials (curl, wget)
 - System utilities (htop, fastfetch)
 - File processing (zip, unzip, gzip)
-- Shell configuration (zsh with oh-my-zsh)
+- Shell configuration (zsh with native plugins)
 - Essential utilities (btop)
 
 **Used by**: All other profiles
@@ -260,7 +260,7 @@ Package collections are in `../packages/`:
 Program-specific configurations are in `../programs/`:
 - `development/` - Direnv, basic Git
 - `editors/` - Neovim, Emacs, Neovide
-- `shells/` - Zsh, oh-my-zsh
+- `shells/` - Zsh with fzf-tab and native plugins
 - `terminals/` - Alacritty, Ghostty, Tmux
 - `utilities/` - AeroSpace, btop, Claude, yazi
 

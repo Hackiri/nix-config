@@ -1,458 +1,342 @@
 # Zsh Configuration
 
-A modern, feature-rich Zsh configuration managed through Home Manager, providing an enhanced shell environment with integrated tools and productivity features.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Maintenance](#maintenance)
-- [Troubleshooting](#troubleshooting)
+A modern Zsh configuration managed through Home Manager with vim mode, fzf-tab completion, and FZF-powered commands for Git, Kubernetes, Cilium, and Claude Code.
 
 ## Overview
 
-This configuration provides a comprehensive Zsh environment optimized for development workflows. It integrates Oh My Zsh, custom plugins, and FZF keybindings to create a powerful and user-friendly shell experience.
+This configuration provides a native Zsh environment without frameworks like oh-my-zsh. Shell options, completion, keybindings, and FZF integrations are each defined in dedicated Nix modules imported by `default.nix`.
 
-## Features
+### Key Features
 
-### Core Configuration
-- Home Manager integration for declarative configuration
-- Extended globbing and case-insensitive completion
-- Custom environment variables for development tools
-- Optimized history management (50,000 entries)
-- Modern theme configuration with Tokyo Night color scheme
-- Starship prompt for fast, customizable shell prompt
+- **Vim mode** with cursor shape switching (block in normal, beam in insert)
+- **fzf-tab** for fuzzy completion with file/directory previews
+- **Native plugins**: syntax highlighting, autosuggestions, history-substring-search
+- **FZF commands** for Git, Kubernetes, Cilium, and Claude Code
+- **Direnv auto-detect** hook that creates `.envrc` when project markers are found
+- **Starship prompt** for fast, customizable shell prompt
+- **50,000-entry shared history** with deduplication
+- Optimized completion loading (cache rebuilt once per day)
 
-### Plugin Integration
+## Directory Structure
 
-#### Oh My Zsh
-- Git integration for enhanced repository management
-- Sudo command line editing
-- Directory-specific environment management with direnv
-- Archive extraction utilities
-- Colored man pages for better readability
-- Kubectl, Docker, and Docker Compose integration
-- macOS-specific optimizations
-- JSON tools for JSON manipulation
+```
+zsh/
+├── default.nix         # Main module: imports, session vars, history, zoxide
+├── options.nix         # Shell options (setopt), zmodload, named directories
+├── keybindings.nix     # Vim mode, cursor switching, history-substring-search keys
+├── completion.nix      # fzf-tab plugin, compinit optimization, zstyle config
+├── fzf.nix             # Shared FZF config: env vars, fzf-down, compgen, comprun
+├── fzf-git.nix         # Git FZF commands (gff, gfb, gft, gfh, gfr, gfs, gfst, gfa, gfc)
+├── fzf-kubectl.nix     # Kubectl FZF commands (kfp, kfn, kfc, kfl, kfe, kfs, kfd, kfx, kff)
+├── fzf-cilium.nix      # Cilium FZF commands (cfp, cfs, cft, cfe, cfm, cfl, cfv, cfu, cfo, cfh, cfd)
+├── fzf-claude.nix      # Claude Code FZF commands (clh, cls, clp, clr, claude-search)
+├── direnv-hook.nix     # chpwd hook: auto-detect project markers, create .envrc
+├── aliases.nix         # All command aliases (nix, k8s, git, modern tools, etc.)
+└── README.md
+```
 
-#### Additional Plugins
-- Auto-suggestions with smart history completion
-- Syntax highlighting for commands and arguments
-- History substring search for better history navigation
-- Integration with zoxide for smart directory jumping
+## Vim Mode
 
-### Command Aliases
+Vim mode is enabled via `bindkey -v` in `keybindings.nix` with `lib.mkBefore` to ensure it loads before FZF commands.
 
-#### System Management (Nix Darwin)
+| Key | Mode | Action |
+|-----|------|--------|
+| `Esc` | insert | Switch to normal mode (block cursor) |
+| `i` | normal | Switch to insert mode (beam cursor) |
+| `v` | normal | Edit command in `$EDITOR` |
+| `Ctrl+X Ctrl+E` | insert | Edit command in `$EDITOR` |
+| `Esc Esc` | any | Toggle `sudo` prefix on current line |
+| `Up` / `Down` | any | History substring search |
+| `k` / `j` | normal | History substring search |
+| `Ctrl+\` | any | Accept and hold (run command, keep on line) |
+
+## FZF Commands
+
+All FZF integration modules define plain shell commands (not ZLE keybindings). Each module is guarded by `command -v` so it only loads when the relevant tool is installed.
+
+### Git Commands (`fzf-git.nix`)
+
+Only available inside git repositories.
+
+| Command | Description |
+|---------|-------------|
+| `gff` | File status browser — modified/untracked files with diff preview |
+| `gfb` | Branch browser — local and remote branches with commit history |
+| `gft` | Tag browser — tags with version sorting and details |
+| `gfh` | History browser — commit log with diff preview (Ctrl+S toggles sort) |
+| `gfr` | Remote browser — remotes with commit history |
+| `gfs` | Stash browser — stashed changes with preview |
+| `gfst` | Interactive status — Ctrl+A to add/unstage, Ctrl+C to commit |
+| `gfa` | Interactive add — multi-select files to stage (TAB) |
+| `gfc` | Interactive commit — opens editor with staged file list |
+
+### Kubectl Commands (`fzf-kubectl.nix`)
+
+| Command | Description |
+|---------|-------------|
+| `kfp` | Pod selector — browse pods with describe preview |
+| `kfn` | Namespace selector — switch namespace with resource preview |
+| `kfc` | Context selector — switch cluster context |
+| `kfl` | Log viewer — select pod, view logs (Ctrl+F to follow) |
+| `kfe` | Exec into pod — select pod/container, open shell |
+| `kfs` | Service selector — browse services with endpoints |
+| `kfd` | Deployment selector — browse deployments with replica status |
+| `kfx` | Delete resource — select type, then resource, with confirmation |
+| `kff` | Port forward — select pod, enter port mapping |
+
+### Cilium Commands (`fzf-cilium.nix`)
+
+| Command | Description |
+|---------|-------------|
+| `cfp` | Pod selector — browse Cilium agent pods |
+| `cfs` | Status — show Cilium status |
+| `cft` | Connectivity test — run Cilium connectivity tests |
+| `cfe` | Endpoint browser — select pod, view endpoint list |
+| `cfm` | Monitor — start Cilium monitor on selected pod |
+| `cfl` | Policy browser — browse CNP/CCNP policies |
+| `cfv` | Service map — view cluster service list |
+| `cfu` | Hubble UI — open with port-forward |
+| `cfo` | Hubble observe — interactive flow observation with filters |
+| `cfh` | Health check — quick Cilium health overview |
+| `cfd` | Debug info — version, status, events from selected pod |
+
+### Claude Code Commands (`fzf-claude.nix`)
+
+| Command | Description |
+|---------|-------------|
+| `clh` | History — browse all prompts across projects |
+| `cls` | Sessions — browse sessions for current project |
+| `clp` | Projects — list all projects with conversation counts |
+| `clr` | Recent — conversations from the last 7 days |
+| `claude-search` | Full-text search across all conversations |
+
+### Built-in FZF Shortcuts
+
+These are standard FZF shell integration shortcuts configured in `fzf.nix`:
+
+| Key | Action |
+|-----|--------|
+| `Ctrl+T` | Fuzzy file finder (preview with bat/eza) |
+| `Alt+C` | Fuzzy directory finder + cd (preview with eza tree) |
+| `Ctrl+R` | Command history search |
+| `Ctrl+/` | Toggle preview in any FZF window |
+
+## Command Aliases
+
+All aliases are defined in `aliases.nix` and shared between zsh and bash.
+
+### System Management (Nix)
+
 ```bash
-# Basic Operations
-nixb         # Base darwin-rebuild command
-nixbuild     # Build only (no activation)
 nixswitch    # Build and activate configuration
-nixcheck     # Check configuration for errors
-nixdry       # Dry build (test without changes)
+nixbuild     # Build only (no activation)
+nixcheck     # Check configuration validity
+nixdry       # Dry run (test build without changes)
 nixedit      # Open configuration in $EDITOR
-
-# System Management
-nixlist      # List all system generations
+nixlist      # List all generations
 nixrollback  # Rollback to previous generation
-nixclean     # Clean old generations and free space
-
-# Debugging
+nixclean     # Clean old generations and garbage collect
 nixtrace     # Show trace for debugging
-nixverbose   # Verbose output during build
+nixverbose   # Verbose output
+```
 
-# Nix Utilities
-nxsearch     # Search nixpkgs for packages
-nxrepl       # Interactive Nix REPL
+### Nix Utilities
+
+```bash
+nxsearch     # Search packages (nix search nixpkgs)
+nxrepl       # Interactive nix REPL
 nxdev        # Enter development shell
 ```
 
-#### Container Operations (Podman)
-```bash
-# Podman Management
-pps          # List containers (formatted table)
-pclean       # Clean stopped containers
-piclean      # Remove dangling images
-pi           # List images
-pcomp        # Podman compose shorthand
-prestart     # Restart compose services
+### Kubernetes
 
-# Docker aliases (mapped to Podman)
-docker       # Alias to podman
-docker-compose # Alias to podman-compose
-```
-
-#### Kubernetes Operations
 ```bash
-# Basic Commands
-k            # kubectl shorthand
+k            # kubectl
 kns          # Set namespace for current context
-
-# Resource Operations
-kg           # Get resources
-kd           # Describe resources
-kl           # View logs
-ke           # Edit resources
-kx           # Execute command in container
+kg/kd/kl/ke  # Get/describe/logs/edit resources
+kx           # Exec into container
 ka           # Apply configuration file
-
-# Pod Management
-kgp          # Get pods
-kgps         # Get pods (sorted by name)
-kgpsn        # Get pods in namespace
-kexec        # Execute command in pod
-kshell       # Open shell in pod
-
-# Service and Deployment
-kgs          # Get services
-kgsvc        # Get services (sorted by name)
-kgd          # Get deployments
-krestartpo   # Restart deployment
-
-# Other Resources
-kgn          # Get nodes
-kgnodes      # Get nodes (wide output)
-kgc          # Get configmaps
-kgsec        # Get secrets
-kgns         # Get namespaces
+kgp/kgs/kgd  # Get pods/services/deployments
+kgn/kgc/kgsec/kgns  # Get nodes/configmaps/secrets/namespaces
 kgaa         # Get all resources in all namespaces
-
-# Monitoring and Debugging
-ktop         # Show pod resource usage
-ktopnodes    # Show node resource usage
+ktop/ktopnodes  # Resource usage for pods/nodes
 kdebug       # Start debug container
-klogs        # View logs
-kevents      # Get events (sorted by creation time)
-
-# Context Management
-kusectx      # Switch context
-kgctx        # Get available contexts
-knschange    # Change namespace
-
-# Deployment Management
-kroll        # Rollout restart
-kstatus      # Rollout status
-kscale       # Scale replicas
-
-# Advanced Operations
+kevents      # Events sorted by time
+kusectx/kgctx  # Switch/list contexts
+kroll/kstatus/kscale  # Rollout restart/status/scale
 kfwd         # Port forward
 kapplyd      # Apply kustomization in current directory
 ```
 
-#### Helm Operations
-```bash
-h            # Helm shorthand
-hi           # Helm install
-hu           # Helm upgrade
-hl           # Helm list
-hd           # Helm delete
-hr           # Helm repo
-hru          # Helm repo update
-hs           # Helm search
-```
-
-#### Version Control (Git)
-```bash
-# Basic Operations
-gaa          # Git add all
-gcmsg        # Git commit with message
-gst          # Show status
-gco          # Checkout
-gcb          # Create and checkout new branch
-gcm          # Checkout main branch
-
-# History and Logs
-gl           # Show log graph (oneline)
-glast        # Show last commit
-
-# Remote Operations
-gpull        # Pull with rebase
-gpush        # Push to current branch
-```
-
-#### Modern Unix Replacements
-```bash
-cat          # bat (syntax highlighting)
-ls           # eza (icons, tree view)
-l            # ls -l
-ll           # ls -alh
-lsa          # ls -a
-find         # fd (modern find)
-grep         # rg (ripgrep)
-ps           # procs (modern ps)
-top          # btm (bottom - system monitor)
-du           # dust (disk usage)
-df           # duf (disk free)
-diff         # colordiff (colored diff)
-```
-
-#### File Management
-```bash
-files        # yazi (terminal file manager)
-lg           # lazygit (terminal git UI)
-vi           # nvim (Neovim)
-vif          # Open file with FZF preview
-fin          # Find and open in nvim
-```
-
-#### FZF Combinations
-```bash
-fcd          # Fuzzy cd to directory
-fh           # Fuzzy search history
-fkill        # Fuzzy kill process
-fenv         # Fuzzy search environment variables
-frg          # Fuzzy ripgrep with preview
-```
-
-#### Tmux
-```bash
-ta           # Attach to session
-tad          # Attach to session (detach others)
-ts           # Create new session
-tl           # List sessions
-tksv         # Kill server
-tkss         # Kill session
-```
-
-#### Other Utilities
-```bash
-dots         # cd to ~/nix-config
-ai           # aichat (AI assistant)
-pcmit        # Run pre-commit on all files
-md           # glow (markdown viewer)
-```
-
-### Keyboard Shortcuts (Keymaps)
-
-The configuration includes powerful keyboard shortcuts for Git, Kubernetes, Talos, and Cilium operations using FZF integration.
-
-#### Git Integration Keymaps
-
-All Git keymaps use `Ctrl+G` followed by another key combination. These only work inside Git repositories.
-
-**File and Status Management:**
-```bash
-Ctrl+G Ctrl+F    # Git File Status Browser
-                 # Shows modified/untracked files with diff preview
-                 # Multi-select with TAB
-
-Ctrl+G Ctrl+ST   # Enhanced Git Status (interactive)
-                 # Press Ctrl+A to add/unstage files
-                 # Press Ctrl+C to commit
-                 # Live diff preview
-
-Ctrl+G Ctrl+A    # Interactive Git Add
-                 # Multi-select files to stage (TAB to select)
-                 # Shows diff for modified files, content for new files
-```
-
-**Branch and Tag Management:**
-```bash
-Ctrl+G Ctrl+B    # Git Branch Browser
-                 # Lists local and remote branches
-                 # Shows commit history for selected branch
-                 # Multi-select supported
-
-Ctrl+G Ctrl+T    # Git Tag Browser
-                 # Lists all tags with version sorting
-                 # Shows tag details and associated commits
-```
-
-**History and Commits:**
-```bash
-Ctrl+G Ctrl+H    # Git History Browser
-                 # Interactive commit history with diff preview
-                 # Press Ctrl+S to toggle sort order
-                 # Multi-select commits
-
-Ctrl+G Ctrl+C    # Interactive Git Commit
-                 # Opens editor for commit message
-                 # Shows staged files and their status
-                 # Auto-filters out comments
-```
-
-**Remote and Stash:**
-```bash
-Ctrl+G Ctrl+R    # Git Remote Browser
-                 # Lists remotes with their URLs
-                 # Shows commit history for each remote
-
-Ctrl+G Ctrl+S    # Git Stash Browser
-                 # Browse stashed changes
-                 # Preview stash contents
-```
-
-#### Kubectl Integration Keymaps
-
-Kubernetes operations with `Ctrl+K` prefix. Includes FZF-powered resource browsing.
-
-#### Talos Integration Keymaps
-
-Talos operations with FZF integration for cluster management.
-
-#### Cilium Integration Keymaps
-
-Cilium operations with FZF integration for network policy and troubleshooting.
-
-#### FZF Navigation Keymaps
-
-Built-in FZF shortcuts for file and directory navigation:
+### Helm
 
 ```bash
-Ctrl+T           # Fuzzy file/directory finder
-                 # Search recursively from current directory
-                 # Preview files with syntax highlighting (bat)
-                 # Preview directories with tree structure (eza)
-
-Alt+C            # Fuzzy directory finder + cd
-                 # Quickly navigate to any subdirectory
-                 # Preview directory structure
-
-Ctrl+R           # Command history search
-                 # Fuzzy find previous commands
-                 # Execute or edit selected command
+h/hi/hu/hl/hd  # helm/install/upgrade/list/delete
+hr/hru/hs      # repo/repo-update/search
 ```
 
-#### Preview Features
-
-All FZF keymaps include intelligent previews:
-- **Files**: Syntax-highlighted content (first 500 lines) using bat
-- **Directories**: Tree structure (first 200 lines) using eza
-- **Git diffs**: Color-coded changes
-- **Git commits**: Full commit details and diff
-- **Git branches**: Commit history graph
-
-Press `Ctrl+/` in any FZF window to toggle preview visibility.
-
-## Configuration
-
-### Directory Structure
-```
-zsh/
-├── aliases.nix       # Command shortcuts and aliases
-├── default.nix       # Shell and plugin settings
-├── fzf-cilium.nix    # FZF keybindings for Cilium operations
-├── fzf-git.nix       # FZF keybindings for Git operations
-├── fzf-kubectl.nix   # FZF keybindings for Kubectl operations
-├── fzf-talos.nix     # FZF keybindings for Talos operations
-└── themes/           # Custom Zsh themes
-    ├── agnoster.zsh-theme
-    └── jonathan.zsh-theme
-```
-
-### Required Components
-- Nix package manager
-- Home Manager
-- Git
-- Darwin (for macOS system management)
-
-### Core Packages
-The following packages are automatically installed and configured:
-- `oh-my-zsh`: Zsh framework with plugins
-- `zsh-autosuggestions`: Command suggestions from history
-- `zsh-syntax-highlighting`: Real-time syntax highlighting
-- `zsh-history-substring-search`: Better history search
-- `direnv`: Environment management
-- `fzf`: Fuzzy finding
-- `zoxide`: Smart directory jumping (replaces `cd`)
-- `bat`: Modern cat replacement with syntax highlighting
-- `eza`: Modern ls replacement with icons
-- `fd`: Modern find replacement
-- `ripgrep`: Fast grep alternative
-- `starship`: Cross-shell prompt
-
-## Usage
-
-### Installation
-This configuration is automatically loaded through the Nix configuration. The Zsh configuration is integrated into the Home Manager setup.
-
-### Daily Usage
-```bash
-# Navigate directories
-cd <partial-path>  # Uses zoxide smart jumping
-Ctrl+T             # Fuzzy find files
-Alt+C              # Fuzzy find directories
-
-# Git operations
-Ctrl+G Ctrl+F      # Browse and stage files
-Ctrl+G Ctrl+B      # Browse branches
-Ctrl+G Ctrl+H      # Browse commit history
-
-# System management
-nixswitch          # Apply configuration changes
-nixdry             # Test configuration changes
-nixclean           # Clean old generations
-```
-
-### Updates
-The configuration is declaratively managed through Nix, so updates are applied by modifying the configuration files and rebuilding:
+### Git
 
 ```bash
-nixdry             # Test configuration changes
-nixswitch          # Apply changes
+gaa/gcmsg/gst  # Add all / commit -m / status
+gco/gcb/gcm    # Checkout / new branch / main
+gl/glast       # Log graph / last commit
+gpull/gpush    # Pull --rebase / push
+gd/gds/gdw/gdn  # Diff / staged / word / name-only
 ```
+
+### Container Operations (Podman)
+
+```bash
+pps/pi         # List containers/images
+pclean/piclean # Clean stopped containers / dangling images
+pcomp/prestart # Compose / restart compose
+docker         # Alias to podman
+docker-compose # Alias to podman-compose
+```
+
+### Modern Unix Replacements
+
+```bash
+l / ll         # eza -l / eza -la (with icons)
+lse            # eza tree (1 level)
+lstree         # eza tree (full)
+cdiff          # colordiff
+prs            # procs
+lg             # lazygit
+md             # glow (markdown viewer)
+```
+
+### FZF Combinations
+
+```bash
+vif            # Open file with FZF + bat preview in nvim
+fcd            # Fuzzy cd to directory
+fh             # Fuzzy search history
+fkill          # Fuzzy kill process
+fenv           # Fuzzy search environment variables
+frg            # Fuzzy ripgrep with preview
+fin            # FZF → open in nvim
+```
+
+### File and Navigation
+
+```bash
+vi             # nvim
+files          # yazi file manager
+dots           # cd ~/nix-config
+..  ...  ....  # cd up 1/2/3 levels
+```
+
+### Zsh-specific Features
+
+Defined in `aliases.nix` `initContent` (not available in bash):
+
+**Suffix aliases** — open files by typing the filename:
+```bash
+file.py        # runs python3 file.py
+file.md        # runs glow file.md
+file.json      # runs jq . file.json
+repo.git       # runs git clone repo.git
+```
+
+**Global aliases** — substituted anywhere on the line:
+```bash
+command G      # | grep
+command L      # | less
+command H      # | head -20
+command J      # | jq .
+command C      # | wc -l
+```
+
+**Extract function** — handles tar.gz, zip, 7z, xz, zst, rar, bz2, etc.
+
+## Direnv Auto-detect Hook
+
+When you `cd` into a directory, `direnv-hook.nix` checks for project markers and offers to create a devShell environment:
+
+| Marker file | DevShell |
+|-------------|----------|
+| `Cargo.toml` | rust |
+| `package.json` | node |
+| `go.mod` | go |
+| `pyproject.toml` / `requirements.txt` / `setup.py` | python |
+| `Gemfile` | ruby |
+| `composer.json` | php |
+
+The hook generates a `flake.nix` in `~/.cache/direnv-flakes/` and a `.envrc` pointing to it, keeping the project directory clean. It also adds `.envrc` and `.direnv` to `.git/info/exclude`.
+
+Skipped when: `.envrc` already exists, current directory is `$HOME` or `~/nix-config`, no markers found.
+
+## Core Packages
+
+The following are automatically installed and configured:
+
+- `zsh-fzf-tab` — Fuzzy completion with previews (replaces default tab menu)
+- `zsh-syntax-highlighting` — Real-time command highlighting
+- `zsh-autosuggestions` — History-based command suggestions
+- `zsh-history-substring-search` — Type then Up/Down to filter history
+- `fzf` + `fd` — Fuzzy finding with modern file search
+- `bat` — Syntax-highlighted file previews
+- `eza` — Modern ls with icons and tree view
+- `ripgrep` — Fast grep for FZF integrations
+- `zoxide` — Smart directory jumping via `z` / `zi` commands (does NOT override `cd`)
+- `starship` — Cross-shell prompt
+- `direnv` — Per-directory environment management
 
 ## Maintenance
 
 ### Configuration Files
-- `default.nix`: Main shell configuration, plugins, and initialization
-- `aliases.nix`: All command aliases
-- `fzf-git.nix`: Git FZF keybindings
-- `fzf-kubectl.nix`: Kubectl FZF keybindings
-- `fzf-talos.nix`: Talos FZF keybindings
-- `fzf-cilium.nix`: Cilium FZF keybindings
-- `themes/`: Custom Zsh prompt themes (Starship is used by default)
+
+| File | Purpose |
+|------|---------|
+| `default.nix` | Main module: imports, session vars, history, zoxide init |
+| `options.nix` | Shell options (setopt), zmodload, named directories |
+| `keybindings.nix` | Vim mode, cursor shape, history-substring-search bindings |
+| `completion.nix` | fzf-tab plugin, compinit cache, zstyle completion config |
+| `fzf.nix` | FZF defaults, preview config, compgen/comprun |
+| `fzf-git.nix` | Git FZF commands |
+| `fzf-kubectl.nix` | Kubectl FZF commands |
+| `fzf-cilium.nix` | Cilium FZF commands |
+| `fzf-claude.nix` | Claude Code FZF commands |
+| `direnv-hook.nix` | Auto-detect chpwd hook |
+| `aliases.nix` | All aliases (shared zsh + bash) |
 
 ### Update Process
+
 1. Modify configuration files as needed
 2. Test changes with `nixdry` to verify no errors
 3. Apply changes with `nixswitch`
 4. If issues occur, use `nixrollback` to revert
 
-### Performance Optimization
-The configuration includes several performance optimizations:
-- Completion cache rebuilt only once per day
-- Async auto-suggestions
-- Limited auto-suggest buffer size (20 characters)
-- Disabled magic functions for faster startup
-- Optimized completion loading with `compinit -C`
-
 ## Troubleshooting
 
-### Common Issues
+### FZF Commands Not Working
 
-1. **Plugin Loading Failures**
-   - Verify plugin configuration in [default.nix](default.nix)
-   - Check that required packages are installed
-   - Ensure Oh My Zsh is properly initialized
+- Verify FZF is installed: `fzf --version`
+- Git commands require being inside a git repo
+- Kubectl/Cilium commands require the tool to be installed
+- Claude commands require `claude` CLI to be installed
 
-2. **Performance Issues**
-   - Review enabled plugins in [default.nix](default.nix#L111-L122)
-   - Monitor startup time: Add `zmodload zsh/zprof` at the start of initContent and `zprof` at the end
-   - Check for conflicting configurations
-   - Ensure completion cache is being used
+### Completion Issues
 
-3. **Prompt Display Problems**
-   - Verify Starship is installed and initialized
-   - Check font compatibility (requires Nerd Fonts for icons)
-   - Review theme configuration
-   - Ensure `$TERM` is set correctly
+- Rebuild completion cache: delete `~/.cache/zsh/.zcompdump` and restart shell
+- Verify fzf-tab is loaded: `type _fzf_tab_complete` should show a function
 
-4. **FZF Keybindings Not Working**
-   - Verify FZF is installed: `fzf --version`
-   - Check that FZF initialization scripts are sourced
-   - Ensure no conflicting keybindings in other configurations
-   - Test in a clean shell: `zsh -f`
+### Vim Mode Issues
 
-5. **Oh My Zsh Not Found**
-   - Check that `$ZSH` environment variable points to correct location
-   - Verify Oh My Zsh package is installed via Nix
-   - Ensure oh-my-zsh.sh exists at `$ZSH/oh-my-zsh.sh`
+- `KEYTIMEOUT=1` is set for responsive mode switching
+- If chords feel sluggish, check for conflicting keybindings
+- Backspace and delete keys are explicitly bound for insert mode
 
-6. **Zoxide Not Working**
-   - Verify initialization: `which cd` should show zoxide wrapper
-   - Check that zoxide is installed: `zoxide --version`
-   - Rebuild database: `zoxide query --list`
+### Zoxide Not Working
+
+- Uses `z` and `zi` commands (does NOT override `cd`)
+- Verify zoxide is installed: `zoxide --version`
+- Check database: `zoxide query --list`
+
+### Direnv Auto-detect Not Triggering
+
+- Only runs on `chpwd` (directory change), not in current directory
+- Skipped if `.envrc` already exists
+- Check that the hook is registered: `type _direnv_auto_detect`
