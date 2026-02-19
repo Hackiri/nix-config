@@ -13,15 +13,7 @@
   home.homeDirectory = "/Users/${username}";
 
   # Enable SOPS encrypted secrets management
-  profiles.sops = {
-    enable = true;
-    extraSecrets = {
-      ssh-config-srv696730 = {
-        path = "/Users/${username}/.ssh/conf.d/srv696730";
-        mode = "0600";
-      };
-    };
-  };
+  profiles.sops.enable = true;
 
   # Enable Kubernetes development profile
   profiles.kubernetes = {

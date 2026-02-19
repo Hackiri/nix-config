@@ -161,6 +161,10 @@ in {
             path = "${config.home.homeDirectory}/.config/git/signingkey";
             mode = "0400";
           };
+          ssh-config-srv696730 = {
+            path = "${config.home.homeDirectory}/.ssh/conf.d/srv696730";
+            mode = "0600";
+          };
         }
         // cfg.extraSecrets;
     };

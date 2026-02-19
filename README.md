@@ -100,14 +100,8 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    The default `hosts/mbp/home.nix` has SOPS enabled. If you don't have an age key, disable it before building to avoid activation errors:
 
    ```nix
-   # In hosts/mbp/home.nix — comment out or remove the sops import and enable line:
-   imports = [
-     ../../home/profiles/platform/darwin.nix
-     ../../home/profiles/features/kubernetes.nix
-     # ../../home/profiles/features/sops.nix  # Remove or comment out
-   ];
-
-   # profiles.sops.enable = true;  # Remove or comment out
+   # In hosts/mbp/home.nix — change to:
+   profiles.sops.enable = false;
    ```
 
    You can re-enable SOPS later by following step 5.
@@ -135,21 +129,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    a. **Enable sops in your host config** (`hosts/mbp/home.nix`):
 
    ```nix
-   imports = [
-     ../../home/profiles/platform/darwin.nix
-     ../../home/profiles/features/kubernetes.nix  # Keep existing imports
-     ../../home/profiles/features/sops.nix        # Add this
-   ];
-
    profiles.sops.enable = true;
-
-   # Optional: add host-specific secrets via extraSecrets
-   # profiles.sops.extraSecrets = {
-   #   my-ssh-config = {
-   #     path = "/Users/yourname/.ssh/conf.d/myhost";
-   #     mode = "0600";
-   #   };
-   # };
    ```
 
    b. **Generate age key:**
@@ -173,17 +153,24 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    d. **Create and encrypt secrets:**
 
-   These three keys are required by `sops.nix` for git credential management. Add any extra keys needed by your `extraSecrets` config.
+   These keys are required by `sops.nix` for git credential management and SSH configuration:
 
    ```bash
    cat > secrets/secrets.yaml << EOF
    git-userName: your-username
    git-userEmail: your-email@example.com
    git-signingKey: YOUR_GPG_KEY_ID
+   ssh-config-srv696730: |
+     Host srv696730
+       HostName your-server.example.com
+       User your-user
+       IdentityFile ~/.ssh/id_ed25519
    EOF
 
    sops -e -i secrets/secrets.yaml
    ```
+
+   > **Note:** The `ssh-config-srv696730` secret is decrypted to `~/.ssh/conf.d/srv696730`. Remove or replace this entry in `sops.nix` if you don't need it.
 
    **Example use cases for sops:**
 
