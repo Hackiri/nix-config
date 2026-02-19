@@ -75,7 +75,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
 3. **Configure Your System**
 
-   **Edit `flake.nix` (lines 157-163)** - This is the ONLY required edit to start:
+   **Edit `flake.nix`** (search for `darwinConfigurations`) - This is the ONLY required edit to start:
 
    ```nix
    darwinConfigurations = {
@@ -126,6 +126,8 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    git config --global user.email "your-email@example.com"
    ```
 
+   > **Note:** GPG commit signing is disabled by default. It is automatically enabled when you set up SOPS (step 5), which provides your signing key. To enable signing without SOPS, set `programs.git.signing.signByDefault = true` and configure your GPG key.
+
 5. **Set Up SOPS Secrets (Optional)**
 
    The `mbp` host config ships with SOPS enabled. If you disabled it in step 3, follow these steps when you're ready to enable sops-encrypted Git credentials:
@@ -135,10 +137,19 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    ```nix
    imports = [
      ../../home/profiles/platform/darwin.nix
-     ../../home/profiles/features/sops.nix  # Add this
+     ../../home/profiles/features/kubernetes.nix  # Keep existing imports
+     ../../home/profiles/features/sops.nix        # Add this
    ];
 
    profiles.sops.enable = true;
+
+   # Optional: add host-specific secrets via extraSecrets
+   # profiles.sops.extraSecrets = {
+   #   my-ssh-config = {
+   #     path = "/Users/yourname/.ssh/conf.d/myhost";
+   #     mode = "0600";
+   #   };
+   # };
    ```
 
    b. **Generate age key:**
@@ -161,6 +172,8 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    ```
 
    d. **Create and encrypt secrets:**
+
+   These three keys are required by `sops.nix` for git credential management. Add any extra keys needed by your `extraSecrets` config.
 
    ```bash
    cat > secrets/secrets.yaml << EOF

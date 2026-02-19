@@ -1,7 +1,11 @@
 # Basic Git configuration without sops-nix integration
 # Use this for a simple Git setup without encrypted secrets.
 # For sops-integrated Git with hooks, use home/profiles/features/sops.nix instead.
-{pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   # GPG configuration
   programs.gpg = {
     enable = true;
@@ -19,8 +23,7 @@
     # userEmail = "your-email@example.com";
 
     signing = {
-      signByDefault = true;
-      # key = "YOUR_GPG_KEY_ID";
+      signByDefault = lib.mkDefault false;
     };
 
     settings = {
@@ -30,8 +33,6 @@
       difftool.prompt = "false";
       merge.tool = "meld";
       mergetool.meld.path = "${pkgs.meld}/bin/meld";
-      commit.gpgsign = true;
-      tag.gpgsign = true;
 
       # Delta integration for better terminal diffs
       core.pager = "delta";

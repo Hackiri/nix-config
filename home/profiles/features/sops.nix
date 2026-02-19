@@ -113,6 +113,32 @@
 in {
   options.profiles.sops = with lib; {
     enable = mkEnableOption "SOPS encrypted secrets management";
+
+    extraSecrets = mkOption {
+      type = types.attrsOf (types.submodule {
+        options = {
+          path = mkOption {
+            type = types.str;
+            description = "Destination path for the decrypted secret";
+          };
+          mode = mkOption {
+            type = types.str;
+            default = "0400";
+            description = "File permissions for the decrypted secret";
+          };
+        };
+      });
+      default = {};
+      description = "Additional sops secrets beyond the default git credentials";
+      example = lib.literalExpression ''
+        {
+          ssh-config-myhost = {
+            path = "''${config.home.homeDirectory}/.ssh/conf.d/myhost";
+            mode = "0600";
+          };
+        }
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -121,24 +147,22 @@ in {
       defaultSopsFile = ../../../secrets/secrets.yaml;
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
-      secrets = {
-        git-userName = {
-          path = "${config.home.homeDirectory}/.config/git/username";
-          mode = "0400";
-        };
-        git-userEmail = {
-          path = "${config.home.homeDirectory}/.config/git/email";
-          mode = "0400";
-        };
-        git-signingKey = {
-          path = "${config.home.homeDirectory}/.config/git/signingkey";
-          mode = "0400";
-        };
-        ssh-config-srv696730 = {
-          path = "${config.home.homeDirectory}/.ssh/conf.d/srv696730";
-          mode = "0600";
-        };
-      };
+      secrets =
+        {
+          git-userName = {
+            path = "${config.home.homeDirectory}/.config/git/username";
+            mode = "0400";
+          };
+          git-userEmail = {
+            path = "${config.home.homeDirectory}/.config/git/email";
+            mode = "0400";
+          };
+          git-signingKey = {
+            path = "${config.home.homeDirectory}/.config/git/signingkey";
+            mode = "0400";
+          };
+        }
+        // cfg.extraSecrets;
     };
 
     programs = {
