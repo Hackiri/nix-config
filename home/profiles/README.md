@@ -139,6 +139,41 @@ profiles.sops.enable = true;
 - Age key at `~/.config/sops/age/keys.txt`
 - Encrypted `secrets/secrets.yaml` with your age public key
 
+**Customizing secrets**:
+
+The default secrets in `sops.nix` (git credentials, SSH config) are just a starting point. Edit the `secrets` attrset to match your needs:
+
+```nix
+# In sops.nix — add, remove, or change secrets:
+secrets = {
+  # Keep, remove, or rename any of these
+  git-userName = {
+    path = "${config.home.homeDirectory}/.config/git/username";
+    mode = "0400";
+  };
+  # Add your own
+  my-api-token = {
+    path = "${config.home.homeDirectory}/.config/myapp/token";
+    mode = "0400";
+  };
+}
+// cfg.extraSecrets;
+```
+
+Each key must have a matching entry in `secrets/secrets.yaml`. For host-specific secrets without editing `sops.nix`, use `extraSecrets` in your host's `home.nix`:
+
+```nix
+profiles.sops = {
+  enable = true;
+  extraSecrets = {
+    my-host-secret = {
+      path = "/Users/yourname/.config/app/secret";
+      mode = "0600";
+    };
+  };
+};
+```
+
 ---
 
 ### Platform Profiles

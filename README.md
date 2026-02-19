@@ -170,7 +170,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    sops -e -i secrets/secrets.yaml
    ```
 
-   Edit the `secrets` attrset in `sops.nix` to match whatever keys you define in `secrets.yaml`. You can also add host-specific secrets via `profiles.sops.extraSecrets` in your host's `home.nix`.
+   Edit the `secrets` attrset in `sops.nix` to match whatever keys you define in `secrets.yaml`. You can also add host-specific secrets via `profiles.sops.extraSecrets` in your host's `home.nix`. See [Customizing secrets](home/profiles/README.md#customizing-secrets) for details.
 
    **Example use cases for sops:**
 
