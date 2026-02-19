@@ -1,4 +1,7 @@
-{pkgs}: let
+{
+  pkgs,
+  pkgs-unstable ? pkgs,
+}: let
   inherit (pkgs) lib;
 
   # Organized Kubernetes tool categories for better maintainability
@@ -21,7 +24,7 @@
     observability = with pkgs;
       [
         stern # Multi-pod log tailing with color coding
-        k9s # Terminal-based Kubernetes dashboard
+        pkgs-unstable.k9s # Terminal-based Kubernetes dashboard (unstable for latest K8s API support)
         popeye # Kubernetes cluster resource sanitizer
       ]
       ++ lib.optionals (lib.hasAttr "kubectl-tree" pkgs) [

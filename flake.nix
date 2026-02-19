@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-25.11-darwin";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
@@ -11,9 +12,8 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs-darwin";
 
     home-manager.url = "github:nix-community/home-manager/release-25.11";
-    # Follows stable nixpkgs — matches home-manager release-25.11's target.
-    # Only affects HM's internal lib/module evaluation since useGlobalPkgs = true
-    # means actual packages come from each system's own pkgs (stable or unstable).
+    # Follows stable nixpkgs — only affects HM's internal lib/module evaluation
+    # since useGlobalPkgs = true means actual packages come from each system's own pkgs.
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Emacs overlay for native compilation support
@@ -51,7 +51,7 @@
     overlay = import ./overlays;
 
     # Build pkgs from a specific nixpkgs source with shared overlays.
-    # Darwin uses nixpkgs-darwin (unstable), NixOS uses nixpkgs (stable).
+    # Darwin uses nixpkgs-25.11-darwin, NixOS uses nixos-25.11.
     mkPkgs = nixpkgsSrc: system:
       import nixpkgsSrc {
         inherit system;
@@ -116,13 +116,14 @@
         mkHomeManagerConfig = {
           name,
           username,
+          pkgs-unstable,
         }: {
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
             backupFileExtension = "backup";
             extraSpecialArgs = {
-              inherit inputs username;
+              inherit inputs username pkgs-unstable;
               hostName = name;
             };
             users.${username} = import ./hosts/${name}/home.nix;
@@ -138,7 +139,9 @@
           name,
           system ? "x86_64-darwin",
           username ? "wm",
-        }:
+        }: let
+          pkgs-unstable = mkPkgs inputs.nixpkgs-unstable system;
+        in
           inputs.nix-darwin.lib.darwinSystem {
             inherit system;
             pkgs = mkPkgs inputs.nixpkgs-darwin system;
@@ -146,7 +149,7 @@
               ./hosts/${name}/configuration.nix
               inputs.sops-nix.darwinModules.sops
               inputs.home-manager.darwinModules.home-manager
-              (mkHomeManagerConfig {inherit name username;})
+              (mkHomeManagerConfig {inherit name username pkgs-unstable;})
               inputs.nix-homebrew.darwinModules.nix-homebrew
               {
                 nix-homebrew = {
@@ -166,7 +169,7 @@
                 };
               }
             ];
-            specialArgs = {inherit inputs system username;};
+            specialArgs = {inherit inputs system username pkgs-unstable;};
           };
 
         # Function to create a NixOS system configuration
@@ -174,7 +177,9 @@
           name,
           system ? "x86_64-linux",
           username ? "wm",
-        }:
+        }: let
+          pkgs-unstable = mkPkgs inputs.nixpkgs-unstable system;
+        in
           inputs.nixpkgs.lib.nixosSystem {
             inherit system;
             pkgs = mkPkgs inputs.nixpkgs system;
@@ -182,9 +187,9 @@
               ./hosts/${name}/configuration.nix
               inputs.sops-nix.nixosModules.sops
               inputs.home-manager.nixosModules.home-manager
-              (mkHomeManagerConfig {inherit name username;})
+              (mkHomeManagerConfig {inherit name username pkgs-unstable;})
             ];
-            specialArgs = {inherit inputs system username;};
+            specialArgs = {inherit inputs system username pkgs-unstable;};
           };
       in {
         darwinConfigurations = {

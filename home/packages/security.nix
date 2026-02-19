@@ -1,5 +1,9 @@
 # Security and encryption tools
-{pkgs, ...}: {
+{
+  pkgs,
+  pkgs-unstable,
+  ...
+}: {
   home.packages = with pkgs; [
     #--------------------------------------------------
     # Secrets Management
@@ -11,7 +15,7 @@
     # Security Auditing & Analysis
     #--------------------------------------------------
     lynis # Security auditing tool for Unix systems
-    trivy # Vulnerability scanner for containers and filesystems
+    pkgs-unstable.trivy # Vulnerability scanner for containers and filesystems (unstable for latest CVE data)
     vulnix # Nix vulnerability scanner (PKGS-7398)
     clamav # On-demand malware scanning (HRDN-7230)
 
