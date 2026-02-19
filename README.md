@@ -153,7 +153,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    d. **Create and encrypt secrets:**
 
-   These keys are required by `sops.nix` for git credential management and SSH configuration:
+   The default secrets in `sops.nix` are fully customizable — add, remove, or replace them to fit your needs. The included defaults are just a starting point:
 
    ```bash
    cat > secrets/secrets.yaml << EOF
@@ -170,7 +170,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    sops -e -i secrets/secrets.yaml
    ```
 
-   > **Note:** The `ssh-config-srv696730` secret is decrypted to `~/.ssh/conf.d/srv696730`. Remove or replace this entry in `sops.nix` if you don't need it.
+   Edit the `secrets` attrset in `sops.nix` to match whatever keys you define in `secrets.yaml`. You can also add host-specific secrets via `profiles.sops.extraSecrets` in your host's `home.nix`.
 
    **Example use cases for sops:**
 
