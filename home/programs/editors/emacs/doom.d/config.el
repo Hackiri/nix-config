@@ -38,7 +38,8 @@ This is a compatibility shim for packages expecting this function in Emacs 31."
 (setq org-directory "~/org/")
 
 ;; UI/UX tweaks
-(setq confirm-kill-emacs nil) ; Don't prompt on quit
+(setq confirm-kill-emacs nil)   ; Don't prompt on quit
+(setq confirm-kill-processes nil) ; Don't wait for active subprocesses (native-comp, LSP, etc.)
 
 ;; Configure Nerd Icons to use JetBrainsMono Nerd Font
 (after! nerd-icons
