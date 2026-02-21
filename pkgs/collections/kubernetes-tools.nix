@@ -8,7 +8,7 @@
   kubernetesTools = rec {
     # Essential Kubernetes core tools - always needed
     core = with pkgs; [
-      kubectl # Kubernetes command-line tool
+      pkgs-unstable.kubectl # Kubernetes command-line tool (unstable for K8s version skew policy)
       kubernetes-helm # Kubernetes package manager (Helm 3)
       kustomize # Kubernetes native configuration management
     ];
@@ -51,22 +51,19 @@
 
     # GitOps and CI/CD tools
     gitops = with pkgs; [
-      argocd # GitOps continuous delivery CLI
+      argocd # GitOps continuous delivery CLI (stable; unstable 3.3.0 has broken fetchYarnDeps hash)
       flux # GitOps toolkit CLI
       skaffold # Local development workflow automation
       tektoncd-cli # Tekton Pipelines CLI
     ];
 
-    # Service mesh tools
+    # Service mesh tools (cilium-cli is in networking category)
     serviceMesh = with pkgs;
       [
         istioctl # Istio service mesh management
       ]
       ++ lib.optionals (lib.hasAttr "linkerd" pkgs) [
         linkerd # Linkerd service mesh CLI
-      ]
-      ++ lib.optionals (lib.hasAttr "cilium-cli" pkgs) [
-        cilium-cli # CLI for Cilium CNI and service mesh
       ];
 
     # Container registry and image management tools (for remote clusters)
@@ -78,7 +75,7 @@
 
     # Infrastructure as Code
     iac = with pkgs; [
-      opentofu # Infrastructure as code tool (open-source Terraform fork)
+      pkgs-unstable.opentofu # Infrastructure as code tool (unstable for diverging features)
       terragrunt # Terraform wrapper for DRY configurations
       pulumi-bin # Modern infrastructure as code
       ansible # Configuration management and orchestration
@@ -87,9 +84,9 @@
     # Cloud provider CLIs
     cloudClis = with pkgs;
       [
-        awscli2 # AWS CLI v2
-        google-cloud-sdk # Google Cloud SDK
-        azure-cli # Azure CLI
+        pkgs-unstable.awscli2 # AWS CLI v2 (unstable for new service/feature support)
+        pkgs-unstable.google-cloud-sdk # Google Cloud SDK (unstable for GCP feature parity)
+        pkgs-unstable.azure-cli # Azure CLI (unstable for Azure feature parity)
       ]
       ++ lib.optionals (lib.hasAttr "doctl" pkgs) [
         doctl # DigitalOcean CLI
@@ -127,10 +124,10 @@
         kubectl-neat # Clean up Kubernetes yaml and json output
       ];
 
-    # Networking and CNI management tools
+    # Networking and CNI management tools (cilium-cli lives here, not in serviceMesh)
     networking = with pkgs;
-      lib.optionals (lib.hasAttr "cilium-cli" pkgs) [
-        cilium-cli # CLI for Cilium CNI management
+      lib.optionals (lib.hasAttr "cilium-cli" pkgs-unstable) [
+        pkgs-unstable.cilium-cli # CLI for Cilium CNI management (unstable to track Cilium releases)
       ];
 
     # Development and testing utilities
