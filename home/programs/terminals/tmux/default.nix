@@ -132,6 +132,7 @@ in {
     customPaneNavigationAndResize = false;
     escapeTime = 0;
     baseIndex = 1;
+    mouse = true;
 
     plugins = with pkgs.tmuxPlugins; [
       vim-tmux-navigator
