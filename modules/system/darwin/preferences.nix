@@ -151,7 +151,8 @@ _: {
           # Install System data files & security updates
           CriticalUpdateInstall = 1;
         };
-        # Disable Spotlight indexing (Raycast replaces Spotlight)
+        # Spotlight disabled — Raycast (installed via homebrew.nix) replaces all Spotlight functionality.
+        # Re-enable if not using Raycast or an alternative launcher.
         "com.apple.Spotlight" = {
           orderedItems = [
             {

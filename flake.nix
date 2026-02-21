@@ -17,6 +17,8 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Emacs overlay for native compilation support
+    # Intentionally unpinned — tracks latest for fresh emacs builds and daily MELPA updates.
+    # The lock file still provides a reproducible SHA; `nix flake update emacs-overlay` pulls new builds.
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -24,10 +26,14 @@
     };
 
     # Secrets management
+    # Tracks default branch; nixpkgs alignment via `follows` and flake.lock SHA ensure reproducibility.
+    # sops-nix has no stable release branches — pinning to default branch is the upstream convention.
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Git hooks management
+    # Tracks default branch; nixpkgs alignment via `follows` and flake.lock SHA ensure reproducibility.
+    # git-hooks.nix has no stable release branches — pinning to default branch is the upstream convention.
     git-hooks.url = "github:cachix/git-hooks.nix";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -88,6 +94,8 @@
             deadnix.enable = true;
             statix.enable = true;
             stylua.enable = true;
+            shellcheck.enable = true;
+            prettier.enable = true;
           };
         };
 
