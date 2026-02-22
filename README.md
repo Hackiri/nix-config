@@ -328,6 +328,8 @@ direnv allow
 
 The environment loads/unloads automatically as you enter/leave the directory.
 
+> **Note:** If a project's direnv cache points to a stale path (e.g. a deleted worktree), run `direnv reload` in that project to refresh the cache.
+
 ## Project Templates
 
 Scaffold a new project with a ready-made `flake.nix`:

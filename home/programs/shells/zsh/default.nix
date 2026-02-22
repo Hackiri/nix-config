@@ -57,6 +57,14 @@
       enable = true;
       enableCompletion = true;
 
+      # Load direnv for non-interactive shells (Claude Code, scripts, etc.)
+      # Interactive shells use a precmd hook instead, which doesn't fire here
+      envExtra = ''
+        if [[ ! -o interactive ]] && command -v direnv &>/dev/null; then
+          eval "$(direnv export zsh 2>/dev/null)"
+        fi
+      '';
+
       # Native plugins
       syntaxHighlighting.enable = true;
       autosuggestion.enable = true;
