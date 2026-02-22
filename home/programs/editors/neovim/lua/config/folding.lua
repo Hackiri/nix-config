@@ -111,16 +111,7 @@ function M.setup_folding(bufnr)
   current_method[bufnr] = "indent"
 end
 
--- Setup autocommand for folding
-local group = vim.api.nvim_create_augroup("FoldingSetup", { clear = true })
-vim.api.nvim_create_autocmd({ "BufEnter", "BufAdd", "BufNew", "BufNewFile" }, {
-  group = group,
-  callback = function(ev)
-    -- Defer folding setup slightly to ensure buffer is ready
-    vim.schedule(function()
-      M.setup_folding(ev.buf)
-    end)
-  end,
-})
+-- Folding autocmds disabled — nvim-ufo handles fold management (see plugins/ufo.lua)
+-- The utility functions above are kept available for manual use or statusline integration.
 
 return M
