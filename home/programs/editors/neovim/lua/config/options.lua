@@ -26,6 +26,7 @@ vim.opt.updatetime = 250
 
 -- Decrease mapped sequence wait time (from kickstart)
 vim.opt.timeoutlen = 300
+vim.opt.ttimeoutlen = 0 -- No delay for key codes (instant Esc)
 
 -- Preview substitutions live, as you type (from kickstart)
 vim.opt.inccommand = "split"
@@ -38,7 +39,10 @@ vim.opt.relativenumber = true -- Relative line numbers
 vim.opt.showmode = false -- Don't show mode since we have a statusline
 vim.opt.signcolumn = "yes" -- Always show signcolumn
 vim.opt.scrolloff = 10 -- Number of lines to keep above and below the cursor (kickstart uses 10)
+vim.opt.sidescrolloff = 10 -- Horizontal scrolloff
 vim.opt.cursorline = true -- Enable highlighting of the current line
+vim.opt.showmatch = true -- Highlight matching bracket
+vim.opt.pumheight = 10 -- Max completion menu height
 vim.opt.cmdheight = 0 -- Hide command line unless needed
 vim.opt.laststatus = 3 -- Global statusline
 vim.opt.guicursor = "n-v-c:block-Cursor/lCursor" -- Cursor shape
@@ -63,6 +67,7 @@ vim.opt.swapfile = false -- No swap file
 vim.opt.undofile = true -- Enable persistent undo
 vim.opt.undolevels = 10000 -- Number of undo levels
 vim.opt.writebackup = false -- No backup file
+vim.opt.autoread = true -- Auto-reload files changed externally
 
 -- Search
 vim.opt.ignorecase = true -- Ignore case when searching
@@ -85,6 +90,12 @@ vim.opt.signcolumn = "yes" -- Always show sign column
 vim.opt.updatetime = 250 -- Faster completion
 vim.opt.timeout = true
 vim.opt.timeoutlen = 300 -- Time to wait for a mapped sequence to complete
+
+-- Diff
+vim.opt.diffopt:append("linematch:60") -- Smarter diff: align similar lines within hunks
+
+-- Word boundaries
+vim.opt.iskeyword:append("-") -- Treat kebab-case as one word
 
 -- Wild menu
 vim.opt.wildmode = "longest:full,full" -- Command-line completion mode
