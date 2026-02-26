@@ -133,7 +133,7 @@ def test_{}():
   -- Flatten nested list
   s(
     "pyflatten",
-    fmt([=[flat = [item for sub in {} for item in sub]]=], {
+    fmt([=[flat = [item for sublist in {} for item in sublist]]=], {
       i(1, "nested"),
     })
   ),
@@ -155,11 +155,11 @@ def test_{}():
     fmt(
       [[
 with open({}) as f:
-    {} = f.read()
+    {} = f.read().splitlines()
 ]],
       {
-        i(1, '"path"'),
-        i(2, "content"),
+        i(1, '"file.txt"'),
+        i(2, "lines"),
       }
     )
   ),
