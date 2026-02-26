@@ -129,6 +129,114 @@ def test_{}():
       }
     )
   ),
+
+  -- Flatten nested list
+  s(
+    "pyflatten",
+    fmt([=[flat = [item for sub in {} for item in sub]]=], {
+      i(1, "nested"),
+    })
+  ),
+
+  -- Swap two variables
+  s(
+    "pyswap",
+    fmt([[{}, {} = {}, {}]], {
+      i(1, "a"),
+      i(2, "b"),
+      i(3, "b"),
+      i(4, "a"),
+    })
+  ),
+
+  -- Read a file
+  s(
+    "pyread",
+    fmt(
+      [[
+with open({}) as f:
+    {} = f.read()
+]],
+      {
+        i(1, '"path"'),
+        i(2, "content"),
+      }
+    )
+  ),
+
+  -- Count occurrences
+  s(
+    "pycount",
+    fmt(
+      [[
+from collections import Counter
+counts = Counter({})
+]],
+      {
+        i(1, "iterable"),
+      }
+    )
+  ),
+
+  -- Reverse an iterable
+  s(
+    "pyrev",
+    fmt([=[reversed_{} = {}[::-1]]=], {
+      i(1, "name"),
+      i(2, "iterable"),
+    })
+  ),
+
+  -- Conditional assignment
+  s(
+    "pycond",
+    fmt([[{} = {} if {} else {}]], {
+      i(1, "var"),
+      i(2, "val_true"),
+      i(3, "condition"),
+      i(4, "val_false"),
+    })
+  ),
+
+  -- Chain comparisons
+  s(
+    "pychain",
+    fmt([[if {} <= {} <= {}:]], {
+      i(1, "low"),
+      i(2, "val"),
+      i(3, "high"),
+    })
+  ),
+
+  -- Join iterable to string
+  s(
+    "pyjoin",
+    fmt([[result = ", ".join({})]], {
+      i(1, "iterable"),
+    })
+  ),
+
+  -- Pretty print
+  s(
+    "pypprint",
+    fmt(
+      [[
+import pprint
+pprint.pprint({})
+]],
+      {
+        i(1, "obj"),
+      }
+    )
+  ),
+
+  -- f-string with literal braces
+  s(
+    "pybrace",
+    fmt([[f"{{{{...{}...}}}}"]], {
+      i(1, "expr"),
+    })
+  ),
 }
 
 return python_snippets
