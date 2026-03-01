@@ -39,9 +39,9 @@ return {
         enabled = true,
       },
       -- HACK: read picker docs @ https://github.com/folke/snacks.nvim/blob/main/docs/picker.md
-      -- NOTE: Picker disabled - using fzf-lua instead
+      -- NOTE: Picker enabled for frecency - fzf-lua remains primary on <leader>f*
       picker = {
-        enabled = false,
+        enabled = true,
         matchers = {
           frecency = true,
           cwd_bonus = false,
