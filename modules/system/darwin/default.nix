@@ -7,6 +7,7 @@
   imports = [
     # Shared system modules
     ../shared/nix-index.nix
+    ../shared/nix-settings.nix
     ../shared/users.nix
 
     # Darwin-specific modules
@@ -39,5 +40,4 @@
   nixpkgs = {
     hostPlatform = lib.mkDefault "${system}";
   };
-
 }

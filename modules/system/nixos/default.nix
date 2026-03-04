@@ -7,6 +7,7 @@
   imports = [
     # Shared system modules
     ../shared/nix-index.nix
+    ../shared/nix-settings.nix
     ../shared/users.nix
 
     # NixOS-specific modules
