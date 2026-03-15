@@ -4,7 +4,7 @@
     #--------------------------------------------------
     # Tmux Session Management
     #--------------------------------------------------
-    tmuxinator # For managing complex tmux sessions
+    tmuxinator
 
     #--------------------------------------------------
     # Terminal Dependencies (cross-platform)

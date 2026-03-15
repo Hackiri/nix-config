@@ -1,15 +1,11 @@
 # Code quality tools, formatters, and linters
-{
-  pkgs,
-  pkgs-unstable,
-  ...
-}: {
+{pkgs, ...}: {
   home.packages = with pkgs; [
     # General code quality
     shellcheck # Static analysis tool for shell scripts
 
     # Nix-specific tools
-    pkgs-unstable.nixd # Language server for Nix (unstable for latest features)
+    nixd # Language server for Nix
     alejandra # Opinionated Nix code formatter
     deadnix # Find unused variables and functions in Nix code
     statix # Lints and suggestions for Nix code

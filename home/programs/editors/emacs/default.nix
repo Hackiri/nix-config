@@ -364,7 +364,7 @@ in {
       graphviz # Org-roam graph visualization
 
       # Language servers and formatters (emacs-specific)
-      nixfmt-classic
+      nixfmt
       nodePackages.prettier
       nodePackages.typescript-language-server
 

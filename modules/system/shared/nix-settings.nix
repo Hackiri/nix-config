@@ -6,7 +6,7 @@
 }: let
   commonSettings = {
     download-buffer-size = 268435456;
-    auto-optimise-store = true;
+    auto-optimise-store = false; # Disabled: race condition (NixOS/nix#7273); run `nix-store --optimise` manually
   };
   toNixConf = lib.concatStringsSep "\n" (lib.mapAttrsToList (
       k: v: "${k} = ${

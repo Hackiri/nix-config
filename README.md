@@ -39,6 +39,7 @@ nix-config/
 ## Installation
 
 ### Prerequisites
+
 - macOS or NixOS
 - Git for cloning the repository
 
@@ -50,12 +51,12 @@ nix-config/
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --determinate
 ```
 
-   > **Note:** This installs Determinate Nix, which provides enhanced stability and features. macOS users can alternatively use the [graphical installer](https://install.determinate.systems/determinate-pkg/stable/Universal).
+> **Note:** This installs Determinate Nix, which provides enhanced stability and features. macOS users can alternatively use the [graphical installer](https://install.determinate.systems/determinate-pkg/stable/Universal).
 
 2. **Get the Repository**
 
    **Option A: Fork (Recommended for maintaining your own version)**
-   
+
    ```bash
    # 1. Fork on GitHub: https://github.com/Hackiri/nix-config (click Fork button)
    # 2. Clone your fork
@@ -64,7 +65,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    ```
 
    **Option B: Direct Clone (Quick start)**
-   
+
    ```bash
    # Clone directly and make it your own
    git clone https://github.com/Hackiri/nix-config.git ~/nix-config
@@ -173,7 +174,6 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    Edit the `secrets` attrset in `sops.nix` to match whatever keys you define in `secrets.yaml`. You can also add host-specific secrets via `profiles.sops.extraSecrets` in your host's `home.nix`. See [Customizing secrets](home/profiles/README.md#customizing-secrets) for details.
 
    **Example use cases for sops:**
-
    - **Git credentials** — Encrypt your name, email, and GPG signing key so they're never stored in plaintext in the repo. Git hooks automatically read from sops-decrypted secrets on checkout and merge.
    - **API tokens** — Store tokens for services (GitHub, cloud providers) as sops secrets and reference them in shell environment or program configs.
    - **SSH keys** — Manage SSH private keys as encrypted secrets that are decrypted at activation time by sops-nix.
@@ -211,6 +211,7 @@ sudo nixos-rebuild switch --flake .#desktop
 This configuration provides many convenient aliases for system management:
 
 #### **System Management**
+
 ```bash
 # Build and switch
 nixswitch    # Build and activate configuration
@@ -230,6 +231,7 @@ nixedit      # Open configuration in $EDITOR
 ```
 
 #### **Nix Utilities**
+
 ```bash
 nxsearch     # Search packages (nix search nixpkgs)
 nxrepl       # Interactive nix REPL
@@ -244,6 +246,7 @@ nix flake update  # Update flake inputs
 This configuration uses [git-hooks.nix](https://github.com/cachix/git-hooks.nix) to automatically run code formatters and linters before commits:
 
 **Enabled hooks:**
+
 - `alejandra` - Nix code formatter
 - `deadnix` - Remove unused Nix code
 - `statix` - Nix linter
@@ -252,6 +255,7 @@ This configuration uses [git-hooks.nix](https://github.com/cachix/git-hooks.nix)
 **Troubleshooting:**
 
 If you encounter an error like:
+
 ```
 .git/hooks/pre-commit: No such file or directory
 ```
@@ -269,6 +273,7 @@ nix develop
 The hooks are automatically installed when you enter the development shell and will run on every commit.
 
 #### **Quick Navigation**
+
 ```bash
 dots         # cd ~/nix-config
 files        # Open yazi file manager
@@ -344,16 +349,31 @@ nix flake init -t ~/nix-config#go
 
 Each template provides a self-contained `flake.nix` with the same tooling as the corresponding development shell, so new projects work independently from this config.
 
+## ⚠️ x86_64-darwin (Intel Mac) Notice
+
+> [!CAUTION]
+> Nixpkgs **26.05 is the last release** to support `x86_64-darwin`. Binary builds and source support will continue until 26.05 goes end-of-life (late 2026), but **26.11 will drop x86_64-darwin entirely** — no binary cache, no source builds.
+
+> [!IMPORTANT]
+> This configuration uses `nixos-25.11` (stable) exclusively. The `nixpkgs-unstable` channel is **not** used because unstable packages receive less CI coverage on Intel Mac and are more likely to have build failures on `x86_64-darwin`. The `allowDeprecatedx86_64Darwin = true` flag is set in `flake.nix` to suppress the deprecation warning.
+
+> [!TIP]
+> 🖥️ Install **NixOS** on the hardware (supported indefinitely on x86_64)
+> 🍎 Switch to **MacPorts** (plans to maintain Intel support longer than Homebrew)
+> 💻 Migrate to **Apple Silicon** hardware
+
 ## Troubleshooting
 
 ### Homebrew Taps conflict after enabling `mutableTaps = false`
 
 If you see:
+
 ```
 Error: An existing /usr/local/Homebrew/Library/Taps is in the way
 ```
 
 Remove the existing taps so nix-darwin can manage them declaratively:
+
 ```bash
 sudo rm -rf /usr/local/Homebrew/Library/Taps
 sudo darwin-rebuild switch --flake ~/nix-config#mbp

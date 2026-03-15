@@ -1,5 +1,5 @@
 -- lua/config/lazy.lua
--- Leader keys are set in default.nix extraLuaConfig before this file loads
+-- Leader keys are set in default.nix initLua before this file loads
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

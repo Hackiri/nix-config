@@ -1,14 +1,11 @@
-{
-  pkgs,
-  pkgs-unstable ? pkgs,
-}: let
+{pkgs}: let
   inherit (pkgs) lib;
 
   # Organized Kubernetes tool categories for better maintainability
   kubernetesTools = rec {
     # Essential Kubernetes core tools - always needed
     core = with pkgs; [
-      pkgs-unstable.kubectl # Kubernetes command-line tool (unstable for K8s version skew policy)
+      kubectl # Kubernetes command-line tool
       kubernetes-helm # Kubernetes package manager (Helm 3)
       kustomize # Kubernetes native configuration management
     ];
@@ -24,7 +21,7 @@
     observability = with pkgs;
       [
         stern # Multi-pod log tailing with color coding
-        pkgs-unstable.k9s # Terminal-based Kubernetes dashboard (unstable for latest K8s API support)
+        k9s # Terminal-based Kubernetes dashboard
         popeye # Kubernetes cluster resource sanitizer
       ]
       ++ lib.optionals (lib.hasAttr "kubectl-tree" pkgs) [
@@ -51,7 +48,7 @@
 
     # GitOps and CI/CD tools
     gitops = with pkgs; [
-      argocd # GitOps continuous delivery CLI (stable; unstable 3.3.0 has broken fetchYarnDeps hash)
+      argocd # GitOps continuous delivery CLI
       flux # GitOps toolkit CLI
       skaffold # Local development workflow automation
       tektoncd-cli # Tekton Pipelines CLI
@@ -75,7 +72,7 @@
 
     # Infrastructure as Code
     iac = with pkgs; [
-      pkgs-unstable.opentofu # Infrastructure as code tool (unstable for diverging features)
+      opentofu # Infrastructure as code tool
       terragrunt # Terraform wrapper for DRY configurations
       pulumi-bin # Modern infrastructure as code
       ansible # Configuration management and orchestration
@@ -84,9 +81,9 @@
     # Cloud provider CLIs
     cloudClis = with pkgs;
       [
-        pkgs-unstable.awscli2 # AWS CLI v2 (unstable for new service/feature support)
-        pkgs-unstable.google-cloud-sdk # Google Cloud SDK (unstable for GCP feature parity)
-        pkgs-unstable.azure-cli # Azure CLI (unstable for Azure feature parity)
+        awscli2 # AWS CLI v2
+        google-cloud-sdk # Google Cloud SDK
+        azure-cli # Azure CLI
       ]
       ++ lib.optionals (lib.hasAttr "doctl" pkgs) [
         doctl # DigitalOcean CLI
@@ -126,8 +123,8 @@
 
     # Networking and CNI management tools (cilium-cli lives here, not in serviceMesh)
     networking = with pkgs;
-      lib.optionals (lib.hasAttr "cilium-cli" pkgs-unstable) [
-        pkgs-unstable.cilium-cli # CLI for Cilium CNI management (unstable to track Cilium releases)
+      lib.optionals (lib.hasAttr "cilium-cli" pkgs) [
+        cilium-cli # CLI for Cilium CNI management
       ];
 
     # Development and testing utilities

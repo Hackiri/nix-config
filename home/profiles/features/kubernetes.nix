@@ -13,11 +13,10 @@
   config,
   lib,
   pkgs,
-  pkgs-unstable,
   ...
 }: let
   cfg = config.profiles.kubernetes;
-  kubernetesTools = import ../../../pkgs/collections/kubernetes-tools.nix {inherit pkgs pkgs-unstable;};
+  kubernetesTools = import ../../../pkgs/collections/kubernetes-tools.nix {inherit pkgs;};
 in {
   options.profiles.kubernetes = with lib; {
     enable = mkEnableOption "Kubernetes development profile";

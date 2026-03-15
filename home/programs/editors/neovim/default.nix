@@ -1,8 +1,4 @@
-{
-  pkgs,
-  pkgs-unstable,
-  ...
-}: {
+{pkgs, ...}: {
   programs.neovim = {
     enable = true;
     # Note: neovim stays on stable — HM's neovim module is tightly coupled
@@ -47,7 +43,7 @@
       # Neovim-specific formatters (not in profiles)
       nodePackages.prettier # JavaScript/TypeScript/CSS/HTML/JSON/YAML/Markdown formatter
       shfmt # Shell script formatter
-      pkgs-unstable.ruff # Python linter and formatter (CLI)
+      ruff # Python linter and formatter
       templ # Go template formatter
     ];
 

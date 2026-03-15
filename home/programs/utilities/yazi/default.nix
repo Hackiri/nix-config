@@ -1,7 +1,8 @@
-{pkgs-unstable, ...}: {
+{pkgs, ...}: {
   programs.yazi = {
     enable = true;
-    package = pkgs-unstable.yazi;
+    package = pkgs.yazi;
+    shellWrapperName = "y";
     enableZshIntegration = true;
     settings = {
       mgr = {
