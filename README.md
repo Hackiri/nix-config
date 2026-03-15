@@ -380,6 +380,26 @@ Each template provides a self-contained `flake.nix` with the same tooling as the
 
 ## Troubleshooting
 
+### Activation Failing due to "Unexpected files in /etc" (nix.custom.conf)
+
+If your very first `nix-darwin` installation fails with:
+
+```
+error: Unexpected files in /etc, aborting activation
+The following files have unrecognized content and would be overwritten:
+  /etc/nix/nix.custom.conf
+```
+
+This occurs because the Determinate Systems Nix installer places its own configuration file here, but `nix-darwin` requires total declarative control over `/etc/nix/`.
+
+Rename the old config so `nix-darwin` can safely write its own:
+
+```bash
+sudo mv /etc/nix/nix.custom.conf /etc/nix/nix.custom.conf.before-nix-darwin
+# Then re-run the switch command
+sudo nix run nix-darwin -- switch --flake .
+```
+
 ### Homebrew Taps conflict after enabling `mutableTaps = false`
 
 If you see:
