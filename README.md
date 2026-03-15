@@ -10,6 +10,19 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains
 
+## ⚠️ x86_64-darwin (Intel Mac) Notice
+
+> [!CAUTION]
+> Nixpkgs **26.05 is the last release** to support `x86_64-darwin`. Binary builds and source support will continue until 26.05 goes end-of-life (late 2026), but **26.11 will drop x86_64-darwin entirely** — no binary cache, no source builds.
+
+> [!IMPORTANT]
+> This configuration uses `nixos-25.11` (stable) exclusively. The `nixpkgs-unstable` channel is **not** used because unstable packages receive less CI coverage on Intel Mac and are more likely to have build failures on `x86_64-darwin`. The `allowDeprecatedx86_64Darwin = true` flag is set in `flake.nix` to suppress the deprecation warning.
+
+> [!TIP]
+> 🖥️ Install **NixOS** on the hardware (supported indefinitely on x86_64)
+> 🍎 Switch to **MacPorts** (plans to maintain Intel support longer than Homebrew)
+> 💻 Migrate to **Apple Silicon** hardware
+
 ## Structure
 
 ```
@@ -348,19 +361,6 @@ nix flake init -t ~/nix-config#go
 ```
 
 Each template provides a self-contained `flake.nix` with the same tooling as the corresponding development shell, so new projects work independently from this config.
-
-## ⚠️ x86_64-darwin (Intel Mac) Notice
-
-> [!CAUTION]
-> Nixpkgs **26.05 is the last release** to support `x86_64-darwin`. Binary builds and source support will continue until 26.05 goes end-of-life (late 2026), but **26.11 will drop x86_64-darwin entirely** — no binary cache, no source builds.
-
-> [!IMPORTANT]
-> This configuration uses `nixos-25.11` (stable) exclusively. The `nixpkgs-unstable` channel is **not** used because unstable packages receive less CI coverage on Intel Mac and are more likely to have build failures on `x86_64-darwin`. The `allowDeprecatedx86_64Darwin = true` flag is set in `flake.nix` to suppress the deprecation warning.
-
-> [!TIP]
-> 🖥️ Install **NixOS** on the hardware (supported indefinitely on x86_64)
-> 🍎 Switch to **MacPorts** (plans to maintain Intel support longer than Homebrew)
-> 💻 Migrate to **Apple Silicon** hardware
 
 ## Troubleshooting
 
