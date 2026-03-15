@@ -66,7 +66,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
 > **Note:** This installs Determinate Nix, which provides enhanced stability and features. macOS users can alternatively use the [graphical installer](https://install.determinate.systems/determinate-pkg/stable/Universal).
 
-2. **Get the Repository**
+1. **Get the Repository**
 
    **Option A: Fork (Recommended for maintaining your own version)**
 
@@ -87,40 +87,56 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    git remote remove origin
    ```
 
-3. **Configure Your System**
+2. **Configure Your System**
 
-   **Edit `flake.nix`** (search for `darwinConfigurations`) - This is the ONLY required edit to start:
+   **1. Edit `flake.nix` overrides** (search for `darwinConfigurations`):
 
    ```nix
    darwinConfigurations = {
-     "mbp" = mkDarwin {           # Change "mbp" to your hostname
-       name = "mbp";              # Change to match your host directory name
-       system = "x86_64-darwin";  # or "aarch64-darwin" for Apple Silicon
-       username = "wm";           # Change to your macOS username
+     "mbp" = mkDarwin {           # Change "mbp" to your exact local hostname (run 'scutil --get LocalHostName')
+       name = "mbp";              # Change to match the host directory name you will use in 'hosts/'
+       system = "x86_64-darwin";  # Set to "aarch64-darwin" for Apple Silicon or "x86_64-darwin" for Intel
+       username = "wm";           # Change to your exact macOS username (run 'whoami')
      };
    };
    ```
 
    **What to change:**
-   - **Hostname key** (`"mbp"`): Your computer's hostname (run `hostname` to check)
-   - **name**: Must match a directory in `hosts/` (use existing `mbp` or create your own)
-   - **system**: `"x86_64-darwin"` (Intel) or `"aarch64-darwin"` (Apple Silicon)
-   - **username**: Your macOS username (run `whoami` to check)
+   - **Hostname key** (`"mbp"`): Your computer's exact hostname (run `scutil --get LocalHostName` to check on macOS).
+   - **name**: Must match a directory in `hosts/` (use existing `mbp` or rename it to match).
+   - **system**: `"x86_64-darwin"` (Intel) or `"aarch64-darwin"` (Apple Silicon).
+   - **username**: Your exact macOS username (run `whoami` to check).
 
-   **Optional:** Customize host-specific settings in `hosts/mbp/configuration.nix` and `hosts/mbp/home.nix` later
-
-   **Disable SOPS (if you haven't set up age keys yet):**
-
-   The default `hosts/mbp/home.nix` has SOPS enabled. If you don't have an age key, disable it before building to avoid activation errors:
+   **2. Edit `flake.nix` defaults** (search for `mkDarwin`):
+   Ensure that the default system matches your architecture, and the default username matches your username.
 
    ```nix
-   # In hosts/mbp/home.nix — change to:
+   # Function to create a Darwin system configuration
+   mkDarwin = {
+     name,
+     system ? "x86_64-darwin", # Change to "aarch64-darwin" for Apple Silicon
+     username ? "wm",          # Change to your exact macOS username
+   }: let
+   ```
+
+   **3. Rename the Host Directory to Match (if changed)**
+   If you changed the `name` attribute above from `mbp` to something else (e.g. `scds-mbp`), you MUST rename the folder in `hosts/` to match:
+
+   ```bash
+   mv hosts/mbp hosts/YOUR_HOSTNAME
+   ```
+
+   **4. Disable SOPS (Crucial if you haven't set up age keys yet):**
+   The default `hosts/mbp/home.nix` (or whatever you renamed it to) has SOPS enabled. If you don't have your age keys set up yet, you **must disable it** before building to avoid activation errors. Edit your `home.nix` file:
+
+   ```nix
+   # In hosts/mbp/home.nix (or your renamed host folder) — change to:
    profiles.sops.enable = false;
    ```
 
    You can re-enable SOPS later by following step 5.
 
-4. **Install nix-darwin**
+3. **Install nix-darwin**
 
    ```bash
    # Install nix-darwin with your customized configuration
@@ -136,7 +152,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    > **Note:** GPG commit signing is disabled by default. It is automatically enabled when you set up SOPS (step 5), which provides your signing key. To enable signing without SOPS, set `programs.git.signing.signByDefault = true` and configure your GPG key.
 
-5. **Set Up SOPS Secrets (Optional)**
+4. **Set Up SOPS Secrets (Optional)**
 
    The `mbp` host config ships with SOPS enabled. If you disabled it in step 3, follow these steps when you're ready to enable sops-encrypted Git credentials:
 
