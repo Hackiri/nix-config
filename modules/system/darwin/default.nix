@@ -13,7 +13,7 @@
     # Darwin-specific modules
     ./networking.nix
     ./nix-daemon.nix
-    ./preferences.nix
+    ./defaults
     ./security.nix
 
     # Optional feature modules
