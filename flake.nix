@@ -148,23 +148,6 @@
               inputs.home-manager.darwinModules.home-manager
               (mkHomeManagerConfig {inherit name username;})
               inputs.nix-homebrew.darwinModules.nix-homebrew
-              {
-                nix-homebrew = {
-                  enable = true;
-                  user = username;
-                  autoMigrate = true;
-                  taps = {
-                    "homebrew/homebrew-core" = inputs.homebrew-core;
-                    "homebrew/homebrew-cask" = inputs.homebrew-cask;
-                    "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
-                  };
-                  mutableTaps = false;
-                };
-                homebrew.caskArgs = {
-                  appdir = "~/Applications";
-                  require_sha = true;
-                };
-              }
             ];
             specialArgs = {inherit inputs system username;};
           };

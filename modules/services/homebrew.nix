@@ -2,6 +2,8 @@
 {
   config,
   lib,
+  inputs,
+  username,
   ...
 }: {
   options.services.homebrew = {
@@ -21,8 +23,25 @@
   };
 
   config = lib.mkIf config.services.homebrew.enable {
+    # nix-homebrew configuration (moved from flake.nix for encapsulation)
+    nix-homebrew = {
+      enable = true;
+      user = username;
+      autoMigrate = true;
+      taps = {
+        "homebrew/homebrew-core" = inputs.homebrew-core;
+        "homebrew/homebrew-cask" = inputs.homebrew-cask;
+        "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
+      };
+      mutableTaps = false;
+    };
+
     homebrew = {
       enable = true;
+      caskArgs = {
+        appdir = "~/Applications";
+        require_sha = true;
+      };
       onActivation = {
         cleanup = "uninstall"; # Remove packages not in config (preserves app data)
         # Disabled for reproducibility -- brew updates are independent of flake.lock pins.
