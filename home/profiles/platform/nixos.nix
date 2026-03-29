@@ -9,16 +9,4 @@
     # Platform: Linux-specific packages and settings
     ./nixos-pkgs.nix
   ];
-
-  # NixOS-specific profile configurations
-  # Add any NixOS-specific profile settings here
-
-  # This profile is designed for NixOS systems and includes:
-  # - Essential cross-platform tools (from base/minimal.nix)
-  # - All development tools (from features/development.nix)
-  # - Desktop applications and media tools (from features/desktop.nix)
-  # - Linux-specific packages and configurations (from nixos-pkgs.nix)
-  # - X11/Wayland utilities (xclip, xsel)
-  # - XDG desktop configuration
-  # - Linux-specific services and environment
 }

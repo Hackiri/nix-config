@@ -22,5 +22,6 @@
     # Text and Data Processing
     #--------------------------------------------------
     jq # Lightweight JSON processor
+    glow # Terminal markdown renderer
   ];
 }

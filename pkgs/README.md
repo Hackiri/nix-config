@@ -7,31 +7,30 @@ Custom Nix packages exported by this flake.
 ```
 pkgs/
 ├── default.nix                      # Package collection exports
-├── collections/
-│   └── kubernetes-tools.nix         # Kubernetes and cloud-native tools
+├── kubernetes-tools.nix             # Kubernetes and cloud-native tools
 └── README.md
 ```
 
-## Kubernetes Tools (`collections/kubernetes-tools.nix`)
+## Kubernetes Tools (`kubernetes-tools.nix`)
 
 A curated collection of Kubernetes and cloud-native tools organized by category. Used by the `features.kubernetes` profile to provide selectable tool sets.
 
 ### Tool Categories
 
-| Category | Tools | Description |
-|---|---|---|
-| `core` | kubectl, helm, kustomize | Essential Kubernetes tools |
-| `contextManagement` | kubectx, kubecolor, kubelogin-oidc | Cluster context switching |
-| `observability` | stern, k9s, popeye, kubectl-tree, kubectl-who-can | Monitoring and debugging |
-| `security` | kube-bench, kube-hunter, kubesec, falco | Security scanning and auditing |
-| `gitops` | argocd, flux, skaffold, tektoncd-cli | GitOps and CI/CD |
-| `serviceMesh` | istioctl, linkerd, cilium-cli | Service mesh management |
-| `containers` | skopeo, dive, crane | Container image tools |
-| `iac` | opentofu, terragrunt, pulumi, ansible | Infrastructure as Code |
-| `cloudClis` | awscli2, google-cloud-sdk, azure-cli, doctl | Cloud provider CLIs |
-| `distributions` | talosctl, rke2, k0sctl | K8s distribution tools |
-| `helmExtensions` | helm-diff, helm-secrets, helm-git, helm-docs | Helm plugins |
-| `devUtils` | jq, yq-go, curl, wget, httpie, grpcurl, hey | Development utilities |
+| Category            | Tools                                             | Description                    |
+| ------------------- | ------------------------------------------------- | ------------------------------ |
+| `core`              | kubectl, helm, kustomize                          | Essential Kubernetes tools     |
+| `contextManagement` | kubectx, kubecolor, kubelogin-oidc                | Cluster context switching      |
+| `observability`     | stern, k9s, popeye, kubectl-tree, kubectl-who-can | Monitoring and debugging       |
+| `security`          | kube-bench, kube-hunter, kubesec, falco           | Security scanning and auditing |
+| `gitops`            | argocd, flux, skaffold, tektoncd-cli              | GitOps and CI/CD               |
+| `serviceMesh`       | istioctl, linkerd, cilium-cli                     | Service mesh management        |
+| `containers`        | skopeo, dive, crane                               | Container image tools          |
+| `iac`               | opentofu, terragrunt, pulumi, ansible             | Infrastructure as Code         |
+| `cloudClis`         | awscli2, google-cloud-sdk, azure-cli, doctl       | Cloud provider CLIs            |
+| `distributions`     | talosctl, rke2, k0sctl                            | K8s distribution tools         |
+| `helmExtensions`    | helm-diff, helm-secrets, helm-git, helm-docs      | Helm plugins                   |
+| `devUtils`          | jq, yq-go, curl, wget, httpie, grpcurl, hey       | Development utilities          |
 
 ### Predefined Sets
 

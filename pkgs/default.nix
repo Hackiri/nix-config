@@ -1,7 +1,7 @@
 # This file exports all custom packages
 {pkgs}: let
   # Kubernetes tool collections
-  kubernetes-tools = import ./collections/kubernetes-tools.nix {inherit pkgs;};
+  kubernetes-tools = import ./kubernetes-tools.nix {inherit pkgs;};
 in {
   inherit kubernetes-tools;
 

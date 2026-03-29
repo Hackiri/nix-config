@@ -39,13 +39,7 @@
     # Programs: System utilities and file managers
     ../../programs/utilities
 
-    # Packages: Build tools and compilers
-    ../../packages/build-tools.nix
-    ../../packages/code-quality.nix
-    ../../packages/databases.nix
-    ../../packages/languages.nix
-    ../../packages/security.nix
-    ../../packages/terminals.nix
-    ../../packages/web-dev.nix
+    # Packages: Development package collections (build tools, languages, etc.)
+    ../../packages
   ];
 }

@@ -37,13 +37,12 @@ nix-config/
 │   ├── programs/               # Program configurations (editors, shells, terminals, etc.)
 │   └── packages/               # Package collections (cli-essentials, build-tools, etc.)
 ├── modules/                    # System modules
-│   ├── system/                 # System configurations (darwin, nixos)
-│   ├── services/               # Service configurations
-│   └── optional-features/      # Optional features
+│   ├── system/                 # System configurations (darwin, nixos, shared)
+│   └── services/               # Service configurations (homebrew, fonts)
 ├── lib/                        # Shared library functions
 │   └── devshells.nix           # Language-specific development shells
 ├── overlays/                   # Nixpkgs overlays
-├── pkgs/                       # Custom packages (kubernetes-tools)
+├── pkgs/                       # Custom packages
 ├── templates/                  # Project templates (node, python, rust, go)
 ├── secrets/                    # Encrypted secrets (sops-nix)
 └── stylua.toml                 # Stylua configuration

@@ -40,8 +40,10 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 ### Base Profiles
 
 #### `base/minimal.nix` - Foundation Profile
+
 **Purpose**: Essential cross-platform tools available everywhere
 **Includes**:
+
 - Basic CLI tools (bat, eza, fd, fzf, jq, ripgrep, tree, zoxide)
 - Network essentials (curl, wget)
 - System utilities (htop, fastfetch)
@@ -80,17 +82,20 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 **Imports**:
 
 - Programs: editors, development (direnv), shells, terminals, utilities
-- Packages: build-tools, code-quality, databases, languages, security, terminals, web-dev
+- Packages: `../../packages` (aggregator imports build-tools, code-quality, databases, languages, security, terminals, web-dev)
 
 #### `features/desktop.nix` - Desktop Profile
+
 **Purpose**: GUI applications and desktop environment tools
 **Includes**:
+
 - Desktop applications
 - Media processing tools (imagemagick, ghostscript)
 
 **Inherits from**: `features/development.nix` (which includes `base/minimal.nix`)
 **Used by**: `platform/darwin.nix`, `platform/nixos.nix`
 **Imports**:
+
 - Packages: utilities
 
 #### `features/kubernetes.nix` - Kubernetes Development Profile
@@ -136,6 +141,7 @@ profiles.sops.enable = true;
 ```
 
 **Prerequisites**:
+
 - Age key at `~/.config/sops/age/keys.txt`
 - Encrypted `secrets/secrets.yaml` with your age public key
 
@@ -179,8 +185,10 @@ profiles.sops = {
 ### Platform Profiles
 
 #### `platform/darwin.nix` - macOS Profile
+
 **Purpose**: macOS-specific configuration entry point
 **Includes**:
+
 - All tools from desktop → development → minimal chain
 - macOS-specific packages and settings
 - macOS window management (AeroSpace)
@@ -188,14 +196,17 @@ profiles.sops = {
 **Inherits from**: `features/desktop.nix`
 **Platform**: macOS (Darwin)
 **Imports**:
+
 - Platform: platform/darwin-pkgs.nix
 - Programs: utilities/aerospace
 
 ---
 
 #### `platform/nixos.nix` - NixOS Profile
+
 **Purpose**: NixOS-specific configuration entry point
 **Includes**:
+
 - All tools from desktop → development → minimal chain
 - Linux-specific packages and settings
 - X11/Wayland utilities
@@ -203,6 +214,7 @@ profiles.sops = {
 **Inherits from**: `features/desktop.nix`
 **Platform**: NixOS (Linux)
 **Imports**:
+
 - Platform: platform/nixos-pkgs.nix
 
 ---
@@ -212,14 +224,18 @@ profiles.sops = {
 Platform-specific packages and settings are located in `platform/`:
 
 ### `platform/darwin.nix`
+
 macOS-specific packages:
+
 - `mkalias` - macOS alias creation
 - `pam-reattach` - Touch ID support in tmux
 - `reattach-to-user-namespace` - macOS clipboard integration
 - `aerospace` - Tiling window manager
 
 ### `platform/nixos.nix`
+
 Linux-specific packages:
+
 - `xclip` - X11 clipboard utility
 - `xsel` - X11 selection utility
 - XDG desktop configuration
@@ -249,6 +265,7 @@ imports = [
 ```
 
 **Rules**:
+
 1. **Directory imports**: Omit `default.nix` → `../programs/shells`
 2. **File imports**: Include `.nix` extension → `../packages/web-dev.nix`
 3. **Relative paths**: Use `../` for parent, `./` for same level
@@ -259,18 +276,22 @@ imports = [
 ## Adding New Packages
 
 ### To add packages available everywhere:
+
 → Add to `minimal.nix` `home.packages`
 
 ### To add development-specific packages:
+
 1. Add to appropriate package file in `../packages/`
 2. If new category needed, create new `.nix` file
 3. Import in `development.nix`
 
 ### To add desktop-specific packages:
+
 1. Add to the appropriate package file in `../packages/`
 2. Ensure imported in `development.nix`
 
 ### To add platform-specific packages:
+
 → Add to `platform/darwin.nix` or `platform/nixos.nix`
 
 ---
@@ -278,6 +299,7 @@ imports = [
 ## Package Organization
 
 Package collections are in `../packages/`:
+
 - `build-tools.nix` - Compilers, build systems, dev tools
 - `cli-essentials.nix` - Core CLI tools (bat, eza, fd, fzf, ripgrep, etc.)
 - `code-quality.nix` - Linters, formatters, analyzers
@@ -293,6 +315,7 @@ Package collections are in `../packages/`:
 ## Program Configurations
 
 Program-specific configurations are in `../programs/`:
+
 - `development/` - Direnv, basic Git
 - `editors/` - Neovim, Emacs, Neovide
 - `shells/` - Zsh with fzf-tab and native plugins
@@ -333,6 +356,6 @@ Profiles are imported via host-specific home configurations:
 
 1. **Layered Inheritance**: Each profile builds on the previous, avoiding duplication
 2. **Clear Separation**: Profiles vs Programs vs Packages vs Platform configs
-3. **Explicit Imports**: Import specific files rather than aggregators
+3. **Clean Imports**: Use aggregator `default.nix` for package collections, specific files for programs
 4. **Consistent Naming**: Category prefixes in comments for clarity
 5. **Documentation**: Each file has clear purpose and usage notes

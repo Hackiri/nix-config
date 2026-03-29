@@ -16,7 +16,7 @@
   ...
 }: let
   cfg = config.profiles.kubernetes;
-  kubernetesTools = import ../../../pkgs/collections/kubernetes-tools.nix {inherit pkgs;};
+  kubernetesTools = import ../../../pkgs/kubernetes-tools.nix {inherit pkgs;};
 in {
   options.profiles.kubernetes = with lib; {
     enable = mkEnableOption "Kubernetes development profile";

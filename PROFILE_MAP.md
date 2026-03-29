@@ -3,6 +3,7 @@
 This document provides a comprehensive map of how all files are linked in the profile structure.
 
 ## Table of Contents
+
 1. [Overview](#overview)
 2. [Profile Hierarchy](#profile-hierarchy)
 3. [Detailed Import Maps](#detailed-import-maps)
@@ -13,6 +14,7 @@ This document provides a comprehensive map of how all files are linked in the pr
 ## Overview
 
 The profile system uses a three-layer architecture:
+
 - **Base Layer**: Foundation profiles with essential tools
 - **Features Layer**: Optional feature sets that build on base
 - **Platform Layer**: Platform-specific configurations (Darwin/NixOS)
@@ -61,6 +63,7 @@ The profile system uses a three-layer architecture:
 ### Layer 1: Base Profiles
 
 #### `base/minimal.nix` (Foundation)
+
 **Purpose**: Essential cross-platform tools available everywhere
 
 ```
@@ -95,13 +98,14 @@ features/development.nix
 │   └── programs/utilities/             # Btop, claude, yazi
 │
 └── Packages:
-    ├── packages/build-tools.nix        # Make, cmake, gcc, etc.
-    ├── packages/code-quality.nix       # Linters, formatters
-    ├── packages/databases.nix          # DB clients, Redis, etc.
-    ├── packages/languages.nix          # Python, Node, Go, Rust, etc.
-    ├── packages/security.nix           # Security utilities
-    ├── packages/terminals.nix          # Terminal utilities
-    └── packages/web-dev.nix            # Web development tools
+    └── packages/                       # Dev package aggregator (default.nix)
+        ├── build-tools.nix             # Make, cmake, gcc, etc.
+        ├── code-quality.nix            # Linters, formatters
+        ├── databases.nix               # DB clients, Redis, etc.
+        ├── languages.nix               # Python, Node, Go, Rust, etc.
+        ├── security.nix                # Security utilities
+        ├── terminals.nix               # Terminal utilities
+        └── web-dev.nix                 # Web development tools
 ```
 
 **Import Chain (Default Configuration)**:
@@ -174,6 +178,7 @@ features/sops.nix
 ### Layer 3: Platform Profiles
 
 #### `platform/darwin.nix` (macOS)
+
 **Purpose**: macOS-specific configuration
 
 ```
@@ -195,6 +200,7 @@ platform/darwin.nix
 ```
 
 **Full Import Chain**:
+
 ```
 platform/darwin.nix
   ↓
@@ -343,11 +349,13 @@ This ensures:
 
 ```
 home/packages/
+├── default.nix                  # Dev package aggregator (imported by development.nix)
 ├── build-tools.nix              # Make, cmake, gcc, cargo-make, etc.
+├── cli-essentials.nix           # Core CLI tools (imported by minimal.nix)
 ├── code-quality.nix             # Linters, formatters (alejandra, shellcheck, etc.)
 ├── databases.nix                # PostgreSQL, MySQL, Redis clients, etc.
 ├── languages.nix                # Python, Node, Go, Rust, Java, etc.
-├── network.nix                  # Network debugging, DNS tools
+├── network.nix                  # Network essentials (imported by minimal.nix)
 ├── security.nix                 # Password managers, encryption tools
 ├── terminals.nix                # Terminal utilities, multiplexers
 └── web-dev.nix                  # Web development tools
@@ -357,25 +365,25 @@ home/packages/
 
 ## Summary: Who Includes What?
 
-| Profile | Includes |
-| ------- | -------- |
-| **base/minimal** | CLI essentials, network tools, btop, SSH |
-| **features/development** | minimal + shells + basic Git + all dev tools |
-| **features/desktop** | development + GUI apps + neovide |
-| **features/kubernetes** | Standalone K8s module (profiles.kubernetes.enable) |
-| **features/sops** | SOPS secrets, git hooks, GPG, aliases (profiles.sops.enable) |
-| **platform/darwin** | desktop + macOS packages + aerospace |
-| **platform/nixos** | desktop + Linux packages + XDG |
-| **hosts/mbp** | darwin + kubernetes + sops |
-| **hosts/desktop** | nixos |
+| Profile                  | Includes                                                     |
+| ------------------------ | ------------------------------------------------------------ |
+| **base/minimal**         | CLI essentials, network tools, btop, SSH                     |
+| **features/development** | minimal + shells + basic Git + all dev tools                 |
+| **features/desktop**     | development + GUI apps + neovide                             |
+| **features/kubernetes**  | Standalone K8s module (profiles.kubernetes.enable)           |
+| **features/sops**        | SOPS secrets, git hooks, GPG, aliases (profiles.sops.enable) |
+| **platform/darwin**      | desktop + macOS packages + aerospace                         |
+| **platform/nixos**       | desktop + Linux packages + XDG                               |
+| **hosts/mbp**            | darwin + kubernetes + sops                                   |
+| **hosts/desktop**        | nixos                                                        |
 
 ### Git Configuration Options
 
 Basic Git is the default in `features/development.nix`. SOPS integration is gated by `profiles.sops.enable`:
 
-| Option | How to Enable | Features | Use Case |
-| ------ | ------------- | -------- | -------- |
-| **Basic** (default) | Included in development.nix | Basic Git, no sops | Works out of the box |
+| Option              | How to Enable                 | Features                          | Use Case              |
+| ------------------- | ----------------------------- | --------------------------------- | --------------------- |
+| **Basic** (default) | Included in development.nix   | Basic Git, no sops                | Works out of the box  |
 | **SOPS** (optional) | `profiles.sops.enable = true` | Git with sops hooks, GPG, aliases | Encrypted credentials |
 
 ---
@@ -384,17 +392,17 @@ Basic Git is the default in `features/development.nix`. SOPS integration is gate
 
 All home-manager feature flags use the `profiles.*` namespace:
 
-| Option | File | Purpose |
-| ------ | ---- | ------- |
-| `profiles.kubernetes.enable` | `features/kubernetes.nix` | Kubernetes tooling |
-| `profiles.sops.enable` | `features/sops.nix` | SOPS encrypted secrets |
-| `profiles.neovide.enable` | `programs/editors/neovide/default.nix` | Neovide GUI editor |
+| Option                       | File                                   | Purpose                |
+| ---------------------------- | -------------------------------------- | ---------------------- |
+| `profiles.kubernetes.enable` | `features/kubernetes.nix`              | Kubernetes tooling     |
+| `profiles.sops.enable`       | `features/sops.nix`                    | SOPS encrypted secrets |
+| `profiles.neovide.enable`    | `programs/editors/neovide/default.nix` | Neovide GUI editor     |
 
 System-level options use separate namespaces:
 
-| Option | File | Purpose |
-| ------ | ---- | ------- |
-| `features.fonts.enable` | `modules/optional-features/fonts.nix` | System fonts |
+| Option                     | File                            | Purpose              |
+| -------------------------- | ------------------------------- | -------------------- |
+| `features.fonts.enable`    | `modules/services/fonts.nix`    | System fonts         |
 | `services.homebrew.enable` | `modules/services/homebrew.nix` | Homebrew integration |
 
 ---

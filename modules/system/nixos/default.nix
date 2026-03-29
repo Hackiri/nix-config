@@ -15,8 +15,8 @@
     ./podman.nix
     ./security.nix
 
-    # Optional feature modules
-    ../../optional-features/fonts.nix
+    # Service modules
+    ../../services/fonts.nix
   ];
 
   # Enable features

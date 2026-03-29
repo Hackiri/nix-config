@@ -61,17 +61,18 @@ Two git configurations are available:
 
 To enable sops integration, set `profiles.sops.enable = true` in your host config.
 
-
 ## Usage Examples
 
 ### Setting up a Python Project
 
 1. Create `.envrc` in your project:
+
    ```bash
    layout poetry
    ```
 
 2. Initialize Poetry project:
+
    ```bash
    poetry init
    poetry add requests
@@ -82,12 +83,12 @@ To enable sops integration, set `profiles.sops.enable = true` in your host confi
 ### Setting up a Node.js Project
 
 1. Create `.envrc`:
+
    ```bash
    layout node
    ```
 
 2. The layout will auto-detect your package manager (npm, yarn, pnpm, bun)
-
 
 ## Configuration
 
@@ -129,4 +130,4 @@ If git hooks fail:
 - [direnv Documentation](https://direnv.net/)
 - [Nix Flakes](https://nixos.wiki/wiki/Flakes)
 - [sops-nix](https://github.com/Mic92/sops-nix)
-- [Kubernetes Tools](../../../pkgs/collections/kubernetes-tools.nix)
+- [Kubernetes Tools](../../../pkgs/kubernetes-tools.nix)
