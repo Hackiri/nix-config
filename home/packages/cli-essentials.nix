@@ -14,7 +14,6 @@
     #--------------------------------------------------
     # Navigation and Search
     #--------------------------------------------------
-    fzf # Command-line fuzzy finder
     zoxide # Smarter cd command that learns your habits
     tree # Display directories as trees
 
@@ -23,5 +22,11 @@
     #--------------------------------------------------
     jq # Lightweight JSON processor
     glow # Terminal markdown renderer
+
+    #--------------------------------------------------
+    # Media and Reference
+    #--------------------------------------------------
+    libwebp # WebP image format tools
+    wordnet # Lexical database for English
   ];
 }
