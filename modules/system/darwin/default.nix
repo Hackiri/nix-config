@@ -14,6 +14,7 @@
     ./networking.nix
     ./nix-daemon.nix
     ./defaults
+    ./activation.nix
     ./security.nix
 
     # Optional feature modules
@@ -34,6 +35,13 @@
   # System configuration
   system = {
     stateVersion = 6;
+  };
+
+  # Power management
+  power.sleep = {
+    display = 15;
+    computer = 30;
+    harddisk = 10;
   };
 
   # Platform-specific nixpkgs configuration

@@ -9,7 +9,7 @@ _: {
       # Require password immediately after sleep/screen saver
       "com.apple.screensaver" = {
         askForPassword = 1;
-        askForPasswordDelay = 0;
+        askForPasswordDelay = 0; # 0 = immediately
       };
 
       # Disable Siri data collection

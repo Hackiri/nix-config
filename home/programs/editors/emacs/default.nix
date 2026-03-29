@@ -255,50 +255,14 @@ in {
         fi
       '';
 
-      # Phase 6: Create macOS application symlinks and launcher scripts (macOS only)
-      setupMacOSApplications = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      # Create Doom Emacs launcher scripts (macOS only)
+      # Note: Emacs.app alias is handled by system-level mkalias in modules/system/darwin/activation.nix
+      setupDoomLaunchers = lib.hm.dag.entryAfter ["writeBoundary"] ''
         if [ "$(uname)" = "Darwin" ]; then
-          echo "Setting up macOS Applications..."
+          echo "Setting up Doom Emacs launchers..."
 
-          # Define applications to copy/symlink
-          apps=(
-            "${pkgs.emacs-git}/Applications/Emacs.app"
-          )
-
-          # Define target directory
           target_dir="$HOME/Applications/Nix Apps"
           mkdir -p "$target_dir"
-
-          # Symlink each application (or copy as fallback)
-          for app in "''${apps[@]}"; do
-            app_name=$(basename "$app")
-            target="$target_dir/$app_name"
-
-            echo "Processing $app_name..."
-
-            # Remove existing application if it exists and we have permission
-            if [ -L "$target" ]; then
-              rm -f "$target" || echo "Warning: Could not remove symlink $target"
-            elif [ -d "$target" ] && [ -w "$target" ]; then
-              rm -rf "$target" || echo "Warning: Could not remove $target"
-            elif [ -e "$target" ]; then
-              echo "Warning: Cannot remove $target (permission denied). Skipping..."
-              continue
-            fi
-
-            # Create symlink instead of copying (more efficient for nix-darwin)
-            if [ -e "$app" ]; then
-              ln -sf "$app" "$target" && echo "Created symlink for $app_name" || \
-              echo "Warning: Could not create symlink for $app_name, falling back to copy"
-
-              # Fall back to copy if symlink fails
-              if [ ! -e "$target" ]; then
-                cp -rL "$app" "$target" || echo "Warning: Could not copy $app to $target"
-              fi
-            else
-              echo "Warning: Source application $app does not exist"
-            fi
-          done
 
           # Create a Doom Emacs launcher script
           doom_launcher="$target_dir/Doom Emacs.command"
