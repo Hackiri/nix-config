@@ -2,6 +2,7 @@
 {
   config,
   pkgs,
+  username,
   ...
 }: {
   # Create macOS aliases for Nix-installed .app bundles so they appear in Spotlight/Raycast
@@ -16,15 +17,20 @@
       echo "setting up /Applications/Nix Apps..." >&2
       rm -rf "/Applications/Nix Apps"
       mkdir -p "/Applications/Nix Apps"
-      find ${apps}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
-      while read -r src; do
-        app_name=$(basename "$src")
-        ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
-      done
+      if [ -d "${apps}/Applications" ]; then
+        for app in "${apps}/Applications"/*.app; do
+          [ -e "$app" ] || continue
+          app_name=$(basename "$app")
+          ${pkgs.mkalias}/bin/mkalias "$(readlink -f "$app")" "/Applications/Nix Apps/$app_name" \
+            || echo "Warning: mkalias failed for $app_name" >&2
+        done
+      fi
     '';
 
   # Ensure Screenshots directory exists (referenced in defaults/dock.nix)
+  # Uses explicit path since system activation runs as root ($HOME = /var/root)
   system.activationScripts.screenshotsDir.text = ''
-    mkdir -p "$HOME/Screenshots"
+    mkdir -p "/Users/${username}/Screenshots"
+    chown ${username} "/Users/${username}/Screenshots"
   '';
 }
