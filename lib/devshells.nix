@@ -34,8 +34,8 @@
       rustc
       cargo
       rustfmt
-      clippy
       rust-analyzer
+      clippy
     ];
     shellHook = ''
       echo "Rust $(rustc --version) dev environment"
