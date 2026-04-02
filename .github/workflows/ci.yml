@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+
+jobs:
+  flake-check:
+    name: Flake check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v20
+
+      - name: Evaluate flake
+        run: nix flake check --no-build --all-systems
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v20
+
+      - name: Check formatting (alejandra)
+        run: nix run nixpkgs#alejandra -- --check .
+
+      - name: Check dead code (deadnix)
+        run: nix run nixpkgs#deadnix -- --fail .
+
+      - name: Static analysis (statix)
+        run: nix run nixpkgs#statix -- check .
