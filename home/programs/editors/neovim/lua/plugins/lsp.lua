@@ -1,10 +1,11 @@
 -- LSP Configuration
--- This config is compatible with Neovim 0.11+ which introduces:
---   - New vim.lsp.config() and vim.lsp.enable() APIs (used below)
---   - Default keymaps: grn, grr, gri, gra, grt, gO, <C-S> (overridden in keymaps.lua)
---   - Virtual text diagnostics now opt-in (explicitly enabled below)
---   - New diagnostic display options: only_current_line, virtual_lines
--- See: https://gpanders.com/blog/whats-new-in-neovim-0-11/
+-- This config is compatible with Neovim 0.12+ which introduces:
+--   - vim.lsp.config() and vim.lsp.enable() APIs (used below, since 0.11)
+--   - Default keymaps: grn, grr, gri, gra, grt, grx, gO, <C-S>, v_an, v_in
+--   - grx: vim.lsp.codelens.run() (new in 0.12)
+--   - v_an/v_in: incremental treesitter/LSP selection (new in 0.12)
+--   - Virtual text diagnostics opt-in (explicitly enabled below)
+--   - Code lenses display as virtual lines (reimplemented in 0.12)
 
 return {
   {
