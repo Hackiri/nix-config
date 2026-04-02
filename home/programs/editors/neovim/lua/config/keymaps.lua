@@ -224,6 +224,9 @@ map("n", "<leader>bi", function()
   require("personal-plugins.misc").inspectBuffer()
 end, { desc = "Buffer: Inspect info" })
 
+-- Undo tree (built-in Neovim 0.12+)
+map("n", "<leader>uu", "<cmd>Undotree<cr>", { desc = "Undo Tree" })
+
 -- Sticky yank (from v12 config) - cursor doesn't move after yank
 map({ "n", "x" }, "gy", function()
   vim.b.cursorPreYank = vim.api.nvim_win_get_cursor(0)
