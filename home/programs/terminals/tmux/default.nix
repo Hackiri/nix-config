@@ -5,6 +5,7 @@
 }: let
   homeDir = config.home.homeDirectory;
   tmux_config = builtins.readFile ./tmux.conf;
+  catppuccin_plugin = "${pkgs.tmuxPlugins.catppuccin}/share/tmux-plugins/catppuccin";
 
   truncate_path = pkgs.writeScriptBin "truncate_path" ''
     #!/bin/sh
@@ -36,9 +37,21 @@
 
     echo "$path"
   '';
+
+  git_branch = pkgs.writeScriptBin "git_branch" ''
+    #!/bin/sh
+    cd "$1" 2>/dev/null || exit 0
+    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 0
+    if [ -n "$(git status --porcelain 2>/dev/null | head -1)" ]; then
+      echo "''${branch}*"
+    else
+      echo "$branch"
+    fi
+  '';
 in {
   home.packages = [
     truncate_path # Custom path truncation script
+    git_branch # Git branch for tmux status bar
   ];
 
   programs.tmux = {
@@ -68,11 +81,18 @@ in {
       ${tmux_config}
 
       # Load catppuccin AFTER options are set (home-manager runs plugins before extraConfig)
-      run-shell ${pkgs.tmuxPlugins.catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux
+      run-shell ${catppuccin_plugin}/catppuccin.tmux
 
-      # Status line must be set AFTER catppuccin creates the template variables
-      set -g status-left "#{E:@catppuccin_status_session}"
-      set -g status-right "#{E:@catppuccin_status_directory}"
+      # Custom git_branch module (defined after catppuccin creates theme variables)
+      %hidden MODULE_NAME="git_branch"
+      set -ogq "@catppuccin_''${MODULE_NAME}_icon" "󰊢 "
+      set -ogq "@catppuccin_''${MODULE_NAME}_color" "#04d1f9"
+      set -ogq "@catppuccin_''${MODULE_NAME}_text" " #(git_branch #{pane_current_path})"
+      source "${catppuccin_plugin}/utils/status_module.conf"
+
+      # Status line must be set AFTER all modules (built-in + custom) are defined
+      set -g status-left "#{E:@catppuccin_status_session}#{E:@catppuccin_status_host}"
+      set -g status-right "#{E:@catppuccin_status_git_branch}#{E:@catppuccin_status_directory}#{E:@catppuccin_status_date_time}"
     '';
   };
 }
