@@ -2,11 +2,6 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
     #--------------------------------------------------
-    # Tmux Session Management
-    #--------------------------------------------------
-    tmuxinator
-
-    #--------------------------------------------------
     # Terminal Dependencies (cross-platform)
     #--------------------------------------------------
     moreutils # For sponge command used in tmux-resurrect

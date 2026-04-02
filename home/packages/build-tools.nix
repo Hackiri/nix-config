@@ -1,5 +1,5 @@
 # Build tools, compilers, and core development utilities
-# Note: CLI essentials (bat, eza, fd, fzf, etc.) are in cli-essentials.nix
+# Note: CLI essentials (bat, eza, fd, etc.) are in cli-essentials.nix
 {pkgs, ...}: {
   home.packages = with pkgs; [
     #--------------------------------------------------

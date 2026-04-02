@@ -28,6 +28,7 @@
       zstyle ':completion:*' matcher-list "" 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
       zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
       zstyle ':completion:*' menu select
+      zstyle ':completion:*' verbose yes
       zstyle ':completion:*' special-dirs true
       zstyle ':completion:*:descriptions' format '[%d]'
       zstyle ':completion:*' group-name ""
@@ -42,6 +43,7 @@
       zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps -p $word -o pid,user,%cpu,%mem,start,command'
       zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
       zstyle ':fzf-tab:*' fzf-flags '--height=50%'
+      zstyle ':fzf-tab:*' show-group full
       zstyle ':fzf-tab:*' switch-group '<' '>'
     '';
   };

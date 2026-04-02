@@ -19,5 +19,6 @@
 
     # Window management
     aerospace # AeroSpace tiling window manager for macOS
+    jankyborders # Focused-window border highlighting for AeroSpace
   ];
 }

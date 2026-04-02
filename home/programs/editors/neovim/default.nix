@@ -1,8 +1,8 @@
 {pkgs, ...}: {
   programs.neovim = {
     enable = true;
-    # Note: neovim stays on stable — HM's neovim module is tightly coupled
-    # to nixpkgs' neovim/lua infrastructure, incompatible across channels
+    # Note: neovim-unwrapped comes from nixpkgs-unstable (0.12+) via overlay.
+    # HM wrapping and Lua/Python infra still use stable nixpkgs.
     plugins = with pkgs.vimPlugins; [];
     defaultEditor = true;
     viAlias = true;

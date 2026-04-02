@@ -24,28 +24,23 @@ on-focus-changed = ['move-mouse window-lazy-center']
 # Automatically unhide macOS hidden apps
 automatically-unhide-macos-hidden-apps = true
 
+# JankyBorders: highlight focused window with Eldritch green border
+after-startup-command = [
+  'exec-and-forget borders active_color=0xff37f499 inactive_color=0xff565f89 width=4.0 style=round'
+]
+
 # Key mapping preset
 [key-mapping]
 preset = 'qwerty'
 
 # Gaps settings
 [gaps]
-inner.horizontal = 10
-inner.vertical = 10
-outer.left = 5
-outer.right = 5
-outer.bottom = 5
-outer.top = [
-  { monitor."built-in" = 10 },
-  { monitor.main = 10 },
-  { monitor.secondary = 10 },
-  10,
-]
-
-# Optional: uncomment to enable JankyBorders for focused-window highlighting
-# after-startup-command = [
-#   'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=3.0'
-# ]
+inner.horizontal = 15
+inner.vertical = 15
+outer.left = 12
+outer.right = 12
+outer.bottom = 12
+outer.top = 12
 
 # Workspace-to-monitor assignments (multi-monitor setup)
 [workspace-to-monitor-force-assignment]

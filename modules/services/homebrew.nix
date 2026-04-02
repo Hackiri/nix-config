@@ -55,10 +55,8 @@
         [
           "mas" # Mac App Store CLI
           "bitwarden-cli" # Password manager CLI
-          "webp" # WebP image format
           "podman-compose" # Podman Compose
           "podman" # Podman
-          "wordnet" # Wordnet dictionary
           "coreutils" # GNU coreutils (provides grealpath for yazi.nvim)
           "gettext" # GNU internationalization utilities
           "gh" # GitHub CLI

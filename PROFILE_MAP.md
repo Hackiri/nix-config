@@ -27,17 +27,17 @@ The profile system uses a three-layer architecture:
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         HOST CONFIGURATIONS                         │
 │    (hosts/mbp/home.nix, hosts/desktop/home.nix)                     │
-│    Optional: + features/sops.nix (profiles.sops.enable = true)     │
+│    Optional: + features/sops.nix (profiles.sops.enable = true)      │
 │    Optional: + features/kubernetes.nix (profiles.kubernetes.enable) │
 └─────────────────────────────────┬───────────────────────────────────┘
                                   │
-                    ┌─────────────┴─────────────┐
-                    │                           │
+                    ┌─────────────┴──────────────┐
+                    │                            │
         ┌───────────▼──────────┐   ┌───────────▼──────────┐
         │   platform/darwin    │   │   platform/nixos     │
-        └───────────┬──────────┘   └───────────┬──────────┘
-                    │                           │
-                    └─────────────┬─────────────┘
+        └───────────┬──────────┘   └─────────────┬────────┘
+                    │                            │
+                    └─────────────┬──────────────┘
                                   │
                     ┌─────────────▼──────────────┐
                     │    features/desktop        │
@@ -53,7 +53,7 @@ The profile system uses a three-layer architecture:
                     ┌─────────────▼──────────────┐
                     │      base/minimal          │
                     │     (foundation)           │
-                    └─────────────────────────────┘
+                    └────────────────────────────┘
 ```
 
 ---
@@ -73,7 +73,7 @@ base/minimal.nix
 ├── programs/security/                 # SSH hardening
 ├── programs/utilities/btop/           # System monitoring
 └── Direct packages:
-    ├── neofetch, htop
+    ├── fastfetch, htop
     └── unzip, zip, gzip
 ```
 
@@ -319,7 +319,7 @@ home/programs/
 │   ├── default.nix              → All terminal configs
 │   ├── tmux/
 │   ├── alacritty/
-│   └── ...
+│   └── ghostty/
 │
 └── utilities/
     ├── default.nix              → btop + claude + yazi
