@@ -6,6 +6,7 @@
 }: {
   imports = [
     # Shared system modules
+    ../shared/device.nix
     ../shared/nix-index.nix
     ../shared/nix-settings.nix
     ../shared/users.nix

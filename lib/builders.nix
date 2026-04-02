@@ -40,6 +40,7 @@
     name,
     system ? "x86_64-darwin",
     username ? "wm",
+    device ? "desktop",
   }: let
     pkgs = mkPkgs system;
   in
@@ -51,6 +52,12 @@
         inputs.home-manager.darwinModules.home-manager
         (mkHomeManagerConfig {inherit name username;})
         inputs.nix-homebrew.darwinModules.nix-homebrew
+        {
+          device = {
+            type = device;
+            hostname = name;
+          };
+        }
       ];
       specialArgs = {inherit inputs system username;};
     };
@@ -59,6 +66,7 @@
     name,
     system ? "x86_64-linux",
     username ? "wm",
+    device ? "desktop",
   }: let
     pkgs = mkPkgs system;
   in
@@ -69,6 +77,12 @@
         inputs.sops-nix.nixosModules.sops
         inputs.home-manager.nixosModules.home-manager
         (mkHomeManagerConfig {inherit name username;})
+        {
+          device = {
+            type = device;
+            hostname = name;
+          };
+        }
       ];
       specialArgs = {inherit inputs system username;};
     };
@@ -91,7 +105,7 @@
         inherit (h) name;
         value = mkDarwin {
           inherit (h) name;
-          inherit (h.meta) system username;
+          inherit (h.meta) system username device;
         };
       })
       darwinHosts);
@@ -99,7 +113,7 @@
         inherit (h) name;
         value = mkNixOS {
           inherit (h) name;
-          inherit (h.meta) system username;
+          inherit (h.meta) system username device;
         };
       })
       nixosHosts);
