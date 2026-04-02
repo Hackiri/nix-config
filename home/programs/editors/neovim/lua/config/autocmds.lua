@@ -427,8 +427,7 @@ M.setup = function()
       return
     end
 
-    local hasParserForFt, _ = pcall(vim.treesitter.get_parser, bufnr)
-    if not hasParserForFt then
+    if not vim.treesitter.get_parser(bufnr) then
       return
     end
 
