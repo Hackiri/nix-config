@@ -230,6 +230,12 @@ map("n", "<leader>uu", function()
   vim.cmd.Undotree()
 end, { desc = "Undo Tree" })
 
+-- Diff tool (built-in Neovim 0.12+, opt-in plugin)
+map("n", "<leader>uD", function()
+  vim.cmd.packadd("nvim.difftool")
+  vim.cmd("DiffTool")
+end, { desc = "Diff Tool" })
+
 -- Sticky yank (from v12 config) - cursor doesn't move after yank
 map({ "n", "x" }, "gy", function()
   vim.b.cursorPreYank = vim.api.nvim_win_get_cursor(0)

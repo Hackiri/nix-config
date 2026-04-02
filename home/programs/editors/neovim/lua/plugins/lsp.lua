@@ -401,6 +401,11 @@ return {
             require("config.folding").enable_lsp_folding(event.buf)
           end)
 
+          -- Enable code lenses (displayed as virtual lines in 0.12)
+          if client and client:supports_method("textDocument/codeLens") then
+            vim.lsp.codelens.enable(true, { bufnr = event.buf })
+          end
+
           local map = function(keys, func, desc)
             vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
           end
