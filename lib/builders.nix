@@ -1,5 +1,6 @@
-# System builder functions: mkPkgs, mkHomeManagerConfig, mkDarwin, mkNixOS
+# System builder functions: mkPkgs, mkHomeManagerConfig, mkDarwin, mkNixOS, discoverHosts
 {inputs}: let
+  inherit (inputs.nixpkgs) lib;
   overlay = import ../overlays {inherit inputs;};
 
   mkPkgs = system:
@@ -71,6 +72,38 @@
       ];
       specialArgs = {inherit inputs system username;};
     };
+  # Auto-discover hosts from hosts/ directory via meta.nix metadata files
+  discoverHosts = let
+    hostsDir = ../hosts;
+    hostNames =
+      builtins.attrNames
+      (lib.filterAttrs (_: type: type == "directory") (builtins.readDir hostsDir));
+    hostMetas =
+      map (name: {
+        inherit name;
+        meta = import ../hosts/${name}/meta.nix;
+      })
+      hostNames;
+    darwinHosts = builtins.filter (h: h.meta.type == "darwin") hostMetas;
+    nixosHosts = builtins.filter (h: h.meta.type == "nixos") hostMetas;
+  in {
+    darwinConfigurations = lib.listToAttrs (map (h: {
+        inherit (h) name;
+        value = mkDarwin {
+          inherit (h) name;
+          inherit (h.meta) system username;
+        };
+      })
+      darwinHosts);
+    nixosConfigurations = lib.listToAttrs (map (h: {
+        inherit (h) name;
+        value = mkNixOS {
+          inherit (h) name;
+          inherit (h.meta) system username;
+        };
+      })
+      nixosHosts);
+  };
 in {
-  inherit mkPkgs mkHomeManagerConfig mkDarwin mkNixOS;
+  inherit mkPkgs mkHomeManagerConfig mkDarwin mkNixOS discoverHosts;
 }

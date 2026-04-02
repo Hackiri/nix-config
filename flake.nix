@@ -92,17 +92,8 @@
       };
 
       flake = {
-        darwinConfigurations."mbp" = builders.mkDarwin {
-          name = "mbp";
-          system = "x86_64-darwin";
-          username = "wm";
-        };
-
-        nixosConfigurations."desktop" = builders.mkNixOS {
-          name = "desktop";
-          system = "x86_64-linux";
-          username = "wm";
-        };
+        # Auto-discovered from hosts/*/meta.nix
+        inherit (builders.discoverHosts) darwinConfigurations nixosConfigurations;
 
         templates = {
           node = {
