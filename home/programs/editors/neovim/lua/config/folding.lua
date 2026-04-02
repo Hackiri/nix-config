@@ -5,39 +5,12 @@ local current_method = {}
 
 -- Check if treesitter is available for the current buffer
 function M.has_treesitter()
-  local ok, parsers = pcall(require, "nvim-treesitter.parsers")
-  if not ok or type(parsers) ~= "table" then
-    return false
-  end
-
-  -- Determine the buffer language safely across versions
-  local lang
-  local ok_lang, res = pcall(function()
-    if type(parsers.get_buf_lang) == "function" then
-      return parsers.get_buf_lang(0)
-    end
-    -- Fallback: derive from filetype
-    local ft = vim.bo.filetype
-    if type(parsers.ft_to_lang) == "function" then
-      return parsers.ft_to_lang(ft)
-    end
-    return ft
-  end)
-  lang = ok_lang and res or nil
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   if not lang or lang == "" then
     return false
   end
-
-  -- Check parser availability guards
-  if type(parsers.has_parser) == "function" then
-    local ok_has, has = pcall(parsers.has_parser, lang)
-    return ok_has and has or false
-  end
-  if type(parsers.get_parser) == "function" then
-    local ok_get = pcall(parsers.get_parser, 0, lang)
-    return ok_get
-  end
-  return false
+  -- In 0.12, get_parser returns nil instead of throwing
+  return vim.treesitter.get_parser(0, lang) ~= nil
 end
 
 -- Function to enable LSP folding for a buffer
