@@ -1,5 +1,5 @@
 # Disable flaky Python package tests
-_final: prev: {
+_: _final: prev: {
   pythonPackagesExtensions =
     (prev.pythonPackagesExtensions or [])
     ++ [

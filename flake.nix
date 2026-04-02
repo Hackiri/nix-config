@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
@@ -50,20 +51,7 @@
   };
 
   outputs = inputs: let
-    overlay = import ./overlays;
-
-    mkPkgs = system:
-      import inputs.nixpkgs {
-        inherit system;
-        overlays = [
-          inputs.emacs-overlay.overlays.default
-          overlay
-        ];
-        config = {
-          allowUnfree = true;
-          allowDeprecatedx86_64Darwin = true;
-        };
-      };
+    builders = import ./lib/builders.nix {inherit inputs;};
   in
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-darwin" "aarch64-darwin" "x86_64-linux" "aarch64-linux"];
@@ -75,19 +63,12 @@
         ...
       }: {
         # Configure pkgs with overlays and allowUnfree
-        _module.args.pkgs = mkPkgs system;
+        _module.args.pkgs = builders.mkPkgs system;
 
         # Git pre-commit hooks checks
-        checks.pre-commit-check = inputs.git-hooks.lib.${system}.run {
+        checks.pre-commit-check = import ./lib/pre-commit.nix {
+          inherit inputs system;
           src = ./.;
-          hooks = {
-            alejandra.enable = true;
-            deadnix.enable = true;
-            statix.enable = true;
-            stylua.enable = true;
-            shellcheck.enable = true;
-            prettier.enable = true;
-          };
         };
 
         # Custom packages as flake outputs
@@ -110,81 +91,17 @@
           // langShells;
       };
 
-      flake = let
-        # Shared home-manager configuration for all system types
-        mkHomeManagerConfig = {
-          name,
-          username,
-        }: {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            backupFileExtension = "backup";
-            extraSpecialArgs = {
-              inherit inputs username;
-              hostName = name;
-            };
-            users.${username} = import ./hosts/${name}/home.nix;
-            sharedModules = [
-              inputs.sops-nix.homeManagerModules.sops
-              {manual.json.enable = false;}
-            ];
-          };
+      flake = {
+        darwinConfigurations."mbp" = builders.mkDarwin {
+          name = "mbp";
+          system = "x86_64-darwin";
+          username = "wm";
         };
 
-        # Function to create a Darwin system configuration
-        mkDarwin = {
-          name,
-          system ? "x86_64-darwin",
-          username ? "wm",
-        }: let
-          pkgs = mkPkgs system;
-        in
-          inputs.nix-darwin.lib.darwinSystem {
-            inherit system pkgs;
-            modules = [
-              ./hosts/${name}/configuration.nix
-              inputs.sops-nix.darwinModules.sops
-              inputs.home-manager.darwinModules.home-manager
-              (mkHomeManagerConfig {inherit name username;})
-              inputs.nix-homebrew.darwinModules.nix-homebrew
-            ];
-            specialArgs = {inherit inputs system username;};
-          };
-
-        # Function to create a NixOS system configuration
-        mkNixOS = {
-          name,
-          system ? "x86_64-linux",
-          username ? "wm",
-        }: let
-          pkgs = mkPkgs system;
-        in
-          inputs.nixpkgs.lib.nixosSystem {
-            inherit system pkgs;
-            modules = [
-              ./hosts/${name}/configuration.nix
-              inputs.sops-nix.nixosModules.sops
-              inputs.home-manager.nixosModules.home-manager
-              (mkHomeManagerConfig {inherit name username;})
-            ];
-            specialArgs = {inherit inputs system username;};
-          };
-      in {
-        darwinConfigurations = {
-          "mbp" = mkDarwin {
-            name = "mbp";
-            system = "x86_64-darwin";
-            username = "wm";
-          };
-        };
-
-        nixosConfigurations = {
-          "desktop" = mkNixOS {
-            name = "desktop";
-            system = "x86_64-linux";
-            username = "wm";
-          };
+        nixosConfigurations."desktop" = builders.mkNixOS {
+          name = "desktop";
+          system = "x86_64-linux";
+          username = "wm";
         };
 
         templates = {

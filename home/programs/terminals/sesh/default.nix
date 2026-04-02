@@ -1,4 +1,4 @@
-{...}: {
+_: {
   programs.sesh = {
     enable = true;
     enableTmuxIntegration = true;
@@ -11,7 +11,10 @@
       };
       sort_order = ["config" "tmux" "zoxide"];
       session = [
-        {name = "nix-config"; path = "~/nix-config";}
+        {
+          name = "nix-config";
+          path = "~/nix-config";
+        }
       ];
     };
   };
