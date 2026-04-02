@@ -18,9 +18,6 @@ vim.opt.rtp:prepend(lazypath)
 -- Python is provided by Nix via extraPython3Packages in default.nix
 -- Neovim will automatically find it in PATH
 
--- Setup treesitter compatibility shims for Neovim 0.11+
-require("compat.treesitter").setup()
-
 -- Safe require function to handle missing modules
 local function safe_require(module)
   local ok, result = pcall(require, module)
@@ -77,7 +74,6 @@ require("lazy").setup({
         -- "matchparen",
         -- "netrwPlugin",
         "tarPlugin",
-        "tohtml",
         -- "tutor",
         "zipPlugin",
       },
