@@ -7,6 +7,9 @@
   ...
 }: {
   imports = [
+    # Theme: Centralized color palette (used by starship, terminals, etc.)
+    ../../programs/theme
+
     # Packages: Core CLI tools (bat, eza, fd, fzf, ripgrep, etc.)
     ../../packages/cli-essentials.nix
 
