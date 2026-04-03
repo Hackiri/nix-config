@@ -40,7 +40,10 @@ nix-config/
 │   ├── system/                 # System configurations (darwin, nixos, shared)
 │   └── services/               # Service configurations (homebrew, fonts)
 ├── lib/                        # Shared library functions
-│   └── devshells.nix           # Language-specific development shells
+│   ├── builders.nix            # System builders (mkDarwin, mkNixOS, auto-discovery)
+│   ├── devshells.nix           # Language-specific development shells
+│   ├── pre-commit.nix          # Git pre-commit hook configuration
+│   └── theme.nix               # Centralized theme/palette definitions
 ├── overlays/                   # Nixpkgs overlays
 ├── pkgs/                       # Custom packages
 ├── templates/                  # Project templates (node, python, rust, go)
@@ -88,48 +91,42 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
 2. **Configure Your System**
 
-   **1. Edit `flake.nix` overrides** (search for `darwinConfigurations`):
+   **1. Set your username in `flake.nix`:**
+
+   Hosts are auto-discovered from `hosts/*/meta.nix` files. The default username is defined once in `flake.nix`:
 
    ```nix
-   darwinConfigurations = {
-     "mbp" = mkDarwin {           # Change "mbp" to your exact local hostname (run 'scutil --get LocalHostName')
-       name = "mbp";              # Change to match the host directory name you will use in 'hosts/'
-       system = "x86_64-darwin";  # Set to "aarch64-darwin" for Apple Silicon or "x86_64-darwin" for Intel
-       username = "wm";           # Change to your exact macOS username (run 'whoami')
-     };
-   };
+   defaultUsername = "wm";  # Change to your exact macOS/Linux username (run 'whoami')
    ```
 
-   **What to change:**
-   - **Hostname key** (`"mbp"`): Your computer's exact hostname (run `scutil --get LocalHostName` to check on macOS).
-   - **name**: Must match a directory in `hosts/` (use existing `mbp` or rename it to match).
-   - **system**: `"x86_64-darwin"` (Intel) or `"aarch64-darwin"` (Apple Silicon).
-   - **username**: Your exact macOS username (run `whoami` to check).
+   All hosts inherit this username unless they override it in their `meta.nix`.
 
-   **2. Edit `flake.nix` defaults** (search for `mkDarwin`):
-   Ensure that the default system matches your architecture, and the default username matches your username.
+   **2. Edit the host's `meta.nix`:**
+
+   Each host directory has a `meta.nix` that defines its platform and device type:
 
    ```nix
-   # Function to create a Darwin system configuration
-   mkDarwin = {
-     name,
-     system ? "x86_64-darwin", # Change to "aarch64-darwin" for Apple Silicon
-     username ? "wm",          # Change to your exact macOS username
-   }: let
+   # hosts/mbp/meta.nix
+   {
+     type = "darwin";             # "darwin" or "nixos"
+     system = "x86_64-darwin";    # "aarch64-darwin" for Apple Silicon, "x86_64-linux" for NixOS
+     device = "laptop";           # "laptop" or "desktop"
+     # username = "other";        # Optional: override defaultUsername for this host
+   }
    ```
 
-   **3. Rename the Host Directory to Match (if changed)**
-   If you changed the `name` attribute above from `mbp` to something else (e.g. `scds-mbp`), you MUST rename the folder in `hosts/` to match:
+   **3. Rename the Host Directory to Match Your Hostname**
+
+   The directory name under `hosts/` becomes the configuration name. Rename it to match your hostname (run `scutil --get LocalHostName` on macOS):
 
    ```bash
    mv hosts/mbp hosts/YOUR_HOSTNAME
    ```
 
    **4. Disable SOPS (Crucial if you haven't set up age keys yet):**
-   The default `hosts/mbp/home.nix` (or whatever you renamed it to) has SOPS enabled. If you don't have your age keys set up yet, you **must disable it** before building to avoid activation errors. Edit your `home.nix` file:
+   The default `home.nix` has SOPS enabled. If you don't have your age keys set up yet, you **must disable it** before building to avoid activation errors. Edit your host's `home.nix` file:
 
    ```nix
-   # In hosts/mbp/home.nix (or your renamed host folder) — change to:
    profiles.sops.enable = false;
    ```
 
@@ -215,22 +212,61 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    sops-decrypt secrets/secrets.yaml # Print decrypted contents to stdout
    ```
 
+## Adding a New Host
+
+To deploy this configuration on another machine:
+
+1. **Create a host directory** by copying an existing one:
+
+   ```bash
+   cp -r hosts/mbp hosts/YOUR_HOSTNAME
+   ```
+
+2. **Edit `hosts/YOUR_HOSTNAME/meta.nix`** for the new machine:
+
+   ```nix
+   {
+     type = "darwin";             # "darwin" or "nixos"
+     system = "aarch64-darwin";   # Architecture of the new machine
+     device = "laptop";           # "laptop" or "desktop"
+     username = "youruser";       # Optional: only needed if different from defaultUsername in flake.nix
+   }
+   ```
+
+3. **Disable SOPS** in `hosts/YOUR_HOSTNAME/home.nix` if you haven't set up age keys:
+
+   ```nix
+   profiles.sops.enable = false;
+   ```
+
+4. **Build:**
+
+   ```bash
+   sudo darwin-rebuild switch --flake .#YOUR_HOSTNAME
+   # Or for first-time install:
+   nix run nix-darwin -- switch --flake .#YOUR_HOSTNAME
+   ```
+
+The host is auto-discovered from `meta.nix` — no changes to `flake.nix` required.
+
 ## Usage
 
 ### System Updates
 
 ```bash
 # macOS system-level changes (nix-darwin + home-manager)
-nixswitch  # Custom alias: sudo darwin-rebuild switch --flake ~/nix-config#mbp
+nixswitch  # Alias: sudo darwin-rebuild switch --flake ~/nix-config#<hostname>
 # OR manually:
-sudo darwin-rebuild switch --flake .#mbp
+sudo darwin-rebuild switch --flake .#<hostname>
 
 # Alternative using nix run (if darwin-rebuild not available)
-sudo nix run nix-darwin -- switch --flake .#mbp
+sudo nix run nix-darwin -- switch --flake .#<hostname>
 
 # NixOS system-level changes
-sudo nixos-rebuild switch --flake .#desktop
+sudo nixos-rebuild switch --flake .#<hostname>
 ```
+
+The `nixswitch` alias automatically uses the current host's name — no need to specify it.
 
 **Note:** This configuration integrates home-manager through nix-darwin/NixOS modules, so there's no separate home-manager-only command. User configurations are applied together with system configurations.
 
@@ -321,7 +357,7 @@ base/            Shared foundations (shell, git, core programs)
            └─ platform/     Platform-specific settings (darwin, nixos)
 ```
 
-Profiles are composed via `mkHomeManagerConfig` in `flake.nix`. Feature flags in `home/profiles/features/` use `lib.mkEnableOption` to gate package groups.
+Profiles are composed via `mkHomeManagerConfig` in `lib/builders.nix`. Feature flags in `home/profiles/features/` use `lib.mkEnableOption` to gate package groups.
 
 ## Development Shells
 
@@ -413,6 +449,25 @@ Remove the existing taps so nix-darwin can manage them declaratively:
 sudo rm -rf /usr/local/Homebrew/Library/Taps
 sudo darwin-rebuild switch --flake ~/nix-config#mbp
 ```
+
+### Known Harmless Warnings
+
+**`options.json` store path warning:**
+
+```
+warning: Using 'builtins.derivation' to create a derivation named 'options.json' that references the store path ... without a proper context.
+```
+
+This is a [known home-manager issue](https://github.com/nix-community/home-manager) on recent Nix versions. It is mitigated by `manual.json.enable = false` and `documentation.doc.enable = false` in this config. The warning is cosmetic and will be resolved upstream.
+
+**`eval-cores` / `lazy-trees` unknown setting (Determinate Nix):**
+
+```
+warning: unknown setting 'eval-cores'
+warning: unknown setting 'lazy-trees'
+```
+
+These come from Determinate Nix's managed `/etc/nix/nix.conf`, not from this config. They appear when the Nix binary doesn't recognize settings added by a newer Determinate config. Safe to ignore — Nix skips unknown settings. Running `sudo determinate-nixd upgrade` may resolve them on supported platforms.
 
 ## Documentation
 

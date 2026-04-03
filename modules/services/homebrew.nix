@@ -75,8 +75,8 @@
           "podman-desktop"
 
           # Terminal emulators
-          "iterm2"
           "ghostty"
+          "wezterm"
 
           # Productivity
           "raycast" # Spotlight replacement

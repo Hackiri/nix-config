@@ -10,10 +10,17 @@ _: {
         preview_command = "eza --all --git --icons --color=always {}";
       };
       sort_order = ["config" "tmux" "zoxide"];
+      blacklist = ["0"];
       session = [
         {
           name = "nix-config";
           path = "~/nix-config";
+        }
+      ];
+      wildcard = [
+        {
+          pattern = "~/Projects/*";
+          startup_command = "nvim";
         }
       ];
     };

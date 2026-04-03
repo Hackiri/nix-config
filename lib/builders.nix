@@ -1,5 +1,8 @@
 # System builder functions: mkPkgs, mkHomeManagerConfig, mkDarwin, mkNixOS, discoverHosts
-{inputs}: let
+{
+  inputs,
+  defaultUsername,
+}: let
   inherit (inputs.nixpkgs) lib;
   overlay = import ../overlays {inherit inputs;};
 
@@ -38,8 +41,8 @@
 
   mkDarwin = {
     name,
-    system ? "x86_64-darwin",
-    username ? "wm",
+    system ? "aarch64-darwin",
+    username ? defaultUsername,
     device ? "desktop",
   }: let
     pkgs = mkPkgs system;
@@ -65,7 +68,7 @@
   mkNixOS = {
     name,
     system ? "x86_64-linux",
-    username ? "wm",
+    username ? defaultUsername,
     device ? "desktop",
   }: let
     pkgs = mkPkgs system;
@@ -105,7 +108,8 @@
         inherit (h) name;
         value = mkDarwin {
           inherit (h) name;
-          inherit (h.meta) system username device;
+          inherit (h.meta) system device;
+          username = h.meta.username or defaultUsername;
         };
       })
       darwinHosts);
@@ -113,7 +117,8 @@
         inherit (h) name;
         value = mkNixOS {
           inherit (h) name;
-          inherit (h.meta) system username device;
+          inherit (h.meta) system device;
+          username = h.meta.username or defaultUsername;
         };
       })
       nixosHosts);

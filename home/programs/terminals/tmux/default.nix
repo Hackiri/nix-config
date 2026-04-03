@@ -91,8 +91,13 @@ in {
       source "${catppuccin_plugin}/utils/status_module.conf"
 
       # Status line must be set AFTER all modules (built-in + custom) are defined
-      set -g status-left "#{E:@catppuccin_status_session}#{E:@catppuccin_status_host}"
-      set -g status-right "#{E:@catppuccin_status_git_branch}#{E:@catppuccin_status_directory}#{E:@catppuccin_status_date_time}"
+      # Left: prefix-aware session (red on prefix, catppuccin pill otherwise) + dir + zoom
+      set -g  status-left "#{?client_prefix,#{#[bg=#{@thm_red},fg=#{@thm_crust},bold]  #S },#{E:@catppuccin_status_session}}"
+      set -ga status-left "#[bg=default,fg=#{@thm_overlay_0},none]│"
+      set -ga status-left "#[bg=default,fg=#{@thm_blue}]  #{=/-32/...:#{s|$USER|~|:#{b:pane_current_path}}} "
+      set -ga status-left "#[bg=default,fg=#{@thm_overlay_0},none]#{?window_zoomed_flag,│,}"
+      set -ga status-left "#[bg=default,fg=#{@thm_yellow}]#{?window_zoomed_flag,  zoom ,}"
+      set -g status-right "#{E:@catppuccin_status_git_branch}#{E:@catppuccin_status_date_time}"
     '';
   };
 }

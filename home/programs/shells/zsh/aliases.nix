@@ -168,11 +168,11 @@
       fkill = "ps aux | fzf --multi | awk '{print $2}' | xargs kill -9";
       fenv = "env | fzf";
       frg = "rg --color=always --line-number --no-heading --smart-case \"\" | fzf --ansi --preview=\"bat --color=always {1} --highlight-line {2}\"";
+
       # eza aliases (defined directly to avoid flag conflicts from chaining)
       lse = "eza --icons -l -T -L=1";
       l = "eza --icons -l";
       ll = "eza --icons -la";
-
       lstree = "eza --icons -T";
       hist = "history | grep";
 
@@ -213,18 +213,19 @@
       mcpl = "mcpl --config ~/.config/mcpl/mcp.json";
 
       # nix-darwin directory shortcuts
-      dots = "cd ~/nix-config";
+      dots = "z ~/nix-config";
 
       # Pre-commit
       pcmit = "pre-commit run --all-files";
 
-      # Tmux aliases
+      # Tmux/Sesh aliases
       ta = "tmux attach -t";
       tad = "tmux attach -d -t";
       ts = "tmux new-session -s";
       tl = "tmux list-sessions";
       tksv = "tmux kill-server";
       tkss = "tmux kill-session -t";
+      scl = "sesh connect $(sesh list | fzf --preview 'sesh preview {}')";
 
       # Better directory navigation
       ".." = "cd ..";
