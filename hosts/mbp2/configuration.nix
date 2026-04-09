@@ -1,0 +1,20 @@
+{
+  pkgs,
+  username,
+  ...
+}: {
+  imports = [
+    ../../modules/system/darwin
+  ];
+
+  # Host-specific system configuration
+  system.primaryUser = username;
+
+  # Host-specific user configuration
+  users.users.${username}.home = "/Users/${username}";
+
+  # Host-specific packages
+  environment.systemPackages = with pkgs; [
+    # Add host-specific packages here
+  ];
+}

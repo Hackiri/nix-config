@@ -1,5 +1,6 @@
 # Darwin system configuration
 {
+  config,
   lib,
   system,
   ...
@@ -37,11 +38,14 @@
   };
 
   # Power management
-  power.sleep = {
-    display = 15;
-    computer = 30;
-    harddisk = 10;
-  };
+  power.sleep =
+    {
+      display = 15;
+      computer = 30;
+    }
+    // lib.optionalAttrs config.device.isIntel {
+      harddisk = 10; # No-op on Apple Silicon
+    };
 
   # Platform-specific nixpkgs configuration
   nixpkgs = {

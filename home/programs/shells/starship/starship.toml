@@ -9,48 +9,24 @@ scan_timeout = 30
 continuation_prompt = "[▸▹ ](dimmed white)"
 
 format = """
-($nix_shell$container$fill$git_metrics\n)\
-$cmd_duration\
-$hostname\
-$localip\
-$shlvl\
-$os\
-$shell\
-$env_var\
-$jobs\
-$sudo\
-$username\
-$character"""
+[╭─ ](dimmed white)$cmd_duration$os$directory $git_branch$git_commit$git_state$git_status$git_metrics
+[╰─](dimmed white) $nix_shell$container$hostname$localip$shlvl$env_var$jobs$sudo$username$character"""
 
 right_format = """
 $singularity\
 $kubernetes\
-$directory\
-$vcsh\
-$fossil_branch\
-$git_branch\
-$git_commit\
-$git_state\
-$git_status\
-$hg_branch\
-$pijul_channel\
 $docker_context\
 $package\
 $c\
 $cmake\
-$cobol\
-$daml\
 $dart\
 $deno\
 $dotnet\
 $elixir\
 $elm\
 $erlang\
-$fennel\
 $golang\
-$guix_shell\
 $haskell\
-$haxe\
 $helm\
 $java\
 $julia\
@@ -59,25 +35,16 @@ $gradle\
 $lua\
 $nim\
 $nodejs\
-$ocaml\
-$opa\
 $perl\
 $php\
 $typst\
 $pulumi\
-$purescript\
 $python\
-$raku\
-$rlang\
-$red\
 $ruby\
 $rust\
 $scala\
-$solidity\
 $swift\
 $terraform\
-$vlang\
-$vagrant\
 $zig\
 $buf\
 $bun\
@@ -88,9 +55,10 @@ $aws\
 $gcloud\
 $openstack\
 $azure\
-$crystal\
+$memory_usage\
 $custom\
 $status\
+$time\
 $battery"""
 
 [os]
@@ -165,8 +133,8 @@ vimcmd_visual_symbol = "󰈈"
 [shell]
 disabled = false
 bash_indicator = ""
-zsh_indicator = ""
-unknown_indicator = "󰞷 "
+zsh_indicator = ""
+unknown_indicator = " "
 style = "bold italic blue"
 
 [env_var.VIMSHELL]
@@ -193,8 +161,9 @@ show_always = false
 
 [directory]
 home_symbol = ""
-truncation_length = 2
-truncation_symbol = " "
+truncate_to_repo = true
+truncation_length = 3
+truncation_symbol = "󰜥 "
 read_only = " 󰌾"
 use_os_path_sep = true
 style = "italic blue"
@@ -242,6 +211,10 @@ style = "italic dimmed bright-purple"
 threshold = 70
 style = "italic dimmed yellow"
 
+[[battery.display]]
+threshold = 100
+style = "italic dimmed green"
+
 [kubernetes]
 disabled = false
 detect_files = ["k8s", "Chart.yaml", "helmfile.yaml", "kustomization.yaml"]
@@ -256,7 +229,7 @@ symbol = "☸ "
 "staging-cluster" = "🟡 stage"
 
 [git_branch]
-format = " [$branch(:$remote_branch)]($style)"
+format = "[$branch(:$remote_branch)]($style)"
 symbol = "󰘬 "
 style = "italic bright-blue"
 truncation_symbol = "…"
@@ -416,8 +389,11 @@ symbol = "󰣐 "
 format = " jl [$symbol($version )]($style)"
 
 [memory_usage]
+disabled = false
+threshold = 75
 symbol = "󰍛 "
-format = " mem [${ram}( ${swap})]($style)"
+format = " [${symbol}${ram}( | ${swap})]($style)"
+style = "bold dimmed yellow"
 
 [nim]
 symbol = "󰆥 "
@@ -426,7 +402,7 @@ format = " nim [$symbol($version )]($style)"
 [nix_shell]
 style = 'bold italic dimmed blue'
 symbol = '🐚'
-format = '[$symbol nix⎪$state⎪]($style) [$name](italic dimmed white)'
+format = '[$symbol nix⎪$state⎪]($style) [$name ](italic dimmed white)'
 impure_msg = '[⌽](bold dimmed red)'
 pure_msg = '[⌾](bold dimmed green)'
 unknown_msg = '[◌](bold dimmed yellow)'
@@ -435,3 +411,42 @@ unknown_msg = '[◌](bold dimmed yellow)'
 symbol = "◇ "
 format = " spack [$symbol$environment]($style)"
 
+[time]
+disabled = false
+format = " [$time]($style)"
+time_format = "%H:%M"
+style = "dimmed white"
+
+[status]
+disabled = false
+format = "[$symbol$status( $signal_name)]($style) "
+symbol = "✖ "
+not_executable_symbol = " "
+not_found_symbol = "󰍉 "
+sigint_symbol = " "
+signal_symbol = "󱐋 "
+style = "bold red"
+map_symbol = true
+recognize_signal_code = true
+
+[git_commit]
+format = "[ $hash$tag]($style)"
+style = "italic bright-purple"
+commit_hash_length = 7
+tag_symbol = " 󰓹 "
+only_detached = true
+tag_disabled = false
+
+[shlvl]
+disabled = false
+format = "[$symbol]($style)"
+symbol = "󰜮 "
+threshold = 2
+style = "bold italic yellow"
+
+[hostname]
+ssh_only = true
+format = "[$ssh_symbol$hostname]($style) "
+style = "bold italic bright-green"
+ssh_symbol = "󰣀 "
+trim_at = "."

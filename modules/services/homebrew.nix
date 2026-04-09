@@ -73,9 +73,9 @@
           # Development tools
           "visual-studio-code"
           "podman-desktop"
+          "opencode-desktop" # Open source IDE
 
           # Terminal emulators
-          "ghostty"
           "wezterm"
 
           # Productivity
@@ -85,7 +85,6 @@
           # Communication
           "slack"
           "discord"
-          "telegram"
 
           # Media
           "vlc"
