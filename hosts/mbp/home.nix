@@ -13,7 +13,10 @@
   home.homeDirectory = "/Users/${username}";
 
   # Enable SOPS encrypted secrets management
-  profiles.sops.enable = true;
+  profiles.sops = {
+    enable = true;
+    signingKeySecret = "git-signingKey-mbp";
+  };
 
   # Enable Kubernetes development profile
   profiles.kubernetes = {

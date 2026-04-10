@@ -1,5 +1,5 @@
 # Disable flaky Python package tests
-_: _final: prev: {
+{inputs}: _final: prev: {
   pythonPackagesExtensions =
     (prev.pythonPackagesExtensions or [])
     ++ [
@@ -18,4 +18,19 @@ _: _final: prev: {
         });
       })
     ];
+
+  # Use nixpkgs-unstable nerd-fonts.jetbrains-mono which doesn't depend on gftools/ffmpeg-python.
+  # The stable (25.11) version builds jetbrains-mono via gftools which requires ffmpeg-python,
+  # and ffmpeg-python tests are killed by SIGKILL in the Nix sandbox on macOS.
+  nerd-fonts =
+    prev.nerd-fonts
+    // {
+      inherit
+        ((import inputs.nixpkgs-unstable {
+          inherit (prev) system;
+          config.allowUnfree = true;
+        }).nerd-fonts)
+        jetbrains-mono
+        ;
+    };
 }

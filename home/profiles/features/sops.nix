@@ -42,7 +42,7 @@
     # Use warnings instead of errors to avoid breaking plugin updates (e.g., LazyVim)
     if [[ ! -f "${config.sops.secrets.git-userName.path}" ]] ||
        [[ ! -f "${config.sops.secrets.git-userEmail.path}" ]] ||
-       [[ ! -f "${config.sops.secrets.git-signingKey.path}" ]]; then
+       [[ ! -f "${config.sops.secrets.${cfg.signingKeySecret}.path}" ]]; then
       log_warning "Sops secrets not found, skipping git config setup"
       log_warning "Run 'PATH=/usr/bin:/bin sops-install-secrets' or rebuild home-manager to decrypt secrets"
       exit 0
@@ -51,7 +51,7 @@
     # Read and apply secrets
     if username=$(cat "${config.sops.secrets.git-userName.path}" 2>/dev/null) &&
        email=$(cat "${config.sops.secrets.git-userEmail.path}" 2>/dev/null) &&
-       signingkey=$(cat "${config.sops.secrets.git-signingKey.path}" 2>/dev/null); then
+       signingkey=$(cat "${config.sops.secrets.${cfg.signingKeySecret}.path}" 2>/dev/null); then
 
       # Validate that secrets are not empty
       if [[ -z "$username" ]] || [[ -z "$email" ]] || [[ -z "$signingkey" ]]; then
@@ -91,7 +91,7 @@
     # Check if sops secret files exist and are readable
     if [[ ! -f "${config.sops.secrets.git-userName.path}" ]] ||
        [[ ! -f "${config.sops.secrets.git-userEmail.path}" ]] ||
-       [[ ! -f "${config.sops.secrets.git-signingKey.path}" ]]; then
+       [[ ! -f "${config.sops.secrets.${cfg.signingKeySecret}.path}" ]]; then
       log_warning "Some sops secret files are missing, skipping git config update"
       exit 0
     fi
@@ -99,7 +99,7 @@
     # Read and apply secrets
     if username=$(cat "${config.sops.secrets.git-userName.path}" 2>/dev/null) &&
        email=$(cat "${config.sops.secrets.git-userEmail.path}" 2>/dev/null) &&
-       signingkey=$(cat "${config.sops.secrets.git-signingKey.path}" 2>/dev/null); then
+       signingkey=$(cat "${config.sops.secrets.${cfg.signingKeySecret}.path}" 2>/dev/null); then
 
       git config user.name "$username"
       git config user.email "$email"
@@ -113,6 +113,12 @@
 in {
   options.profiles.sops = with lib; {
     enable = mkEnableOption "SOPS encrypted secrets management";
+
+    signingKeySecret = mkOption {
+      type = types.str;
+      default = "git-signingKey";
+      description = "Name of the sops secret to use for the git signing key (allows per-host GPG keys)";
+    };
 
     extraSecrets = mkOption {
       type = types.attrsOf (types.submodule {
@@ -157,7 +163,7 @@ in {
             path = "${config.home.homeDirectory}/.config/git/email";
             mode = "0400";
           };
-          git-signingKey = {
+          "${cfg.signingKeySecret}" = {
             path = "${config.home.homeDirectory}/.config/git/signingkey";
             mode = "0400";
           };

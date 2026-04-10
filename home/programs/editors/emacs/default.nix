@@ -311,7 +311,6 @@ in {
 
       # Font support
       fontconfig
-      jetbrains-mono
       nerd-fonts.jetbrains-mono
 
       # Emacs-specific dependencies
