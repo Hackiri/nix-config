@@ -2,7 +2,6 @@
 {
   config,
   lib,
-  system,
   ...
 }: {
   imports = [
@@ -46,9 +45,4 @@
     // lib.optionalAttrs config.device.isIntel {
       harddisk = 10; # No-op on Apple Silicon
     };
-
-  # Platform-specific nixpkgs configuration
-  nixpkgs = {
-    hostPlatform = lib.mkDefault "${system}";
-  };
 }

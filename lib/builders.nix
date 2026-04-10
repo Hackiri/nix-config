@@ -48,7 +48,7 @@
     pkgs = mkPkgs system;
   in
     inputs.nix-darwin.lib.darwinSystem {
-      inherit system pkgs;
+      inherit pkgs;
       modules = [
         ../hosts/${name}/configuration.nix
         inputs.sops-nix.darwinModules.sops
@@ -60,9 +60,10 @@
             type = device;
             hostname = name;
           };
+          nixpkgs.hostPlatform = pkgs.stdenv.hostPlatform.system;
         }
       ];
-      specialArgs = {inherit inputs system username;};
+      specialArgs = {inherit inputs username;};
     };
 
   mkNixOS = {
@@ -74,7 +75,7 @@
     pkgs = mkPkgs system;
   in
     inputs.nixpkgs.lib.nixosSystem {
-      inherit system pkgs;
+      inherit pkgs;
       modules = [
         ../hosts/${name}/configuration.nix
         inputs.sops-nix.nixosModules.sops
@@ -85,9 +86,10 @@
             type = device;
             hostname = name;
           };
+          nixpkgs.hostPlatform = pkgs.stdenv.hostPlatform.system;
         }
       ];
-      specialArgs = {inherit inputs system username;};
+      specialArgs = {inherit inputs username;};
     };
   # Auto-discover hosts from hosts/ directory via meta.nix metadata files
   discoverHosts = let
