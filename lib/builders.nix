@@ -76,7 +76,6 @@
           ];
           nixpkgs.config = {
             allowUnfree = true;
-            allowDeprecatedx86_64Darwin = true;
           };
         }
         ../hosts/${name}/configuration.nix
