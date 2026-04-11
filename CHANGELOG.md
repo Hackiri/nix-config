@@ -5,7 +5,7 @@
 ### Flake Modularization
 
 - **refactor(flake):** Extract overlays, builders, and pre-commit config from `flake.nix` into dedicated files (`82569e3`)
-  - `lib/builders.nix` — mkPkgs, mkHomeManagerConfig, mkDarwin, mkNixOS
+  - `lib/builders.nix` — mkHomeManagerConfig, mkDarwin, mkNixOS
   - `lib/pre-commit.nix` — git-hooks configuration
   - `overlays/neovim.nix` — neovim-unstable overlay
   - `overlays/*.nix` — accept `{ inputs }` for input-dependent overlays

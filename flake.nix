@@ -63,9 +63,6 @@
         self',
         ...
       }: {
-        # Configure pkgs with overlays and allowUnfree
-        _module.args.pkgs = builders.mkPkgs system;
-
         # Git pre-commit hooks checks
         checks.pre-commit-check = import ./lib/pre-commit.nix {
           inherit inputs system;
