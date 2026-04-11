@@ -2,7 +2,7 @@
 _: {
   system.defaults = {
     dock = {
-      autohide = false;
+      autohide = true;
       launchanim = false;
       static-only = false;
       show-recents = false;
