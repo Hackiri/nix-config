@@ -1,6 +1,6 @@
 {
   pkgs,
-  hostName ? "mbp",
+  hostName,
   ...
 }: let
   aliases =
