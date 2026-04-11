@@ -39,16 +39,16 @@ zsh/
 
 Vim mode is enabled via `bindkey -v` in `keybindings.nix` with `lib.mkBefore` to ensure it loads before FZF commands.
 
-| Key | Mode | Action |
-|-----|------|--------|
-| `Esc` | insert | Switch to normal mode (block cursor) |
-| `i` | normal | Switch to insert mode (beam cursor) |
-| `v` | normal | Edit command in `$EDITOR` |
-| `Ctrl+X Ctrl+E` | insert | Edit command in `$EDITOR` |
-| `Esc Esc` | any | Toggle `sudo` prefix on current line |
-| `Up` / `Down` | any | History substring search |
-| `k` / `j` | normal | History substring search |
-| `Ctrl+\` | any | Accept and hold (run command, keep on line) |
+| Key             | Mode   | Action                                      |
+| --------------- | ------ | ------------------------------------------- |
+| `Esc`           | insert | Switch to normal mode (block cursor)        |
+| `i`             | normal | Switch to insert mode (beam cursor)         |
+| `v`             | normal | Edit command in `$EDITOR`                   |
+| `Ctrl+X Ctrl+E` | insert | Edit command in `$EDITOR`                   |
+| `Esc Esc`       | any    | Toggle `sudo` prefix on current line        |
+| `Up` / `Down`   | any    | History substring search                    |
+| `k` / `j`       | normal | History substring search                    |
+| `Ctrl+\`        | any    | Accept and hold (run command, keep on line) |
 
 ## FZF Commands
 
@@ -58,68 +58,68 @@ All FZF integration modules define plain shell commands (not ZLE keybindings). E
 
 Only available inside git repositories.
 
-| Command | Description |
-|---------|-------------|
-| `gff` | File status browser — modified/untracked files with diff preview |
-| `gfb` | Branch browser — local and remote branches with commit history |
-| `gft` | Tag browser — tags with version sorting and details |
-| `gfh` | History browser — commit log with diff preview (Ctrl+S toggles sort) |
-| `gfr` | Remote browser — remotes with commit history |
-| `gfs` | Stash browser — stashed changes with preview |
-| `gfst` | Interactive status — Ctrl+A to add/unstage, Ctrl+C to commit |
-| `gfa` | Interactive add — multi-select files to stage (TAB) |
-| `gfc` | Interactive commit — opens editor with staged file list |
+| Command | Description                                                          |
+| ------- | -------------------------------------------------------------------- |
+| `gff`   | File status browser — modified/untracked files with diff preview     |
+| `gfb`   | Branch browser — local and remote branches with commit history       |
+| `gft`   | Tag browser — tags with version sorting and details                  |
+| `gfh`   | History browser — commit log with diff preview (Ctrl+S toggles sort) |
+| `gfr`   | Remote browser — remotes with commit history                         |
+| `gfs`   | Stash browser — stashed changes with preview                         |
+| `gfst`  | Interactive status — Ctrl+A to add/unstage, Ctrl+C to commit         |
+| `gfa`   | Interactive add — multi-select files to stage (TAB)                  |
+| `gfc`   | Interactive commit — opens editor with staged file list              |
 
 ### Kubectl Commands (`fzf-kubectl.nix`)
 
-| Command | Description |
-|---------|-------------|
-| `kfp` | Pod selector — browse pods with describe preview |
-| `kfn` | Namespace selector — switch namespace with resource preview |
-| `kfc` | Context selector — switch cluster context |
-| `kfl` | Log viewer — select pod, view logs (Ctrl+F to follow) |
-| `kfe` | Exec into pod — select pod/container, open shell |
-| `kfs` | Service selector — browse services with endpoints |
-| `kfd` | Deployment selector — browse deployments with replica status |
-| `kfx` | Delete resource — select type, then resource, with confirmation |
-| `kff` | Port forward — select pod, enter port mapping |
+| Command | Description                                                     |
+| ------- | --------------------------------------------------------------- |
+| `kfp`   | Pod selector — browse pods with describe preview                |
+| `kfn`   | Namespace selector — switch namespace with resource preview     |
+| `kfc`   | Context selector — switch cluster context                       |
+| `kfl`   | Log viewer — select pod, view logs (Ctrl+F to follow)           |
+| `kfe`   | Exec into pod — select pod/container, open shell                |
+| `kfs`   | Service selector — browse services with endpoints               |
+| `kfd`   | Deployment selector — browse deployments with replica status    |
+| `kfx`   | Delete resource — select type, then resource, with confirmation |
+| `kff`   | Port forward — select pod, enter port mapping                   |
 
 ### Cilium Commands (`fzf-cilium.nix`)
 
-| Command | Description |
-|---------|-------------|
-| `cfp` | Pod selector — browse Cilium agent pods |
-| `cfs` | Status — show Cilium status |
-| `cft` | Connectivity test — run Cilium connectivity tests |
-| `cfe` | Endpoint browser — select pod, view endpoint list |
-| `cfm` | Monitor — start Cilium monitor on selected pod |
-| `cfl` | Policy browser — browse CNP/CCNP policies |
-| `cfv` | Service map — view cluster service list |
-| `cfu` | Hubble UI — open with port-forward |
-| `cfo` | Hubble observe — interactive flow observation with filters |
-| `cfh` | Health check — quick Cilium health overview |
-| `cfd` | Debug info — version, status, events from selected pod |
+| Command | Description                                                |
+| ------- | ---------------------------------------------------------- |
+| `cfp`   | Pod selector — browse Cilium agent pods                    |
+| `cfs`   | Status — show Cilium status                                |
+| `cft`   | Connectivity test — run Cilium connectivity tests          |
+| `cfe`   | Endpoint browser — select pod, view endpoint list          |
+| `cfm`   | Monitor — start Cilium monitor on selected pod             |
+| `cfl`   | Policy browser — browse CNP/CCNP policies                  |
+| `cfv`   | Service map — view cluster service list                    |
+| `cfu`   | Hubble UI — open with port-forward                         |
+| `cfo`   | Hubble observe — interactive flow observation with filters |
+| `cfh`   | Health check — quick Cilium health overview                |
+| `cfd`   | Debug info — version, status, events from selected pod     |
 
 ### Claude Code Commands (`fzf-claude.nix`)
 
-| Command | Description |
-|---------|-------------|
-| `clh` | History — browse all prompts across projects |
-| `cls` | Sessions — browse sessions for current project |
-| `clp` | Projects — list all projects with conversation counts |
-| `clr` | Recent — conversations from the last 7 days |
-| `claude-search` | Full-text search across all conversations |
+| Command         | Description                                           |
+| --------------- | ----------------------------------------------------- |
+| `clh`           | History — browse all prompts across projects          |
+| `cls`           | Sessions — browse sessions for current project        |
+| `clp`           | Projects — list all projects with conversation counts |
+| `clr`           | Recent — conversations from the last 7 days           |
+| `claude-search` | Full-text search across all conversations             |
 
 ### Built-in FZF Shortcuts
 
 These are standard FZF shell integration shortcuts configured in `fzf.nix`:
 
-| Key | Action |
-|-----|--------|
-| `Ctrl+T` | Fuzzy file finder (preview with bat/eza) |
-| `Alt+C` | Fuzzy directory finder + cd (preview with eza tree) |
-| `Ctrl+R` | Command history search |
-| `Ctrl+/` | Toggle preview in any FZF window |
+| Key      | Action                                              |
+| -------- | --------------------------------------------------- |
+| `Ctrl+T` | Fuzzy file finder (preview with bat/eza)            |
+| `Alt+C`  | Fuzzy directory finder + cd (preview with eza tree) |
+| `Ctrl+R` | Command history search                              |
+| `Ctrl+/` | Toggle preview in any FZF window                    |
 
 ## Command Aliases
 
@@ -233,6 +233,7 @@ dots           # cd ~/nix-config
 Defined in `aliases.nix` `initContent` (not available in bash):
 
 **Suffix aliases** — open files by typing the filename:
+
 ```bash
 file.py        # runs python3 file.py
 file.md        # runs glow file.md
@@ -241,6 +242,7 @@ repo.git       # runs git clone repo.git
 ```
 
 **Global aliases** — substituted anywhere on the line:
+
 ```bash
 command G      # | grep
 command L      # | less
@@ -255,14 +257,14 @@ command C      # | wc -l
 
 When you `cd` into a directory, `direnv-hook.nix` checks for project markers and offers to create a devShell environment:
 
-| Marker file | DevShell |
-|-------------|----------|
-| `Cargo.toml` | rust |
-| `package.json` | node |
-| `go.mod` | go |
-| `pyproject.toml` / `requirements.txt` / `setup.py` | python |
-| `Gemfile` | ruby |
-| `composer.json` | php |
+| Marker file                                        | DevShell |
+| -------------------------------------------------- | -------- |
+| `Cargo.toml`                                       | rust     |
+| `package.json`                                     | node     |
+| `go.mod`                                           | go       |
+| `pyproject.toml` / `requirements.txt` / `setup.py` | python   |
+| `Gemfile`                                          | ruby     |
+| `composer.json`                                    | php      |
 
 The hook generates a `flake.nix` in `~/.cache/direnv-flakes/` and a `.envrc` pointing to it, keeping the project directory clean. It also adds `.envrc` and `.direnv` to `.git/info/exclude`.
 
@@ -288,19 +290,19 @@ The following are automatically installed and configured:
 
 ### Configuration Files
 
-| File | Purpose |
-|------|---------|
-| `default.nix` | Main module: imports, session vars, history, zoxide init |
-| `options.nix` | Shell options (setopt), zmodload, named directories |
+| File              | Purpose                                                   |
+| ----------------- | --------------------------------------------------------- |
+| `default.nix`     | Main module: imports, session vars, history, zoxide init  |
+| `options.nix`     | Shell options (setopt), zmodload, named directories       |
 | `keybindings.nix` | Vim mode, cursor shape, history-substring-search bindings |
-| `completion.nix` | fzf-tab plugin, compinit cache, zstyle completion config |
-| `fzf.nix` | FZF defaults, preview config, compgen/comprun |
-| `fzf-git.nix` | Git FZF commands |
-| `fzf-kubectl.nix` | Kubectl FZF commands |
-| `fzf-cilium.nix` | Cilium FZF commands |
-| `fzf-claude.nix` | Claude Code FZF commands |
-| `direnv-hook.nix` | Auto-detect chpwd hook |
-| `aliases.nix` | All aliases (shared zsh + bash) |
+| `completion.nix`  | fzf-tab plugin, compinit cache, zstyle completion config  |
+| `fzf.nix`         | FZF defaults, preview config, compgen/comprun             |
+| `fzf-git.nix`     | Git FZF commands                                          |
+| `fzf-kubectl.nix` | Kubectl FZF commands                                      |
+| `fzf-cilium.nix`  | Cilium FZF commands                                       |
+| `fzf-claude.nix`  | Claude Code FZF commands                                  |
+| `direnv-hook.nix` | Auto-detect chpwd hook                                    |
+| `aliases.nix`     | All aliases (shared zsh + bash)                           |
 
 ### Update Process
 
