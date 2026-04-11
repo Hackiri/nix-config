@@ -35,14 +35,16 @@
     inputs.nix-darwin.lib.darwinSystem {
       modules = [
         {
-          nixpkgs.hostPlatform = system;
-          nixpkgs.overlays = [
-            inputs.emacs-overlay.overlays.default
-            overlay
-          ];
-          nixpkgs.config = {
-            allowUnfree = true;
-            allowDeprecatedx86_64Darwin = true;
+          nixpkgs = {
+            hostPlatform = system;
+            overlays = [
+              inputs.emacs-overlay.overlays.default
+              overlay
+            ];
+            config = {
+              allowUnfree = true;
+              allowDeprecatedx86_64Darwin = true;
+            };
           };
         }
         ../hosts/${name}/configuration.nix
@@ -69,13 +71,13 @@
     inputs.nixpkgs.lib.nixosSystem {
       modules = [
         {
-          nixpkgs.hostPlatform = system;
-          nixpkgs.overlays = [
-            inputs.emacs-overlay.overlays.default
-            overlay
-          ];
-          nixpkgs.config = {
-            allowUnfree = true;
+          nixpkgs = {
+            hostPlatform = system;
+            overlays = [
+              inputs.emacs-overlay.overlays.default
+              overlay
+            ];
+            config.allowUnfree = true;
           };
         }
         ../hosts/${name}/configuration.nix
