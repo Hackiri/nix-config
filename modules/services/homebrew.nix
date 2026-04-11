@@ -32,6 +32,8 @@
         "homebrew/homebrew-core" = inputs.homebrew-core;
         "homebrew/homebrew-cask" = inputs.homebrew-cask;
         "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
+        "nikitabobko/homebrew-tap" = inputs.homebrew-aerospace;
+        "FelixKratz/homebrew-formulae" = inputs.homebrew-felixkratz;
       };
       mutableTaps = false;
     };
@@ -60,6 +62,7 @@
           "coreutils" # GNU coreutils (provides grealpath for yazi.nvim)
           "gettext" # GNU internationalization utilities
           "gh" # GitHub CLI
+          "FelixKratz/formulae/borders" # JankyBorders - window border highlighting for AeroSpace
         ]
         ++ config.services.homebrew.extraBrews;
 
@@ -93,6 +96,7 @@
           # Utilities
           "obsidian" # Note-taking
           "hammerspoon" # Automation
+          "nikitabobko/tap/aerospace" # AeroSpace tiling window manager
           "pika" # Color picker
 
           # Creative
