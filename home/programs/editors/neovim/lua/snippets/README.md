@@ -26,6 +26,7 @@ snippets/
 ## All Implemented Modules
 
 ### Programming Languages
+
 - ✅ **Markdown** (20+ snippets) - Code blocks, links, tables, callouts, frontmatter
 - ✅ **Python** (5 snippets) - Main, class, function, FastAPI, pytest
 - ✅ **Rust** (3 snippets) - Main, struct with impl, test module
@@ -37,6 +38,7 @@ snippets/
 - ✅ **Bash/Shell** (9 snippets) - Script headers, functions, error handling, logging
 
 ### DevOps & Infrastructure
+
 - ✅ **Nix** (9 snippets) - Flakes, modules, packages, overlays, scripts
 - ✅ **Kubernetes** (12 snippets) - Deployments, Services, ConfigMaps, Ingress, StatefulSets
 - ✅ **Docker** (8 snippets) - Multi-stage builds for Node/Python/Go/Rust, nginx, .dockerignore
@@ -93,6 +95,7 @@ The original `luasnip.lua` had 2,621 lines with all snippets inline. This has be
 ## Available Snippet Triggers
 
 ### Markdown
+
 - Code blocks: `bash`, `python`, `javascript`, `typescript`, etc.
 - Headers: `h1`, `h2`, `h3`
 - Lists: `ul`, `ol`, `cl` (checklist)
@@ -101,8 +104,9 @@ The original `luasnip.lua` had 2,621 lines with all snippets inline. This has be
 - Callouts: `note`, `warn`, `info`
 
 ### Python
+
 - `pymain` - Main script template
-- `pyclass` - Class with __init__ and __str__
+- `pyclass` - Class with **init** and **str**
 - `pyfunc` - Function with docstring
 - `pyapi` - FastAPI endpoint
 - `pytest` - Test function template
@@ -116,6 +120,7 @@ In addition to custom snippets, this setup loads `friendly-snippets` which provi
 **Important:** Custom snippets require the `;` prefix to trigger (configured in `blink-cmp.lua`).
 
 Example:
+
 - Type `;pymain` to expand Python main template
 - Type `;bash` to create a bash code block in markdown
 
