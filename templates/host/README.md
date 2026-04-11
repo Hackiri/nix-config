@@ -16,11 +16,7 @@ cp -r templates/host hosts/<name>
 #    Darwin: ../../home/profiles/platform/darwin.nix
 #    NixOS:  ../../home/profiles/platform/nixos.nix
 
-# 4. Register the host in lib/builders.nix (or flake.nix)
-#    Darwin: builders.mkDarwin { name = "<name>"; system = "aarch64-darwin"; }
-#    NixOS:  builders.mkNixOS  { name = "<name>"; system = "x86_64-linux"; }
-
-# 5. Build and test
+# 4. Build and test
 darwin-rebuild build --flake .#<name>   # Darwin
 nixos-rebuild build --flake .#<name>    # NixOS
 ```

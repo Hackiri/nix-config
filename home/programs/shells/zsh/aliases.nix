@@ -16,7 +16,7 @@
         nixswitch = "sudo darwin-rebuild switch --flake ~/nix-config\\#${hostName}"; # Build and activate
         nixcheck = "sudo darwin-rebuild check --flake ~/nix-config\\#${hostName}"; # Check configuration
         nixdry = "sudo darwin-rebuild dry-build --flake ~/nix-config\\#${hostName}"; # Test build without making changes
-        nixedit = "sudo darwin-rebuild edit --flake ~/nix-config\\#${hostName}"; # Open configuration in $EDITOR
+        nixedit = "$EDITOR ~/nix-config"; # Open configuration in $EDITOR
         nixlist = "sudo darwin-rebuild --list-generations"; # List all generations
         nixrollback = "sudo darwin-rebuild switch --rollback"; # Rollback to previous generation
         nixtrace = "sudo darwin-rebuild switch --flake ~/nix-config\\#${hostName} --show-trace"; # Show trace for debugging
@@ -29,7 +29,7 @@
         nixswitch = "sudo nixos-rebuild switch --flake ~/nix-config\\#${hostName}"; # Build and activate
         nixcheck = "sudo nixos-rebuild dry-activate --flake ~/nix-config\\#${hostName}"; # Build and show what would change
         nixdry = "sudo nixos-rebuild dry-build --flake ~/nix-config\\#${hostName}"; # Evaluate without building
-        nixedit = "sudo nixos-rebuild edit --flake ~/nix-config\\#${hostName}"; # Open configuration in $EDITOR
+        nixedit = "$EDITOR ~/nix-config"; # Open configuration in $EDITOR
         nixlist = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system"; # List all generations
         nixrollback = "sudo nixos-rebuild switch --rollback"; # Rollback to previous generation
         nixtrace = "sudo nixos-rebuild switch --flake ~/nix-config\\#${hostName} --show-trace"; # Show trace for debugging
@@ -41,7 +41,7 @@
 
       # Nix utilities
       nxsearch = "nix search nixpkgs"; # Search packages
-      nxrepl = "nix repl --expr 'import <nixpkgs> {}'"; # Interactive nix REPL
+      nxrepl = "nix repl 'nixpkgs'"; # Interactive nix REPL
       nxdev = "nix develop .#"; # Enter dev shell
 
       # Kubernetes aliases

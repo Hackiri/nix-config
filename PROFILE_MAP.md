@@ -191,9 +191,8 @@ platform/darwin.nix
 ├── Platform Packages:
 │   └── platform/darwin-pkgs.nix
 │       ├── mkalias
-│       ├── pam-reattach
-│       ├── reattach-to-user-namespace
-│       └── aerospace
+│       └── reattach-to-user-namespace
+│       # AeroSpace + JankyBorders are installed via Homebrew
 │
 └── Programs:
     └── programs/utilities/aerospace/   # macOS window manager

@@ -228,9 +228,9 @@ Platform-specific packages and settings are located in `platform/`:
 macOS-specific packages:
 
 - `mkalias` - macOS alias creation
-- `pam-reattach` - Touch ID support in tmux
 - `reattach-to-user-namespace` - macOS clipboard integration
-- `aerospace` - Tiling window manager
+
+> **Note:** AeroSpace and JankyBorders are installed via Homebrew (see `modules/services/homebrew.nix`).
 
 ### `platform/nixos.nix`
 
