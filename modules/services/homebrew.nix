@@ -62,6 +62,7 @@
           "coreutils" # GNU coreutils (provides grealpath for yazi.nvim)
           "gettext" # GNU internationalization utilities
           "gh" # GitHub CLI
+          "gemini-cli" # Google Gemini CLI
           "FelixKratz/formulae/borders" # JankyBorders - window border highlighting for AeroSpace
         ]
         ++ config.services.homebrew.extraBrews;
@@ -77,6 +78,7 @@
           "visual-studio-code"
           "podman-desktop"
           "opencode-desktop" # Open source IDE
+          "codex"
 
           # Terminal emulators
           "wezterm"

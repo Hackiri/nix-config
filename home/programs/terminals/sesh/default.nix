@@ -2,7 +2,7 @@ _: {
   programs.sesh = {
     enable = true;
     enableTmuxIntegration = true;
-    tmuxKey = "f";
+    tmuxKey = "T";
     icons = true;
     settings = {
       default_session = {

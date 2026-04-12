@@ -14,6 +14,11 @@ _: {
   };
 
   programs.zsh.initContent = ''
+    # Rebind fzf file widget from Ctrl-t to Ctrl-p to avoid conflict with
+    # sesh picker (prefix+T -> ctrl-t = filter tmux sessions)
+    bindkey -r '^T'
+    bindkey '^P' fzf-file-widget
+
     # Shared FZF dropdown function used by all integration modules
     # (fzf-git, fzf-kubectl, fzf-cilium, fzf-claude)
     fzf-down() {

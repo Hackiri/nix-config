@@ -94,11 +94,17 @@ config.send_composed_key_when_right_alt_is_pressed = false
 -- Keys
 local act = wezterm.action
 
+config.disable_default_key_bindings = true
+
 config.keys = {
   -- Tab management
+  { key = "t", mods = "SUPER", action = act.SpawnTab("CurrentPaneDomain") },
   { key = "t", mods = "SUPER|SHIFT", action = act.SpawnTab("CurrentPaneDomain") },
+  { key = "w", mods = "SUPER", action = act.CloseCurrentTab({ confirm = false }) },
   { key = "w", mods = "SUPER|SHIFT", action = act.CloseCurrentTab({ confirm = false }) },
+  { key = "[", mods = "SUPER", action = act.ActivateTabRelative(-1) },
   { key = "[", mods = "SUPER|SHIFT", action = act.ActivateTabRelative(-1) },
+  { key = "]", mods = "SUPER", action = act.ActivateTabRelative(1) },
   { key = "]", mods = "SUPER|SHIFT", action = act.ActivateTabRelative(1) },
   { key = "1", mods = "SUPER", action = act.ActivateTab(0) },
   { key = "2", mods = "SUPER", action = act.ActivateTab(1) },
@@ -125,6 +131,18 @@ config.keys = {
   { key = "UpArrow", mods = "SUPER|CTRL", action = act.AdjustPaneSize({ "Up", 10 }) },
   { key = "DownArrow", mods = "SUPER|CTRL", action = act.AdjustPaneSize({ "Down", 10 }) },
   { key = "=", mods = "SUPER|SHIFT", action = act.PaneSelect({ mode = "SwapWithActive" }) },
+
+  -- macOS essentials
+  { key = "c", mods = "SUPER", action = act.CopyTo("Clipboard") },
+  { key = "v", mods = "SUPER", action = act.PasteFrom("Clipboard") },
+  { key = "f", mods = "SUPER", action = act.Search("CurrentSelectionOrEmptyString") },
+  { key = "k", mods = "SUPER", action = act.ClearScrollback("ScrollbackOnly") },
+  { key = "r", mods = "SUPER", action = act.ReloadConfiguration },
+  { key = "q", mods = "SUPER", action = act.QuitApplication },
+  { key = "0", mods = "SUPER", action = act.ResetFontSize },
+  { key = "=", mods = "SUPER", action = act.IncreaseFontSize },
+  { key = "-", mods = "SUPER", action = act.DecreaseFontSize },
+  { key = "Enter", mods = "SUPER", action = act.ToggleFullScreen },
 
   -- Window management
   { key = "n", mods = "SUPER", action = act.SpawnWindow },

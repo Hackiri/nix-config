@@ -323,15 +323,16 @@ return {
       -- Define servers that are installed via Nix and should not be managed by Mason
       local nix_installed_servers = {
         nixd = true,
-        -- Add other servers installed via Nix here
+        gopls = true, -- installed via Nix (Mason needs `go` in PATH to build it)
       }
 
       -- Filter out servers installed via Nix to create Mason's ensure_installed list
       -- This automatically includes all servers from the 'servers' table except Nix-managed ones
       -- Current Mason-managed servers: ts_ls→vtsls, html, cssls, tailwindcss, svelte,
-      --   lua_ls, graphql, emmet_ls, prismals, pylsp, eslint, rust_analyzer, gopls,
+      --   lua_ls, graphql, emmet_ls, prismals, pylsp, eslint, rust_analyzer,
       --   dockerls, docker_compose_language_service, ruff, terraformls, yamlls,
       --   jsonls, sqlls, taplo, bashls, texlab, tinymist
+      -- Nix-managed (excluded from Mason): nixd, gopls
       local mason_servers = {}
       for server_name, _ in pairs(servers) do
         if not nix_installed_servers[server_name] then

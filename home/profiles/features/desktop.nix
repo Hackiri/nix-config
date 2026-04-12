@@ -29,7 +29,7 @@
 
       # Font configuration - matching your other editors
       font = {
-        normal = ["JetBrainsMono Nerd Font"];
+        normal = ["JetBrainsMono NFM"]; # actual family name in the installed font files
         size = 13.0; # Slightly smaller than default for more screen space
       };
     };

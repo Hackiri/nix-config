@@ -158,8 +158,11 @@ if vim.g.neovide then
   vim.g.neovide_padding_right = 0
   vim.g.neovide_padding_left = 0
 
+  -- Font
+  vim.opt.guifont = "JetBrainsMono NFM:h13"
+
   -- Transparency (0.0 = fully transparent, 1.0 = opaque)
-  vim.g.neovide_transparency = 0.95 -- Slight transparency for modern look
+  vim.g.neovide_opacity = 0.95 -- Slight transparency for modern look
   vim.g.neovide_window_blurred = true -- Blur background on macOS
 
   -- Floating window transparency

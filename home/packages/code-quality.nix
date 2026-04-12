@@ -10,6 +10,9 @@
     deadnix # Find unused variables and functions in Nix code
     statix # Lints and suggestions for Nix code
 
+    # Go tools (gopls needs go at build time; Nix provides it pre-compiled)
+    gopls # Go language server
+
     # Language-specific formatters
     stylua # Opinionated Lua code formatter
 
