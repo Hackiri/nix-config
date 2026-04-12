@@ -30,7 +30,8 @@ nix-config/
 ├── flake.nix                   # Main flake configuration (flake-parts)
 ├── flake.lock                  # Flake input locks
 ├── hosts/                      # Host-specific configurations
-│   ├── mbp/                    # MacBook Pro (darwin)
+│   ├── mbp/                    # MacBook Pro (darwin) x86_64-darwin
+│   ├── mbp2/                   # MacBook Pro (darwin) aarch64-darwin
 │   └── desktop/                # NixOS Desktop
 ├── home/                       # Home Manager configurations
 │   ├── profiles/               # Layered user profiles (base, features, platform)
