@@ -350,13 +350,6 @@ return {
 
       -- Utilities
       {
-        "<M-k>",
-        function()
-          Snacks.picker.keymaps({ layout = "vertical" })
-        end,
-        desc = "Keymaps",
-      },
-      {
         "<leader>pk",
         function()
           require("snacks").picker.keymaps({ layout = "ivy" })
@@ -365,13 +358,6 @@ return {
       },
 
       -- Git
-      {
-        "<M-b>",
-        function()
-          Snacks.picker.git_branches({ layout = "select" })
-        end,
-        desc = "Git Branches",
-      },
       {
         "<leader>gbr",
         function()
