@@ -258,29 +258,6 @@ return {
         desc = "Find Config File",
       },
 
-      -- Buffer Navigation with delete functionality
-      {
-        "<S-h>",
-        function()
-          Snacks.picker.buffers({
-            on_show = function()
-              vim.cmd.stopinsert()
-            end,
-            finder = "buffers",
-            format = "buffer",
-            hidden = false,
-            unloaded = true,
-            current = true,
-            sort_lastused = true,
-            win = {
-              input = { keys = { ["d"] = "bufdelete" } },
-              list = { keys = { ["d"] = "bufdelete" } },
-            },
-          })
-        end,
-        desc = "Buffers (with delete)",
-      },
-
       -- Search
       {
         "<leader>ps",
