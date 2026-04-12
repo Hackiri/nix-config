@@ -9,5 +9,4 @@ return {
       { "<leader>L", "<cmd>Lazy<cr>", desc = "Lazy Plugin Manager" },
     },
   },
-  -- lazygit.nvim removed: consolidated under Snacks.lazygit()
 }
