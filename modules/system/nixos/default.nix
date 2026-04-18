@@ -1,5 +1,6 @@
 # NixOS system configuration
 {
+  config,
   lib,
   username,
   ...
@@ -22,16 +23,19 @@
   ];
 
   # Enable features
-  features.fonts.enable = true;
+  features.fonts.enable = lib.mkDefault true;
 
   # Disable command-not-found to avoid conflicts with nix-index (from shared/nix-index.nix)
-  programs.command-not-found.enable = lib.mkForce false;
+  programs.command-not-found.enable = false;
 
   # NixOS-specific user configuration
   users.users.${username} = {
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager"];
   };
+
+  # Wire hostname from device metadata (can be overridden per-host)
+  networking.hostName = lib.mkDefault config.device.hostname;
 
   # Enable networking
   networking.networkmanager.enable = true;

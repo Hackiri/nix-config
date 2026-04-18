@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   username,
   ...
@@ -16,6 +17,12 @@
   profiles.sops = {
     enable = true;
     signingKeySecret = "git-signingKey-mbp";
+    extraSecrets = {
+      ssh-config-srv696730 = {
+        path = "${config.home.homeDirectory}/.ssh/conf.d/srv696730";
+        mode = "0600";
+      };
+    };
   };
 
   # Enable Kubernetes development profile

@@ -7,7 +7,6 @@ _: {
     ./databases.nix
     ./languages.nix
     ./security.nix
-    ./terminals.nix
     ./web-dev.nix
   ];
 }

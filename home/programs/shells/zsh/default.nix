@@ -1,8 +1,4 @@
-{
-  config,
-  lib,
-  ...
-}: {
+{config, ...}: {
   imports = [
     ./options.nix
     ./keybindings.nix
@@ -71,8 +67,8 @@
       historySubstringSearch.enable = true;
 
       history = {
-        size = lib.mkForce 50000;
-        save = lib.mkForce 50000;
+        size = 50000;
+        save = 50000;
         path = "${config.home.homeDirectory}/.zsh_history";
         ignoreDups = true;
         share = true;

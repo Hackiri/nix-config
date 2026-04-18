@@ -28,5 +28,6 @@
     #--------------------------------------------------
     libwebp # WebP image format tools
     wordnet # Lexical database for English
+    moreutils # sponge and other small utilities (used by tmux-resurrect)
   ];
 }

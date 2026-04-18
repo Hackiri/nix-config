@@ -20,12 +20,11 @@
     ./security.nix
 
     # Service modules
-    ../../services/darwin/hermes-agent-darwin.nix
     ../../services/darwin/homebrew.nix
   ];
 
   # Enable features
-  features.fonts.enable = true;
+  features.fonts.enable = lib.mkDefault true;
   services.homebrew.enable = true;
 
   # Disable doc output to avoid builtins.toFile warning with options.json

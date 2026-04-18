@@ -1,21 +1,39 @@
 # System configuration for <HOST_NAME>
-# Copy this to hosts/<name>/configuration.nix and edit
+# Copy to hosts/<name>/configuration.nix and edit.
+# Choose one of the two templates below.
+# ── Darwin ────────────────────────────────────────────────────────────────────
 {
   pkgs,
   username,
   ...
 }: {
   imports = [
-    # Darwin: ../../modules/system/darwin
-    # NixOS:  ../../modules/system/nixos
+    ../../modules/system/darwin
+    # Add host-specific service modules here, e.g.:
+    # ../../modules/services/darwin/hermes-agent-darwin.nix
   ];
 
-  # Darwin: set primary user
-  # system.primaryUser = username;
-
-  # User configuration
+  system.primaryUser = username;
   users.users.${username}.home = "/Users/${username}";
 
-  # Add system-level packages here
   environment.systemPackages = with pkgs; [];
 }
+# ── NixOS ─────────────────────────────────────────────────────────────────────
+# {
+#   pkgs,
+#   ...
+# }: {
+#   imports = [
+#     ./hardware-configuration.nix
+#     ../../modules/system/nixos
+#     # Add host-specific service modules here, e.g.:
+#     # ../../modules/services/nixos/desktop-gnome.nix
+#   ];
+#
+#   boot.loader.systemd-boot.enable = true;
+#   boot.loader.efi.canTouchEfiVariables = true;
+#
+#   environment.systemPackages = with pkgs; [];
+#   system.stateVersion = "25.05";
+# }
+
