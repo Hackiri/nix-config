@@ -28,6 +28,10 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Hermes Agent NixOS service module
+    hermes-agent.url = "github:NousResearch/hermes-agent";
+    hermes-agent.inputs.nixpkgs.follows = "nixpkgs";
+
     # Git hooks management
     # Tracks default branch; nixpkgs alignment via `follows` and flake.lock SHA ensure reproducibility.
     # git-hooks.nix has no stable release branches — pinning to default branch is the upstream convention.

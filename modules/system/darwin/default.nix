@@ -7,6 +7,7 @@
   imports = [
     # Shared system modules
     ../shared/device.nix
+    ../shared/fonts.nix
     ../shared/nix-index.nix
     ../shared/nix-settings.nix
     ../shared/users.nix
@@ -19,8 +20,8 @@
     ./security.nix
 
     # Service modules
-    ../../services/fonts.nix
-    ../../services/homebrew.nix
+    ../../services/darwin/hermes-agent-darwin.nix
+    ../../services/darwin/homebrew.nix
   ];
 
   # Enable features

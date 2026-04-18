@@ -7,17 +7,18 @@
   imports = [
     # Shared system modules
     ../shared/device.nix
+    ../shared/fonts.nix
     ../shared/nix-index.nix
     ../shared/nix-settings.nix
     ../shared/users.nix
 
     # NixOS-specific modules
     ./nix-settings.nix
-    ./podman.nix
     ./security.nix
 
     # Service modules
-    ../../services/fonts.nix
+    ../../services/nixos/openssh.nix
+    ../../services/nixos/podman.nix
   ];
 
   # Enable features
@@ -30,15 +31,6 @@
   users.users.${username} = {
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager"];
-  };
-
-  # Enable common services
-  services.openssh = {
-    enable = true;
-    settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
-    };
   };
 
   # Enable networking

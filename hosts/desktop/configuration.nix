@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  username,
   ...
 }: {
   imports = [
@@ -10,6 +9,12 @@
 
     # Import improved NixOS modules
     ../../modules/system/nixos
+
+    # Host services
+    ../../modules/services/nixos/hermes-agent.nix
+    ../../modules/services/nixos/desktop-gnome.nix
+    ../../modules/services/nixos/pipewire.nix
+    ../../modules/services/nixos/printing.nix
   ];
 
   # Prevent accidental deployment with placeholder UUIDs from hardware-configuration.nix
@@ -47,42 +52,6 @@
     LC_PAPER = "en_US.UTF-8";
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
-  };
-
-  # Enable sound with pipewire
-  security.rtkit.enable = true;
-
-  # Services configuration
-  services = {
-    # Enable the X11 windowing system
-    xserver = {
-      enable = true;
-      # Configure keymap in X11
-      xkb = {
-        layout = "us";
-        variant = "";
-      };
-    };
-
-    # Desktop environment and display manager (moved from services.xserver in 24.11/25.11)
-    displayManager.gdm.enable = true;
-    desktopManager.gnome.enable = true;
-
-    # Enable CUPS to print documents
-    printing.enable = true;
-
-    # Enable sound with pipewire
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
-    };
-  };
-
-  # Additional user groups for desktop
-  users.users.${username} = {
-    extraGroups = ["audio" "video"];
   };
 
   # Additional desktop-specific packages
