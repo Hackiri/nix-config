@@ -225,7 +225,7 @@
       tl = "tmux list-sessions";
       tksv = "tmux kill-server";
       tkss = "tmux kill-session -t";
-      scl = "sesh connect $(sesh list | fzf --preview 'sesh preview {}')";
+      scl = "sesh connect $(sesh list --icons | fzf-tmux -p 80%,70% --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' --header '  ^a all ^t tmux ^g configs ^x zoxide ^d tmux kill ^f find' --preview-window 'right:55%' --preview 'sesh preview {}')";
 
       # Better directory navigation
       ".." = "cd ..";

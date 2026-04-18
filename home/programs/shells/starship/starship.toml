@@ -173,9 +173,9 @@ repo_root_format = '[$before_root_path]($before_repo_root_style)[$repo_root]($re
 
 [directory.substitutions]
 "Documents" = "󰈙 "
-"Downloads" = " "
+"Downloads" = " "
 "Music" = "󰝚 "
-"Pictures" = " "
+"Pictures" = " "
 "Developer" = "󰲋 "
 
 [cmd_duration]
@@ -401,7 +401,7 @@ format = " nim [$symbol($version )]($style)"
 
 [nix_shell]
 style = 'bold italic dimmed blue'
-symbol = '🐚'
+symbol = '󱄅'
 format = '[$symbol nix⎪$state⎪]($style) [$name ](italic dimmed white)'
 impure_msg = '[⌽](bold dimmed red)'
 pure_msg = '[⌾](bold dimmed green)'

@@ -2,7 +2,10 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
 -- General
-config.font = wezterm.font("JetBrainsMono Nerd Font Mono")
+config.font = wezterm.font_with_fallback({
+  { family = "JetBrains Mono" },
+  { family = "JetBrainsMono Nerd Font Mono", scale = 1.2 },
+})
 config.line_height = 1.2
 config.font_size = 15
 config.window_decorations = "RESIZE"
