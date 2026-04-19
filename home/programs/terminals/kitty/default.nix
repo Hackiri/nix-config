@@ -3,7 +3,7 @@ _: {
     enable = true;
 
     font = {
-      name = "JetBrainsMono Nerd Font";
+      name = "SauceCodePro Nerd Font";
       size = 15;
     };
 

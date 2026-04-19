@@ -17,7 +17,7 @@ window-padding-x = 4,2
 # Vertical padding: top=6pt, bottom=0pt
 window-padding-y = 6,0
 
-font-family = "JetBrainsMono Nerd Font"
+font-family = "SauceCodePro Nerd Font"
 font-size = 15
 
 # Hide titlebar while keeping native borders and rounded corners

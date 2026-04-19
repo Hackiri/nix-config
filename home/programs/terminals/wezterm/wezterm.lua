@@ -3,8 +3,7 @@ local config = wezterm.config_builder()
 
 -- General
 config.font = wezterm.font_with_fallback({
-  { family = "JetBrains Mono" },
-  { family = "JetBrainsMono Nerd Font Mono", scale = 1.2 },
+  { family = "SauceCodePro Nerd Font Mono" },
 })
 config.line_height = 1.2
 config.font_size = 15

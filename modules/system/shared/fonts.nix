@@ -16,8 +16,7 @@
         # Nerd Fonts
         nerd-fonts.jetbrains-mono
         nerd-fonts.fira-code
-        nerd-fonts.blex-mono
-        nerd-fonts.hack
+        nerd-fonts.sauce-code-pro
 
         # System fonts
         noto-fonts

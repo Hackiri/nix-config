@@ -18,9 +18,9 @@ This is a compatibility shim for packages expecting this function in Emacs 31."
       user-mail-address (string-trim (shell-command-to-string "git config user.email")))
 
 ;; Font settings
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 12)
-      doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 12)
-      doom-big-font (font-spec :family "JetBrainsMono Nerd Font" :size 16)) ;; For presentations or streaming
+(setq doom-font (font-spec :family "SauceCodePro Nerd Font" :size 12)
+      doom-variable-pitch-font (font-spec :family "SauceCodePro Nerd Font" :size 12)
+      doom-big-font (font-spec :family "SauceCodePro Nerd Font" :size 16)) ;; For presentations or streaming
 
 ;; Set fixed-pitch font for code blocks in org-mode, markdown, etc.
 (setq doom-unicode-font (font-spec :family "Noto Sans"))
@@ -41,10 +41,10 @@ This is a compatibility shim for packages expecting this function in Emacs 31."
 (setq confirm-kill-emacs nil)   ; Don't prompt on quit
 (setq confirm-kill-processes nil) ; Don't wait for active subprocesses (native-comp, LSP, etc.)
 
-;; Configure Nerd Icons to use JetBrainsMono Nerd Font
+;; Configure Nerd Icons to use SauceCodePro Nerd Font
 (after! nerd-icons
-  (setq nerd-icons-font-family "JetBrainsMono Nerd Font")
-  (setq nerd-icons-font-names '("JetBrainsMono Nerd Font")))
+  (setq nerd-icons-font-family "SauceCodePro Nerd Font")
+  (setq nerd-icons-font-names '("SauceCodePro Nerd Font")))
 
 
 ;; Language-specific settings
