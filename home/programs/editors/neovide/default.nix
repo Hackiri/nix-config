@@ -89,13 +89,13 @@ in {
               options = {
                 normal = lib.mkOption {
                   type = lib.types.listOf lib.types.str;
-                  default = ["JetBrainsMono NFM"];
+                  default = [];
                   description = "List of normal fonts to use.";
                 };
 
                 size = lib.mkOption {
                   type = lib.types.float;
-                  default = 13.0;
+                  default = 14.0;
                   description = "Font size.";
                 };
               };
