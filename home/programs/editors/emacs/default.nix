@@ -28,7 +28,7 @@
 in {
   options.features.emacs.enable = lib.mkEnableOption "Doom Emacs" // {default = true;};
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf ((config.profiles.development.editors.enable or true) && cfg.enable) {
     # Emacs daemon service for macOS
     services.emacs = {
       enable = true;
@@ -339,5 +339,5 @@ in {
         nodePackages.js-beautify
       ];
     };
-  }; # end config = lib.mkIf cfg.enable
+  }; # end config = lib.mkIf ((config.profiles.development.editors.enable or true) && cfg.enable)
 }

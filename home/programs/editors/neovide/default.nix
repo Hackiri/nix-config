@@ -89,13 +89,13 @@ in {
               options = {
                 normal = lib.mkOption {
                   type = lib.types.listOf lib.types.str;
-                  default = [];
+                  default = ["JetBrainsMono NFM"];
                   description = "List of normal fonts to use.";
                 };
 
                 size = lib.mkOption {
                   type = lib.types.float;
-                  default = 14.0;
+                  default = 13.0;
                   description = "Font size.";
                 };
               };
@@ -110,7 +110,7 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf ((config.profiles.development.editors.enable or true) && cfg.enable) {
     # Use HM's programs.neovide with our custom TOML config
     programs.neovide = {
       enable = true;
