@@ -6,19 +6,15 @@ This directory contains the layered profile system for Home Manager configuratio
 
 ```
 profiles/
-├── base/                    # Foundation profiles
-│   └── minimal.nix         # Essential cross-platform tools
-├── features/               # Feature-specific profiles
-│   ├── development.nix     # Development tools and environments
-│   ├── desktop.nix         # GUI applications and desktop tools
-│   ├── kubernetes.nix      # Kubernetes tooling and workflows
-│   └── sops.nix            # SOPS encrypted secrets (gated by profiles.sops.enable)
-├── platform/               # Platform-specific profiles
-│   ├── darwin.nix          # macOS complete profile
-│   ├── nixos.nix           # NixOS complete profile
-│   ├── darwin-pkgs.nix     # macOS-specific packages
-│   └── nixos-pkgs.nix      # Linux-specific packages
-└── README.md
+├── base/
+│   └── minimal.nix          # Foundation: always-on tools (btop, cli-essentials, network)
+├── features/
+│   ├── development.nix      # Dev environment with six opt-out feature flags
+│   ├── kubernetes.nix       # Optional: Kubernetes tools (profiles.kubernetes.enable)
+│   └── sops.nix             # Optional: encrypted secrets (profiles.sops.enable)
+└── platform/
+    ├── darwin.nix           # macOS: imports development.nix + darwin packages
+    └── nixos.nix            # NixOS: imports development.nix + nixos packages
 ```
 
 ## Profile Hierarchy
@@ -26,13 +22,11 @@ profiles/
 Profiles are organized in an inheritance chain, with each level building upon the previous:
 
 ```
-base/minimal.nix (foundation)
+base/minimal.nix (foundation — always on)
     ↓
-features/development.nix (adds dev tools)
+features/development.nix (dev tools — six feature flags, all default on)
     ↓
-features/desktop.nix (adds GUI apps)
-    ↓
-platform/darwin.nix or platform/nixos.nix (platform-specific)
+platform/darwin.nix or platform/nixos.nix (platform-specific packages)
 ```
 
 ## Profile Descriptions
@@ -77,26 +71,57 @@ platform/darwin.nix or platform/nixos.nix (platform-specific)
 **Git Configuration**: Uses basic git by default (no sops dependency). For sops-encrypted git credentials, import `features/sops.nix` and set `profiles.sops.enable = true` in your host config.
 
 **Inherits from**: `base/minimal.nix`
-**Used by**: `features/desktop.nix`
+**Used by**: `platform/darwin.nix`, `platform/nixos.nix`
 
 **Imports**:
 
 - Programs: editors, development (direnv), shells, terminals, utilities
-- Packages: `../../packages` (aggregator imports build-tools, code-quality, databases, languages, security, terminals, web-dev)
+- Packages: `../../packages` (aggregator imports build-tools, code-quality, databases, languages, security, web-dev)
 
-#### `features/desktop.nix` - Desktop Profile
+**Feature Flags** (all enabled by default — set `false` to opt out):
 
-**Purpose**: GUI applications and desktop environment tools
-**Includes**:
+| Flag                                      | Controls                                                                         |
+| ----------------------------------------- | -------------------------------------------------------------------------------- |
+| `profiles.development.git.enable`         | Git config: gpg, delta, difftool, signing                                        |
+| `profiles.development.editors.enable`     | neovim, emacs (via features.emacs.enable), neovide (via profiles.neovide.enable) |
+| `profiles.development.terminals.enable`   | alacritty, ghostty, kitty, wezterm, sesh, tmux                                   |
+| `profiles.development.shells.enable`      | zsh, bash, starship, aliases, fzf integrations, direnv hook                      |
+| `profiles.development.utilities.enable`   | claude statusline, yazi (btop is always-on via base/minimal.nix)                 |
+| `profiles.development.devPackages.enable` | build-tools, code-quality, databases, languages, security, web-dev packages      |
 
-- Desktop applications
-- Media processing tools (imagemagick, ghostscript)
+**Examples:**
 
-**Inherits from**: `features/development.nix` (which includes `base/minimal.nix`)
-**Used by**: `platform/darwin.nix`, `platform/nixos.nix`
-**Imports**:
+```nix
+# hosts/server/home.nix — headless server, no GUI editors or terminals
+{
+  imports = [ ../../home/profiles/platform/nixos.nix ];
+  profiles.development = {
+    editors.enable   = false;
+    terminals.enable = false;
+    utilities.enable = false;
+  };
+}
+```
 
-- Packages: utilities
+```nix
+# hosts/mbp2/home.nix — first setup, configure git manually before rebuilding
+{
+  imports = [ ../../home/profiles/platform/darwin.nix ];
+  profiles.development.git.enable = false;
+}
+```
+
+```nix
+# hosts/mbp2/home.nix — full setup with sops-managed git identity
+{
+  imports = [
+    ../../home/profiles/platform/darwin.nix
+    ../../home/profiles/features/sops.nix
+  ];
+  profiles.sops.enable = true;
+  profiles.development.git.enable = false; # sops.nix handles git config
+}
+```
 
 #### `features/kubernetes.nix` - Kubernetes Development Profile
 
@@ -189,15 +214,14 @@ profiles.sops = {
 **Purpose**: macOS-specific configuration entry point
 **Includes**:
 
-- All tools from desktop → development → minimal chain
+- All tools from development → minimal chain
 - macOS-specific packages and settings
 - macOS window management (AeroSpace)
 
-**Inherits from**: `features/desktop.nix`
+**Inherits from**: `features/development.nix`
 **Platform**: macOS (Darwin)
 **Imports**:
 
-- Platform: platform/darwin-pkgs.nix
 - Programs: utilities/aerospace
 
 ---
@@ -207,15 +231,12 @@ profiles.sops = {
 **Purpose**: NixOS-specific configuration entry point
 **Includes**:
 
-- All tools from desktop → development → minimal chain
+- All tools from development → minimal chain
 - Linux-specific packages and settings
 - X11/Wayland utilities
 
-**Inherits from**: `features/desktop.nix`
+**Inherits from**: `features/development.nix`
 **Platform**: NixOS (Linux)
-**Imports**:
-
-- Platform: platform/nixos-pkgs.nix
 
 ---
 
@@ -285,11 +306,6 @@ imports = [
 2. If new category needed, create new `.nix` file
 3. Import in `development.nix`
 
-### To add desktop-specific packages:
-
-1. Add to the appropriate package file in `../packages/`
-2. Ensure imported in `development.nix`
-
 ### To add platform-specific packages:
 
 → Add to `platform/darwin.nix` or `platform/nixos.nix`
@@ -307,7 +323,6 @@ Package collections are in `../packages/`:
 - `languages.nix` - Language runtimes (Node, Python, Go, etc.)
 - `network.nix` - Network tools (wget, cachix)
 - `security.nix` - Security tools (sops, age)
-- `terminals.nix` - Terminal tools (tmuxinator, moreutils)
 - `web-dev.nix` - Web dev tools (httpie, curl, grpcurl, caddy)
 
 ---
@@ -320,7 +335,7 @@ Program-specific configurations are in `../programs/`:
 - `editors/` - Neovim, Emacs, Neovide
 - `shells/` - Zsh with fzf-tab and native plugins
 - `terminals/` - Alacritty, Ghostty, Tmux
-- `utilities/` - AeroSpace, btop, Claude, yazi
+- `utilities/` - btop, Claude, yazi, plus platform-specific AeroSpace
 
 Kubernetes configuration is in `features/kubernetes.nix` (not under `programs/`).
 
