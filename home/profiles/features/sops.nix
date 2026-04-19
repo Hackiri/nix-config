@@ -187,16 +187,22 @@ in {
       };
 
       # Shell aliases for sops convenience
-      zsh.shellAliases = lib.mkIf config.programs.zsh.enable {
-        sops-edit = "sops";
-        sops-encrypt = "sops -e -i";
-        sops-decrypt = "sops -d";
+      zsh = lib.mkIf config.programs.zsh.enable {
+        shellAliases = {
+          sops-edit = "sops";
+          sops-encrypt = "sops -e -i";
+          sops-decrypt = "sops -d";
+        };
+        sessionVariables.SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
       };
 
-      bash.shellAliases = lib.mkIf config.programs.bash.enable {
-        sops-edit = "sops";
-        sops-encrypt = "sops -e -i";
-        sops-decrypt = "sops -d";
+      bash = lib.mkIf config.programs.bash.enable {
+        shellAliases = {
+          sops-edit = "sops";
+          sops-encrypt = "sops -e -i";
+          sops-decrypt = "sops -d";
+        };
+        sessionVariables.SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
       };
     };
 
