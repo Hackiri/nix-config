@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   username,
   ...
@@ -13,7 +14,16 @@
   home.homeDirectory = "/Users/${username}";
 
   # Enable SOPS encrypted secrets management
-  profiles.sops.enable = true;
+  profiles.sops = {
+    enable = true;
+    signingKeySecret = "git-signingKey-mbp2";
+    extraSecrets = {
+      ssh-config-srv696730 = {
+        path = "${config.home.homeDirectory}/.ssh/conf.d/srv696730";
+        mode = "0600";
+      };
+    };
+  };
 
   # Enable Kubernetes development profile
   profiles.kubernetes = {
