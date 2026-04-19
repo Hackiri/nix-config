@@ -1,4 +1,6 @@
 {
+  config,
+  lib,
   pkgs,
   hostName,
   ...
@@ -234,54 +236,56 @@
       "....." = "cd ../../../..";
     };
 in {
-  programs = {
-    zsh.shellAliases = aliases;
-    bash.shellAliases = aliases;
+  config = lib.mkIf (config.profiles.development.shells.enable or true) {
+    programs = {
+      zsh.shellAliases = aliases;
+      bash.shellAliases = aliases;
 
-    zsh.initContent = ''
-      # Suffix aliases — open files by typing the filename
-      alias -s py=python3
-      alias -s js=node
-      alias -s md=glow
-      alias -s json="jq ."
-      alias -s {yml,yaml}=''${EDITOR:-nvim}
-      alias -s nix=''${EDITOR:-nvim}
-      alias -s txt=''${EDITOR:-nvim}
-      alias -s git='git clone'
+      zsh.initContent = ''
+        # Suffix aliases — open files by typing the filename
+        alias -s py=python3
+        alias -s js=node
+        alias -s md=glow
+        alias -s json="jq ."
+        alias -s {yml,yaml}=''${EDITOR:-nvim}
+        alias -s nix=''${EDITOR:-nvim}
+        alias -s txt=''${EDITOR:-nvim}
+        alias -s git='git clone'
 
-      # Global aliases — substituted anywhere on the line
-      alias -g G='| grep'
-      alias -g L='| less'
-      alias -g H='| head -20'
-      alias -g T='| tail -20'
-      alias -g J='| jq .'
-      alias -g C='| wc -l'
-      alias -g NUL='> /dev/null 2>&1'
+        # Global aliases — substituted anywhere on the line
+        alias -g G='| grep'
+        alias -g L='| less'
+        alias -g H='| head -20'
+        alias -g T='| tail -20'
+        alias -g J='| jq .'
+        alias -g C='| wc -l'
+        alias -g NUL='> /dev/null 2>&1'
 
-      # Extract function (replaces oh-my-zsh extract plugin)
-      extract() {
-        if [[ ! -f "$1" ]]; then
-          echo "extract: '$1' is not a valid file" >&2
-          return 1
-        fi
-        case "$1" in
-          *.tar.bz2)  tar xjf "$1"     ;;
-          *.tar.gz)   tar xzf "$1"     ;;
-          *.tar.xz)   tar xJf "$1"     ;;
-          *.bz2)      bunzip2 "$1"     ;;
-          *.rar)      unrar x "$1"     ;;
-          *.gz)       gunzip "$1"      ;;
-          *.tar)      tar xf "$1"      ;;
-          *.tbz2)     tar xjf "$1"     ;;
-          *.tgz)      tar xzf "$1"     ;;
-          *.zip)      unzip "$1"       ;;
-          *.Z)        uncompress "$1"  ;;
-          *.7z)       7z x "$1"        ;;
-          *.xz)       xz -d "$1"       ;;
-          *.zst)      zstd -d "$1"     ;;
-          *)          echo "extract: unknown archive format '$1'" >&2; return 1 ;;
-        esac
-      }
-    '';
+        # Extract function (replaces oh-my-zsh extract plugin)
+        extract() {
+          if [[ ! -f "$1" ]]; then
+            echo "extract: '$1' is not a valid file" >&2
+            return 1
+          fi
+          case "$1" in
+            *.tar.bz2)  tar xjf "$1"     ;;
+            *.tar.gz)   tar xzf "$1"     ;;
+            *.tar.xz)   tar xJf "$1"     ;;
+            *.bz2)      bunzip2 "$1"     ;;
+            *.rar)      unrar x "$1"     ;;
+            *.gz)       gunzip "$1"      ;;
+            *.tar)      tar xf "$1"      ;;
+            *.tbz2)     tar xjf "$1"     ;;
+            *.tgz)      tar xzf "$1"     ;;
+            *.zip)      unzip "$1"       ;;
+            *.Z)        uncompress "$1"  ;;
+            *.7z)       7z x "$1"        ;;
+            *.xz)       xz -d "$1"       ;;
+            *.zst)      zstd -d "$1"     ;;
+            *)          echo "extract: unknown archive format '$1'" >&2; return 1 ;;
+          esac
+        }
+      '';
+    };
   };
 }

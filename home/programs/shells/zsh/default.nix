@@ -1,4 +1,8 @@
-{config, ...}: {
+{
+  config,
+  lib,
+  ...
+}: {
   imports = [
     ./options.nix
     ./keybindings.nix
@@ -11,97 +15,99 @@
     ./direnv-hook.nix
   ];
 
-  home = {
-    # Ripgrep configuration file
-    file.".ripgreprc".text = ''
-      --smart-case
-      --hidden
-      --glob=!.git/*
-      --glob=!node_modules/*
-      --glob=!.direnv/*
-      --glob=!target/*
-      --glob=!dist/*
-      --glob=!.next/*
-      --glob=!__pycache__/*
-      --glob=!.venv/*
-      --max-columns=200
-      --max-columns-preview
-    '';
-
-    sessionPath = [
-      "${config.home.homeDirectory}/.config/emacs/bin"
-      "${config.home.homeDirectory}/.krew/bin"
-      "${config.home.homeDirectory}/bin"
-      "${config.home.homeDirectory}/.local/bin"
-    ];
-
-    sessionVariables = {
-      KREW_ROOT = "${config.home.homeDirectory}/.krew";
-      EDITOR = "nvim";
-      VISUAL = "nvim";
-      LANG = "en_US.UTF-8";
-      LC_ALL = "en_US.UTF-8";
-      TERM = "xterm-256color";
-      # Colored man pages (replaces oh-my-zsh colored-man-pages plugin)
-      MANPAGER = "sh -c 'col -bx | bat -l man -p --color=always'";
-      MANROFFOPT = "-c";
-    };
-  };
-
-  programs = {
-    zsh = {
-      enable = true;
-      enableCompletion = true;
-
-      # Load direnv for non-interactive shells (Claude Code, scripts, etc.)
-      # Interactive shells use a precmd hook instead, which doesn't fire here
-      envExtra = ''
-        if [[ ! -o interactive ]] && command -v direnv &>/dev/null; then
-          eval "$(direnv export zsh 2>/dev/null)"
-        fi
+  config = lib.mkIf (config.profiles.development.shells.enable or true) {
+    home = {
+      # Ripgrep configuration file
+      file.".ripgreprc".text = ''
+        --smart-case
+        --hidden
+        --glob=!.git/*
+        --glob=!node_modules/*
+        --glob=!.direnv/*
+        --glob=!target/*
+        --glob=!dist/*
+        --glob=!.next/*
+        --glob=!__pycache__/*
+        --glob=!.venv/*
+        --max-columns=200
+        --max-columns-preview
       '';
 
-      # Native plugins
-      syntaxHighlighting.enable = true;
-      autosuggestion.enable = true;
-      historySubstringSearch.enable = true;
+      sessionPath = [
+        "${config.home.homeDirectory}/.config/emacs/bin"
+        "${config.home.homeDirectory}/.krew/bin"
+        "${config.home.homeDirectory}/bin"
+        "${config.home.homeDirectory}/.local/bin"
+      ];
 
-      history = {
-        size = 50000;
-        save = 50000;
-        path = "${config.home.homeDirectory}/.zsh_history";
-        ignoreDups = true;
-        share = true;
-        extended = true;
+      sessionVariables = {
+        KREW_ROOT = "${config.home.homeDirectory}/.krew";
+        EDITOR = "nvim";
+        VISUAL = "nvim";
+        LANG = "en_US.UTF-8";
+        LC_ALL = "en_US.UTF-8";
+        TERM = "xterm-256color";
+        # Colored man pages (replaces oh-my-zsh colored-man-pages plugin)
+        MANPAGER = "sh -c 'col -bx | bat -l man -p --color=always'";
+        MANROFFOPT = "-c";
       };
+    };
 
-      initContent = ''
-        # Raise open file limit (macOS default 256 is too low for nix flake update)
-        ulimit -n 10240
+    programs = {
+      zsh = {
+        enable = true;
+        enableCompletion = true;
 
-        # Performance optimizations
-        export ZSH_AUTOSUGGEST_USE_ASYNC=1
-        export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-        export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+        # Load direnv for non-interactive shells (Claude Code, scripts, etc.)
+        # Interactive shells use a precmd hook instead, which doesn't fire here
+        envExtra = ''
+          if [[ ! -o interactive ]] && command -v direnv &>/dev/null; then
+            eval "$(direnv export zsh 2>/dev/null)"
+          fi
+        '';
 
-        # Initialize zoxide (use z/zi commands, don't override cd)
-        eval "$(zoxide init zsh)"
+        # Native plugins
+        syntaxHighlighting.enable = true;
+        autosuggestion.enable = true;
+        historySubstringSearch.enable = true;
 
-        # Set GPG_TTY for Git commit signing
-        export GPG_TTY=$(tty)
+        history = {
+          size = 50000;
+          save = 50000;
+          path = "${config.home.homeDirectory}/.zsh_history";
+          ignoreDups = true;
+          share = true;
+          extended = true;
+        };
 
-        # Ripgrep configuration
-        export RIPGREP_CONFIG_PATH="${config.home.homeDirectory}/.ripgreprc"
+        initContent = ''
+          # Raise open file limit (macOS default 256 is too low for nix flake update)
+          ulimit -n 10240
 
-        # Word chars — what counts as part of a word for ctrl+w etc.
-        WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
-      '';
+          # Performance optimizations
+          export ZSH_AUTOSUGGEST_USE_ASYNC=1
+          export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+          export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
-      profileExtra = ''
-        if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
-          . $HOME/.nix-profile/etc/profile.d/nix.sh
-        fi
-      '';
+          # Initialize zoxide (use z/zi commands, don't override cd)
+          eval "$(zoxide init zsh)"
+
+          # Set GPG_TTY for Git commit signing
+          export GPG_TTY=$(tty)
+
+          # Ripgrep configuration
+          export RIPGREP_CONFIG_PATH="${config.home.homeDirectory}/.ripgreprc"
+
+          # Word chars — what counts as part of a word for ctrl+w etc.
+          WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+        '';
+
+        profileExtra = ''
+          if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
+            . $HOME/.nix-profile/etc/profile.d/nix.sh
+          fi
+        '';
+      };
     };
   };
 }

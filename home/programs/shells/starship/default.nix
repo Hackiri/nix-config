@@ -1,6 +1,7 @@
 # Starship prompt — palette injected from centralized theme module
 {
   config,
+  lib,
   pkgs,
   ...
 }: let
@@ -10,14 +11,16 @@
     builtins.removeAttrs config.theme.colors
     ["background" "foreground" "accent" "border-active" "border-inactive"];
 in {
-  programs.starship = {
-    enable = true;
-    package = pkgs.starship;
-    settings =
-      base
-      // {
-        palette = config.theme.name;
-        palettes.${config.theme.name} = starshipColors;
-      };
+  config = lib.mkIf (config.profiles.development.shells.enable or true) {
+    programs.starship = {
+      enable = true;
+      package = pkgs.starship;
+      settings =
+        base
+        // {
+          palette = config.theme.name;
+          palettes.${config.theme.name} = starshipColors;
+        };
+    };
   };
 }
