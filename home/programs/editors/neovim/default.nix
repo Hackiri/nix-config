@@ -1,90 +1,97 @@
-{pkgs, ...}: {
-  programs.neovim = {
-    enable = true;
-    # Note: neovim-unwrapped comes from nixpkgs-unstable (0.12+) via overlay.
-    # HM wrapping and Lua/Python infra still use stable nixpkgs.
-    plugins = with pkgs.vimPlugins; [];
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-    withNodeJs = true;
-    withPython3 = true;
-    withRuby = false;
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
+  config = lib.mkIf (config.profiles.development.editors.enable or true) {
+    programs.neovim = {
+      enable = true;
+      # Note: neovim-unwrapped comes from nixpkgs-unstable (0.12+) via overlay.
+      # HM wrapping and Lua/Python infra still use stable nixpkgs.
+      plugins = with pkgs.vimPlugins; [];
+      defaultEditor = true;
+      viAlias = true;
+      vimAlias = true;
+      withNodeJs = true;
+      withPython3 = true;
+      withRuby = false;
 
-    # Add pynvim for Python support and pylatexenc for render-markdown LaTeX support
-    extraPython3Packages = ps:
-      with ps; [
-        pip # Required by mason.nvim
-        pynvim
-        pylatexenc # Provides latex2text for render-markdown.nvim
+      # Add pynvim for Python support and pylatexenc for render-markdown LaTeX support
+      extraPython3Packages = ps:
+        with ps; [
+          pip # Required by mason.nvim
+          pynvim
+          pylatexenc # Provides latex2text for render-markdown.nvim
+        ];
+
+      # Add Lua packages for Neovim plugins
+      extraLuaPackages = ps:
+        with ps; [
+          jsregexp # For LuaSnip transformations
+          magick # For image.nvim and other image manipulation plugins
+        ];
+
+      extraPackages = with pkgs; [
+        tree-sitter
+        vscode-js-debug
+        # For LuaSnip transformations (Lua 5.1 required)
+        lua51Packages.lua
+        lua51Packages.luarocks
+        luajit
+
+        # Image and document rendering tools
+        imagemagick # Provides magick/convert for image conversion
+        ghostscript # Provides gs for PDF rendering
+        tectonic # LaTeX rendering
+        mermaid-cli # Provides mmdc for Mermaid diagrams
+
+        # Neovim-specific formatters (not in profiles)
+        nodePackages.prettier # JavaScript/TypeScript/CSS/HTML/JSON/YAML/Markdown formatter
+        shfmt # Shell script formatter
+        ruff # Python linter and formatter
+        templ # Go template formatter
       ];
 
-    # Add Lua packages for Neovim plugins
-    extraLuaPackages = ps:
-      with ps; [
-        jsregexp # For LuaSnip transformations
-        magick # For image.nvim and other image manipulation plugins
-      ];
+      extraLuaConfig = ''
+        -- Set leader key before lazy
+        vim.g.mapleader = " "
+        vim.g.maplocalleader = " "
 
-    extraPackages = with pkgs; [
-      tree-sitter
-      vscode-js-debug
-      # For LuaSnip transformations (Lua 5.1 required)
-      lua51Packages.lua
-      lua51Packages.luarocks
-      luajit
+        -- Python configuration
+        -- Nix provides Python with required packages via extraPython3Packages
+        -- Neovim will automatically find it in PATH (no need to set python3_host_prog)
 
-      # Image and document rendering tools
-      imagemagick # Provides magick/convert for image conversion
-      ghostscript # Provides gs for PDF rendering
-      tectonic # LaTeX rendering
-      mermaid-cli # Provides mmdc for Mermaid diagrams
+        -- Capture neovim_mode from environment variable
+        vim.g.neovim_mode = vim.env.NEOVIM_MODE or "default"
+        vim.g.md_heading_bg = vim.env.MD_HEADING_BG
 
-      # Neovim-specific formatters (not in profiles)
-      nodePackages.prettier # JavaScript/TypeScript/CSS/HTML/JSON/YAML/Markdown formatter
-      shfmt # Shell script formatter
-      ruff # Python linter and formatter
-      templ # Go template formatter
-    ];
+        -- Load lazy.nvim configuration
+        require("config.lazy")
 
-    extraLuaConfig = ''
-      -- Set leader key before lazy
-      vim.g.mapleader = " "
-      vim.g.maplocalleader = " "
-
-      -- Python configuration
-      -- Nix provides Python with required packages via extraPython3Packages
-      -- Neovim will automatically find it in PATH (no need to set python3_host_prog)
-
-      -- Capture neovim_mode from environment variable
-      vim.g.neovim_mode = vim.env.NEOVIM_MODE or "default"
-      vim.g.md_heading_bg = vim.env.MD_HEADING_BG
-
-      -- Load lazy.nvim configuration
-      require("config.lazy")
-
-      -- Load your Lua configuration
-      require("config")
-    '';
-  };
-
-  # Symlink custom Lua configuration files, dictionaries, and spell files
-  xdg.configFile = {
-    "nvim/lua" = {
-      source = ./lua;
-      recursive = true;
+        -- Load your Lua configuration
+        require("config")
+      '';
     };
 
-    # Symlink dictionaries for blink-cmp dictionary completion
-    "nvim/dictionaries" = {
-      source = ./dictionaries;
-      recursive = true;
-    };
+    # Symlink custom Lua configuration files, dictionaries, and spell files
+    xdg.configFile = {
+      "nvim/lua" = {
+        source = ./lua;
+        recursive = true;
+      };
 
-    # Symlink spell files for vim spell checking and dictionary completion
-    "nvim/spell" = {
-      source = ./spell;
-      recursive = true;
+      # Symlink dictionaries for blink-cmp dictionary completion
+      "nvim/dictionaries" = {
+        source = ./dictionaries;
+        recursive = true;
+      };
+
+      # Symlink spell files for vim spell checking and dictionary completion
+      "nvim/spell" = {
+        source = ./spell;
+        recursive = true;
+      };
     };
   };
 }
