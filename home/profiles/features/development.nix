@@ -8,10 +8,8 @@
 #
 #   profiles.development.git.enable = false;      # first setup or sops-managed git
 #   profiles.development.editors.enable = false;  # disable neovim, emacs, neovide
-#   profiles.development.terminals.enable = false; # headless or CI hosts
 #   profiles.development.shells.enable = false;   # minimal shell environments
 #   profiles.development.utilities.enable = false; # disable claude statusline, yazi
-#   profiles.development.devPackages.enable = false; # minimal package footprint
 #
 # Note: btop is always-on (imported by base/minimal.nix).
 # Note: For sops-encrypted git credentials, import features/sops.nix and set
@@ -30,12 +28,6 @@
       description = "Text editors: neovim (always), emacs (when features.emacs.enable), neovide (when profiles.neovide.enable).";
     };
 
-    terminals.enable = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Terminal emulators and multiplexers: alacritty, ghostty, kitty, wezterm, sesh, tmux.";
-    };
-
     shells.enable = mkOption {
       type = types.bool;
       default = true;
@@ -46,12 +38,6 @@
       type = types.bool;
       default = true;
       description = "Development utilities: claude statusline script, yazi file manager. (btop is always-on via base/minimal.nix.)";
-    };
-
-    devPackages.enable = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Development package collections: build-tools, code-quality, databases, languages, security, web-dev.";
     };
   };
 

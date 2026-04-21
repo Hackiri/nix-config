@@ -80,14 +80,12 @@ platform/darwin.nix or platform/nixos.nix (platform-specific packages)
 
 **Feature Flags** (all enabled by default — set `false` to opt out):
 
-| Flag                                      | Controls                                                                         |
-| ----------------------------------------- | -------------------------------------------------------------------------------- |
-| `profiles.development.git.enable`         | Git config: gpg, delta, difftool, signing                                        |
-| `profiles.development.editors.enable`     | neovim, emacs (via features.emacs.enable), neovide (via profiles.neovide.enable) |
-| `profiles.development.terminals.enable`   | alacritty, ghostty, kitty, wezterm, sesh, tmux                                   |
-| `profiles.development.shells.enable`      | zsh, bash, starship, aliases, fzf integrations, direnv hook                      |
-| `profiles.development.utilities.enable`   | claude statusline, yazi (btop is always-on via base/minimal.nix)                 |
-| `profiles.development.devPackages.enable` | build-tools, code-quality, databases, languages, security, web-dev packages      |
+| Flag                                    | Controls                                                                         |
+| --------------------------------------- | -------------------------------------------------------------------------------- |
+| `profiles.development.git.enable`       | Git config: gpg, delta, difftool, signing                                        |
+| `profiles.development.editors.enable`   | neovim, emacs (via features.emacs.enable), neovide (via profiles.neovide.enable) |
+| `profiles.development.shells.enable`    | zsh, bash, starship, aliases, fzf integrations, direnv hook                      |
+| `profiles.development.utilities.enable` | claude statusline, yazi (btop is always-on via base/minimal.nix)                 |
 
 **Examples:**
 
@@ -96,8 +94,7 @@ platform/darwin.nix or platform/nixos.nix (platform-specific packages)
 {
   imports = [ ../../home/profiles/platform/nixos.nix ];
   profiles.development = {
-    editors.enable   = false;
-    terminals.enable = false;
+    editors.enable = false;
     utilities.enable = false;
   };
 }
