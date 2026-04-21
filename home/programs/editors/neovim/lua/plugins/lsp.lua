@@ -24,14 +24,12 @@ return {
       -- Get enhanced LSP capabilities from blink.cmp
       local capabilities = require("blink.cmp").get_lsp_capabilities()
 
-      -- Disable workspace file watching to prevent constant reloads
-      -- LSP servers will still receive file change notifications from Neovim,
-      -- but won't trigger full workspace reloads on every edit
-      capabilities.workspace = capabilities.workspace or {}
-      capabilities.workspace.didChangeWatchedFiles = {
-        dynamicRegistration = false,
-        relativePatternSupport = false,
-      }
+      -- Force a single encoding for all attached LSP clients.
+      -- Several servers default to UTF-16, while completion/AI clients may
+      -- advertise UTF-8 and trigger Neovim's mixed-encoding warning.
+      capabilities.general = capabilities.general or {}
+      capabilities.general.positionEncodings = { "utf-16" }
+      capabilities.offsetEncoding = { "utf-16" }
 
       -- Configure servers using vim.lsp.config with root_markers
       -- This uses the new Neovim 0.11+ API which is simpler and more maintainable

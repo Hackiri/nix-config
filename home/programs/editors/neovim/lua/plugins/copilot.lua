@@ -15,6 +15,9 @@ return {
         },
       },
       panel = { enabled = false },
+      server_opts_overrides = {
+        offset_encoding = "utf-16",
+      },
     },
     config = function(_, opts)
       require("copilot").setup(opts)
