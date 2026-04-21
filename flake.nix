@@ -75,6 +75,8 @@
         self',
         ...
       }: {
+        formatter = pkgs.alejandra;
+
         # Git pre-commit hooks checks
         checks.pre-commit-check = import ./lib/pre-commit.nix {
           inherit inputs system;
