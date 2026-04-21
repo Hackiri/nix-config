@@ -4,19 +4,6 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
     #--------------------------------------------------
-    # System Utilities
-    #--------------------------------------------------
-    fastfetch # System information tool
-    htop # Interactive process viewer
-
-    #--------------------------------------------------
-    # File Processing & Archives
-    #--------------------------------------------------
-    unzip # Extract ZIP archives
-    zip # Create ZIP archives
-    gzip # GNU compression utility
-
-    #--------------------------------------------------
     # Modern CLI Replacements
     #--------------------------------------------------
     bat # Cat with syntax highlighting and Git integration

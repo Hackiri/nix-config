@@ -1,13 +1,13 @@
 # macOS-specific profile - includes macOS desktop environment and tools
-# Inherits from features/development.nix -> base/minimal.nix
+# Inherits from features/desktop.nix -> features/development.nix -> base/minimal.nix
 # Adds macOS-specific applications, window management, and system integration.
 {...}: {
   imports = [
-    # Features: Development environment (includes minimal)
-    ../features/development.nix
+    # Features: Desktop environment (includes development + minimal)
+    ../features/desktop.nix
 
-    # Packages: macOS-specific packages
-    ../../packages/darwin.nix
+    # Platform: macOS-specific packages and settings
+    ./darwin-pkgs.nix
 
     # Programs: macOS window management
     ../../programs/utilities/aerospace
@@ -18,6 +18,4 @@
     "/run/current-system/sw/bin"
     "$HOME/.nix-profile/bin"
   ];
-
-  profiles.neovide.enable = true;
 }
