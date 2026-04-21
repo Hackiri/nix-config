@@ -61,6 +61,7 @@
           "podman" # Podman
           "coreutils" # GNU coreutils (provides grealpath for yazi.nvim)
           "gettext" # GNU internationalization utilities
+          "tree-sitter-cli" # Tree-sitter CLI for syntax parsing (used by Neovim plugins)
           "gh" # GitHub CLI
           "gemini-cli" # Google Gemini CLI
           "FelixKratz/formulae/borders" # JankyBorders - window border highlighting for AeroSpace
@@ -81,7 +82,7 @@
           "codex"
 
           # Terminal emulators
-          "wezterm"
+          # "wezterm"
 
           # Productivity
           "raycast" # Spotlight replacement
