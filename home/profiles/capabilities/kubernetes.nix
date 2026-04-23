@@ -2,7 +2,7 @@
 # Purpose: Kubernetes engineer workflow with remote cluster management and local development
 #
 # Usage:
-#   imports = [ ../../home/profiles/features/kubernetes.nix ];
+#   imports = [ ../../home/profiles/capabilities/kubernetes.nix ];
 #
 # Configuration:
 #   profiles.kubernetes = {

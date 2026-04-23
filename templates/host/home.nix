@@ -7,8 +7,8 @@
 }: {
   imports = [
     # Pick your platform profile (includes development -> minimal chain):
-    # ../../home/profiles/platform/darwin.nix
-    # ../../home/profiles/platform/nixos.nix
+    # ../../home/profiles/platforms/darwin.nix
+    # ../../home/profiles/platforms/nixos.nix
 
     # Pick one terminal emulator module:
     # ../../home/programs/terminals/kitty
@@ -17,9 +17,9 @@
     # ../../home/programs/terminals/wezterm
 
     # Optional feature profiles:
-    # ../../home/profiles/features/development.nix
-    # ../../home/profiles/features/kubernetes.nix
-    # ../../home/profiles/features/sops.nix
+    # ../../home/profiles/layers/development.nix
+    # ../../home/profiles/capabilities/kubernetes.nix
+    # ../../home/profiles/capabilities/sops.nix
   ];
 
   # Platform-specific home directory

@@ -1,5 +1,5 @@
 # macOS-specific packages - only available or needed on Darwin
-# Imported by: home/profiles/platform/darwin.nix
+# Imported by: home/profiles/platforms/darwin.nix
 #
 # AeroSpace + JankyBorders installed via Homebrew (see modules/services/homebrew.nix)
 # GUI applications installed via Homebrew (see modules/services/homebrew.nix)

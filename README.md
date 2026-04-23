@@ -315,7 +315,7 @@ nix flake update  # Update flake inputs
 
 ### Pre-commit Hooks
 
-This configuration uses [git-hooks.nix](https://github.com/cachix/git-hooks.nix) to automatically run code formatters and linters before commits:
+This configuration uses [git-hooks.nix](https://github.com/cachix/git-hooks.nix) for reproducible pre-commit checks and tool provisioning:
 
 **Enabled hooks:**
 
@@ -326,6 +326,22 @@ This configuration uses [git-hooks.nix](https://github.com/cachix/git-hooks.nix)
 
 **Troubleshooting:**
 
+If you use a custom Git hooks directory via `core.hooksPath`, the dev shell will not auto-install hooks. That avoids conflicts with Home Manager or SOPS-managed hooks.
+
+Run checks manually:
+
+```bash
+pre-commit run --all-files
+```
+
+Install a repo-specific commit hook into the active hooks directory:
+
+```bash
+install-pre-commit-hook
+```
+
+If the active `core.hooksPath` points at a shared global directory, the installer refuses by default so you do not accidentally affect every repo. Use `--force-shared` only when that is intentional.
+
 If you encounter an error like:
 
 ```
@@ -335,14 +351,17 @@ If you encounter an error like:
 This means the pre-commit hooks reference stale Nix store paths. Regenerate them:
 
 ```bash
-# Regenerate hooks without entering shell
-nix develop --command true
-
-# Or enter the devShell which will regenerate hooks automatically
+# Enter the shell to get the toolchain
 nix develop
+
+# Run the checks manually
+pre-commit run --all-files
+
+# Or install the repo hook wrapper explicitly
+install-pre-commit-hook
 ```
 
-The hooks are automatically installed when you enter the development shell and will run on every commit.
+The dev shell also refreshes `.pre-commit-config.yaml` as a symlink to the generated config so manual runs and installed wrappers use the same configuration.
 
 #### **Quick Navigation**
 
@@ -365,7 +384,7 @@ base/            Shared foundations (shell, git, core programs)
        └─ platform/         Platform-specific settings (darwin, nixos)
 ```
 
-Profiles are composed via `mkHomeManagerConfig` in `lib/builders.nix`. Feature flags in `home/profiles/features/` use `lib.mkEnableOption` to gate package groups.
+Profiles are composed via `mkHomeManagerConfig` in `lib/builders.nix`. Capability flags in `home/profiles/capabilities/` use `lib.mkEnableOption` to gate optional add-ons, while layered profiles live under `home/profiles/layers/`.
 
 ## Development Shells
 

@@ -3,7 +3,7 @@
 #          works out of the box without an age key.
 #
 # Usage:
-#   imports = [ ../../home/profiles/features/sops.nix ];
+#   imports = [ ../../home/profiles/capabilities/sops.nix ];
 #
 # Configuration:
 #   profiles.sops.enable = true;

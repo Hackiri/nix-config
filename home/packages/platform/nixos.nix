@@ -1,5 +1,5 @@
 # NixOS-specific packages - only available or needed on Linux
-# Imported by: home/profiles/platform/nixos-pkgs.nix
+# Imported by: home/profiles/platforms/nixos.nix
 {pkgs, ...}: {
   home.packages = with pkgs; [
     #--------------------------------------------------

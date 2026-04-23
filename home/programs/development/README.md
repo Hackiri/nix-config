@@ -9,7 +9,7 @@ The development configuration is organized into focused modules:
 - **`direnv/`** - Direnv configuration with custom layout helpers (use_flake provided by nix-direnv)
 - **`git/`** - Basic Git configuration (no sops dependency)
 
-SOPS-enhanced Git (hooks, GPG, aliases) is in `home/profiles/features/sops.nix`, gated by `profiles.sops.enable`.
+SOPS-enhanced Git (secret-backed identity, hooks, signing) is in `home/profiles/capabilities/sops.nix`, gated by `profiles.sops.enable`.
 
 ## Directory Structure
 
@@ -47,19 +47,20 @@ layout go                   # Go projects with isolated GOPATH
 
 Two git configurations are available:
 
-**`git/default.nix`** - Basic git (default, no sops dependency):
+**`git/default.nix`** - Base git (default):
 
 - Standard git configuration with difftool/mergetool
 - GPG integration for commit signing
 - Works out of the box for new users
+- Also serves as the shared base when sops integration is enabled
 
-**`home/profiles/features/sops.nix`** - Git with sops integration (optional):
+**`home/profiles/capabilities/sops.nix`** - Git with sops integration (optional, layered on top of the base Git config):
 
 - Secret Management: User credentials managed via sops
 - Enhanced Hooks: post-checkout and post-merge hooks for sops secrets
 - Error Handling: Comprehensive validation and fallback mechanisms
 
-To enable sops integration, set `profiles.sops.enable = true` in your host config.
+To enable sops integration, import `home/profiles/capabilities/sops.nix` and set `profiles.sops.enable = true` in your host config.
 
 ## Usage Examples
 

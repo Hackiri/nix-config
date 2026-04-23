@@ -1,13 +1,12 @@
-# Basic Git configuration without sops-nix integration
-# Use this for a simple Git setup without encrypted secrets.
-# For sops-integrated Git with hooks, use home/profiles/features/sops.nix instead.
+# Basic Git configuration shared by both plain and sops-managed workflows.
+# capabilities/sops.nix layers secret-backed identity and hooks on top of this.
 {
   config,
   lib,
   pkgs,
   ...
 }: {
-  config = lib.mkIf (config.profiles.development.git.enable or true) {
+  config = lib.mkIf (config.profiles.development.enable or true) {
     # GPG configuration
     programs.gpg = {
       enable = true;

@@ -16,8 +16,8 @@ cp -r templates/host hosts/<name>
 #    NixOS:  ../../modules/system/nixos
 
 # 4. Edit home.nix — uncomment the right platform profile
-#    Darwin: ../../home/profiles/platform/darwin.nix
-#    NixOS:  ../../home/profiles/platform/nixos.nix
+#    Darwin: ../../home/profiles/platforms/darwin.nix
+#    NixOS:  ../../home/profiles/platforms/nixos.nix
 #    Then import one terminal module:
 #    ../../home/programs/terminals/kitty
 #    ../../home/programs/terminals/alacritty

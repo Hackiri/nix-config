@@ -1,6 +1,6 @@
 # CLI essentials - core command-line tools used across all profiles
 # These are the fundamental tools that should be available on any system.
-# Imported by: home/profiles/base/minimal.nix
+# Imported by: home/profiles/layers/foundation.nix
 {pkgs, ...}: {
   home.packages = with pkgs; [
     #--------------------------------------------------

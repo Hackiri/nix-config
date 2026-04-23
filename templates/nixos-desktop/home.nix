@@ -1,6 +1,6 @@
 {username, ...}: {
   imports = [
-    ../../home/profiles/platform/nixos.nix
+    ../../home/profiles/platforms/nixos.nix
   ];
 
   home.homeDirectory = "/home/${username}";

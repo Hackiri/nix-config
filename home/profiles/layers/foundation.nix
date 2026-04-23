@@ -1,5 +1,5 @@
-# Minimal profile - essential cross-platform tools and configurations
-# This profile provides the foundation that all other profiles inherit from.
+# Foundation layer - essential cross-platform tools and configurations
+# This layer provides the foundation that all other profiles inherit from.
 # It includes only the most essential tools that should be available everywhere.
 {username, ...}: {
   imports = [
@@ -7,10 +7,10 @@
     ../../programs/theme
 
     # Packages: Core CLI tools (bat, eza, fd, fzf, ripgrep, etc.)
-    ../../packages/cli-essentials.nix
+    ../../packages/core/cli.nix
 
     # Packages: Network essentials (wget, cachix)
-    ../../packages/network.nix
+    ../../packages/core/networking.nix
 
     # Programs: Security hardening (SSH, etc.)
     ../../programs/security

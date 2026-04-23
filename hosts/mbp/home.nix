@@ -5,9 +5,9 @@
   ...
 }: {
   imports = [
-    ../../home/profiles/platform/darwin.nix # Darwin-specific profile (includes development -> minimal chain)
-    ../../home/profiles/features/kubernetes.nix # Kubernetes development profile
-    ../../home/profiles/features/sops.nix # SOPS encrypted secrets (requires age key setup)
+    ../../home/profiles/platforms/darwin.nix # Darwin-specific profile (includes development -> foundation chain)
+    ../../home/profiles/capabilities/kubernetes.nix # Kubernetes development capability
+    ../../home/profiles/capabilities/sops.nix # SOPS encrypted secrets (requires age key setup)
   ];
 
   # Platform-specific home directory
