@@ -60,7 +60,7 @@ platform/darwin.nix or platform/nixos.nix (platform-specific packages)
 
 - Text editors (Neovim, Emacs, Neovide)
 - Development tools (Git with basic config, direnv)
-- Terminal emulators (Alacritty, Ghostty, Tmux)
+- Terminal tooling (Tmux, Sesh, plus one host-selected terminal import such as Alacritty, Ghostty, Kitty, or WezTerm)
 - Build tools and compilers
 - Code quality tools (linters, formatters)
 - Database clients
@@ -75,7 +75,7 @@ platform/darwin.nix or platform/nixos.nix (platform-specific packages)
 
 **Imports**:
 
-- Programs: editors, development (direnv), shells, terminals, utilities
+- Programs: editors, development (direnv), shells, terminals (tmux/sesh), utilities
 - Packages: `../../packages` (aggregator imports build-tools, code-quality, databases, languages, security, web-dev)
 
 **Feature Flags** (all enabled by default — set `false` to opt out):
@@ -331,7 +331,7 @@ Program-specific configurations are in `../programs/`:
 - `development/` - Direnv, basic Git
 - `editors/` - Neovim, Emacs, Neovide
 - `shells/` - Zsh with fzf-tab and native plugins
-- `terminals/` - Alacritty, Ghostty, Tmux
+- `terminals/` - Tmux and Sesh base imports, plus selectable emulator modules (`alacritty/`, `ghostty/`, `kitty/`, `wezterm/`) that hosts import explicitly
 - `utilities/` - btop, Claude, yazi, plus platform-specific AeroSpace
 
 Kubernetes configuration is in `features/kubernetes.nix` (not under `programs/`).
@@ -354,7 +354,7 @@ Profiles are imported via host-specific home configurations:
 ```
 
 ```nix
-# hosts/desktop/home.nix
+# templates/nixos-desktop/home.nix
 {
   imports = [
     ../../home/profiles/platform/nixos.nix  # NixOS profile

@@ -6,7 +6,7 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 
 - **Cross-platform**: Works on both macOS and NixOS
 - **Modular architecture**: Organized system, service, and user configurations
-- **Profile-based**: Layered user profiles (minimal → development → desktop → platform)
+- **Profile-based**: Layered user profiles (minimal → development → platform)
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains
 
@@ -32,7 +32,6 @@ nix-config/
 ├── hosts/                      # Host-specific configurations
 │   ├── mbp/                    # MacBook Pro (darwin) x86_64-darwin
 │   ├── mbp2/                   # MacBook Pro (darwin) aarch64-darwin
-│   └── desktop/                # NixOS Desktop
 ├── home/                       # Home Manager configurations
 │   ├── profiles/               # Layered user profiles (base, features, platform)
 │   ├── programs/               # Program configurations (editors, shells, terminals, etc.)
@@ -47,7 +46,13 @@ nix-config/
 │   └── theme.nix               # Centralized theme/palette definitions
 ├── overlays/                   # Nixpkgs overlays
 ├── pkgs/                       # Custom packages
-├── templates/                  # Project templates (node, python, rust, go)
+├── templates/                  # Project and host templates
+│   ├── host/                   # Generic host scaffold
+│   ├── nixos-desktop/          # NixOS desktop host scaffold
+│   ├── node/                   # Node.js project template
+│   ├── python/                 # Python project template
+│   ├── rust/                   # Rust project template
+│   └── go/                     # Go project template
 ├── secrets/                    # Encrypted secrets (sops-nix)
 └── stylua.toml                 # Stylua configuration
 ```
@@ -102,13 +107,16 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    All hosts inherit this username unless they override it in their `meta.nix`.
 
+   **Host discovery rule:** a host is only discovered when `meta.nix`, `configuration.nix`, and `home.nix` all exist, `meta.nix` evaluates successfully, and `meta.enable = true`.
+
    **2. Edit the host's `meta.nix`:**
 
-   Each host directory has a `meta.nix` that defines its platform and device type:
+   Each host directory has a `meta.nix` that defines whether the host is active plus its platform and device type. Host discovery only includes directories with `enable = true` and the full `meta.nix` / `configuration.nix` / `home.nix` trio present, so staging directories under `hosts/` are safe:
 
    ```nix
    # hosts/mbp/meta.nix
    {
+     enable = true;              # Set false while staging or copying a new host
      type = "darwin";             # "darwin" or "nixos"
      system = "x86_64-darwin";    # "aarch64-darwin" for Apple Silicon, "x86_64-linux" for NixOS
      device = "laptop";           # "laptop" or "desktop"
@@ -123,6 +131,8 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    ```bash
    mv hosts/mbp hosts/YOUR_HOSTNAME
    ```
+
+   When copying from `templates/host` or `templates/nixos-desktop`, leave `enable = false` until the new host is ready to build, then flip it to `true`.
 
    **4. Disable SOPS (Crucial if you haven't set up age keys yet):**
    The default `home.nix` has SOPS enabled. If you don't have your age keys set up yet, you **must disable it** before building to avoid activation errors. Edit your host's `home.nix` file:
@@ -227,12 +237,15 @@ To deploy this configuration on another machine:
 
    ```nix
    {
+     enable = true;              # Required for host auto-discovery
      type = "darwin";             # "darwin" or "nixos"
      system = "aarch64-darwin";   # Architecture of the new machine
      device = "laptop";           # "laptop" or "desktop"
      username = "youruser";       # Optional: only needed if different from defaultUsername in flake.nix
    }
    ```
+
+   New hosts are ignored until `enable = true`, so you can safely stage incomplete directories under `hosts/`.
 
 3. **Disable SOPS** in `hosts/YOUR_HOSTNAME/home.nix` if you haven't set up age keys:
 
@@ -353,9 +366,9 @@ The configuration uses a layered profile system for Home Manager:
 base/            Shared foundations (shell, git, core programs)
   └─ features/   Optional feature sets, gated by options
        ├─ development.nix   Dev tools, editors, language packages
-       ├─ desktop.nix       GUI applications and desktop programs
-       └─ kubernetes.nix    Kubernetes tooling (tool set selection)
-           └─ platform/     Platform-specific settings (darwin, nixos)
+       ├─ kubernetes.nix    Kubernetes tooling (tool set selection)
+       ├─ sops.nix          Secrets and signing integration
+       └─ platform/         Platform-specific settings (darwin, nixos)
 ```
 
 Profiles are composed via `mkHomeManagerConfig` in `lib/builders.nix`. Feature flags in `home/profiles/features/` use `lib.mkEnableOption` to gate package groups.

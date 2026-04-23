@@ -7,7 +7,7 @@
     ../../modules/system/darwin
 
     # Host services
-    ../../modules/services/darwin/hermes-agent-darwin.nix
+    ../../modules/services/darwin/hermes-agent-package.nix
   ];
 
   # Host-specific system configuration

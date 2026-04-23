@@ -100,12 +100,33 @@
     hostNames =
       builtins.attrNames
       (lib.filterAttrs (_: type: type == "directory") (builtins.readDir hostsDir));
-    hostMetas =
-      map (name: {
-        inherit name;
-        meta = import ../hosts/${name}/meta.nix;
+    hostEntries =
+      map (name: let
+        hostDir = ../hosts/${name};
+        metaPath = hostDir + "/meta.nix";
+        configurationPath = hostDir + "/configuration.nix";
+        homePath = hostDir + "/home.nix";
+        hasRequiredFiles =
+          builtins.pathExists metaPath
+          && builtins.pathExists configurationPath
+          && builtins.pathExists homePath;
+        importedMeta =
+          if hasRequiredFiles
+          then builtins.tryEval (import metaPath)
+          else {success = false;};
+      in {
+        inherit name hasRequiredFiles importedMeta;
+        meta =
+          if importedMeta.success
+          then importedMeta.value
+          else null;
       })
       hostNames;
+    hostMetas = builtins.filter (host:
+      host.hasRequiredFiles
+      && host.importedMeta.success
+      && (host.meta.enable or false))
+    hostEntries;
     darwinHosts = builtins.filter (h: h.meta.type == "darwin") hostMetas;
     nixosHosts = builtins.filter (h: h.meta.type == "nixos") hostMetas;
   in {
