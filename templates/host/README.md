@@ -10,7 +10,6 @@ cp -r templates/host hosts/<name>
 
 # 2. Edit meta.nix
 #    Set type/system/device for the host
-#    Leave enable = false while staging; flip to true when ready
 #
 # 3. Edit configuration.nix — uncomment the right platform import
 #    Darwin: ../../modules/system/darwin

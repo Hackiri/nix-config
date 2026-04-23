@@ -10,6 +10,4 @@ cp -r templates/nixos-desktop hosts/<name>
 ```
 
 Then replace the placeholder UUIDs in `hardware-configuration.nix` with output
-from `nixos-generate-config --show-hardware-config` on the target machine, and
-flip `meta.nix` from `enable = false` to `enable = true` when the host is ready
-to participate in flake discovery.
+from `nixos-generate-config --show-hardware-config` on the target machine.

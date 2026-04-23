@@ -1,7 +1,4 @@
 {
-  # Flip to true once this host is ready to participate in flake host discovery.
-  enable = false;
-
   # Set to "darwin" or "nixos".
   type = "darwin";
 

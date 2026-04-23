@@ -124,8 +124,7 @@
       hostNames;
     hostMetas = builtins.filter (host:
       host.hasRequiredFiles
-      && host.importedMeta.success
-      && (host.meta.enable or false))
+      && host.importedMeta.success)
     hostEntries;
     darwinHosts = builtins.filter (h: h.meta.type == "darwin") hostMetas;
     nixosHosts = builtins.filter (h: h.meta.type == "nixos") hostMetas;

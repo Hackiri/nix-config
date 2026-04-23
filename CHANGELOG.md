@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-04-22
+
+### Host Discovery & Templates
+
+- **refactor(hosts):** Harden auto-discovery to ignore incomplete host directories (`d55bf40`)
+  - `lib/builders.nix` now only discovers hosts when `meta.nix`, `configuration.nix`, and `home.nix` all exist and `meta.nix` evaluates cleanly
+  - Updated `README.md` to document the host discovery rule and staging workflow
+
+- **refactor(templates):** Replace tracked `hosts/desktop` with `templates/nixos-desktop` scaffold (`8b511c7`)
+  - Moved the old desktop host into a reusable NixOS desktop template
+  - Added template README and Home Manager entrypoint
+  - Updated host/template docs and related references in `PROFILE_MAP.md`, `flake.nix`, and setup guidance
+
+### Module Naming
+
+- **refactor(services):** Rename Darwin Hermes module to clarify it installs a package rather than managing a daemon (`d55bf40`)
+  - `modules/services/darwin/hermes-agent-darwin.nix` → `modules/services/darwin/hermes-agent-package.nix`
+  - Updated Darwin host imports and host template comments
+
 ## 2026-04-02
 
 ### Flake Modularization
