@@ -21,7 +21,6 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  # Example configuration - replace with your actual hardware
   boot = {
     initrd.availableKernelModules = ["xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod"];
     initrd.kernelModules = [];
@@ -29,7 +28,6 @@
     extraModulePackages = [];
   };
 
-  # Example filesystem configuration - replace with your actual setup
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/REPLACE-WITH-YOUR-ROOT-UUID";
     fsType = "ext4";
@@ -41,12 +39,10 @@
     options = ["fmask=0077" "dmask=0077"];
   };
 
-  # Example swap configuration
   swapDevices = [
     {device = "/dev/disk/by-uuid/REPLACE-WITH-YOUR-SWAP-UUID";}
   ];
 
-  # Enables DHCP on each ethernet and wireless interface.
   networking.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

@@ -108,6 +108,14 @@
         inherit (builders.discoverHosts) darwinConfigurations nixosConfigurations;
 
         templates = {
+          host = {
+            path = ./templates/host;
+            description = "Generic host scaffold for darwin or NixOS";
+          };
+          nixos-desktop = {
+            path = ./templates/nixos-desktop;
+            description = "NixOS desktop host scaffold with placeholder hardware config";
+          };
           node = {
             path = ./templates/node;
             description = "Node.js project with devShell and direnv";

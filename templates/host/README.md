@@ -8,15 +8,24 @@ Scaffold for adding a new host to this nix-config.
 # 1. Copy template to hosts/
 cp -r templates/host hosts/<name>
 
-# 2. Edit configuration.nix — uncomment the right platform import
+# 2. Edit meta.nix
+#    Set type/system/device for the host
+#    Leave enable = false while staging; flip to true when ready
+#
+# 3. Edit configuration.nix — uncomment the right platform import
 #    Darwin: ../../modules/system/darwin
 #    NixOS:  ../../modules/system/nixos
 
-# 3. Edit home.nix — uncomment the right platform profile
+# 4. Edit home.nix — uncomment the right platform profile
 #    Darwin: ../../home/profiles/platform/darwin.nix
 #    NixOS:  ../../home/profiles/platform/nixos.nix
+#    Then import one terminal module:
+#    ../../home/programs/terminals/kitty
+#    ../../home/programs/terminals/alacritty
+#    ../../home/programs/terminals/ghostty
+#    ../../home/programs/terminals/wezterm
 
-# 4. Build and test
+# 5. Build and test
 darwin-rebuild build --flake .#<name>   # Darwin
 nixos-rebuild build --flake .#<name>    # NixOS
 ```

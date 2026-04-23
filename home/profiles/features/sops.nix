@@ -181,8 +181,8 @@ in {
           signByDefault = true;
         };
         settings = {
-          # Init template for sops hooks
-          init.templateDir = "${config.home.homeDirectory}/.git-template";
+          # Apply hooks to existing repositories as well as future clones.
+          core.hooksPath = "${config.home.homeDirectory}/.config/git/hooks";
         };
       };
 
@@ -208,11 +208,11 @@ in {
 
     # Git template directory with sops hooks
     home.file = {
-      ".git-template/hooks/post-checkout" = {
+      ".config/git/hooks/post-checkout" = {
         source = postCheckoutHook;
         executable = true;
       };
-      ".git-template/hooks/post-merge" = {
+      ".config/git/hooks/post-merge" = {
         source = postMergeHook;
         executable = true;
       };

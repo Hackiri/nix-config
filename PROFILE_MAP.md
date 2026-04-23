@@ -26,7 +26,7 @@ The profile system uses a three-layer architecture:
 ```text
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         HOST CONFIGURATIONS                         │
-│    (hosts/mbp/home.nix, hosts/desktop/home.nix)                     │
+│    (hosts/mbp/home.nix, hosts/mbp2/home.nix)                        │
 │    Optional: + features/sops.nix (profiles.sops.enable = true)      │
 │    Optional: + features/kubernetes.nix (profiles.kubernetes.enable) │
 └─────────────────────────────────┬───────────────────────────────────┘
@@ -272,17 +272,17 @@ hosts/mbp/home.nix
   └─→ features/sops.nix                 # SOPS secrets (gated by profiles.sops.enable)
 ```
 
-### `hosts/desktop/home.nix` (NixOS Desktop)
+### `templates/nixos-desktop/home.nix` (NixOS Desktop Template)
 
 ```text
-hosts/desktop/home.nix
+templates/nixos-desktop/home.nix
 └── platform/nixos.nix                  # Full NixOS stack
 ```
 
 **Complete Import Tree**:
 
 ```text
-hosts/desktop/home.nix
+templates/nixos-desktop/home.nix
   ↓
   └─→ platform/nixos.nix
         ↓
@@ -364,17 +364,17 @@ home/packages/
 
 ## Summary: Who Includes What?
 
-| Profile                  | Includes                                                     |
-| ------------------------ | ------------------------------------------------------------ |
-| **base/minimal**         | CLI essentials, network tools, btop, SSH                     |
-| **features/development** | minimal + shells + basic Git + all dev tools                 |
-| **features/desktop**     | development + GUI apps + neovide                             |
-| **features/kubernetes**  | Standalone K8s module (profiles.kubernetes.enable)           |
-| **features/sops**        | SOPS secrets, git hooks, GPG, aliases (profiles.sops.enable) |
-| **platform/darwin**      | desktop + macOS packages + aerospace                         |
-| **platform/nixos**       | desktop + Linux packages + XDG                               |
-| **hosts/mbp**            | darwin + kubernetes + sops                                   |
-| **hosts/desktop**        | nixos                                                        |
+| Profile                     | Includes                                                     |
+| --------------------------- | ------------------------------------------------------------ |
+| **base/minimal**            | CLI essentials, network tools, btop, SSH                     |
+| **features/development**    | minimal + shells + basic Git + all dev tools                 |
+| **features/desktop**        | development + GUI apps + neovide                             |
+| **features/kubernetes**     | Standalone K8s module (profiles.kubernetes.enable)           |
+| **features/sops**           | SOPS secrets, git hooks, GPG, aliases (profiles.sops.enable) |
+| **platform/darwin**         | desktop + macOS packages + aerospace                         |
+| **platform/nixos**          | desktop + Linux packages + XDG                               |
+| **hosts/mbp**               | darwin + kubernetes + sops                                   |
+| **templates/nixos-desktop** | nixos                                                        |
 
 ### Git Configuration Options
 

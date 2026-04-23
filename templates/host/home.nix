@@ -6,13 +6,18 @@
   ...
 }: {
   imports = [
-    # Pick your platform profile (includes desktop -> development -> minimal chain):
+    # Pick your platform profile (includes development -> minimal chain):
     # ../../home/profiles/platform/darwin.nix
     # ../../home/profiles/platform/nixos.nix
 
+    # Pick one terminal emulator module:
+    # ../../home/programs/terminals/kitty
+    # ../../home/programs/terminals/alacritty
+    # ../../home/programs/terminals/ghostty
+    # ../../home/programs/terminals/wezterm
+
     # Optional feature profiles:
     # ../../home/profiles/features/development.nix
-    # ../../home/profiles/features/desktop.nix
     # ../../home/profiles/features/kubernetes.nix
     # ../../home/profiles/features/sops.nix
   ];
