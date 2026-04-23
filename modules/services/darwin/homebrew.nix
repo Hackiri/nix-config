@@ -60,7 +60,6 @@
           "bitwarden-cli" # Password manager CLI
           "podman-compose" # Podman Compose
           "podman" # Podman
-          "coreutils" # GNU coreutils (provides grealpath for yazi.nvim)
           "gettext" # GNU internationalization utilities
           "tree-sitter-cli" # Tree-sitter CLI for syntax parsing (used by Neovim plugins)
           "gh" # GitHub CLI

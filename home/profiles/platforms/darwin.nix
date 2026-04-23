@@ -13,11 +13,5 @@
     ../../programs/utilities/aerospace
   ];
 
-  # Ensure nix-darwin and user profile paths are on PATH
-  home.sessionPath = [
-    "/run/current-system/sw/bin"
-    "$HOME/.nix-profile/bin"
-  ];
-
   profiles.development.editors.neovide.enable = true;
 }
