@@ -342,24 +342,19 @@ install-pre-commit-hook
 
 If the active `core.hooksPath` points at a shared global directory, the installer refuses by default so you do not accidentally affect every repo. Use `--force-shared` only when that is intentional.
 
-If you encounter an error like:
+If a commit is blocked by a stale repo hook, for example:
 
 ```
-.git/hooks/pre-commit: No such file or directory
+.git/hooks/pre-commit: .../pre-commit: No such file or directory
 ```
 
-This means the pre-commit hooks reference stale Nix store paths. Regenerate them:
+This means the repo hook points at an old Nix store path. Reinstall the managed hook:
 
 ```bash
-# Enter the shell to get the toolchain
-nix develop
-
-# Run the checks manually
-pre-commit run --all-files
-
-# Or install the repo hook wrapper explicitly
-install-pre-commit-hook
+nix develop --command install-pre-commit-hook
 ```
+
+Then retry the commit.
 
 The dev shell also refreshes `.pre-commit-config.yaml` as a symlink to the generated config so manual runs and installed wrappers use the same configuration.
 
