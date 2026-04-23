@@ -8,7 +8,7 @@ start-at-login = true
 
 # JankyBorders + optional sketchybar on startup
 after-startup-command = [
-  'exec-and-forget borders active_color=0x66ffffff inactive_color=0x00ffffff width=1 style=round order=above hidpi=on'
+  'exec-and-forget borders active_color=0x66ffffff inactive_color=0x00ffffff width=1 style=round rder=above hidpi=on'
 ]
 
 # Notify Sketchybar about workspace change (uncomment when sketchybar is configured)
@@ -171,8 +171,9 @@ cmd-ctrl-alt-shift-r = 'mode resize'
 # Launch mode (alt-shift-space) - app launching with single keypress
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [mode.launch.binding]
-# Terminal
+# Terminals
 w = ['exec-and-forget open -na wezterm', 'mode main']
+k = ['exec-and-forget kitty', 'mode main']
 # Editors
 v = ['exec-and-forget open -na neovide', 'mode main']
 e = ['exec-and-forget open -a Emacs', 'mode main']
@@ -292,6 +293,14 @@ run = 'move-node-to-workspace 6'
 [[on-window-detected]]
 if.app-id = 'com.github.wez.wezterm'
 run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-id = 'net.kovidgoyal.kitty'
+run = ['layout tiling', 'move-node-to-workspace 1']
+
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+run = ['layout tiling']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Terminal'

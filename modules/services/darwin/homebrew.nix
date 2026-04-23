@@ -34,6 +34,7 @@
         "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
         "nikitabobko/homebrew-tap" = inputs.homebrew-aerospace;
         "FelixKratz/homebrew-formulae" = inputs.homebrew-felixkratz;
+        "slp/homebrew-krun" = inputs.homebrew-krun;
       };
       mutableTaps = false;
     };
@@ -65,6 +66,7 @@
           "gh" # GitHub CLI
           "gemini-cli" # Google Gemini CLI
           "FelixKratz/formulae/borders" # JankyBorders - window border highlighting for AeroSpace
+          "krunkit"
         ]
         ++ config.services.homebrew.extraBrews;
 
@@ -82,7 +84,6 @@
           "codex"
 
           # Terminal emulators
-          # "wezterm"
 
           # Productivity
           "raycast" # Spotlight replacement

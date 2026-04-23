@@ -4,7 +4,7 @@
   ...
 }: {
   imports = [
-    # Import improved Darwin modules
+    # Darwin modules
     ../../modules/system/darwin
 
     # Host services

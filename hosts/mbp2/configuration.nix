@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    # Darwin modules
     ../../modules/system/darwin
 
     # Host services
@@ -21,4 +22,8 @@
   environment.systemPackages = with pkgs; [
     # Add host-specific packages here
   ];
+
+  # Host-specific services configuration
+
+  # Home Manager is integrated via flake.nix
 }

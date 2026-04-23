@@ -4,11 +4,9 @@
   pkgs,
   ...
 }: let
-  cfg = config.profiles.neovide;
+  cfg = config.profiles.development.editors.neovide;
 in {
-  options.profiles.neovide = {
-    enable = lib.mkEnableOption "neovide";
-
+  options.profiles.development.editors.neovide = {
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.neovide;
@@ -110,20 +108,25 @@ in {
     };
   };
 
-  config = lib.mkIf ((config.profiles.development.editors.enable or true) && cfg.enable) {
-    # Use HM's programs.neovide with our custom TOML config
-    programs.neovide = {
-      enable = true;
-      inherit (cfg) package;
-    };
+  config =
+    lib.mkIf (
+      (config.profiles.development.enable or true)
+      && (config.profiles.development.editors.enable or true)
+      && cfg.enable
+    ) {
+      # Use HM's programs.neovide with our custom TOML config
+      programs.neovide = {
+        enable = true;
+        inherit (cfg) package;
+      };
 
-    xdg.configFile."neovide/config.toml".source = (pkgs.formats.toml {}).generate "neovide-config" {
-      inherit (cfg.settings) fork frame idle maximized srgb tabs theme vsync wsl;
-      no-multigrid = cfg.settings.noMultigrid;
-      title-hidden = cfg.settings.titleHidden;
-      font = {
-        inherit (cfg.settings.font) normal size;
+      xdg.configFile."neovide/config.toml".source = (pkgs.formats.toml {}).generate "neovide-config" {
+        inherit (cfg.settings) fork frame idle maximized srgb tabs theme vsync wsl;
+        no-multigrid = cfg.settings.noMultigrid;
+        title-hidden = cfg.settings.titleHidden;
+        font = {
+          inherit (cfg.settings.font) normal size;
+        };
       };
     };
-  };
 }
