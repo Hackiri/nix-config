@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-04-23
+
+### Home Profiles & Packages
+
+- **refactor(home):** Reorganize Home Manager profiles and package bundles into clearer taxonomy (`b1ad2d0`)
+  - `home/profiles/base/` → `home/profiles/layers/`
+  - `home/profiles/features/` → `home/profiles/capabilities/`
+  - `home/profiles/platform/` → `home/profiles/platforms/`
+  - `home/packages/` split into `core/`, `development/`, and `platform/`
+  - Moved Kubernetes `k9s` assets alongside the Kubernetes capability module
+  - Updated hosts, templates, and profile docs to use the new paths
+
+### Pre-commit & Dev Shell
+
+- **refactor(devshell):** Make pre-commit tooling coexist with custom `core.hooksPath` (`b1ad2d0`)
+  - Default `nix develop` shell now provides pre-commit tooling without forcing hook installation
+  - Added explicit `install-pre-commit-hook` workflow for repo-local hook installation
+  - Added `pcinstall` alias and updated README troubleshooting/docs
+
+### Darwin & Builders
+
+- **refactor(darwin):** Simplify Darwin PATH handling and reduce duplication (`bb6a603`)
+  - Removed redundant `home.sessionPath` additions for `/run/current-system/sw/bin` and `$HOME/.nix-profile/bin`
+  - Removed duplicate Homebrew `coreutils` since it is already provided system-wide
+
+- **refactor(builders):** Tighten builder plumbing and host discovery (`bb6a603`)
+  - Extracted pre-commit hook installer to `lib/install-pre-commit-hook.nix`
+  - Made `allowDeprecatedx86_64Darwin` conditional on Intel Darwin only
+  - Replaced silent `tryEval` host discovery behavior with explicit metadata validation
+
+### Programs & Host Modules
+
+- **refactor(home-programs):** Update Home Manager program modules and related host config (`fa8880d`)
+  - Refreshed shell, editor, terminal, utility, and host/module configuration files
+  - Applied formatter/linter-driven normalization across touched modules
+
 ## 2026-04-22
 
 ### Host Discovery & Templates

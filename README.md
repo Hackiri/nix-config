@@ -331,13 +331,13 @@ If you use a custom Git hooks directory via `core.hooksPath`, the dev shell will
 Run checks manually:
 
 ```bash
-pre-commit run --all-files
+nix develop --command pre-commit run --all-files
 ```
 
 Install a repo-specific commit hook into the active hooks directory:
 
 ```bash
-install-pre-commit-hook
+nix develop --command install-pre-commit-hook
 ```
 
 If the active `core.hooksPath` points at a shared global directory, the installer refuses by default so you do not accidentally affect every repo. Use `--force-shared` only when that is intentional.
