@@ -40,6 +40,11 @@
 
     # Homebrew inputs
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+    nix-homebrew.inputs.brew-src.follows = "brew-src";
+    brew-src = {
+      url = "github:Homebrew/brew";
+      flake = false;
+    };
     homebrew-core = {
       url = "github:homebrew/homebrew-core";
       flake = false;
