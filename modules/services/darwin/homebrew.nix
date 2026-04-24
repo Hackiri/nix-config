@@ -3,6 +3,7 @@
   config,
   lib,
   inputs,
+  pkgs,
   username,
   ...
 }: {
@@ -28,14 +29,17 @@
       enable = true;
       user = username;
       autoMigrate = true;
-      taps = {
-        "homebrew/homebrew-core" = inputs.homebrew-core;
-        "homebrew/homebrew-cask" = inputs.homebrew-cask;
-        "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
-        "nikitabobko/homebrew-tap" = inputs.homebrew-aerospace;
-        "FelixKratz/homebrew-formulae" = inputs.homebrew-felixkratz;
-        "slp/homebrew-krun" = inputs.homebrew-krun;
-      };
+      taps =
+        {
+          "homebrew/homebrew-core" = inputs.homebrew-core;
+          "homebrew/homebrew-cask" = inputs.homebrew-cask;
+          "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
+          "nikitabobko/homebrew-tap" = inputs.homebrew-aerospace;
+          "FelixKratz/homebrew-formulae" = inputs.homebrew-felixkratz;
+        }
+        // lib.optionalAttrs (pkgs.stdenv.hostPlatform.isAarch64 && pkgs.stdenv.hostPlatform.isDarwin) {
+          "slp/homebrew-krun" = inputs.homebrew-krun;
+        };
       mutableTaps = false;
     };
 
@@ -65,6 +69,8 @@
           "gh" # GitHub CLI
           "gemini-cli" # Google Gemini CLI
           "FelixKratz/formulae/borders" # JankyBorders - window border highlighting for AeroSpace
+        ]
+        ++ lib.optionals (pkgs.stdenv.hostPlatform.isAarch64 && pkgs.stdenv.hostPlatform.isDarwin) [
           "krunkit"
         ]
         ++ config.services.homebrew.extraBrews;
