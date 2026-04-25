@@ -1,6 +1,7 @@
 # System activation scripts for macOS
 {
   config,
+  lib,
   pkgs,
   username,
   ...
@@ -13,7 +14,7 @@
 in {
   system.activationScripts = {
     # Create macOS aliases for Nix-installed .app bundles so they appear in Spotlight/Raycast
-    applications.text = pkgs.lib.mkForce ''
+    applications.text = lib.mkForce ''
       echo "setting up /Applications/Nix Apps..." >&2
       rm -rf "/Applications/Nix Apps"
       mkdir -p "/Applications/Nix Apps"
@@ -27,11 +28,15 @@ in {
       fi
     '';
 
-    # Show package changes on activation (additions, removals, version changes)
+    # Run after activation:
+    # 1. Show package changes (additions, removals, version changes)
+    # 2. Disable macOS built-in Apache httpd (CVE-2021-44790, etc.)
     postActivation.text = ''
       if [[ -e /run/current-system ]]; then
         ${pkgs.nix}/bin/nix store diff-closures /run/current-system "$systemConfig" || true
       fi
+
+      /bin/launchctl disable system/org.apache.httpd 2>/dev/null || true
     '';
 
     # Ensure Screenshots directory exists (referenced in defaults/dock.nix)

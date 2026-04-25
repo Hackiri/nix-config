@@ -88,8 +88,6 @@
           "opencode-desktop" # Open source IDE
           "codex"
 
-          # Terminal emulators
-
           # Productivity
           "raycast" # Spotlight replacement
           "shottr" # Screenshot tool
