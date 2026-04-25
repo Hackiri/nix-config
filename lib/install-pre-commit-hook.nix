@@ -51,26 +51,26 @@ pkgs.writeShellApplication {
       mv "$hook_path" "$legacy_path"
     fi
 
-    cat >"$hook_path" <<'EOF'
-    #!${pkgs.bash}/bin/bash
-    # File generated for nix-config
-    # Managed by install-pre-commit-hook for nix-config
-    INSTALL_PYTHON=""
-    ARGS=(hook-impl --config=${configFile} --hook-type=pre-commit)
+    sed 's/^            //' >"$hook_path" <<'EOF'
+            #!${pkgs.bash}/bin/bash
+            # File generated for nix-config
+            # Managed by install-pre-commit-hook for nix-config
+            INSTALL_PYTHON=""
+            ARGS=(hook-impl --config=${configFile} --hook-type=pre-commit)
 
-    HERE="$(cd "$(dirname "$0")" && pwd)"
-    ARGS+=(--hook-dir "$HERE" -- "$@")
+            HERE="$(cd "$(dirname "$0")" && pwd)"
+            ARGS+=(--hook-dir "$HERE" -- "$@")
 
-    ${pkgs.pre-commit}/bin/pre-commit "''${ARGS[@]}"
-    status=$?
+            ${pkgs.pre-commit}/bin/pre-commit "''${ARGS[@]}"
+            status=$?
 
-    if [ "$status" -ne 0 ]; then
-      exit "$status"
-    fi
+            if [ "$status" -ne 0 ]; then
+              exit "$status"
+            fi
 
-    if [ -x "$HERE/pre-commit.legacy" ]; then
-      exec "$HERE/pre-commit.legacy" "$@"
-    fi
+            if [ -x "$HERE/pre-commit.legacy" ]; then
+              exec "$HERE/pre-commit.legacy" "$@"
+            fi
     EOF
 
     chmod +x "$hook_path"

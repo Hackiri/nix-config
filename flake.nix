@@ -114,8 +114,13 @@
               shellHook = ''
                 if git rev-parse --git-dir >/dev/null 2>&1; then
                   repo_root="$(git rev-parse --show-toplevel)"
-                  if [ ! -L "$repo_root/.pre-commit-config.yaml" ] || [ "$(readlink "$repo_root/.pre-commit-config.yaml" 2>/dev/null)" != "${preCommitCheck.config.configFile}" ]; then
-                    ln -fs "${preCommitCheck.config.configFile}" "$repo_root/.pre-commit-config.yaml"
+                  config_link="$repo_root/.pre-commit-config.yaml"
+                  if [ ! -e "$config_link" ]; then
+                    ln -s "${preCommitCheck.config.configFile}" "$config_link"
+                  elif [ -L "$config_link" ] && [ "$(readlink "$config_link" 2>/dev/null)" != "${preCommitCheck.config.configFile}" ]; then
+                    ln -fs "${preCommitCheck.config.configFile}" "$config_link"
+                  elif [ ! -L "$config_link" ]; then
+                    echo "git-hooks.nix: leaving existing $config_link in place because it is not a symlink."
                   fi
                 fi
 
