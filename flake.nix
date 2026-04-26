@@ -38,6 +38,10 @@
     git-hooks.url = "github:cachix/git-hooks.nix";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Treefmt for unified formatting
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     # Homebrew inputs
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     nix-homebrew.inputs.brew-src.follows = "brew-src";
@@ -78,6 +82,10 @@
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-darwin" "aarch64-darwin" "x86_64-linux" "aarch64-linux"];
 
+      imports = [
+        inputs.treefmt-nix.flakeModule
+      ];
+
       perSystem = {
         pkgs,
         system,
@@ -92,7 +100,8 @@
           inherit (preCommitCheck.config) configFile;
         };
       in {
-        formatter = pkgs.alejandra;
+        # Formatter configuration
+        treefmt.config = import ./treefmt.nix;
 
         # Git pre-commit hooks checks
         checks.pre-commit-check = preCommitCheck;
@@ -110,7 +119,14 @@
         in
           {
             default = pkgs.mkShell {
-              buildInputs = preCommitCheck.enabledPackages ++ [pkgs.pre-commit installPreCommitHook];
+              buildInputs =
+                preCommitCheck.enabledPackages
+                ++ [
+                  pkgs.pre-commit
+                  installPreCommitHook
+                  pkgs.just
+                  pkgs.nh
+                ];
               shellHook = ''
                 if git rev-parse --git-dir >/dev/null 2>&1; then
                   repo_root="$(git rev-parse --show-toplevel)"
