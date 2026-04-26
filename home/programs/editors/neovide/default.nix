@@ -109,11 +109,13 @@ in {
   };
 
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.editors.enable or true)
       && cfg.enable
-    ) {
+    )
+    {
       # Use HM's programs.neovide with our custom TOML config
       programs.neovide = {
         enable = true;
@@ -121,7 +123,18 @@ in {
       };
 
       xdg.configFile."neovide/config.toml".source = (pkgs.formats.toml {}).generate "neovide-config" {
-        inherit (cfg.settings) fork frame idle maximized srgb tabs theme vsync wsl;
+        inherit
+          (cfg.settings)
+          fork
+          frame
+          idle
+          maximized
+          srgb
+          tabs
+          theme
+          vsync
+          wsl
+          ;
         no-multigrid = cfg.settings.noMultigrid;
         title-hidden = cfg.settings.titleHidden;
         font = {

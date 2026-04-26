@@ -7,10 +7,11 @@
   ...
 }: {
   config =
-    lib.mkIf (
-      (config.profiles.development.enable or true)
-      && (config.profiles.development.shells.enable or true)
-    ) {
+    lib.mkIf
+    (
+      (config.profiles.development.enable or true) && (config.profiles.development.shells.enable or true)
+    )
+    {
       programs.zsh.initContent = ''
             # Package lists for each devShell (mirrors lib/devshells.nix)
             typeset -A _devshell_pkgs

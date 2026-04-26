@@ -12,14 +12,16 @@
     eval-cores = 0;
     lazy-trees = true;
   };
-  toNixConf = lib.concatStringsSep "\n" (lib.mapAttrsToList (
+  toNixConf = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (
       k: v: "${k} = ${
         if builtins.isBool v
         then lib.boolToString v
         else toString v
       }"
     )
-    commonSettings);
+    commonSettings
+  );
 in
   lib.mkMerge [
     (lib.mkIf pkgs.stdenv.isLinux {

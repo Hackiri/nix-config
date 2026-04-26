@@ -4,11 +4,13 @@
   ...
 }: {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.terminals.enable or true)
       && (config.profiles.development.terminals.default or "kitty") == "alacritty"
-    ) {
+    )
+    {
       programs.alacritty.enable = true;
 
       xdg.configFile."alacritty/alacritty.toml" = {

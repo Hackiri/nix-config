@@ -238,10 +238,11 @@
     };
 in {
   config =
-    lib.mkIf (
-      (config.profiles.development.enable or true)
-      && (config.profiles.development.shells.enable or true)
-    ) {
+    lib.mkIf
+    (
+      (config.profiles.development.enable or true) && (config.profiles.development.shells.enable or true)
+    )
+    {
       programs = {
         zsh.shellAliases = aliases;
         bash.shellAliases = aliases;

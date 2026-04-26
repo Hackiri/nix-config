@@ -33,7 +33,13 @@ in {
     };
 
     toolSet = mkOption {
-      type = types.enum ["minimal" "admin" "operations" "devops" "complete"];
+      type = types.enum [
+        "minimal"
+        "admin"
+        "operations"
+        "devops"
+        "complete"
+      ];
       default = "admin";
       description = ''
         Which kubernetes tool set to install. Options:

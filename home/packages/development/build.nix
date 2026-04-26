@@ -7,11 +7,13 @@
   ...
 }: {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.packages.enable or true)
       && (config.profiles.development.packages.buildTools.enable or true)
-    ) {
+    )
+    {
       home.packages = with pkgs; [
         #--------------------------------------------------
         # Build Tools and Compilers

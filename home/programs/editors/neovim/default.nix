@@ -5,11 +5,13 @@
   ...
 }: {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.editors.enable or true)
       && (config.profiles.development.editors.neovim.enable or true)
-    ) {
+    )
+    {
       programs.neovim = {
         enable = true;
         # Note: neovim-unwrapped comes from nixpkgs-unstable (0.12+) via overlay.

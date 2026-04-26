@@ -27,11 +27,13 @@
   '';
 in {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.editors.enable or true)
       && cfg.enable
-    ) {
+    )
+    {
       # Emacs daemon service for macOS
       services.emacs = {
         enable = true;

@@ -6,11 +6,13 @@
   ...
 }: {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.packages.enable or true)
       && (config.profiles.development.packages.languages.enable or true)
-    ) {
+    )
+    {
       home.packages = with pkgs; [
         #--------------------------------------------------
         # Python Ecosystem

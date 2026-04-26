@@ -26,11 +26,13 @@
     prev.nerd-fonts
     // {
       inherit
-        ((import inputs.nixpkgs-unstable {
-          inherit (prev.stdenv.hostPlatform) system;
-          config.allowUnfree = true;
-          config.allowDeprecatedx86_64Darwin = true;
-        }).nerd-fonts)
+        (
+          (import inputs.nixpkgs-unstable {
+            inherit (prev.stdenv.hostPlatform) system;
+            config.allowUnfree = true;
+            config.allowDeprecatedx86_64Darwin = true;
+          }).nerd-fonts
+        )
         jetbrains-mono
         ;
     };

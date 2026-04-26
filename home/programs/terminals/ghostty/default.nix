@@ -12,11 +12,13 @@
   };
 in {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.terminals.enable or true)
       && (config.profiles.development.terminals.default or "kitty") == "ghostty"
-    ) {
+    )
+    {
       # Use the binary package because source-built Ghostty is not available on
       # Darwin in the currently pinned nixpkgs channels.
       home.packages = [unstablePkgs.ghostty-bin];

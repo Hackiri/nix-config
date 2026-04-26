@@ -89,19 +89,21 @@ in {
     };
 
     extraSecrets = mkOption {
-      type = types.attrsOf (types.submodule {
-        options = {
-          path = mkOption {
-            type = types.str;
-            description = "Destination path for the decrypted secret";
+      type = types.attrsOf (
+        types.submodule {
+          options = {
+            path = mkOption {
+              type = types.str;
+              description = "Destination path for the decrypted secret";
+            };
+            mode = mkOption {
+              type = types.str;
+              default = "0400";
+              description = "File permissions for the decrypted secret";
+            };
           };
-          mode = mkOption {
-            type = types.str;
-            default = "0400";
-            description = "File permissions for the decrypted secret";
-          };
-        };
-      });
+        }
+      );
       default = {};
       description = "Additional sops secrets beyond the default git credentials";
       example = lib.literalExpression ''

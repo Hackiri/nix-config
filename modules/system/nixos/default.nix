@@ -31,7 +31,10 @@
   # NixOS-specific user configuration
   users.users.${username} = {
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager"];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ];
   };
 
   # Wire hostname from device metadata (can be overridden per-host)

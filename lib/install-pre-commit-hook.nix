@@ -4,7 +4,10 @@
 }:
 pkgs.writeShellApplication {
   name = "install-pre-commit-hook";
-  runtimeInputs = [pkgs.git pkgs.pre-commit];
+  runtimeInputs = [
+    pkgs.git
+    pkgs.pre-commit
+  ];
   text = ''
     set -euo pipefail
 

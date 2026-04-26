@@ -12,11 +12,13 @@
   };
 in {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.terminals.enable or true)
       && (config.profiles.development.terminals.default or "kitty") == "wezterm"
-    ) {
+    )
+    {
       home.packages = [unstablePkgs.wezterm];
 
       xdg.configFile."wezterm/wezterm.lua".source = ./wezterm.lua;

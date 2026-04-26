@@ -51,10 +51,12 @@
   '';
 in {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.terminals.enable or true)
-    ) {
+    )
+    {
       home.packages = [
         truncate_path # Custom path truncation script
         git_branch # Git branch for tmux status bar

@@ -4,10 +4,12 @@
   ...
 }: {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.terminals.enable or true)
-    ) {
+    )
+    {
       programs.sesh = {
         enable = true;
         enableTmuxIntegration = true;
@@ -18,7 +20,11 @@
             startup_command = "nvim";
             preview_command = "eza --all --git --icons --color=always {}";
           };
-          sort_order = ["config" "tmux" "zoxide"];
+          sort_order = [
+            "config"
+            "tmux"
+            "zoxide"
+          ];
           blacklist = ["0"];
           session = [
             {

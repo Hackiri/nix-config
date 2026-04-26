@@ -5,14 +5,20 @@
   ...
 }: {
   config =
-    lib.mkIf (
-      (config.profiles.development.enable or true)
-      && (config.profiles.development.shells.enable or true)
-    ) {
+    lib.mkIf
+    (
+      (config.profiles.development.enable or true) && (config.profiles.development.shells.enable or true)
+    )
+    {
       programs.fzf = {
         enable = true;
         defaultCommand = "fd --type f --hidden --follow --exclude .git";
-        defaultOptions = ["--height 50%" "-1" "--layout=reverse" "--multi"];
+        defaultOptions = [
+          "--height 50%"
+          "-1"
+          "--layout=reverse"
+          "--multi"
+        ];
         fileWidgetCommand = "fd --type f --hidden --follow --exclude .git";
         fileWidgetOptions = [
           "--preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'"

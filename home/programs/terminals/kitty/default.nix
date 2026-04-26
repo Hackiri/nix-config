@@ -12,11 +12,13 @@
   };
 in {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.terminals.enable or true)
       && (config.profiles.development.terminals.default or "kitty") == "kitty"
-    ) {
+    )
+    {
       programs.kitty = {
         enable = true;
         package = unstablePkgs.kitty;

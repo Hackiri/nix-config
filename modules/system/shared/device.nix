@@ -7,7 +7,12 @@
 }: {
   options.device = {
     type = lib.mkOption {
-      type = lib.types.enum ["desktop" "laptop" "server" "vm"];
+      type = lib.types.enum [
+        "desktop"
+        "laptop"
+        "server"
+        "vm"
+      ];
       description = "Physical device form factor.";
     };
 

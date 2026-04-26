@@ -6,10 +6,12 @@
   ...
 }: {
   config =
-    lib.mkIf (
+    lib.mkIf
+    (
       (config.profiles.development.enable or true)
       && (config.profiles.development.utilities.enable or true)
-    ) {
+    )
+    {
       # Deploy statusline script to ~/.claude/ (Claude Code's expected location)
       home.file.".claude/statusline-command.sh" = {
         executable = true;

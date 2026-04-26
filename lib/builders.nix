@@ -12,14 +12,20 @@
     homePath = hostDir + "/home.nix";
     meta = import metaPath;
   in
-    assert lib.assertMsg (builtins.pathExists metaPath) "Host '${name}' is missing hosts/${name}/meta.nix";
-    assert lib.assertMsg (builtins.pathExists configurationPath) "Host '${name}' is missing hosts/${name}/configuration.nix";
-    assert lib.assertMsg (builtins.pathExists homePath) "Host '${name}' is missing hosts/${name}/home.nix";
+    assert lib.assertMsg (builtins.pathExists metaPath)
+    "Host '${name}' is missing hosts/${name}/meta.nix";
+    assert lib.assertMsg (builtins.pathExists configurationPath)
+    "Host '${name}' is missing hosts/${name}/configuration.nix";
+    assert lib.assertMsg (builtins.pathExists homePath)
+    "Host '${name}' is missing hosts/${name}/home.nix";
     assert lib.assertMsg (builtins.isAttrs meta) "Host '${name}' metadata must evaluate to an attrset";
     assert lib.assertMsg (meta ? type) "Host '${name}' metadata must define 'type'";
     assert lib.assertMsg (meta ? system) "Host '${name}' metadata must define 'system'";
     assert lib.assertMsg (meta ? device) "Host '${name}' metadata must define 'device'";
-    assert lib.assertMsg (builtins.elem meta.type ["darwin" "nixos"]) "Host '${name}' metadata type must be 'darwin' or 'nixos'"; {
+    assert lib.assertMsg (builtins.elem meta.type [
+      "darwin"
+      "nixos"
+    ]) "Host '${name}' metadata type must be 'darwin' or 'nixos'"; {
       inherit name meta;
     };
 
@@ -114,14 +120,15 @@
   # Auto-discover hosts from hosts/ directory via meta.nix metadata files
   discoverHosts = let
     hostsDir = ../hosts;
-    hostNames =
-      builtins.attrNames
-      (lib.filterAttrs (_: type: type == "directory") (builtins.readDir hostsDir));
+    hostNames = builtins.attrNames (
+      lib.filterAttrs (_: type: type == "directory") (builtins.readDir hostsDir)
+    );
     hostMetas = map readHostMeta hostNames;
     darwinHosts = builtins.filter (h: h.meta.type == "darwin") hostMetas;
     nixosHosts = builtins.filter (h: h.meta.type == "nixos") hostMetas;
   in {
-    darwinConfigurations = lib.listToAttrs (map (h: {
+    darwinConfigurations = lib.listToAttrs (
+      map (h: {
         inherit (h) name;
         value = mkDarwin {
           inherit (h) name;
@@ -129,8 +136,10 @@
           username = h.meta.username or defaultUsername;
         };
       })
-      darwinHosts);
-    nixosConfigurations = lib.listToAttrs (map (h: {
+      darwinHosts
+    );
+    nixosConfigurations = lib.listToAttrs (
+      map (h: {
         inherit (h) name;
         value = mkNixOS {
           inherit (h) name;
@@ -138,8 +147,14 @@
           username = h.meta.username or defaultUsername;
         };
       })
-      nixosHosts);
+      nixosHosts
+    );
   };
 in {
-  inherit mkHomeManagerConfig mkDarwin mkNixOS discoverHosts;
+  inherit
+    mkHomeManagerConfig
+    mkDarwin
+    mkNixOS
+    discoverHosts
+    ;
 }

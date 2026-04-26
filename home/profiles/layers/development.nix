@@ -22,7 +22,11 @@
 #       profiles.sops.enable = true in your host config.
 {lib, ...}: {
   options.profiles.development = with lib; {
-    enable = mkEnableOption "development profile" // {default = true;};
+    enable =
+      mkEnableOption "development profile"
+      // {
+        default = true;
+      };
 
     editors = {
       enable = mkOption {
@@ -70,7 +74,13 @@
       };
 
       default = mkOption {
-        type = types.enum ["kitty" "ghostty" "wezterm" "alacritty" "none"];
+        type = types.enum [
+          "kitty"
+          "ghostty"
+          "wezterm"
+          "alacritty"
+          "none"
+        ];
         default = "kitty";
         description = "Standalone terminal app to configure for the development profile. Use \"none\" to skip the terminal app while keeping tmux and sesh; set terminals.enable = false to disable the entire terminal layer.";
       };

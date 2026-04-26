@@ -9,5 +9,8 @@
     pulse.enable = true;
   };
 
-  users.users.${username}.extraGroups = ["audio" "video"];
+  users.users.${username}.extraGroups = [
+    "audio"
+    "video"
+  ];
 }
