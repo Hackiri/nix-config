@@ -87,6 +87,7 @@
       ];
 
       perSystem = {
+        config,
         pkgs,
         system,
         ...
@@ -94,6 +95,7 @@
         preCommitCheck = import ./lib/pre-commit.nix {
           inherit inputs system;
           src = ./.;
+          treefmt = config.treefmt.build.wrapper;
         };
         installPreCommitHook = import ./lib/install-pre-commit-hook.nix {
           inherit pkgs;

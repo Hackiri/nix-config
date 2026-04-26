@@ -3,10 +3,14 @@
   inputs,
   system,
   src,
+  treefmt,
 }:
 inputs.git-hooks.lib.${system}.run {
   inherit src;
   hooks = {
-    treefmt.enable = true;
+    treefmt = {
+      enable = true;
+      package = treefmt;
+    };
   };
 }
