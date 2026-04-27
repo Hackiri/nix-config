@@ -66,22 +66,20 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     vim.api.nvim_set_hl(0, "CmpItemKindVariable", { fg = "#e06c75", bg = bg })
     vim.api.nvim_set_hl(0, "CmpItemKindKeyword", { fg = "#56b6c2", bg = bg })
 
-    -- Telescope with subtle borders
-    vim.api.nvim_set_hl(0, "TelescopeBorder", { fg = border_color, bg = bg })
-    vim.api.nvim_set_hl(0, "TelescopePromptBorder", { fg = border_color, bg = bg })
-    vim.api.nvim_set_hl(0, "TelescopeResultsBorder", { fg = border_color, bg = bg })
-    vim.api.nvim_set_hl(0, "TelescopePreviewBorder", { fg = border_color, bg = bg })
+    -- Fzf-lua with subtle borders
+    vim.api.nvim_set_hl(0, "FzfLuaBorder", { fg = border_color, bg = bg })
+    vim.api.nvim_set_hl(0, "FzfLuaTitle", { fg = border_color, bg = bg })
 
-    local telescope_groups = {
-      "TelescopeNormal",
-      "TelescopePrompt",
-      "TelescopeResults",
-      "TelescopePreview",
-      "TelescopePromptNormal",
-      "TelescopePromptPrefix",
-      "TelescopeSelection",
+    local fzflua_groups = {
+      "FzfLuaNormal",
+      "FzfLuaPreviewNormal",
+      "FzfLuaCursorLine",
+      "FzfLuaSelection",
+      "FzfLuaHeaderBind",
+      "FzfLuaHeaderText",
+      "FzfLuaPath",
     }
-    for _, group in ipairs(telescope_groups) do
+    for _, group in ipairs(fzflua_groups) do
       vim.api.nvim_set_hl(0, group, { bg = bg })
     end
 

@@ -1,3 +1,4 @@
+-- bundle: vim-dadbod + vim-dadbod-ui + vim-dadbod-completion
 return {
   --use nvim in browser
   { "kristijanhusak/vim-dadbod-ui" },

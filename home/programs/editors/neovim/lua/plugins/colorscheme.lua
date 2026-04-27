@@ -1,3 +1,4 @@
+-- bundle: colorscheme tokyonight + LazyVim default colorscheme override
 return {
   -- Configure LazyVim to load the colorscheme
   {

@@ -1,3 +1,4 @@
+-- plugin: mini.indentscope | https://github.com/nvim-mini/mini.indentscope
 return {
   "nvim-mini/mini.indentscope",
   version = "*",

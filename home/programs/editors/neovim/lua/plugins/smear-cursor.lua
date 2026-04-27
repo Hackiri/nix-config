@@ -1,3 +1,4 @@
+-- plugin: smear-cursor.nvim | https://github.com/sphamba/smear-cursor.nvim
 return {
   "sphamba/smear-cursor.nvim",
   enabled = vim.g.neovim_mode ~= "skitty", -- Disable plugin for skitty mode

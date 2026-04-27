@@ -1,3 +1,4 @@
+-- plugin: blink.cmp | https://github.com/saghen/blink.cmp
 local trigger_text = ";"
 
 return {

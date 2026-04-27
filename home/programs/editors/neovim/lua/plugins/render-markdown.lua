@@ -1,3 +1,4 @@
+-- plugin: render-markdown.nvim | https://github.com/MeanderingProgrammer/render-markdown.nvim
 return {
   "MeanderingProgrammer/render-markdown.nvim",
   ft = { "markdown" }, -- Only load for markdown files

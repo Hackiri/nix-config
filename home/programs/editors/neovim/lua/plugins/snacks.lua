@@ -1,3 +1,4 @@
+-- plugin: snacks.nvim | https://github.com/folke/snacks.nvim
 return {
   -- HACK: docs @ https://github.com/folke/snacks.nvim/blob/main/docs
   {
@@ -67,9 +68,9 @@ return {
           },
         },
         layout = {
-          -- presets options : "default" , "ivy" , "ivy-split" , "telescope" , "vscode", "select" , "sidebar"
+          -- presets options : "default" , "ivy" , "ivy-split" , "fzf_lua" , "vscode", "select" , "sidebar"
           -- override picker layout in keymaps function as a param below
-          preset = "telescope", -- defaults to this layout unless overidden
+          preset = "fzf_lua", -- defaults to this layout unless overidden
           cycle = false,
         },
         layouts = {
@@ -90,7 +91,7 @@ return {
               { win = "preview", title = "{preview}", width = 0.6, height = 0.4, border = "top" },
             },
           },
-          telescope = {
+          fzf_lua = {
             reverse = true, -- set to false for search bar to be on top
             layout = {
               box = "horizontal",

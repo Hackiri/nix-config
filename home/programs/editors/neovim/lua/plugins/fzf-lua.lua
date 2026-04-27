@@ -1,8 +1,8 @@
 -- fzf-lua: Fast and customizable fuzzy finder
--- LazyVim 14.x+ default picker (replaces telescope.nvim)
+-- LazyVim 14.x+ default picker (uses fzf-lua)
 -- Docs: https://github.com/ibhagwan/fzf-lua
 --
--- Key advantages over Telescope (from https://git.ramboe.io/YouTube/ciao-telescope-i-dont-need-you-anymore):
+-- Key advantages of fzf-lua (from https://git.ramboe.io/YouTube/ciao-telescope-i-dont-need-you-anymore):
 --   1. Exact string matching support (--exact flag)
 --   2. Multi-stage filtering workflow via quickfix
 --   3. Better composability with native Vim workflows

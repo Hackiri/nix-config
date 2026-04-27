@@ -1,3 +1,4 @@
+-- plugin: kanagawa.nvim | https://github.com/rebelot/kanagawa.nvim
 return {
   "rebelot/kanagawa.nvim",
   branch = "master",

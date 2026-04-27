@@ -92,7 +92,7 @@ return {
         DiffChange = { bg = colors["color03"], fg = "black" },
         DiffDelete = { bg = colors["color11"], fg = "black" },
         DiffAdd = { bg = colors["color02"], fg = "black" },
-        TelescopeResultsDiffDelete = { bg = colors["color01"], fg = "black" },
+        FzfLuaResultsDiffDelete = { bg = colors["color01"], fg = "black" },
 
         -- horizontal line that goes across where cursor is
         CursorLine = { bg = colors["color13"] },
@@ -213,9 +213,9 @@ return {
         FzfLuaBorder = { fg = colors["color02"], bg = colors["color10"] },
         FzfLuaNormal = { fg = colors["color14"], bg = colors["color10"] },
 
-        TelescopeNormal = { fg = colors["color14"], bg = colors["color10"] },
-        TelescopeMultiSelection = { fg = colors["color02"], bg = colors["color10"] },
-        TelescopeSelection = { fg = colors["color14"], bg = colors["color13"] },
+        FzfLuaNormal = { fg = colors["color14"], bg = colors["color10"] },
+        FzfLuaMultiSelection = { fg = colors["color02"], bg = colors["color10"] },
+        FzfLuaSelection = { fg = colors["color14"], bg = colors["color13"] },
       }
 
       -- Apply all highlight definitions at once

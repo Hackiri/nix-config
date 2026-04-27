@@ -1,3 +1,4 @@
+-- bundle: LazyVim core keymap overrides (LSP key conflicts)
 return {
   -- Override LazyVim default keymaps to prevent conflicts with LSP operations
   {

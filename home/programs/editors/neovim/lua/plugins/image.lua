@@ -1,3 +1,4 @@
+-- plugin: image.nvim | https://github.com/3rd/image.nvim
 return {
   "3rd/image.nvim",
   event = "VeryLazy",

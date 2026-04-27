@@ -1,3 +1,4 @@
+-- plugin: copilot.lua | https://github.com/zbirenbaum/copilot.lua
 return {
   {
     "zbirenbaum/copilot.lua",

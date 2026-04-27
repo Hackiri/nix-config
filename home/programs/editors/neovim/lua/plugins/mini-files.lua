@@ -1,3 +1,4 @@
+-- plugin: mini.files | https://github.com/nvim-mini/mini.files
 return {
   "nvim-mini/mini.files",
   version = "*",

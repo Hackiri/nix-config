@@ -1,3 +1,4 @@
+-- plugin: harpoon | https://github.com/ThePrimeagen/harpoon
 return {
   "ThePrimeagen/harpoon",
   branch = "harpoon2",

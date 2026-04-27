@@ -1,3 +1,4 @@
+-- plugin: headlines.nvim | https://github.com/lukas-reineke/headlines.nvim
 return {
   "lukas-reineke/headlines.nvim",
   enabled = false, -- Disabled to avoid conflict with render-markdown.nvim

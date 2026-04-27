@@ -1,3 +1,4 @@
+-- plugin: nvim | https://github.com/catppuccin/nvim
 return {
   --  catppuccin
   {
@@ -94,10 +95,7 @@ return {
           },
         },
         integrations = {
-          telescope = {
-            enabled = true,
-            style = "catppuccin",
-          },
+          fzf_lua = true,
         },
         custom_highlights = function()
           return {
@@ -140,7 +138,7 @@ return {
           notify = true,
           nvimtree = true,
           semantic_tokens = true,
-          telescope = true,
+          fzf_lua = true,
           treesitter = true,
           treesitter_context = true,
           which_key = true,

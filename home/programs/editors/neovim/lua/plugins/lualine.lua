@@ -1,3 +1,4 @@
+-- plugin: lualine.nvim | https://github.com/nvim-lualine/lualine.nvim
 return {
   "nvim-lualine/lualine.nvim",
   event = "VeryLazy", -- Load after initial UI is rendered

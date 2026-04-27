@@ -1,3 +1,4 @@
+-- plugin: yazi.nvim | https://github.com/mikavilpas/yazi.nvim
 return {
   "mikavilpas/yazi.nvim",
   dependencies = { "nvim-lua/plenary.nvim" },

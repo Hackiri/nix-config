@@ -1,3 +1,4 @@
+-- plugin: aerial.nvim | https://github.com/stevearc/aerial.nvim
 return {
   "stevearc/aerial.nvim",
   version = "*",
