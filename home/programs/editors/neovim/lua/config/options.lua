@@ -11,7 +11,8 @@ vim.g.editorconfig = true
 -- General
 vim.opt.mouse = "a" -- Enable mouse support
 vim.opt.clipboard = "unnamedplus" -- Use system clipboard
-vim.opt.completeopt = "menu,menuone,noselect"
+-- Neovim 0.12: "nearest" sorts candidates by distance to cursor; "fuzzy" allows fuzzy matching.
+vim.opt.completeopt = "menu,menuone,noselect,fuzzy,nearest"
 vim.opt.conceallevel = 3 -- Hide * markup for bold and italic
 vim.opt.confirm = true -- Confirm to save changes before exiting modified buffer
 vim.opt.formatoptions = "jcroqlnt" -- tcqj
@@ -41,12 +42,16 @@ vim.opt.signcolumn = "yes" -- Always show signcolumn
 vim.opt.scrolloff = 10 -- Number of lines to keep above and below the cursor (kickstart uses 10)
 vim.opt.sidescrolloff = 10 -- Horizontal scrolloff
 vim.opt.cursorline = true -- Enable highlighting of the current line
+vim.opt.colorcolumn = "100" -- Visual ruler at 100 chars
 vim.opt.showmatch = true -- Highlight matching bracket
 vim.opt.pumheight = 10 -- Max completion menu height
 vim.opt.cmdheight = 0 -- Hide command line unless needed
 vim.opt.laststatus = 3 -- Global statusline
 vim.opt.guicursor = "n-v-c:block-Cursor/lCursor" -- Cursor shape
 vim.opt.winborder = "rounded" -- Rounded window borders
+-- Neovim 0.12: dedicated popup-menu styling (separate from winborder).
+vim.opt.pumborder = "rounded" -- Border style for completion popup
+vim.opt.pummaxwidth = 80 -- Cap completion popup width to keep menus readable
 
 -- Visualize whitespace (from kickstart)
 vim.opt.list = true
@@ -92,7 +97,16 @@ vim.opt.timeout = true
 vim.opt.timeoutlen = 300 -- Time to wait for a mapped sequence to complete
 
 -- Diff
-vim.opt.diffopt:append("linematch:60") -- Smarter diff: align similar lines within hunks
+-- Neovim 0.12 added "indent-heuristic" and "inline:char" to defaults; appending
+-- explicitly so older nvim still gets them, then linematch for smart hunk align.
+vim.opt.diffopt:append({ "indent-heuristic", "inline:char", "linematch:60" })
+
+-- Neovim 0.12: "view" applies to tagstack jumps too — preserve scroll position.
+vim.opt.jumpoptions = "view,stack"
+
+-- Neovim 0.12: 'exrc' walks up parent dirs for project-local .nvim.lua files.
+-- Files must be trusted (vim.secure) before they execute.
+vim.opt.exrc = true
 
 -- Word boundaries
 vim.opt.iskeyword:append("-") -- Treat kebab-case as one word

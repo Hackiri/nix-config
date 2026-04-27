@@ -1,5 +1,25 @@
 -- Mason and LSP configuration
 return {
+  -- Mason tool installer (split from lsp.lua so keymaps register at startup,
+  -- not after BufReadPre. Otherwise <leader>lmt/<leader>lmu unavailable until
+  -- a file is opened.)
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    version = "*",
+    cmd = { "MasonToolsInstall", "MasonToolsUpdate", "MasonToolsClean" },
+    keys = {
+      { "<leader>lmt", "<cmd>MasonToolsInstall<cr>", desc = "Mason Tools Install" },
+      { "<leader>lmu", "<cmd>MasonToolsUpdate<cr>", desc = "Mason Tools Update" },
+    },
+    dependencies = { "mason-org/mason.nvim" },
+    opts = {
+      ensure_installed = {
+        "js-debug-adapter", -- DAP adapter for JS/TS
+        -- Note: stylua, shfmt, shellcheck, prettier, ruff, templ via Nix
+        -- Note: jsregexp for LuaSnip via Nix extraLuaPackages
+      },
+    },
+  },
   -- Mason package manager for external tools
   {
     "mason-org/mason.nvim",

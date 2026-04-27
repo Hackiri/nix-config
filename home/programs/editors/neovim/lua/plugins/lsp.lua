@@ -17,7 +17,6 @@ return {
       "mason-org/mason.nvim",
       -- Automatically install LSPs and related tools to stdpath for neovim
       { "mason-org/mason-lspconfig.nvim", version = "2.*" }, -- LazyVim 15.x requires v2.x
-      { "WhoIsSethDaniel/mason-tool-installer.nvim", version = "*" },
     },
 
     config = function()
@@ -367,27 +366,8 @@ return {
       --   return result
       -- end
 
-      -- Ensure non-LSP tools are installed (LSP servers handled by mason-lspconfig)
-      -- NOTE: Formatters and linters are now managed via Nix (see default.nix)
-      -- This ensures reproducible builds and avoids version conflicts
-      local ensure_installed = {
-        "js-debug-adapter", -- DAP adapter for JS/TS
-        -- Note: The following are now installed via Nix:
-        --   stylua, shfmt, shellcheck, prettier, ruff, templ
-        -- Note: jsregexp for LuaSnip is provided via Nix extraLuaPackages
-      }
-      require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
-
-      -- Provide keymaps for Mason Tools commands (under <leader>lm to avoid <leader>c Claude Code collision)
-      vim.keymap.set("n", "<leader>lmt", "<cmd>MasonToolsInstall<cr>", { desc = "Mason Tools Install" })
-      vim.keymap.set("n", "<leader>lmu", function()
-        local ok, err = pcall(function()
-          vim.cmd("MasonToolsInstall")
-        end)
-        if not ok then
-          vim.notify("Mason tools update failed: " .. tostring(err), vim.log.levels.ERROR)
-        end
-      end, { desc = "Mason Tools Update" })
+      -- mason-tool-installer setup + keymaps live in mason.lua so keys register
+      -- at startup (this lsp config only loads on BufReadPre/BufNewFile).
 
       -- LSP Attach Keybindings
       vim.api.nvim_create_autocmd("LspAttach", {
@@ -403,6 +383,27 @@ return {
           -- Enable code lenses (displayed as virtual lines in 0.12)
           if client and client:supports_method("textDocument/codeLens") then
             vim.lsp.codelens.enable(true, { bufnr = event.buf })
+          end
+
+          -- Neovim 0.12: linked editing range — auto-rename matching tags (HTML/JSX/XML).
+          if client and client:supports_method("textDocument/linkedEditingRange") then
+            vim.lsp.linked_editing_range.enable(true, { bufnr = event.buf })
+          end
+
+          -- Neovim 0.12: on-type formatting — server-driven format on trigger chars.
+          if client and client:supports_method("textDocument/onTypeFormatting") then
+            vim.lsp.on_type_formatting.enable(true, { bufnr = event.buf })
+          end
+
+          -- Neovim 0.12: document color hints (CSS/Tailwind etc.) inline in buffer.
+          -- Auto-enabled globally; this re-enables per-buffer if a server reports support.
+          if client and client:supports_method("textDocument/documentColor") then
+            vim.lsp.document_color.enable(true, { bufnr = event.buf })
+          end
+
+          -- Neovim 0.12: native LSP-driven inline completions (Copilot LSP, etc.).
+          if client and client:supports_method("textDocument/inlineCompletion") then
+            vim.lsp.inline_completion.enable(true, { bufnr = event.buf })
           end
 
           local map = function(keys, func, desc)
@@ -426,6 +427,9 @@ return {
           map("<leader>lwl", function()
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
           end, "[L]SP [W]orkspace [L]ist Folders")
+
+          -- Neovim 0.12: workspace-wide diagnostics (pulls diagnostics for whole workspace).
+          map("<leader>lW", vim.lsp.buf.workspace_diagnostics, "[L]SP [W]orkspace Diagnostics")
 
           -- Document highlight DISABLED - using Snacks.words instead
           -- Snacks.words provides better performance and doesn't cause cursor lag
