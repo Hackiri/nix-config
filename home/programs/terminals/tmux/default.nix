@@ -7,6 +7,8 @@
   homeDir = config.home.homeDirectory;
   tmux_config = builtins.readFile ./tmux.conf;
   catppuccin_plugin = "${pkgs.tmuxPlugins.catppuccin}/share/tmux-plugins/catppuccin";
+  tmux_thumbs_plugin = "${pkgs.tmuxPlugins.tmux-thumbs}/share/tmux-plugins/tmux-thumbs";
+  fzf_tmux_url_plugin = "${pkgs.tmuxPlugins.fzf-tmux-url}/share/tmux-plugins/fzf-tmux-url";
 
   truncate_path = pkgs.writeScriptBin "truncate_path" ''
     #!/bin/sh
@@ -80,13 +82,16 @@ in {
           sensible
           resurrect
           continuum
-          tmux-thumbs # Quick pattern-copy from terminal (prefix+F)
-          fzf-tmux-url # Quick URL opening from terminal (prefix+U)
-          # catppuccin is loaded manually in tmux.conf to control option ordering
+          # tmux-thumbs, fzf-tmux-url, and catppuccin are loaded manually below
+          # so their options can be set before their plugin scripts run.
         ];
 
         extraConfig = ''
           ${tmux_config}
+
+          # Load key-option-sensitive plugins AFTER tmux_config sets their options
+          run-shell ${tmux_thumbs_plugin}/tmux-thumbs.tmux
+          run-shell ${fzf_tmux_url_plugin}/fzf-url.tmux
 
           # Load catppuccin AFTER options are set (home-manager runs plugins before extraConfig)
           run-shell ${catppuccin_plugin}/catppuccin.tmux
