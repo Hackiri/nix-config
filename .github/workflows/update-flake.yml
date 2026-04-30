@@ -9,6 +9,10 @@ jobs:
   update:
     name: Update flake.lock
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v6
 
