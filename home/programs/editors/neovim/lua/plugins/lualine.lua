@@ -644,7 +644,7 @@ return {
     vim.api.nvim_create_autocmd("RecordingLeave", {
       callback = function()
         -- Wait 50ms for vim.fn.reg_recording() to clear before refreshing
-        local timer = vim.loop.new_timer()
+        local timer = vim.uv.new_timer()
         timer:start(
           50,
           0,

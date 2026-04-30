@@ -52,12 +52,12 @@ return {
       vim.api.nvim_create_autocmd("FileType", {
         pattern = { "sql", "mysql", "plsql" },
         callback = function()
-          vim.keymap.set("n", "<leader>qe", "<cmd>DBUIExecuteQuery<CR>", { buffer = true, desc = "Execute Query" })
+          vim.keymap.set("n", "<leader>qe", "<cmd>DBUIExecuteQuery<CR>", { buf = 0, desc = "Execute Query" })
           vim.keymap.set(
             "v",
             "<leader>qe",
             "<cmd>'<,'>DBUIExecuteQuery<CR>",
-            { buffer = true, desc = "Execute Selected Query" }
+            { buf = 0, desc = "Execute Selected Query" }
           )
         end,
       })

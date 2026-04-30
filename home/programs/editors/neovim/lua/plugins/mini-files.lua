@@ -318,7 +318,7 @@ return {
             else
               vim.notify("No file or directory selected", vim.log.levels.WARN)
             end
-          end, { buffer = buf_id, noremap = true, silent = true, desc = "Copy file/directory to clipboard" })
+          end, { buf = buf_id, noremap = true, silent = true, desc = "Copy file/directory to clipboard" })
 
           -- Paste from system clipboard (macOS only)
           vim.keymap.set("n", keymaps.paste_from_clipboard, function()
@@ -367,7 +367,7 @@ return {
 
             mini_files.synchronize()
             vim.notify("Pasted successfully.", vim.log.levels.INFO)
-          end, { buffer = buf_id, noremap = true, silent = true, desc = "Paste from clipboard" })
+          end, { buf = buf_id, noremap = true, silent = true, desc = "Paste from clipboard" })
 
           -- Copy relative path to clipboard
           vim.keymap.set("n", keymaps.copy_path, function()
@@ -381,7 +381,7 @@ return {
             else
               vim.notify("No file or directory selected", vim.log.levels.WARN)
             end
-          end, { buffer = buf_id, noremap = true, silent = true, desc = "Copy relative path to clipboard" })
+          end, { buf = buf_id, noremap = true, silent = true, desc = "Copy relative path to clipboard" })
 
           -- Preview with macOS Quick Look
           vim.keymap.set("n", keymaps.preview_image, function()
@@ -397,7 +397,7 @@ return {
             else
               vim.notify("No file selected", vim.log.levels.WARN)
             end
-          end, { buffer = buf_id, noremap = true, silent = true, desc = "Preview with macOS Quick Look" })
+          end, { buf = buf_id, noremap = true, silent = true, desc = "Preview with macOS Quick Look" })
         end,
       })
     end

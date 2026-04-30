@@ -3,9 +3,6 @@
 return {
   "chrisgrieser/nvim-tinygit",
   event = "VeryLazy",
-  dependencies = {
-    "stevearc/dressing.nvim", -- Optional: improves input UI
-  },
   keys = {
     -- Core git operations (remapped to avoid conflicts)
     {

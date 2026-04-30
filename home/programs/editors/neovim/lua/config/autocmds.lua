@@ -157,7 +157,7 @@ M.setup = function()
           vim.cmd("close")
           pcall(vim.api.nvim_buf_delete, event.buf, { force = true })
         end, {
-          buffer = event.buf,
+          buf = event.buf,
           silent = true,
           desc = "Quit buffer",
         })

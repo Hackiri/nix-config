@@ -18,7 +18,7 @@ return {
       hideKeymapHints = true, -- Cleaner UI
     },
     keymaps = {
-      insertModeConfirm = "<CR>", -- Confirm with Enter in insert mode
+      insertModeConfirmAndSubstituteInBuffer = "<CR>", -- Confirm with Enter in insert mode
     },
     editingBehavior = {
       autoCaptureGroups = true, -- Automatically capture regex groups

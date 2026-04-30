@@ -35,27 +35,46 @@ return {
     },
     {
       "drop-stones/fzf-lua-grep-context",
+      dependencies = { "MunifTanjim/nui.nvim" },
       config = function()
         -- Define reusable grep contexts
         local contexts = {
-          -- Language-specific contexts
-          lua = { name = "Lua Files", icon = "", glob = "*.lua" },
-          nix = { name = "Nix Files", icon = "", glob = "*.nix" },
-          typescript = { name = "TypeScript/React", icon = "", glob = "*.{ts,tsx,js,jsx}" },
-          python = { name = "Python Files", icon = "", glob = "*.py" },
-          go = { name = "Go Files", icon = "", glob = "*.go" },
-          rust = { name = "Rust Files", icon = "", glob = "*.rs" },
-          markdown = { name = "Markdown Files", icon = "", glob = "*.md" },
-          config = { name = "Config Files", icon = "", glob = "*.{json,yaml,yml,toml,conf}" },
-          -- Exclude contexts
-          no_tests = { name = "Exclude Tests", icon = "", glob = "!**/*test*" },
-          no_node_modules = { name = "Exclude node_modules", icon = "", glob = "!**/node_modules/**" },
-          no_build = { name = "Exclude Build/Dist", icon = "", glob = "!{**/dist/**,**/build/**,**/target/**,result}" },
+          default = {
+            title = "Default",
+            entries = {
+              -- Language-specific contexts
+              lua = { label = "Lua Files", filetype = "lua", globs = { "*.lua" } },
+              nix = { label = "Nix Files", extension = "nix", globs = { "*.nix" } },
+              typescript = {
+                label = "TypeScript/React",
+                filetype = "typescriptreact",
+                globs = { "*.ts", "*.tsx", "*.js", "*.jsx" },
+              },
+              python = { label = "Python Files", filetype = "python", globs = { "*.py" } },
+              go = { label = "Go Files", filetype = "go", globs = { "*.go" } },
+              rust = { label = "Rust Files", filetype = "rust", globs = { "*.rs" } },
+              markdown = { label = "Markdown Files", filetype = "markdown", globs = { "*.md" } },
+              config = {
+                label = "Config Files",
+                extension = "json",
+                globs = { "*.json", "*.yaml", "*.yml", "*.toml", "*.conf" },
+              },
+              -- Exclude contexts
+              no_tests = { label = "Exclude Tests", globs = { "!**/*test*" } },
+              no_node_modules = { label = "Exclude node_modules", globs = { "!**/node_modules/**" } },
+              no_build = {
+                label = "Exclude Build/Dist",
+                globs = { "!{**/dist/**,**/build/**,**/target/**,result}" },
+              },
+            },
+          },
         }
 
         require("fzf-lua-grep-context").setup({
           contexts = contexts,
-          toggle_key = "<C-t>",
+          picker = {
+            default_group = "default",
+          },
         })
       end,
     },
@@ -163,7 +182,7 @@ return {
     {
       "<leader>fgx",
       function()
-        require("fzf-lua-grep-context").select_contexts()
+        require("fzf-lua-grep-context").picker()
       end,
       desc = "Select Grep Contexts",
     },
@@ -273,12 +292,16 @@ return {
         git_icons = true,
         file_icons = true,
         color_icons = true,
-        rg_glob = true, -- Enable passing flags to ripgrep
-        -- Usage: search for 'pattern -- -F' to pass -F (fixed string) flag to rg
-        rg_glob_fn = function(query, opts)
-          local regex, flags = query:match("^(.-)%s%-%-(.*)$")
-          return (regex or query), flags
+        rg_glob = false, -- fzf-lua-grep-context handles glob parsing and injection
+        fn_transform_cmd = function(query, cmd, _)
+          vim.opt.rtp:append(vim.env.FZF_LUA_GREP_CONTEXT)
+          return require("fzf-lua-grep-context.transform").rg(query, cmd)
         end,
+        actions = {
+          ["ctrl-t"] = function()
+            require("fzf-lua-grep-context").picker()
+          end,
+        },
       },
 
       -- LSP configuration
@@ -430,22 +453,6 @@ return {
     -- Register fzf-lua as the default UI select
     require("fzf-lua").register_ui_select()
 
-    -- Integrate grep-context with fzf-lua grep commands
-    -- This allows using <C-t> to toggle contexts during grep
-    local has_grep_context, grep_context = pcall(require, "fzf-lua-grep-context")
-    if has_grep_context then
-      -- Override grep keymaps to use context-aware versions
-      vim.keymap.set("n", "<leader>fg", function()
-        grep_context.live_grep()
-      end, { desc = "Live Grep (with contexts)" })
-
-      vim.keymap.set("n", "<leader>fw", function()
-        grep_context.grep_cword()
-      end, { desc = "Grep Word (with contexts)" })
-
-      vim.keymap.set("v", "<leader>fv", function()
-        grep_context.grep_visual()
-      end, { desc = "Grep Visual (with contexts)" })
-    end
+    -- Grep contexts are injected through grep.fn_transform_cmd above.
   end,
 }

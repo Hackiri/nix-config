@@ -407,7 +407,7 @@ return {
           end
 
           local map = function(keys, func, desc)
-            vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+            vim.keymap.set("n", keys, func, { buf = event.buf, desc = "LSP: " .. desc })
           end
 
           -- Keep your existing keymaps but reorganize under <leader>l prefix
@@ -435,12 +435,12 @@ return {
           -- Snacks.words provides better performance and doesn't cause cursor lag
           -- if client and client.server_capabilities.documentHighlightProvider then
           --   vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-          --     buffer = event.buf,
+          --     buf = event.buf,
           --     callback = vim.lsp.buf.document_highlight,
           --   })
           --
           --   vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-          --     buffer = event.buf,
+          --     buf = event.buf,
           --     callback = vim.lsp.buf.clear_references,
           --   })
           -- end

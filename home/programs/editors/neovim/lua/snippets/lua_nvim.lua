@@ -122,7 +122,7 @@ vim.api.nvim_create_autocmd("LspAttach", {{
   callback = function(event)
     local client = vim.lsp.get_client_by_id(event.data.client_id)
     local map = function(keys, func, desc)
-      vim.keymap.set("n", keys, func, {{ buffer = event.buf, desc = "LSP: " .. desc }})
+      vim.keymap.set("n", keys, func, {{ buf = event.buf, desc = "LSP: " .. desc }})
     end
 
     {}

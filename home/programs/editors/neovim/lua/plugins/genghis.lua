@@ -2,9 +2,6 @@
 -- File manipulation and navigation plugin from v12 config
 return {
   "chrisgrieser/nvim-genghis",
-  dependencies = {
-    "stevearc/dressing.nvim", -- Optional: improves input UI
-  },
   opts = {
     navigation = {
       onlySameExtAsCurrentFile = true, -- Navigate only between files with same extension
