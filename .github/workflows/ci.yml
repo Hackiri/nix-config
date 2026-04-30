@@ -17,9 +17,9 @@ jobs:
     name: Flake check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: DeterminateSystems/nix-installer-action@v20
+      - uses: DeterminateSystems/nix-installer-action@v22
 
       - name: Evaluate flake
         run: nix flake check --no-build --all-systems
@@ -28,9 +28,9 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: DeterminateSystems/nix-installer-action@v20
+      - uses: DeterminateSystems/nix-installer-action@v22
 
       - name: Check formatting (alejandra)
         run: nix run nixpkgs#alejandra -- --check .
