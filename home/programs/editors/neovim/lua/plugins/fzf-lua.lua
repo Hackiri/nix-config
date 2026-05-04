@@ -88,6 +88,7 @@ return {
     { "<leader>fw", "<cmd>FzfLua grep_cword<cr>", desc = "Find Word Under Cursor" },
     { "<leader>fv", "<cmd>FzfLua grep_visual<cr>", mode = "v", desc = "Find Visual Selection" },
     { "<leader>fh", "<cmd>FzfLua help_tags<cr>", desc = "Find Help" },
+    { "<leader>f0", "<cmd>FzfLua tmux_buffers<cr>", desc = "Find Tmux Buffers" },
     { "<leader>fo", "<cmd>FzfLua oldfiles<cr>", desc = "Find Recent Files" },
     { "<leader>fr", "<cmd>FzfLua resume<cr>", desc = "Resume Last Search" },
     { "<leader>fp", "<cmd>FzfLua builtin<cr>", desc = "FzfLua Pickers (Builtin)" },
@@ -191,6 +192,26 @@ return {
     local actions = require("fzf-lua.actions")
     local path = require("fzf-lua.path")
 
+    local function image_preview_bin()
+      if package.loaded["snacks"] then
+        local ok, image = pcall(require, "snacks.image")
+        if ok and image.supports_terminal and image.supports_terminal() then
+          return nil
+        end
+      end
+
+      if vim.fn.executable("ueberzug") == 1 then
+        return { "ueberzug" }
+      elseif vim.fn.executable("chafa") == 1 then
+        return { "chafa", "--format=symbols" }
+      elseif vim.fn.executable("viu") == 1 then
+        return { "viu", "-b" }
+      end
+    end
+
+    local img_prev_bin = image_preview_bin()
+    local svg_prev_bin = vim.fn.executable("chafa") == 1 and { "chafa" } or img_prev_bin
+
     -- Custom action: Copy file path with line:col to clipboard
     local function copy_file_path(selected, opts)
       local file_and_path = path.entry_to_file(selected[1], opts).stripped
@@ -203,6 +224,23 @@ return {
       -- Global configuration
       "default-title", -- Use default title style
       fzf_opts = { ["--wrap"] = true }, -- Wrap long lines in fzf
+      fzf_colors = function(o)
+        local fzf_opts = o.fzf_opts or {}
+        local is_tmux = (o.fzf_bin and tostring(o.fzf_bin):match("tmux")) or fzf_opts["--tmux"]
+
+        if is_tmux then
+          return {
+            true,
+            bg = "-1",
+            gutter = "-1",
+            border = { "fg", "Comment" },
+            header = { "fg", "Comment" },
+            separator = { "fg", "Comment" },
+          }
+        end
+
+        return { true }
+      end,
 
       winopts = {
         height = 0.80,
@@ -210,9 +248,13 @@ return {
         row = 0.5,
         col = 0.5,
         preview = {
-          layout = "horizontal",
+          layout = "flex",
           horizontal = "right:60%",
+          vertical = "up:60%",
+          flip_columns = 140,
           delay = 50,
+          scrollbar = "float",
+          scrolloff = -1,
           wrap = "wrap", -- Wrap long lines in preview
         },
       },
@@ -230,6 +272,13 @@ return {
           -- Use syntax highlighting instead
           syntax = true,
           syntax_limit_b = 1024 * 100, -- 100KB limit
+          extensions = {
+            gif = img_prev_bin,
+            jpeg = img_prev_bin,
+            jpg = img_prev_bin,
+            png = img_prev_bin,
+            svg = svg_prev_bin,
+          },
         },
       },
 
@@ -314,6 +363,17 @@ return {
         lsp_icons = true,
         ui_select = true,
         symbol_style = 1, -- 1: icon+text, 2: icon only, 3: text only
+        code_actions = {
+          previewer = vim.fn.executable("delta") == 1 and "codeaction_native" or nil,
+          preview_pager = "delta --width=$COLUMNS --hunk-header-style=omit --file-style=omit",
+          winopts = {
+            relative = "cursor",
+            row = 1,
+            col = 0,
+            height = 0.4,
+            preview = { vertical = "down:70%" },
+          },
+        },
         symbol_icons = {
           File = "󰈙",
           Module = "",

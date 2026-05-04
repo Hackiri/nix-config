@@ -10,7 +10,7 @@ vim.g.editorconfig = true
 
 -- General
 vim.opt.mouse = "a" -- Enable mouse support
-vim.opt.clipboard = "unnamedplus" -- Use system clipboard
+vim.opt.clipboard = "" -- Keep deletes/changes out of the system clipboard; yank sync is in config.clipboard
 -- Neovim 0.12: "nearest" sorts candidates by distance to cursor; "fuzzy" allows fuzzy matching.
 vim.opt.completeopt = "menu,menuone,noselect,fuzzy,nearest"
 vim.opt.conceallevel = 3 -- Hide * markup for bold and italic

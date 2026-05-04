@@ -3,7 +3,9 @@
 
 -- Load core configurations
 require("config.options")
+require("config.clipboard").setup()
 require("config.keymaps")
+require("config.formatting").setup()
 require("config.autocmds")
 require("config.colors")
 

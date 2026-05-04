@@ -39,9 +39,23 @@ return {
       --   3. We've improved the defaults (e.g., added go.work, shell.nix)
       --
       -- For simple servers, we omit root_markers to use lspconfig's well-tested defaults
+      local function lua_root_dir(bufnr, on_dir)
+        local markers = { ".luarc.json", ".luarc.jsonc", ".luacheckrc", ".stylua.toml", "stylua.toml", ".git" }
+        local root = vim.fs.root(bufnr, markers)
+
+        -- Avoid making a home-level dotfiles repo the Lua workspace; LuaLS can
+        -- otherwise try to index all of $HOME and refuse the workspace.
+        if root == vim.env.HOME then
+          on_dir(nil)
+        else
+          on_dir(root)
+        end
+      end
+
       local servers = {
         lua_ls = {
           -- Use lspconfig defaults: .luarc.json, .luarc.jsonc, .luacheckrc, stylua.toml, .git
+          root_dir = lua_root_dir,
           settings = {
             Lua = {
               runtime = { version = "LuaJIT" },
