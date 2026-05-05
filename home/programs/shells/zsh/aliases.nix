@@ -9,40 +9,40 @@
     (
       if pkgs.stdenv.isDarwin
       then {
-        # Darwin rebuild commands
-        nixb = "sudo darwin-rebuild"; # Base command
+        # Darwin rebuild commands via nh
+        nixb = "nh darwin"; # Base command
         # Darwin-specific network aliases
         ports = "sudo lsof -iTCP -sTCP:LISTEN -n -P";
         conns = "netstat -an | grep ESTABLISHED";
-        nixbuild = "sudo darwin-rebuild build --flake ~/nix-config\\#${hostName}"; # Build only
-        nixswitch = "sudo darwin-rebuild switch --flake ~/nix-config\\#${hostName}"; # Build and activate
-        nixcheck = "sudo darwin-rebuild check --flake ~/nix-config\\#${hostName}"; # Check configuration
-        nixdry = "sudo darwin-rebuild dry-build --flake ~/nix-config\\#${hostName}"; # Test build without making changes
+        nixbuild = "nh darwin build -H ${hostName} ~/nix-config"; # Build only
+        nixswitch = "nh darwin switch -H ${hostName} ~/nix-config"; # Build and activate
+        nixcheck = "nh darwin build -H ${hostName} ~/nix-config"; # Check by building configuration
+        nixdry = "nh darwin switch --dry -H ${hostName} ~/nix-config"; # Show switch actions without making changes
         nixedit = "$EDITOR ~/nix-config"; # Open configuration in $EDITOR
         nixlist = "sudo darwin-rebuild --list-generations"; # List all generations
         nixrollback = "sudo darwin-rebuild switch --rollback"; # Rollback to previous generation
-        nixtrace = "sudo darwin-rebuild switch --flake ~/nix-config\\#${hostName} --show-trace"; # Show trace for debugging
-        nixverbose = "sudo darwin-rebuild switch --flake ~/nix-config\\#${hostName} --verbose"; # Verbose output
+        nixtrace = "nh darwin switch --show-trace -H ${hostName} ~/nix-config"; # Show trace for debugging
+        nixverbose = "nh darwin switch --verbose -H ${hostName} ~/nix-config"; # Verbose output
       }
       else {
-        # NixOS rebuild commands
-        nixb = "sudo nixos-rebuild"; # Base command
-        nixbuild = "sudo nixos-rebuild build --flake ~/nix-config\\#${hostName}"; # Build only
-        nixswitch = "sudo nixos-rebuild switch --flake ~/nix-config\\#${hostName}"; # Build and activate
-        nixcheck = "sudo nixos-rebuild dry-activate --flake ~/nix-config\\#${hostName}"; # Build and show what would change
-        nixdry = "sudo nixos-rebuild dry-build --flake ~/nix-config\\#${hostName}"; # Evaluate without building
+        # NixOS rebuild commands via nh
+        nixb = "nh os"; # Base command
+        nixbuild = "nh os build -H ${hostName} ~/nix-config"; # Build only
+        nixswitch = "nh os switch -H ${hostName} ~/nix-config"; # Build and activate
+        nixcheck = "nh os test -H ${hostName} ~/nix-config"; # Build and activate until reboot
+        nixdry = "nh os switch --dry -H ${hostName} ~/nix-config"; # Show switch actions without making changes
         nixedit = "$EDITOR ~/nix-config"; # Open configuration in $EDITOR
-        nixlist = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system"; # List all generations
-        nixrollback = "sudo nixos-rebuild switch --rollback"; # Rollback to previous generation
-        nixtrace = "sudo nixos-rebuild switch --flake ~/nix-config\\#${hostName} --show-trace"; # Show trace for debugging
-        nixverbose = "sudo nixos-rebuild switch --flake ~/nix-config\\#${hostName} --verbose"; # Verbose output
+        nixlist = "nh os info"; # List all generations
+        nixrollback = "nh os rollback"; # Rollback to previous generation
+        nixtrace = "nh os switch --show-trace -H ${hostName} ~/nix-config"; # Show trace for debugging
+        nixverbose = "nh os switch --verbose -H ${hostName} ~/nix-config"; # Verbose output
       }
     )
     // {
-      nixclean = "sudo nix-collect-garbage -d"; # Clean old generations
+      nixclean = "nh clean all"; # Clean old generations
 
       # Nix utilities
-      nxsearch = "nix search nixpkgs"; # Search packages
+      nxsearch = "nh search"; # Search packages
       nxrepl = "nix repl 'nixpkgs'"; # Interactive nix REPL
       nxdev = "nix develop .#"; # Enter dev shell
 

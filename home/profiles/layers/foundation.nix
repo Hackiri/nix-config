@@ -1,7 +1,14 @@
 # Foundation layer - essential cross-platform tools and configurations
 # This layer provides the foundation that all other profiles inherit from.
 # It includes only the most essential tools that should be available everywhere.
-{username, ...}: {
+{
+  config,
+  lib,
+  username,
+  ...
+}: let
+  nixConfigPath = "${config.home.homeDirectory}/nix-config";
+in {
   imports = [
     # Theme: Centralized color palette (used by starship, terminals, etc.)
     ../../programs/theme
@@ -28,5 +35,12 @@
   # Essential programs that work everywhere
   programs = {
     home-manager.enable = true;
+    nh = {
+      enable = true;
+      flake = lib.mkDefault nixConfigPath;
+      darwinFlake = lib.mkDefault nixConfigPath;
+      homeFlake = lib.mkDefault nixConfigPath;
+      osFlake = lib.mkDefault nixConfigPath;
+    };
   };
 }
