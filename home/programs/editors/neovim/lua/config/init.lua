@@ -9,12 +9,6 @@ require("config.formatting").setup()
 require("config.autocmds")
 require("config.colors")
 
--- Load LuaSnip configuration
-local status_ok, _ = pcall(require, "luasnip")
-if status_ok then
-  require("config.luasnip_config")
-end
-
 -- Load custom highlights
 require("config.highlights")
 
