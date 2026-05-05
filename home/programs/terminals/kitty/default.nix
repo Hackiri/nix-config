@@ -5,11 +5,58 @@
   pkgs,
   ...
 }: let
+  homeDir = config.home.homeDirectory;
   unstablePkgs = import inputs.nixpkgs-unstable {
     inherit (pkgs.stdenv.hostPlatform) system;
     config.allowUnfree = true;
     config.allowDeprecatedx86_64Darwin = true;
   };
+
+  kitty_tmux = pkgs.writeScriptBin "kitty-tmux" ''
+    #!${pkgs.bash}/bin/bash
+    set -euo pipefail
+
+    exec ${pkgs.zsh}/bin/zsh -lc 'tmux attach 2>/dev/null || tmux'
+  '';
+
+  kitty_sesh = pkgs.writeScriptBin "kitty-sesh" ''
+    #!${pkgs.bash}/bin/bash
+    set -euo pipefail
+
+    exec ${pkgs.zsh}/bin/zsh -lc '
+      selected="$(
+        sesh list --icons |
+          fzf --no-sort --ansi --border-label " sesh " --prompt "⚡  " \
+            --header "enter connect  ^a all  ^t tmux  ^g configs  ^x zoxide  ^f find" \
+            --bind "ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)" \
+            --bind "ctrl-t:change-prompt(🪟  )+reload(sesh list -t --icons)" \
+            --bind "ctrl-g:change-prompt(⚙️  )+reload(sesh list -c --icons)" \
+            --bind "ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)" \
+            --bind "ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)" \
+            --preview "sesh preview {}"
+      )"
+      [ -n "$selected" ] && exec sesh connect "$selected"
+    '
+  '';
+
+  kitty_codex = pkgs.writeScriptBin "kitty-codex" ''
+    #!${pkgs.bash}/bin/bash
+    set +e
+
+    codex_bin="$(command -v codex 2>/dev/null || true)"
+    [ -n "$codex_bin" ] || [ ! -x /opt/homebrew/bin/codex ] || codex_bin=/opt/homebrew/bin/codex
+    [ -n "$codex_bin" ] || [ ! -x /usr/local/bin/codex ] || codex_bin=/usr/local/bin/codex
+
+    if [ -n "$codex_bin" ]; then
+      "$codex_bin"
+      status=$?
+      printf '\n[codex exited: %s]\n' "$status"
+    else
+      printf 'codex was not found on PATH or in common Homebrew locations.\n'
+    fi
+
+    exec ${pkgs.zsh}/bin/zsh -l
+  '';
 in {
   config =
     lib.mkIf
@@ -19,6 +66,15 @@ in {
       && (config.profiles.development.terminals.default or "kitty") == "kitty"
     )
     {
+      home.packages = [
+        kitty_tmux
+        kitty_sesh
+        kitty_codex
+      ];
+
+      # Ensure Kitty can create its per-user remote-control socket.
+      home.file.".local/state/kitty/.keep".text = "";
+
       programs.kitty = {
         enable = true;
         package = unstablePkgs.kitty;
@@ -29,6 +85,9 @@ in {
         };
 
         settings = {
+          # ── Shell integration ─────────────────────────────────────────────
+          shell_integration = "enabled";
+
           # ── Background ────────────────────────────────────────────────────
           background_opacity = "0.85";
           background_blur = 64;
@@ -69,9 +128,21 @@ in {
           # ── Window ────────────────────────────────────────────────────────
           # top right bottom left (mirrors ghostty: y=6,0 x=4,2)
           window_padding_width = "6 2 0 4";
+          window_margin_width = 0;
+          single_window_margin_width = 0;
+          window_border_width = "1pt";
+          draw_minimal_borders = true;
+          active_border_color = "#37f499";
+          inactive_border_color = "#21222c";
+          inactive_text_alpha = "0.82";
           hide_window_decorations = "titlebar-only";
           macos_titlebar_color = "background";
           confirm_os_window_close = 0;
+
+          # ── Layouts ───────────────────────────────────────────────────────
+          # Keep tmux as the primary pane manager, but allow native Kitty layouts
+          # for outer workflow tabs and occasional non-tmux tasks.
+          enabled_layouts = "splits,stack,tall,fat,grid,horizontal,vertical";
 
           # ── Shell ─────────────────────────────────────────────────────────
           shell = "zsh --login";
@@ -84,14 +155,33 @@ in {
           cursor_shape = "block";
           cursor_blink_interval = "0.5";
           cursor_stop_blinking_after = "0";
+          cursor_trail = 3;
+          cursor_trail_decay = "0.1 0.4";
 
           # ── Scrollback ────────────────────────────────────────────────────
           scrollback_lines = 10000;
 
+          # ── URL handling ──────────────────────────────────────────────────
+          url_style = "curly";
+          open_url_with = "default";
+          url_prefixes = "file ftp ftps gemini git gopher http https irc ircs kitty mailto news sftp ssh";
+          detect_urls = true;
+          allow_hyperlinks = true;
+
+          # ── Remote control ────────────────────────────────────────────────
+          # Per-user socket for scripting. Avoid the upstream shared /tmp/kitty.
+          allow_remote_control = "socket-only";
+          listen_on = "unix:${homeDir}/.local/state/kitty/control.sock";
+
           # ── Tab bar ───────────────────────────────────────────────────────
           tab_bar_edge = "bottom";
+          tab_bar_margin_width = "1.0";
+          tab_bar_margin_height = "1.0 0.5";
           tab_bar_style = "powerline";
           tab_powerline_style = "slanted";
+          tab_title_template = "{index}: {title}";
+          active_tab_title_template = "[{index}: {title}]";
+          tab_fade = "0.25 0.5 0.75 1";
           tab_bar_background = "#0D1116";
           active_tab_background = "#37f499";
           active_tab_foreground = "#0D1116";
@@ -106,7 +196,7 @@ in {
 
         keybindings = {
           # Tab management
-          "cmd+shift+t" = "new_tab";
+          "cmd+t" = "new_tab";
           "cmd+shift+w" = "close_tab";
           "cmd+shift+[" = "previous_tab";
           "cmd+shift+]" = "next_tab";
@@ -119,6 +209,11 @@ in {
           "cmd+7" = "goto_tab 7";
           "cmd+8" = "goto_tab 8";
           "cmd+9" = "goto_tab 9";
+
+          # Tmux/sesh workflow launchers
+          "cmd+shift+t" = "launch --type=tab --cwd=current ${kitty_tmux}/bin/kitty-tmux";
+          "cmd+shift+s" = "launch --type=tab --cwd=current ${kitty_sesh}/bin/kitty-sesh";
+          "cmd+shift+c" = "launch --type=tab --cwd=current ${kitty_codex}/bin/kitty-codex";
 
           # Split/window management
           "cmd+shift+d" = "launch --location=vsplit";
@@ -136,6 +231,10 @@ in {
 
           # New OS window
           "cmd+n" = "new_os_window";
+
+          # URL and config helpers
+          "cmd+shift+u" = "open_url_with_hints";
+          "cmd+alt+r" = "load_config_file";
         };
       };
     };

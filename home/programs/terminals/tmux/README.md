@@ -9,6 +9,11 @@ General
 │ Space │ Toggle last session │ sesh last │
 │ T │ Sesh connect │ Custom fzf-tmux │
 │ C │ Claude popup │ Custom popup │
+│ M-s │ Persistent shell popup │ Custom popup │
+│ M-c │ Codex popup │ Custom popup │
+│ M-k │ Kubernetes workflow popup │ Custom popup │
+│ M-f │ Port-forward manager popup │ Custom popup │
+│ M-p │ Podman workflow popup │ Custom popup │
 │ C-l │ Clear history │ Custom │
 │ E │ Broadcast command │ Custom prompt │
 │ d │ Detach │ Default │
@@ -17,6 +22,24 @@ General
 │ ~ │ Show messages │ Default │
 │ t │ Show clock │ Default │
 └───────┴─────────────────────┴─────────────────┘
+
+Persistent Shell Popup
+
+`M-s` opens a reusable tmux-backed shell popup in the current pane path. Press `M-s`
+inside the popup to close the overlay without killing the popup session. `C-a [`
+enters copy mode inside the popup.
+
+Kitty Workflow Keys
+┌─────────────┬──────────────────────────────┬───────────────────────────────┐
+│ Key │ Action │ Scope │
+├─────────────┼──────────────────────────────┼───────────────────────────────┤
+│ Cmd+T │ New Kitty tab │ Native Kitty │
+│ Cmd+Shift+T │ Open/attach tmux │ Kitty launcher │
+│ Cmd+Shift+S │ Sesh picker │ Kitty launcher │
+│ Cmd+Shift+C │ Codex tab │ Kitty launcher │
+│ Cmd+Shift+U │ Open URL hints │ Native Kitty │
+│ Cmd+Alt+R │ Reload Kitty config │ Native Kitty │
+└─────────────┴──────────────────────────────┴───────────────────────────────┘
 
 Sesh FZF (inside Prefix + T)
 ┌───────┬─────────────────────┬──────────────────┐
