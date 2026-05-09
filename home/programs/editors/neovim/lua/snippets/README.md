@@ -29,7 +29,7 @@ snippets/
 
 - ✅ **Markdown** (20+ snippets) - Code blocks, links, tables, callouts, frontmatter
 - ✅ **Python** (5 snippets) - Main, class, function, FastAPI, pytest
-- ✅ **Rust** (3 snippets) - Main, struct with impl, test module
+- ✅ **Rust** (14 snippets) - Main, modules, structs, enums, traits, errors, tests
 - ✅ **TypeScript/JavaScript** (3 snippets) - React components, API handlers, interfaces
 - ✅ **Go** (3 snippets) - Main, struct with methods, table tests
 - ✅ **Node.js** (8 snippets) - Express server, routes, middleware, MongoDB, Jest
@@ -110,6 +110,23 @@ The original `luasnip.lua` had 2,621 lines with all snippets inline. This has be
 - `pyfunc` - Function with docstring
 - `pyapi` - FastAPI endpoint
 - `pytest` - Test function template
+
+### Rust
+
+- `rsmain` - Main function template
+- `rsmod` - Module declaration
+- `rsuse` - Use statement
+- `rsderive` - Derive macro
+- `rsstruct` - Struct with implementation
+- `rsenum` - Enum definition
+- `rstrait` - Trait definition
+- `rsfn` - Function definition
+- `rsasyncfn` - Async function definition
+- `rsmatch` - Match expression
+- `rsiflet` - If let Some pattern
+- `rsprintln` - Println for debugging
+- `rserror` - Custom error implementation
+- `rstest` - Test module template
 
 ## Friendly Snippets
 
