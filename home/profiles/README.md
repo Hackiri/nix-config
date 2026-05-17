@@ -90,7 +90,6 @@ Provides optional AI agent workflow tooling controlled by:
 
 - `profiles.agentDev.enable`
 - `profiles.agentDev.defaultBaseRef`
-- `profiles.agentDev.evaluateHosts`
 - `profiles.agentDev.hermes.enable`
 
 ### `capabilities/kubernetes.nix`

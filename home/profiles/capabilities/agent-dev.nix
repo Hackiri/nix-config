@@ -16,7 +16,11 @@
   inherit (pkgs.stdenv.hostPlatform) system;
   hermesPackages = inputs.hermes-agent.packages.${system} or {};
   hermesPackageAvailable = hermesPackages ? default;
-  evalHosts = lib.concatMapStringsSep " " lib.escapeShellArg cfg.evaluateHosts;
+
+  # Auto-discover Darwin hosts from the hosts/ directory
+  hostNames = builtins.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../../../hosts));
+  darwinHosts = builtins.filter (name: (import (../../../hosts + "/${name}/meta.nix")).type == "darwin") hostNames;
+  evalHosts = lib.concatMapStringsSep " " lib.escapeShellArg darwinHosts;
 
   agentGuard = pkgs.writeShellScriptBin "agent-guard" ''
     set -euo pipefail
@@ -83,12 +87,6 @@ in {
       type = types.str;
       default = "HEAD";
       description = "Default Git ref used by agent-guard when no base ref is provided.";
-    };
-
-    evaluateHosts = mkOption {
-      type = types.listOf types.str;
-      default = ["mbp2" "mbp"];
-      description = "Darwin host outputs evaluated by agent-guard when Nix-owned files change.";
     };
 
     hermes.enable = mkOption {

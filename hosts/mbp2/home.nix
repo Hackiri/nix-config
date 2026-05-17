@@ -38,7 +38,6 @@
     agentDev = {
       enable = true;
       hermes.enable = true;
-      evaluateHosts = ["mbp2" "mbp"];
     };
 
     # Development profile controls
