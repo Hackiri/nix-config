@@ -9,6 +9,7 @@
     ../../home/profiles/capabilities/kubernetes.nix # Kubernetes development capability
     ../../home/profiles/capabilities/sops.nix # SOPS encrypted secrets (requires age key setup)
     ../../home/profiles/capabilities/redis.nix # Local Redis user service
+    ../../home/profiles/capabilities/agent-dev.nix # Optional AI agent development workflow
   ];
 
   # Platform-specific home directory
@@ -36,6 +37,12 @@
 
     # Local Redis service for development
     redis.enable = false;
+
+    # AI agent development workflow
+    agentDev = {
+      enable = true;
+      hermes.enable = true;
+    };
 
     # Development profile controls
     # Set any of these to false or change values to tailor the workstation setup.

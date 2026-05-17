@@ -10,6 +10,7 @@ profiles/
 │   ├── foundation.nix      # always-on cross-platform base
 │   └── development.nix     # main development stack
 ├── capabilities/
+│   ├── agent-dev.nix       # optional AI agent development workflow
 │   ├── kubernetes.nix      # optional Kubernetes tooling
 │   ├── redis.nix           # optional local Redis user service
 │   └── sops.nix            # optional encrypted secrets integration
@@ -36,6 +37,7 @@ platforms/darwin.nix or platforms/nixos.nix
 
 Optional capability modules can be imported directly by hosts:
 
+- `capabilities/agent-dev.nix`
 - `capabilities/kubernetes.nix`
 - `capabilities/redis.nix`
 - `capabilities/sops.nix`
@@ -83,6 +85,14 @@ Feature flags:
 - `profiles.development.terminals.enable`
 - `profiles.development.terminals.default`
 - `profiles.development.packages.*`
+
+### `capabilities/agent-dev.nix`
+
+Provides optional AI agent workflow tooling controlled by:
+
+- `profiles.agentDev.enable`
+- `profiles.agentDev.defaultBaseRef`
+- `profiles.agentDev.hermes.enable`
 
 ### `capabilities/kubernetes.nix`
 

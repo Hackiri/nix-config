@@ -1,0 +1,14 @@
+setup:
+    uv sync
+
+lint:
+    uv run ruff check .
+
+format:
+    uv run ruff format .
+
+test:
+    uv run pytest
+
+eval model="gpt-5-mini":
+    uv run python evals/run_eval.py --model {{model}} --cases evals/cases.jsonl --output evals/results.jsonl

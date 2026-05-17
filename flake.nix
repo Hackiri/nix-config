@@ -181,6 +181,10 @@
             path = ./templates/python;
             description = "Python project with devShell and direnv";
           };
+          ai-python = {
+            path = ./templates/ai-python;
+            description = "Python AI app with uv, OpenAI Responses API evals, and direnv";
+          };
           rust = {
             path = ./templates/rust;
             description = "Rust project with devShell and direnv";

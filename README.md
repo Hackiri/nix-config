@@ -51,6 +51,7 @@ nix-config/
 │   ├── nixos-desktop/          # NixOS desktop host scaffold
 │   ├── node/                   # Node.js project template
 │   ├── python/                 # Python project template
+│   ├── ai-python/              # Python AI app template with evals
 │   ├── rust/                   # Rust project template
 │   └── go/                     # Go project template
 ├── secrets/                    # Encrypted secrets (sops-nix)
@@ -421,6 +422,18 @@ The environment loads/unloads automatically as you enter/leave the directory.
 
 > **Note:** If a project's direnv cache points to a stale path (e.g. a deleted worktree), run `direnv reload` in that project to refresh the cache.
 
+## AI Engineering Workflow
+
+This repo includes an optional Home Manager profile for AI-assisted development:
+
+- `profiles.agentDev.enable = true` installs local agent workflow commands.
+- `profiles.agentDev.hermes.enable = true` installs Hermes Agent when available for the host platform.
+- `agent-guard` checks agent-generated changes before review.
+- `agent-eval-host mbp2` evaluates a Darwin host output without building it.
+- `nix flake init -t ~/nix-config#ai-python` creates a Python AI app with uv and evals.
+- `docs/workflows/ai-agent-workflows.md` describes the review loop.
+- `docs/workflows/mcp-curation.md` describes MCP discovery and safe tool use.
+
 ## Project Templates
 
 Scaffold a new project with a ready-made `flake.nix`:
@@ -429,6 +442,7 @@ Scaffold a new project with a ready-made `flake.nix`:
 # Initialize a new project from a template
 nix flake init -t ~/nix-config#node
 nix flake init -t ~/nix-config#python
+nix flake init -t ~/nix-config#ai-python
 nix flake init -t ~/nix-config#rust
 nix flake init -t ~/nix-config#go
 ```
