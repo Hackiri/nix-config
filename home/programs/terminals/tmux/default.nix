@@ -679,6 +679,7 @@ in {
           bind M-k display-popup -d "#{pane_current_path}" -E -w 90% -h 85% "${tmux_kube_menu}/bin/tmux-kube-menu"
           bind M-f display-popup -d "#{pane_current_path}" -E -w 80% -h 75% "${tmux_pf_manager}/bin/tmux-pf-manager"
           bind M-p display-popup -d "#{pane_current_path}" -E -w 90% -h 85% "${tmux_podman_menu}/bin/tmux-podman-menu"
+          bind L display-popup -E -w 40% -h 40% -T " Layouts " "${tmux_layout_picker}/bin/tmux-layout-picker"
 
           # Load key-option-sensitive plugins AFTER tmux_config sets their options
           run-shell ${tmux_thumbs_plugin}/tmux-thumbs.tmux
