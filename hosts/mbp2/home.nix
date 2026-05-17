@@ -8,6 +8,7 @@
     ../../home/profiles/platforms/darwin.nix # Darwin-specific profile (includes development -> foundation chain)
     ../../home/profiles/capabilities/kubernetes.nix # Kubernetes development capability
     ../../home/profiles/capabilities/sops.nix # SOPS encrypted secrets (requires age key setup)
+    ../../home/profiles/capabilities/agent-dev.nix # Optional AI agent development workflow
   ];
 
   # Platform-specific home directory
@@ -31,6 +32,13 @@
       enable = true;
       includeLocalDev = true; # Include kind, tilt, kubeconform
       toolSet = "complete"; # Full kubernetes tooling for primary workstation
+    };
+
+    # AI agent development workflow
+    agentDev = {
+      enable = true;
+      hermes.enable = true;
+      evaluateHosts = ["mbp2" "mbp"];
     };
 
     # Development profile controls

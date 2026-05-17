@@ -9,8 +9,6 @@
 }: {
   imports = [
     ../../modules/system/darwin
-    # Add host-specific service modules here, e.g.:
-    # ../../modules/services/darwin/hermes-agent-package.nix
   ];
 
   system.primaryUser = username;
