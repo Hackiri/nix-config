@@ -1,0 +1,2 @@
+{"id":"summarize-1","input":"Summarize this in one sentence: Nix flakes make development environments reproducible across machines.","must_contain":["reproducible","development"]}
+{"id":"classify-1","input":"Classify the sentiment as positive, neutral, or negative: The build passed after the guardrail check.","must_contain":["positive"]}
