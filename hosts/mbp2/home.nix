@@ -8,6 +8,7 @@
     ../../home/profiles/platforms/darwin.nix # Darwin-specific profile (includes development -> foundation chain)
     ../../home/profiles/capabilities/kubernetes.nix # Kubernetes development capability
     ../../home/profiles/capabilities/sops.nix # SOPS encrypted secrets (requires age key setup)
+    ../../home/profiles/capabilities/redis.nix # Local Redis user service
   ];
 
   # Platform-specific home directory
@@ -32,6 +33,9 @@
       includeLocalDev = true; # Include kind, tilt, kubeconform
       toolSet = "complete"; # Full kubernetes tooling for primary workstation
     };
+
+    # Local Redis service for development
+    redis.enable = false;
 
     # Development profile controls
     # Set any of these to false or change values to tailor the workstation setup.

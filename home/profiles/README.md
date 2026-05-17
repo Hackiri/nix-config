@@ -11,6 +11,7 @@ profiles/
 │   └── development.nix     # main development stack
 ├── capabilities/
 │   ├── kubernetes.nix      # optional Kubernetes tooling
+│   ├── redis.nix           # optional local Redis user service
 │   └── sops.nix            # optional encrypted secrets integration
 └── platforms/
     ├── darwin.nix          # macOS composition
@@ -36,6 +37,7 @@ platforms/darwin.nix or platforms/nixos.nix
 Optional capability modules can be imported directly by hosts:
 
 - `capabilities/kubernetes.nix`
+- `capabilities/redis.nix`
 - `capabilities/sops.nix`
 
 ## Current Package Coverage
@@ -89,6 +91,15 @@ Provides optional Kubernetes tooling controlled by:
 - `profiles.kubernetes.enable`
 - `profiles.kubernetes.includeLocalDev`
 - `profiles.kubernetes.toolSet`
+
+### `capabilities/redis.nix`
+
+Provides an optional local Redis user service controlled by:
+
+- `profiles.redis.enable`
+- `profiles.redis.port`
+- `profiles.redis.bind`
+- `profiles.redis.databases`
 
 ### `capabilities/sops.nix`
 
