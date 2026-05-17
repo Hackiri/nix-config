@@ -580,6 +580,50 @@
         ;;
     esac
   '';
+
+  tmux_layout_picker = pkgs.writeScriptBin "tmux-layout-picker" ''
+    #!${pkgs.bash}/bin/bash
+    set -euo pipefail
+
+    # Layout options with icons
+    declare -A layouts
+    layouts=(
+      ["󰕰 Tall (Main + Side Stack)"]="Tall"
+      ["󰕬 Fat  (Main + Bottom Stack)"]="Fat"
+      ["󰕫 Grid (Balanced)"]="Grid"
+      ["󰊓 Focus (Zoom toggle)"]="Focus"
+    )
+
+    # Use FZF to pick a layout
+    choice=$(printf "%s\n" "''${!layouts[@]}" | fzf \
+      --header=" iKitty Layouts " \
+      --layout=reverse \
+      --border \
+      --height=100% \
+      --prompt="  " \
+      --pointer="▶" \
+      --color="header:#37f499,pointer:#37f499")
+
+    [ -n "$choice" ] || exit 0
+    selected="''${layouts[$choice]}"
+
+    case "$selected" in
+      Tall)
+        tmux set-window-option main-pane-width 66%
+        tmux select-layout main-vertical
+        ;;
+      Fat)
+        tmux set-window-option main-pane-height 66%
+        tmux select-layout main-horizontal
+        ;;
+      Grid)
+        tmux select-layout tiled
+        ;;
+      Focus)
+        tmux resize-pane -Z
+        ;;
+    esac
+  '';
 in {
   config =
     lib.mkIf
@@ -597,6 +641,7 @@ in {
         tmux_kube_menu # Kubernetes tmux popup workflow
         tmux_pf_manager # Port-forward window manager
         tmux_podman_menu # Podman/Compose tmux popup workflow
+        tmux_layout_picker # Interactive tmux layout picker
       ];
 
       programs.tmux = {
