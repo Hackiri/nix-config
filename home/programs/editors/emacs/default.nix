@@ -329,8 +329,8 @@ in {
 
           # Language servers and formatters (emacs-specific)
           nixfmt
-          nodePackages.prettier
-          nodePackages.typescript-language-server
+          prettier
+          typescript-language-server
 
           # Python development tools (emacs-specific)
           python3Packages.black
@@ -340,8 +340,8 @@ in {
           python3Packages.pytest
 
           # Web development tools (emacs-specific)
-          nodePackages.stylelint
-          nodePackages.js-beautify
+          stylelint
+          js-beautify
         ];
       };
     }; # end config = lib.mkIf ((config.profiles.development.enable or true) && (config.profiles.development.editors.enable or true) && cfg.enable)

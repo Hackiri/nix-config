@@ -6,7 +6,7 @@ result*
 # Nix build logs
 *.log
 
-docs/
+docs/*
 
 # Claude
 .claude

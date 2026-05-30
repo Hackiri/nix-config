@@ -7,8 +7,8 @@
       yarn
       pnpm
       bun
-      nodePackages.typescript
-      nodePackages.prettier
+      typescript
+      prettier
     ];
     shellHook = ''
       echo "Node.js $(node --version) dev environment"

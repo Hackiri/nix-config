@@ -2,7 +2,7 @@
   description = "Node.js development environment";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
   };
 
   outputs = {nixpkgs, ...}: let
@@ -24,8 +24,8 @@
             yarn
             pnpm
             bun
-            nodePackages.typescript
-            nodePackages.prettier
+            typescript
+            prettier
           ];
           shellHook = ''
             echo "Node.js $(node --version) dev environment"

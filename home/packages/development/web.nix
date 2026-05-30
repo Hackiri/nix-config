@@ -30,8 +30,8 @@
         # Web Servers (uncomment as needed)
         #--------------------------------------------------
         # caddy # Modern, automatic HTTPS web server
-        # nodePackages.http-server # Simple HTTP server
-        # nodePackages.live-server # Live-reloading HTTP server
+        # http-server # Simple HTTP server
+        # live-server # Live-reloading HTTP server
 
         #--------------------------------------------------
         # Tunneling and Exposure (uncomment as needed)

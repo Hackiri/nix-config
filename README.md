@@ -1,6 +1,6 @@
 # Nix Configuration
 
-A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager integration. Based on **nixpkgs 25.11**.
+A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager integration. Based on **nixpkgs 26.05**.
 
 ## Features
 
@@ -16,7 +16,7 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 > Nixpkgs **26.05 is the last release** to support `x86_64-darwin`. Binary builds and source support will continue until 26.05 goes end-of-life (late 2026), but **26.11 will drop x86_64-darwin entirely** — no binary cache, no source builds.
 
 > [!IMPORTANT]
-> This configuration uses `nixos-25.11` (stable) exclusively. The `nixpkgs-unstable` channel is **not** used because unstable packages receive less CI coverage on Intel Mac and are more likely to have build failures on `x86_64-darwin`. The `allowDeprecatedx86_64Darwin = true` flag is set in `flake.nix` to suppress the deprecation warning.
+> This configuration uses `nixos-26.05` (stable) exclusively. The `nixpkgs-unstable` channel is **not** used because unstable packages receive less CI coverage on Intel Mac and are more likely to have build failures on `x86_64-darwin`. The `allowDeprecatedx86_64Darwin = true` flag is set in `flake.nix` to suppress the deprecation warning.
 
 > [!TIP]
 > 🖥️ Install **NixOS** on the hardware (supported indefinitely on x86_64)

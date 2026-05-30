@@ -55,6 +55,7 @@
         # Run `brew update` manually when you want to update formulas/casks.
         autoUpdate = false;
         upgrade = true;
+        extraFlags = ["--force-cleanup"];
       };
 
       # CLI tools that work better with Homebrew than Nix on macOS

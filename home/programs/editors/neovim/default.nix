@@ -54,13 +54,13 @@
           mermaid-cli # Provides mmdc for Mermaid diagrams
 
           # Neovim-specific formatters (not in profiles)
-          nodePackages.prettier # JavaScript/TypeScript/CSS/HTML/JSON/YAML/Markdown formatter
+          prettier # JavaScript/TypeScript/CSS/HTML/JSON/YAML/Markdown formatter
           shfmt # Shell script formatter
           ruff # Python linter and formatter
           templ # Go template formatter
         ];
 
-        extraLuaConfig = ''
+        initLua = ''
           -- Set leader key before lazy
           vim.g.mapleader = " "
           vim.g.maplocalleader = " "

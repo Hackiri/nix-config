@@ -1,5 +1,5 @@
 # Emacs overlay configuration
-# Note: emacs-gtk3 is marked broken in nixpkgs 25.11; use pgtk on Linux instead.
+# Note: emacs-gtk3 is marked broken in nixpkgs 26.05; use pgtk on Linux instead.
 _: _final: prev: {
   # Main Emacs build - native compilation + tree-sitter
   # macOS: native Cocoa GUI; Linux: pure GTK (Wayland-native, replaces broken GTK3)

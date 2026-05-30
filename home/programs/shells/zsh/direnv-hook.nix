@@ -20,8 +20,8 @@
                     yarn
                     pnpm
                     bun
-                    nodePackages.typescript
-                    nodePackages.prettier'
+                    typescript
+                    prettier'
               python '      python313
                     uv
                     python313Packages.pip
@@ -62,7 +62,7 @@
           description = "Development environment";
 
           inputs = {
-            nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+            nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
           };
 
           outputs = {nixpkgs, ...}: let
