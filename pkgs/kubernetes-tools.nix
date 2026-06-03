@@ -1,5 +1,6 @@
 {pkgs}: let
   inherit (pkgs) lib;
+  allowUnfree = pkgs.config.allowUnfree or false;
 
   # Organized Kubernetes tool categories for better maintainability
   kubernetesTools = rec {
@@ -76,6 +77,7 @@
       terragrunt # Terraform wrapper for DRY configurations
       pulumi-bin # Modern infrastructure as code
       ansible # Configuration management and orchestration
+      ansible-lint # Ansible playbook linting
     ];
 
     # Cloud provider CLIs
@@ -91,7 +93,10 @@
 
     # Kubernetes distribution-specific tools
     distributions = with pkgs;
-      [
+      lib.optionals (allowUnfree && lib.hasAttr "omnictl" pkgs) [
+        omnictl # CLI for Omni-managed Talos clusters
+      ]
+      ++ [
         talosctl # CLI for Talos Linux management
       ]
       ++ lib.optionals (lib.hasAttr "rke2" pkgs && pkgs.stdenv.isLinux) [

@@ -17,20 +17,20 @@ A curated collection of Kubernetes and cloud-native tools organized by category.
 
 ### Tool Categories
 
-| Category            | Tools                                             | Description                    |
-| ------------------- | ------------------------------------------------- | ------------------------------ |
-| `core`              | kubectl, helm, kustomize                          | Essential Kubernetes tools     |
-| `contextManagement` | kubectx, kubecolor, kubelogin-oidc                | Cluster context switching      |
-| `observability`     | stern, k9s, popeye, kubectl-tree, kubectl-who-can | Monitoring and debugging       |
-| `security`          | kube-bench, kube-hunter, kubesec, falco           | Security scanning and auditing |
-| `gitops`            | argocd, flux, skaffold, tektoncd-cli              | GitOps and CI/CD               |
-| `serviceMesh`       | istioctl, linkerd, cilium-cli                     | Service mesh management        |
-| `containers`        | skopeo, dive, crane                               | Container image tools          |
-| `iac`               | opentofu, terragrunt, pulumi, ansible             | Infrastructure as Code         |
-| `cloudClis`         | awscli2, google-cloud-sdk, azure-cli, doctl       | Cloud provider CLIs            |
-| `distributions`     | talosctl, rke2, k0sctl                            | K8s distribution tools         |
-| `helmExtensions`    | helm-diff, helm-secrets, helm-git, helm-docs      | Helm plugins                   |
-| `devUtils`          | jq, yq-go, curl, wget, httpie, grpcurl, hey       | Development utilities          |
+| Category            | Tools                                               | Description                    |
+| ------------------- | --------------------------------------------------- | ------------------------------ |
+| `core`              | kubectl, helm, kustomize                            | Essential Kubernetes tools     |
+| `contextManagement` | kubectx, kubecolor, kubelogin-oidc                  | Cluster context switching      |
+| `observability`     | stern, k9s, popeye, kubectl-tree, kubectl-who-can   | Monitoring and debugging       |
+| `security`          | kube-bench, kube-hunter, kubesec, falco             | Security scanning and auditing |
+| `gitops`            | argocd, flux, skaffold, tektoncd-cli                | GitOps and CI/CD               |
+| `serviceMesh`       | istioctl, linkerd, cilium-cli                       | Service mesh management        |
+| `containers`        | skopeo, dive, crane                                 | Container image tools          |
+| `iac`               | opentofu, terragrunt, pulumi, ansible, ansible-lint | Infrastructure as Code         |
+| `cloudClis`         | awscli2, google-cloud-sdk, azure-cli, doctl         | Cloud provider CLIs            |
+| `distributions`     | omnictl, talosctl, rke2, k0sctl                     | K8s distribution tools         |
+| `helmExtensions`    | helm-diff, helm-secrets, helm-git, helm-docs        | Helm plugins                   |
+| `devUtils`          | jq, yq-go, curl, wget, httpie, grpcurl, hey         | Development utilities          |
 
 ### Predefined Sets
 
@@ -65,4 +65,4 @@ in {
 }
 ```
 
-Platform availability is handled automatically — some tools use `lib.optionals` to skip packages that are unavailable or Linux-only.
+Platform availability is handled automatically — some tools use `lib.optionals` to skip packages that are unavailable, Linux-only, or require unfree packages to be enabled.
