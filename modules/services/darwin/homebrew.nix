@@ -45,6 +45,8 @@
 
     homebrew = {
       enable = true;
+      global.autoUpdate = false;
+      taps = builtins.attrNames config.nix-homebrew.taps;
       caskArgs = {
         appdir = "~/Applications";
         require_sha = true;
@@ -55,6 +57,11 @@
         # Run `brew update` manually when you want to update formulas/casks.
         autoUpdate = false;
         upgrade = true;
+        extraEnv = {
+          HOMEBREW_NO_ANALYTICS = "1";
+          HOMEBREW_NO_ENV_HINTS = "1";
+          HOMEBREW_NO_UPDATE_REPORT_NEW = "1";
+        };
         extraFlags = ["--force-cleanup"];
       };
 
