@@ -75,7 +75,6 @@
           "gettext" # GNU internationalization utilities
           "tree-sitter-cli" # Tree-sitter CLI for syntax parsing (used by Neovim plugins)
           "gh" # GitHub CLI
-          "gemini-cli" # Google Gemini CLI
           "FelixKratz/formulae/borders" # JankyBorders - window border highlighting for AeroSpace
         ]
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isAarch64 && pkgs.stdenv.hostPlatform.isDarwin) [
