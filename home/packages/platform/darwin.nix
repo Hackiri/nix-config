@@ -14,5 +14,16 @@
     # macOS Utilities
     #--------------------------------------------------
     mkalias # Creates macOS .app aliases
+
+    #--------------------------------------------------
+    # Nix-managed replacements for generic Homebrew formulae
+    #--------------------------------------------------
+    bitwarden-cli # Password manager CLI
+    gemini-cli # Google Gemini CLI
+    gettext # GNU internationalization utilities
+    gh # GitHub CLI
+    mas # Mac App Store CLI used by nix-darwin's Homebrew activation
+    podman-compose # Podman Compose
+    tree-sitter # Tree-sitter CLI for syntax parsing
   ];
 }

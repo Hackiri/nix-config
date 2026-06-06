@@ -57,10 +57,6 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
-    homebrew-bundle = {
-      url = "github:homebrew/homebrew-bundle";
-      flake = false;
-    };
     homebrew-aerospace = {
       url = "github:nikitabobko/homebrew-tap";
       flake = false;

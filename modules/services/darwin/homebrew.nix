@@ -33,7 +33,6 @@
         {
           "homebrew/homebrew-core" = inputs.homebrew-core;
           "homebrew/homebrew-cask" = inputs.homebrew-cask;
-          "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
           "nikitabobko/homebrew-tap" = inputs.homebrew-aerospace;
           "FelixKratz/homebrew-formulae" = inputs.homebrew-felixkratz;
         }
@@ -65,16 +64,11 @@
         extraFlags = ["--force-cleanup"];
       };
 
-      # CLI tools that work better with Homebrew than Nix on macOS
+      # Formulae that need Homebrew's macOS-specific packaging or third-party taps.
+      # Generic CLI tools are managed through Nix/Home Manager.
       brews =
         [
-          "mas" # Mac App Store CLI
-          "bitwarden-cli" # Password manager CLI
-          "podman-compose" # Podman Compose
           "podman" # Podman
-          "gettext" # GNU internationalization utilities
-          "tree-sitter-cli" # Tree-sitter CLI for syntax parsing (used by Neovim plugins)
-          "gh" # GitHub CLI
           "FelixKratz/formulae/borders" # JankyBorders - window border highlighting for AeroSpace
         ]
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isAarch64 && pkgs.stdenv.hostPlatform.isDarwin) [
