@@ -51,14 +51,19 @@
         require_sha = true;
       };
       onActivation = {
-        cleanup = "uninstall"; # Remove packages not in config (preserves app data)
+        cleanup = "zap"; # Remove packages not in config, including cask support files
         # Disabled for reproducibility -- brew updates are independent of flake.lock pins.
         # Run `brew update` manually when you want to update formulas/casks.
         autoUpdate = false;
-        upgrade = true;
+        # Homebrew 5.1 rejects fetching casks from nix-homebrew's store-backed
+        # taps; avoid activation-time cask upgrades until upstreams align.
+        upgrade = false;
         extraEnv = {
           HOMEBREW_NO_ANALYTICS = "1";
           HOMEBREW_NO_ENV_HINTS = "1";
+          # Homebrew 5.1 requires explicit trust for non-official taps, which
+          # does not compose well with nix-homebrew's store-backed taps.
+          HOMEBREW_NO_REQUIRE_TAP_TRUST = "1";
           HOMEBREW_NO_UPDATE_REPORT_NEW = "1";
         };
         extraFlags = ["--force-cleanup"];
