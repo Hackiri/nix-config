@@ -43,5 +43,6 @@
     wordnet # Lexical database for English
     moreutils # sponge and other small utilities (used by tmux-resurrect)
     minicom #
+    mise
   ];
 }
