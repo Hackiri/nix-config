@@ -50,7 +50,10 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.editor.mini-move" }, -- Move lines/blocks with Alt+hjkl
     -- { import = "lazyvim.plugins.extras.editor.illuminate" }, -- Highlight word references (disabled - Neovim 0.11 compatibility issue)
     { import = "lazyvim.plugins.extras.util.project" }, -- Project-based directory switching
-    { import = "lazyvim.plugins.extras.editor.refactoring" }, -- Code refactoring operations
+    -- Disabled because LazyVim's refactoring extra adds lewis6991/async.nvim,
+    -- whose top-level `async` module conflicts with nvim-ufo's promise-async.
+    -- The collision makes ufo fail when it attaches to file and floating buffers.
+    -- { import = "lazyvim.plugins.extras.editor.refactoring" },
 
     -- LazyVim Extras - AI
     { import = "lazyvim.plugins.extras.ai.copilot" }, -- Copilot + blink-cmp source
