@@ -1,5 +1,6 @@
 {
   inputs,
+  pkgs,
   username,
   ...
 }: {
@@ -9,6 +10,7 @@
 
   services.hermes-agent = {
     enable = true;
+    package = pkgs.hermes-agent;
     addToSystemPackages = true;
     environmentFiles = [
       "/var/lib/hermes/env"

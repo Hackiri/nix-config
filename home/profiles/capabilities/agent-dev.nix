@@ -107,7 +107,7 @@ in {
         agentEvalHost
       ]
       ++ lib.optionals (cfg.hermes.enable && hermesPackageAvailable) [
-        hermesPackages.default
+        pkgs.hermes-agent
       ]
       ++ (with pkgs; [
         alejandra
