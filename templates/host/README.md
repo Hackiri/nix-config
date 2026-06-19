@@ -23,11 +23,27 @@ cp -r templates/host hosts/<name>
 #    ../../home/programs/terminals/alacritty
 #    ../../home/programs/terminals/ghostty
 #    ../../home/programs/terminals/wezterm
-
 # 5. Build and test
 darwin-rebuild build --flake .#<name>   # Darwin
 nixos-rebuild build --flake .#<name>    # NixOS
 ```
+
+Program modules are selected through `home/programs/default.nix`.
+
+```nix
+let
+  programRegistry = import ../../home/programs;
+in {
+  imports =
+    [
+      ../../home/profiles/platforms/darwin.nix
+      ../../home/packages/development
+    ]
+    ++ programRegistry.suites.workstation.darwin;
+}
+```
+
+Use `programRegistry.suites.workstation.nixos` for NixOS hosts.
 
 ## Available Profiles
 

@@ -43,7 +43,16 @@ check_darwin_host_imports() {
   check_no_granular_program_imports "$file"
 }
 
+check_nixos_template_imports() {
+  local file="$1"
+
+  check_import "$file" "programRegistry = import ../../home/programs;"
+  check_import "$file" "programRegistry.suites.workstation.nixos"
+  check_no_granular_program_imports "$file"
+}
+
 check_darwin_host_imports hosts/mbp/home.nix
 check_darwin_host_imports hosts/mbp2/home.nix
+check_nixos_template_imports templates/nixos-desktop/home.nix
 
 printf 'program-imports: ok\n'
