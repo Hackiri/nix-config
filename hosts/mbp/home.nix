@@ -3,15 +3,19 @@
   pkgs,
   username,
   ...
-}: {
-  imports = [
-    ../../home/profiles/platforms/darwin.nix # Darwin-specific profile (includes development -> foundation chain)
-    ../../home/packages/development # Development package bundles selected by direct import
-    ../../home/profiles/capabilities/kubernetes.nix # Kubernetes development capability
-    ../../home/profiles/capabilities/sops.nix # SOPS encrypted secrets (requires age key setup)
-    ../../home/profiles/capabilities/redis.nix # Local Redis user service
-    ../../home/profiles/capabilities/agent-dev.nix # Optional AI agent development workflow
-  ];
+}: let
+  programRegistry = import ../../home/programs;
+in {
+  imports =
+    [
+      ../../home/profiles/platforms/darwin.nix # Darwin-specific profile (includes development -> foundation chain)
+      ../../home/packages/development # Development package bundles selected by direct import
+      ../../home/profiles/capabilities/kubernetes.nix # Kubernetes development capability
+      ../../home/profiles/capabilities/sops.nix # SOPS encrypted secrets (requires age key setup)
+      ../../home/profiles/capabilities/redis.nix # Local Redis user service
+      ../../home/profiles/capabilities/agent-dev.nix # Optional AI agent development workflow
+    ]
+    ++ programRegistry.suites.workstation.darwin;
 
   # Platform-specific home directory
   home.homeDirectory = "/Users/${username}";

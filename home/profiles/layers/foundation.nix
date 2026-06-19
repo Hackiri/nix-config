@@ -10,20 +10,11 @@
   nixConfigPath = "${config.home.homeDirectory}/nix-config";
 in {
   imports = [
-    # Theme: Centralized color palette (used by starship, terminals, etc.)
-    ../../programs/theme
-
     # Packages: Core CLI tools (bat, eza, fd, fzf, ripgrep, etc.)
     ../../packages/core/cli.nix
 
     # Packages: Network essentials (wget, cachix)
     ../../packages/core/networking.nix
-
-    # Programs: Security hardening (SSH, etc.)
-    ../../programs/security
-
-    # Programs: Essential system monitoring utilities
-    ../../programs/utilities/btop
   ];
 
   # Common home-manager configuration (replaces home/shared/base.nix)

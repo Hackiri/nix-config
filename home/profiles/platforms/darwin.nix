@@ -8,9 +8,6 @@
 
     # Packages: macOS-specific packages
     ../../packages/platform/darwin.nix
-
-    # Programs: macOS window management
-    ../../programs/utilities/aerospace
   ];
 
   profiles.development.editors.neovide.enable = true;

@@ -89,23 +89,5 @@
   imports = [
     # Base: Foundation layer (minimal tools, btop, cli-essentials)
     ./foundation.nix
-
-    # Programs: Shell configuration and enhancements (zsh, starship, bash)
-    ../../programs/shells
-
-    # Git: Base Git configuration shared by both plain and sops-managed workflows.
-    ../../programs/development/git/default.nix
-
-    # Programs: Text editors and IDEs
-    ../../programs/editors
-
-    # Programs: Development tools and configurations (direnv - always on)
-    ../../programs/development
-
-    # Programs: Terminal emulators and multiplexers
-    ../../programs/terminals
-
-    # Programs: System utilities and file managers
-    ../../programs/utilities
   ];
 }
