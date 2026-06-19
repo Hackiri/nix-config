@@ -6,7 +6,8 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 
 - **Cross-platform**: Works on both macOS and NixOS
 - **Modular architecture**: Organized system, service, and user configurations
-- **Profile-based**: Layered user profiles (minimal → development → platform)
+- **Profile-based behavior**: Layered user profiles handle behavior, defaults, services, and secrets
+- **Import-based package bundles**: Development package bundles are selected with direct imports
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains
 
@@ -33,9 +34,9 @@ nix-config/
 │   ├── mbp/                    # MacBook Pro (darwin) x86_64-darwin
 │   ├── mbp2/                   # MacBook Pro (darwin) aarch64-darwin
 ├── home/                       # Home Manager configurations
-│   ├── profiles/               # Layered user profiles (base, features, platform)
+│   ├── profiles/               # Layered behavior/platform/capability modules
 │   ├── programs/               # Program configurations (editors, shells, terminals, etc.)
-│   └── packages/               # Package collections (cli-essentials, build-tools, etc.)
+│   └── packages/               # Plain package bundles imported from hosts/templates
 ├── modules/                    # System modules
 │   ├── system/                 # System configurations (darwin, nixos, shared)
 │   └── services/               # Service configurations (homebrew, fonts)

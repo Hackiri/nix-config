@@ -6,6 +6,7 @@
 }: {
   imports = [
     ../../home/profiles/platforms/darwin.nix # Darwin-specific profile (includes development -> foundation chain)
+    ../../home/packages/development # Development package bundles selected by direct import
     ../../home/profiles/capabilities/kubernetes.nix # Kubernetes development capability
     ../../home/profiles/capabilities/sops.nix # SOPS encrypted secrets (requires age key setup)
     ../../home/profiles/capabilities/redis.nix # Local Redis user service
@@ -62,16 +63,6 @@
       terminals = {
         enable = true;
         default = "kitty";
-      };
-
-      packages = {
-        enable = true;
-        buildTools.enable = true;
-        codeQuality.enable = true;
-        databases.enable = true;
-        languages.enable = true;
-        security.enable = true;
-        web.enable = true;
       };
     };
   };

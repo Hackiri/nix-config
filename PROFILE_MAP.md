@@ -7,7 +7,10 @@ This file is the short reference for the current profile taxonomy and import flo
 ```text
 hosts/*/home.nix
 ├── platforms/darwin.nix or platforms/nixos.nix
+├── optional: home/packages/development or individual bundle modules
 ├── optional: capabilities/kubernetes.nix
+├── optional: capabilities/redis.nix
+├── optional: capabilities/agent-dev.nix
 └── optional: capabilities/sops.nix
 ```
 
@@ -26,8 +29,10 @@ layers/development.nix
   ├── programs/development
   ├── programs/editors
   ├── programs/terminals
-  ├── programs/utilities
-  └── packages/development/default.nix
+  └── programs/utilities
+
+hosts/*/home.nix
+  └── packages/development/default.nix or individual bundles
        ├── build.nix
        ├── quality.nix
        ├── databases.nix
@@ -65,14 +70,17 @@ capabilities/sops.nix
 `hosts/mbp/home.nix` and `hosts/mbp2/home.nix` currently import:
 
 - `../../home/profiles/platforms/darwin.nix`
+- `../../home/packages/development`
 - `../../home/profiles/capabilities/kubernetes.nix`
+- `../../home/profiles/capabilities/redis.nix`
+- `../../home/profiles/capabilities/agent-dev.nix`
 - `../../home/profiles/capabilities/sops.nix`
 
 ## Naming Rules
 
 - `layers/*` means broad stack composition
-- `capabilities/*` means optional add-on behavior
+- `capabilities/*` means optional add-on behavior, services, or secrets
 - `platforms/*` means OS-specific composition
 - `packages/core/*` means always-useful baseline packages
-- `packages/development/*` means dev package bundles
+- `packages/development/*` means dev package bundles selected by direct imports
 - `packages/platform/*` means OS-specific package bundles

@@ -21,9 +21,10 @@ profiles/
 
 ## Taxonomy
 
-- `layers/`: broad opinionated stacks that compose packages and programs
-- `capabilities/`: optional add-ons that can be imported independently
+- `layers/`: broad opinionated stacks that compose behavior, defaults, and program modules
+- `capabilities/`: optional add-ons that can be imported independently for behavior, services, and secrets
 - `platforms/`: OS-specific entry points that compose layers plus platform extras
+- `home/packages/*`: plain package bundles imported directly from hosts/templates
 
 ## Hierarchy
 
@@ -33,6 +34,8 @@ layers/foundation.nix
 layers/development.nix
   ↓
 platforms/darwin.nix or platforms/nixos.nix
+  ↓
+hosts/*/home.nix imports package bundles directly
 ```
 
 Optional capability modules can be imported directly by hosts:
@@ -69,12 +72,12 @@ Imports:
 - `../../programs/editors`
 - `../../programs/terminals`
 - `../../programs/utilities`
-- `../../packages/development`
 
 Provides:
 
 - Editors, shells, terminals, direnv, git, utilities
-- Development package groups: build, quality, databases, languages, security, web
+- Behavior and program composition for the development workspace
+- No package bundle selection interface; package bundles are imported directly by hosts/templates
 
 Feature flags:
 
@@ -84,7 +87,6 @@ Feature flags:
 - `profiles.development.utilities.enable`
 - `profiles.development.terminals.enable`
 - `profiles.development.terminals.default`
-- `profiles.development.packages.*`
 
 ### `capabilities/agent-dev.nix`
 
@@ -136,24 +138,29 @@ Composes:
 
 ## Host Usage
 
-macOS host with optional SOPS and Kubernetes:
+macOS host with full development package bundles plus optional SOPS and Kubernetes:
 
 ```nix
 {
   imports = [
     ../../home/profiles/platforms/darwin.nix
+    ../../home/packages/development
     ../../home/profiles/capabilities/kubernetes.nix
     ../../home/profiles/capabilities/sops.nix
   ];
 }
 ```
 
-NixOS host:
+NixOS host with selected package bundles:
 
 ```nix
 {
   imports = [
     ../../home/profiles/platforms/nixos.nix
+    ../../home/packages/development/build.nix
+    ../../home/packages/development/languages.nix
   ];
 }
 ```
+
+Capability modules remain profile-based. Keep importing capability profiles such as Kubernetes, SOPS, Redis, and agent development when you want their behavior or services.

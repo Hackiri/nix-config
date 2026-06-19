@@ -12,3 +12,6 @@ lint:
 # Scaffold a new host from template (unique multi-step or template action)
 host name:
     nix flake new -t .#host hosts/{{name}}
+
+package-imports:
+    bash tests/package-imports.sh

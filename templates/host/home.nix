@@ -6,20 +6,19 @@
   ...
 }: {
   imports = [
-    # Pick your platform profile (includes development -> minimal chain):
+    # Pick your platform profile for behavior and platform defaults:
     # ../../home/profiles/platforms/darwin.nix
     # ../../home/profiles/platforms/nixos.nix
 
-    # Pick one terminal emulator module:
-    # ../../home/programs/terminals/kitty
-    # ../../home/programs/terminals/alacritty
-    # ../../home/programs/terminals/ghostty
-    # ../../home/programs/terminals/wezterm
-
-    # Optional feature profiles:
-    # ../../home/profiles/layers/development.nix
+    # Optional capability profiles:
     # ../../home/profiles/capabilities/kubernetes.nix
     # ../../home/profiles/capabilities/sops.nix
+
+    # Package bundles are selected with direct imports:
+    # ../../home/packages/development          # full development bundle
+    # ../../home/packages/development/build.nix
+    # ../../home/packages/development/languages.nix
+    # ../../home/packages/development/web.nix
   ];
 
   # Platform-specific home directory
