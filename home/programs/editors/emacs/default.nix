@@ -4,7 +4,7 @@
   lib,
   ...
 }: let
-  cfg = config.profiles.workspace.editors.emacs;
+  cfg = config.profiles.development.editors.emacs;
 
   # Shared PATH for all activation scripts that need Nix tool access
   activationPath = lib.makeBinPath [
@@ -29,8 +29,8 @@ in {
   config =
     lib.mkIf
     (
-      (config.profiles.workspace.enable or true)
-      && (config.profiles.workspace.editors.enable or true)
+      (config.profiles.development.enable or true)
+      && (config.profiles.development.editors.enable or true)
       && cfg.enable
     )
     {
@@ -344,5 +344,5 @@ in {
           js-beautify
         ];
       };
-    }; # end config = lib.mkIf ((config.profiles.workspace.enable or true) && (config.profiles.workspace.editors.enable or true) && cfg.enable)
+    }; # end config = lib.mkIf ((config.profiles.development.enable or true) && (config.profiles.development.editors.enable or true) && cfg.enable)
 }

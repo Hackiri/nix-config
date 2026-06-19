@@ -53,9 +53,8 @@ Imports:
 
 - `../../packages/core/cli.nix`
 - `../../packages/core/networking.nix`
-- `programRegistry.theme`
-- `programRegistry.security.ssh`
-- `programRegistry.utilities.btop`
+- `../../programs/security`
+- `../../programs/utilities/btop`
 
 Provides:
 
@@ -68,12 +67,11 @@ Provides:
 Imports:
 
 - `./foundation.nix`
-- `programRegistry.suites.shell`
-- `programRegistry.suites.editors`
-- `programRegistry.suites.development`
-- `programRegistry.suites.terminals.all`
-- `programRegistry.utilities.claude`
-- `programRegistry.utilities.yazi`
+- `../../programs/shells`
+- `../../programs/development`
+- `../../programs/editors`
+- `../../programs/terminals`
+- `../../programs/utilities`
 
 Provides:
 
@@ -129,7 +127,7 @@ Composes:
 
 - `../layers/development.nix`
 - `../../packages/platform/darwin.nix`
-- `programRegistry.utilities.aerospace`
+- `../../programs/utilities/aerospace`
 
 ### `platforms/nixos.nix`
 

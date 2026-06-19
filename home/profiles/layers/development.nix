@@ -19,7 +19,7 @@
 # Note: btop is always-on (imported by layers/foundation.nix).
 # Note: For sops-encrypted git credentials, import capabilities/sops.nix and set
 #       profiles.sops.enable = true in your host config.
-{lib, programRegistry, ...}: {
+{lib, ...}: {
   options.profiles.development = with lib; {
     enable =
       mkEnableOption "development profile"
@@ -86,20 +86,26 @@
     };
   };
 
-  imports =
-    [
-      (lib.mkAliasOptionModule [ "profiles" "workspace" ] [ "profiles" "development" ])
+  imports = [
+    # Base: Foundation layer (minimal tools, btop, cli-essentials)
+    ./foundation.nix
 
-      # Base: Foundation layer (minimal tools, btop, cli-essentials)
-      ./foundation.nix
-    ]
-    ++ programRegistry.suites.shell
-    ++ programRegistry.suites.editors
-    ++ programRegistry.suites.development
-    ++ programRegistry.suites.terminals.all
-    ++ [
-      # Programs: System utilities and file managers
-      programRegistry.utilities.claude
-      programRegistry.utilities.yazi
-    ];
+    # Programs: Shell configuration and enhancements (zsh, starship, bash)
+    ../../programs/shells
+
+    # Git: Base Git configuration shared by both plain and sops-managed workflows.
+    ../../programs/development/git/default.nix
+
+    # Programs: Text editors and IDEs
+    ../../programs/editors
+
+    # Programs: Development tools and configurations (direnv - always on)
+    ../../programs/development
+
+    # Programs: Terminal emulators and multiplexers
+    ../../programs/terminals
+
+    # Programs: System utilities and file managers
+    ../../programs/utilities
+  ];
 }

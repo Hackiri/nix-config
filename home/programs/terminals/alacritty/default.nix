@@ -6,9 +6,9 @@
   config =
     lib.mkIf
     (
-      (config.profiles.workspace.enable or true)
-      && (config.profiles.workspace.terminals.enable or true)
-      && (config.profiles.workspace.terminals.default or "kitty") == "alacritty"
+      (config.profiles.development.enable or true)
+      && (config.profiles.development.terminals.enable or true)
+      && (config.profiles.development.terminals.default or "kitty") == "alacritty"
     )
     {
       programs.alacritty.enable = true;

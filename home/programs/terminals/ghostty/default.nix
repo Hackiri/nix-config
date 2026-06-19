@@ -14,9 +14,9 @@ in {
   config =
     lib.mkIf
     (
-      (config.profiles.workspace.enable or true)
-      && (config.profiles.workspace.terminals.enable or true)
-      && (config.profiles.workspace.terminals.default or "kitty") == "ghostty"
+      (config.profiles.development.enable or true)
+      && (config.profiles.development.terminals.enable or true)
+      && (config.profiles.development.terminals.default or "kitty") == "ghostty"
     )
     {
       # Use the binary package because source-built Ghostty is not available on

@@ -3,7 +3,7 @@
   lib,
   ...
 }: {
-  config = lib.mkIf (config.profiles.workspace.enable or true) {
+  config = lib.mkIf (config.profiles.development.enable or true) {
     programs.direnv = {
       enable = true;
       enableZshIntegration = true;

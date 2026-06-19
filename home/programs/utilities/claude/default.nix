@@ -8,8 +8,8 @@
   config =
     lib.mkIf
     (
-      (config.profiles.workspace.enable or true)
-      && (config.profiles.workspace.utilities.enable or true)
+      (config.profiles.development.enable or true)
+      && (config.profiles.development.utilities.enable or true)
     )
     {
       # Deploy statusline script to ~/.claude/ (Claude Code's expected location)

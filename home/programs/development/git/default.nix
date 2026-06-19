@@ -6,7 +6,7 @@
   pkgs,
   ...
 }: {
-  config = lib.mkIf (config.profiles.workspace.enable or true) {
+  config = lib.mkIf (config.profiles.development.enable or true) {
     # GPG configuration
     programs.gpg = {
       enable = true;
