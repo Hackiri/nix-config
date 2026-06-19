@@ -1,6 +1,6 @@
 # Home Manager Profiles
 
-This directory organizes Home Manager modules by role instead of by history.
+This directory organizes Home Manager modules by role instead of by history. Hosts combine these profiles with package bundles and a static program suite from `home/programs/default.nix`.
 
 ## Structure
 
@@ -21,10 +21,11 @@ profiles/
 
 ## Taxonomy
 
-- `layers/`: broad opinionated stacks that compose behavior, defaults, and program modules
+- `layers/`: broad opinionated stacks that compose behavior, defaults, and package bundles
 - `capabilities/`: optional add-ons that can be imported independently for behavior, services, and secrets
 - `platforms/`: OS-specific entry points that compose layers plus platform extras
 - `home/packages/*`: plain package bundles imported directly from hosts/templates
+- `home/programs/*`: static program suites selected by hosts, not imported by profiles
 
 ## Hierarchy
 
@@ -35,7 +36,7 @@ layers/development.nix
   ->
 platforms/darwin.nix or platforms/nixos.nix
   ->
-hosts/*/home.nix imports package bundles directly
+hosts/*/home.nix imports package bundles and selects one program suite
 ```
 
 Optional capability modules can be imported directly by hosts:
@@ -45,16 +46,14 @@ Optional capability modules can be imported directly by hosts:
 - `capabilities/redis.nix`
 - `capabilities/sops.nix`
 
-## Current Package Coverage
+## Profile Composition
 
 ### `layers/foundation.nix`
 
-Imports:
+Composes:
 
 - `../../packages/core/cli.nix`
 - `../../packages/core/networking.nix`
-- `../../programs/security`
-- `../../programs/utilities/btop`
 
 Provides:
 
@@ -64,20 +63,15 @@ Provides:
 
 ### `layers/development.nix`
 
-Imports:
+Composes:
 
 - `./foundation.nix`
-- `../../programs/shells`
-- `../../programs/development`
-- `../../programs/editors`
-- `../../programs/terminals`
-- `../../programs/utilities`
 
 Provides:
 
 - Editors, shells, terminals, direnv, git, utilities
-- Behavior and program composition for the development workspace
-- No package bundle selection interface; package bundles are imported directly by hosts/templates
+- Behavior and package composition for the development workspace
+- No program selection here; hosts choose a suite from `home/programs/default.nix`
 
 Feature flags:
 
@@ -127,7 +121,6 @@ Composes:
 
 - `../layers/development.nix`
 - `../../packages/platform/darwin.nix`
-- `../../programs/utilities/aerospace`
 
 ### `platforms/nixos.nix`
 
@@ -138,28 +131,34 @@ Composes:
 
 ## Host Usage
 
+Hosts select a program suite from `home/programs/default.nix` and compose it with profile and package imports.
+
 macOS host with full development package bundles plus optional SOPS and Kubernetes:
 
 ```nix
-{
+let
+  programRegistry = import ../../home/programs;
+in {
   imports = [
     ../../home/profiles/platforms/darwin.nix
     ../../home/packages/development
     ../../home/profiles/capabilities/kubernetes.nix
     ../../home/profiles/capabilities/sops.nix
-  ];
+  ] ++ programRegistry.suites.workstation.darwin;
 }
 ```
 
 NixOS host with selected package bundles:
 
 ```nix
-{
+let
+  programRegistry = import ../../home/programs;
+in {
   imports = [
     ../../home/profiles/platforms/nixos.nix
     ../../home/packages/development/build.nix
     ../../home/packages/development/languages.nix
-  ];
+  ] ++ programRegistry.suites.workstation.nixos;
 }
 ```
 

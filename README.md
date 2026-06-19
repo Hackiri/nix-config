@@ -6,8 +6,8 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 
 - **Cross-platform**: Works on both macOS and NixOS
 - **Modular architecture**: Organized system, service, and user configurations
-- **Profile-based behavior**: Layered user profiles handle behavior, defaults, services, and secrets
-- **Import-based package bundles**: Development package bundles are selected with direct imports
+- **Profile-based composition**: Layered user profiles compose behavior, defaults, services, secrets, and package bundles
+- **Host-selected program suites**: Hosts choose static suites from `home/programs/default.nix`; profiles do not import program modules
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains
 
@@ -35,7 +35,7 @@ nix-config/
 |   |-- mbp2/                   # MacBook Pro (darwin) aarch64-darwin
 |-- home/                       # Home Manager configurations
 |   |-- profiles/               # Layered behavior/platform/capability modules
-|   |-- programs/               # Program configurations (editors, shells, terminals, etc.)
+|   |-- programs/               # Program registry and configurations (editors, shells, terminals, etc.)
 |   `-- packages/               # Plain package bundles imported from hosts/templates
 |-- modules/                    # System modules
 |   |-- system/                 # System configurations (darwin, nixos, shared)
@@ -133,7 +133,25 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    mv hosts/mbp hosts/YOUR_HOSTNAME
    ```
 
-   **4. Disable SOPS (Crucial if you haven't set up age keys yet):**
+   **4. Select the host's program suite in `home.nix`:**
+
+   Program modules live under `home/programs/` and are exposed through `home/programs/default.nix`.
+   Hosts choose a static suite such as `programRegistry.suites.workstation.darwin` or `programRegistry.suites.workstation.nixos`; profiles do not import program modules.
+
+   ```nix
+   let
+     programRegistry = import ../../home/programs;
+   in {
+     imports =
+       [
+         ../../home/profiles/platforms/darwin.nix
+         ../../home/packages/development
+       ]
+       ++ programRegistry.suites.workstation.darwin;
+   }
+   ```
+
+   **5. Disable SOPS (Crucial if you haven't set up age keys yet):**
    The default `home.nix` has SOPS enabled. If you don't have your age keys set up yet, you **must disable it** before building to avoid activation errors. Edit your host's `home.nix` file:
 
    ```nix
@@ -517,6 +535,4 @@ Detailed documentation for specific components:
 
 ### Programs
 
-- **[Zsh Configuration](home/programs/shells/zsh/README.md)** - Zsh setup with vim mode, FZF commands, and aliases
-- **[Development Tools](home/programs/development/README.md)** - Direnv layouts and Git configuration (basic or sops)
-- **[Neovim Snippets](home/programs/editors/neovim/lua/snippets/README.md)** - LuaSnip snippets for multiple languages
+- **[Program Registry](home/programs/default.nix)** - Host-selected program suites for shells, editors, terminals, and utilities
