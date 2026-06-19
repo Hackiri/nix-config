@@ -16,31 +16,25 @@ cp -r templates/host hosts/<name>
 #    NixOS:  ../../modules/system/nixos
 
 # 4. Edit home.nix — choose the right platform profile, add any optional
-#    capability profiles or package bundles you need, and include exactly one
-#    workstation suite:
-#    Darwin: programRegistry.suites.workstation.darwin
-#    NixOS:  programRegistry.suites.workstation.nixos
+#    capability profiles or package bundles you need, and keep ../../home/programs
+#    imported for centrally managed program modules.
 # 5. Build and test
 darwin-rebuild build --flake .#<name>   # Darwin
 nixos-rebuild build --flake .#<name>    # NixOS
 ```
 
-Program modules are selected through `home/programs/default.nix`.
+Program modules are selected by editing `home/programs/default.nix`.
 
 ```nix
-let
-  programRegistry = import ../../home/programs;
-in {
+{
   imports =
     [
       ../../home/profiles/platforms/darwin.nix
       ../../home/packages/development
-    ]
-    ++ programRegistry.suites.workstation.darwin;
+      ../../home/programs
+    ];
 }
 ```
-
-Use `programRegistry.suites.workstation.nixos` for NixOS hosts.
 
 ## Available Profiles
 

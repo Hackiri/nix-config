@@ -6,8 +6,8 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 
 - **Cross-platform**: Works on both macOS and NixOS
 - **Modular architecture**: Organized system, service, and user configurations
-- **Profile-based composition**: Layered user profiles manage behavior, defaults, services, and secrets; hosts import package bundles and select static program suites
-- **Host-selected program suites**: Hosts choose static suites from `home/programs/default.nix`; profiles do not import program modules
+- **Profile-based composition**: Layered user profiles manage behavior, defaults, services, and secrets; hosts import package bundles and the central program module
+- **Import-managed programs**: Hosts import `home/programs/default.nix`; add or remove programs by editing that one file
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains
 
@@ -35,7 +35,7 @@ nix-config/
 |   |-- mbp2/                   # MacBook Pro (darwin) aarch64-darwin
 |-- home/                       # Home Manager configurations
 |   |-- profiles/               # Layered behavior/platform/capability modules
-|   |-- programs/               # Program registry and configurations (editors, shells, terminals, etc.)
+|   |-- programs/               # Program import list and configurations (editors, shells, terminals, etc.)
 |   `-- packages/               # Plain package bundles imported from hosts/templates
 |-- modules/                    # System modules
 |   |-- system/                 # System configurations (darwin, nixos, shared)
@@ -133,32 +133,32 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    mv hosts/mbp hosts/YOUR_HOSTNAME
    ```
 
-   **4. Select the host's program suite in `home.nix`:**
+   **4. Import the central program module in `home.nix`:**
 
-   Program modules live under `home/programs/` and are exposed through `home/programs/default.nix`.
-   Hosts choose a static suite such as `programRegistry.suites.workstation.darwin` or `programRegistry.suites.workstation.nixos`; profiles do not import program modules.
+   Program modules live under `home/programs/` and are imported by `home/programs/default.nix`.
+   Hosts import that module once; add or remove programs by editing `home/programs/default.nix`.
 
    ```nix
-   let
-     programRegistry = import ../../home/programs;
-   in {
+   {
      imports =
        [
          ../../home/profiles/platforms/darwin.nix
          ../../home/packages/development
-       ]
-       ++ programRegistry.suites.workstation.darwin;
+         ../../home/programs
+       ];
    }
    ```
 
    **5. Disable SOPS (Crucial if you haven't set up age keys yet):**
-   The default `home.nix` has SOPS enabled. If you don't have your age keys set up yet, you **must disable it** before building to avoid activation errors. Edit your host's `home.nix` file:
+   The default host config imports `./sops.nix`. If you don't have your age keys set up yet, you **must disable it** before building to avoid activation errors. Remove or comment this import in your host's `home.nix` file:
 
    ```nix
-   profiles.sops.enable = false;
+   imports = [
+     # ./sops.nix
+   ];
    ```
 
-   You can re-enable SOPS later by following step 4.
+   You can re-enable SOPS later by adding the import back.
 
 3. **Install nix-darwin**
 
@@ -178,12 +178,14 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
 4. **Set Up SOPS Secrets (Optional)**
 
-   The `mbp` host config ships with SOPS enabled. If you disabled it in step 3, follow these steps when you're ready to enable sops-encrypted Git credentials:
+   The `mbp` host config ships with SOPS enabled through `hosts/mbp/sops.nix`. If you disabled it in step 3, follow these steps when you're ready to enable sops-encrypted Git credentials:
 
    a. **Enable sops in your host config** (`hosts/mbp/home.nix`):
 
    ```nix
-   profiles.sops.enable = true;
+   imports = [
+     ./sops.nix
+   ];
    ```
 
    b. **Generate age key:**
@@ -224,7 +226,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    sops -e -i secrets/secrets.yaml
    ```
 
-   Edit the `secrets` attrset in `sops.nix` to match whatever keys you define in `secrets.yaml`. You can also add host-specific secrets via `profiles.sops.extraSecrets` in your host's `home.nix`. See [Customizing secrets](home/profiles/README.md#customizing-secrets) for details.
+   Edit the `secrets` attrset in `home/profiles/capabilities/sops.nix` to match whatever keys you define in `secrets.yaml`. You can also add host-specific secrets via `profiles.sops.extraSecrets` in your host's `sops.nix`. See [Customizing secrets](home/profiles/README.md#customizing-secrets) for details.
 
    **Example use cases for sops:**
    - **Git credentials** — Encrypt your name, email, and GPG signing key so they're never stored in plaintext in the repo. Git hooks automatically read from sops-decrypted secrets on checkout and merge.
@@ -264,7 +266,9 @@ To deploy this configuration on another machine:
 3. **Disable SOPS** in `hosts/YOUR_HOSTNAME/home.nix` if you haven't set up age keys:
 
    ```nix
-   profiles.sops.enable = false;
+   imports = [
+     # ./sops.nix
+   ];
    ```
 
 4. **Build:**
@@ -535,4 +539,4 @@ Detailed documentation for specific components:
 
 ### Programs
 
-- **[Program Registry](home/programs/default.nix)** - Host-selected program suites for shells, editors, terminals, and utilities
+- **[Programs](home/programs/default.nix)** - Central Home Manager import list for shells, editors, terminals, and utilities

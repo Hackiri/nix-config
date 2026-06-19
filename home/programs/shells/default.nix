@@ -1,4 +1,4 @@
-{...}: {
+_: {
   imports = [
     ./zsh/aliases.nix
     ./bash

@@ -1,12 +1,11 @@
 # Basic Git configuration shared by both plain and sops-managed workflows.
 # capabilities/sops.nix layers secret-backed identity and hooks on top of this.
 {
-  config,
   lib,
   pkgs,
   ...
 }: {
-  config = lib.mkIf (config.profiles.development.enable or true) {
+  config = {
     # GPG configuration
     programs.gpg = {
       enable = true;

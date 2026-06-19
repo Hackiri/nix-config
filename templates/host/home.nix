@@ -4,24 +4,22 @@
   pkgs,
   username,
   ...
-}: let
-  programRegistry = import ../../home/programs;
-in {
-  imports =
-    [
-      # Darwin default. For NixOS, replace this with:
-      # ../../home/profiles/platforms/nixos.nix
-      ../../home/profiles/platforms/darwin.nix
+}: {
+  imports = [
+    # Darwin default. For NixOS, replace this with:
+    # ../../home/profiles/platforms/nixos.nix
+    ../../home/profiles/platforms/darwin.nix
 
-      # Optional capability profiles:
-      # ../../home/profiles/capabilities/kubernetes.nix
-      # ../../home/profiles/capabilities/sops.nix
+    # Program modules are managed from home/programs/default.nix.
+    ../../home/programs
 
-      # Package bundles:
-      ../../home/packages/development
-    ]
-    # For NixOS, replace this with programRegistry.suites.workstation.nixos.
-    ++ programRegistry.suites.workstation.darwin;
+    # Optional capability profiles:
+    # ../../home/profiles/capabilities/kubernetes.nix
+    # ../../home/profiles/capabilities/sops.nix
+
+    # Package bundles:
+    ../../home/packages/development
+  ];
 
   # Darwin default. For NixOS, use "/home/${username}".
   home.homeDirectory = "/Users/${username}";

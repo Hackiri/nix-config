@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: let
+{pkgs, ...}: let
   sesh_codex_pane = pkgs.writeScriptBin "sesh-codex-pane" ''
     #!${pkgs.bash}/bin/bash
     set +e
@@ -87,49 +82,43 @@
     exec nvim "$@"
   '';
 in {
-  config =
-    lib.mkIf
-    (
-      (config.profiles.development.enable or true)
-      && (config.profiles.development.terminals.enable or true)
-    )
-    {
-      home.packages = [
-        sesh_codex_pane
-        sesh_dev_layout
-        sesh_git_window
-      ];
+  config = {
+    home.packages = [
+      sesh_codex_pane
+      sesh_dev_layout
+      sesh_git_window
+    ];
 
-      programs.sesh = {
-        enable = true;
-        enableTmuxIntegration = true;
-        tmuxKey = "T";
-        icons = true;
-        settings = {
-          default_session = {
-            startup_command = "sesh-dev-layout";
-            preview_command = "eza --all --git --icons --color=always {}";
-          };
-          sort_order = [
-            "config"
-            "tmux"
-            "zoxide"
-          ];
-          blacklist = ["0"];
-          session = [
-            {
-              name = "nix-config";
-              path = "~/nix-config";
-              startup_command = "sesh-dev-layout";
-            }
-          ];
-          wildcard = [
-            {
-              pattern = "~/Projects/*";
-              startup_command = "sesh-dev-layout";
-            }
-          ];
+    programs.sesh = {
+      enable = true;
+      enableTmuxIntegration = true;
+      tmuxKey = "T";
+      icons = true;
+      settings = {
+        default_session = {
+          startup_command = "sesh-dev-layout";
+          preview_command = "eza --all --git --icons --color=always {}";
         };
+        sort_order = [
+          "config"
+          "tmux"
+          "zoxide"
+        ];
+        blacklist = ["0"];
+        session = [
+          {
+            name = "nix-config";
+            path = "~/nix-config";
+            startup_command = "sesh-dev-layout";
+          }
+        ];
+        wildcard = [
+          {
+            pattern = "~/Projects/*";
+            startup_command = "sesh-dev-layout";
+          }
+        ];
       };
     };
+  };
 }

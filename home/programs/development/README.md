@@ -9,7 +9,7 @@ The development configuration is organized into focused modules:
 - **`direnv/`** - Direnv configuration with custom layout helpers (use_flake provided by nix-direnv)
 - **`git/`** - Basic Git configuration (no sops dependency)
 
-SOPS-enhanced Git (secret-backed identity, hooks, signing) is in `home/profiles/capabilities/sops.nix`, gated by `profiles.sops.enable`.
+SOPS-enhanced Git (secret-backed identity, hooks, signing) is enabled through each host's local `sops.nix` import.
 
 ## Directory Structure
 
@@ -60,7 +60,7 @@ Two git configurations are available:
 - Enhanced Hooks: post-checkout and post-merge hooks for sops secrets
 - Error Handling: Comprehensive validation and fallback mechanisms
 
-To enable sops integration, import `home/profiles/capabilities/sops.nix` and set `profiles.sops.enable = true` in your host config.
+To enable sops integration, import a host-local `./sops.nix` from your host config. That file should import and configure `home/profiles/capabilities/sops.nix`.
 
 ## Usage Examples
 
@@ -103,7 +103,7 @@ The direnv configuration includes optimized settings in `~/.config/direnv/direnv
 
 ### Git Hooks (SOPS mode only)
 
-When `profiles.sops.enable = true`, git hooks are installed via the git template system:
+When the host-local SOPS module is imported, git hooks are installed via the git template system:
 
 - **post-checkout**: Updates git config from sops secrets
 - **post-merge**: Refreshes git config after merges

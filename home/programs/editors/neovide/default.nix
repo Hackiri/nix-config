@@ -1,145 +1,50 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: let
-  cfg = config.profiles.development.editors.neovide;
-in {
-  options.profiles.development.editors.neovide = {
-    package = lib.mkOption {
-      type = lib.types.package;
-      default = pkgs.neovide;
-      description = "The neovide package to use.";
-    };
-
-    settings = lib.mkOption {
-      type = lib.types.submodule {
-        options = {
-          fork = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Whether to fork the process.";
-          };
-
-          frame = lib.mkOption {
-            type = lib.types.str;
-            default = "transparent";
-            description = "Window frame style (full, none, transparent, buttonless).";
-          };
-
-          idle = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = "Whether to enable idle animations.";
-          };
-
-          maximized = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Whether to start maximized.";
-          };
-
-          noMultigrid = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Disable multigrid.";
-          };
-
-          srgb = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Use sRGB colors.";
-          };
-
-          tabs = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = "Show tabs.";
-          };
-
-          theme = lib.mkOption {
-            type = lib.types.str;
-            default = "auto";
-            description = "Theme to use.";
-          };
-
-          titleHidden = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = "Hide window title.";
-          };
-
-          vsync = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Enable vsync.";
-          };
-
-          wsl = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Enable WSL mode.";
-          };
-
-          font = lib.mkOption {
-            type = lib.types.submodule {
-              options = {
-                normal = lib.mkOption {
-                  type = lib.types.listOf lib.types.str;
-                  default = [];
-                  description = "List of normal fonts to use.";
-                };
-
-                size = lib.mkOption {
-                  type = lib.types.float;
-                  default = 14.0;
-                  description = "Font size.";
-                };
-              };
-            };
-            default = {};
-            description = "Font settings.";
-          };
-        };
+{pkgs, ...}: let
+  cfg = {
+    package = pkgs.neovide;
+    settings = {
+      fork = false;
+      frame = "transparent";
+      idle = true;
+      maximized = false;
+      noMultigrid = false;
+      srgb = false;
+      tabs = true;
+      theme = "auto";
+      titleHidden = true;
+      vsync = false;
+      wsl = false;
+      font = {
+        normal = [];
+        size = 14.0;
       };
-      default = {};
-      description = "Neovide settings.";
     };
   };
+in {
+  config = {
+    # Use HM's programs.neovide with our custom TOML config
+    programs.neovide = {
+      enable = true;
+      inherit (cfg) package;
+    };
 
-  config =
-    lib.mkIf
-    (
-      (config.profiles.development.enable or true)
-      && (config.profiles.development.editors.enable or true)
-      && cfg.enable
-    )
-    {
-      # Use HM's programs.neovide with our custom TOML config
-      programs.neovide = {
-        enable = true;
-        inherit (cfg) package;
-      };
-
-      xdg.configFile."neovide/config.toml".source = (pkgs.formats.toml {}).generate "neovide-config" {
-        inherit
-          (cfg.settings)
-          fork
-          frame
-          idle
-          maximized
-          srgb
-          tabs
-          theme
-          vsync
-          wsl
-          ;
-        no-multigrid = cfg.settings.noMultigrid;
-        title-hidden = cfg.settings.titleHidden;
-        font = {
-          inherit (cfg.settings.font) normal size;
-        };
+    xdg.configFile."neovide/config.toml".source = (pkgs.formats.toml {}).generate "neovide-config" {
+      inherit
+        (cfg.settings)
+        fork
+        frame
+        idle
+        maximized
+        srgb
+        tabs
+        theme
+        vsync
+        wsl
+        ;
+      no-multigrid = cfg.settings.noMultigrid;
+      title-hidden = cfg.settings.titleHidden;
+      font = {
+        inherit (cfg.settings.font) normal size;
       };
     };
+  };
 }

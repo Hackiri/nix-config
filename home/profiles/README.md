@@ -1,6 +1,6 @@
 # Home Manager Profiles
 
-This directory organizes Home Manager modules by role instead of by history. Hosts combine these profiles with package bundles and a static program suite from `home/programs/default.nix`.
+This directory organizes Home Manager modules by role instead of by history. Hosts combine these profiles with package bundles and the central program module from `home/programs/default.nix`.
 
 ## Structure
 
@@ -25,7 +25,7 @@ profiles/
 - `capabilities/`: optional add-ons that can be imported independently for behavior, services, and secrets
 - `platforms/`: OS-specific entry points that compose layers plus platform extras
 - `home/packages/*`: plain package bundles imported directly from hosts/templates
-- `home/programs/*`: static program suites selected by hosts, not imported by profiles
+- `home/programs/*`: program modules managed by imports in `home/programs/default.nix`, not by profile enable flags
 
 ## Hierarchy
 
@@ -36,7 +36,7 @@ layers/development.nix
   ->
 platforms/darwin.nix or platforms/nixos.nix
   ->
-hosts/*/home.nix imports package bundles and selects one program suite
+hosts/*/home.nix imports package bundles and home/programs/default.nix
 ```
 
 Optional capability modules can be imported directly by hosts:
@@ -69,17 +69,8 @@ Composes:
 
 Provides:
 
-- Behavior, defaults, and feature flags for the development workspace
-- The actual editor, shell, terminal, git, and utility modules come from the host-selected suite in `home/programs/default.nix`
-
-Feature flags:
-
-- `profiles.development.enable`
-- `profiles.development.editors.*`
-- `profiles.development.shells.enable`
-- `profiles.development.utilities.enable`
-- `profiles.development.terminals.enable`
-- `profiles.development.terminals.default`
+- Shared development workspace defaults
+- The actual editor, shell, terminal, git, and utility modules come from imports in `home/programs/default.nix`
 
 ### `capabilities/agent-dev.nix`
 
@@ -130,35 +121,33 @@ Composes:
 
 ## Host Usage
 
-Hosts select a program suite from `home/programs/default.nix` and compose it with profile and package imports.
+Hosts import `home/programs/default.nix` and compose it with profile and package imports.
 
 macOS host with full development package bundles plus optional SOPS and Kubernetes:
 
 ```nix
-let
-  programRegistry = import ../../home/programs;
-in {
+{
   imports = [
     ../../home/profiles/platforms/darwin.nix
     ../../home/packages/development
+    ../../home/programs
     ../../home/profiles/capabilities/kubernetes.nix
-    ../../home/profiles/capabilities/sops.nix
-  ] ++ programRegistry.suites.workstation.darwin;
+    ./sops.nix
+  ];
 }
 ```
 
 NixOS host with selected package bundles:
 
 ```nix
-let
-  programRegistry = import ../../home/programs;
-in {
+{
   imports = [
     ../../home/profiles/platforms/nixos.nix
     ../../home/packages/development/build.nix
     ../../home/packages/development/languages.nix
-  ] ++ programRegistry.suites.workstation.nixos;
+    ../../home/programs
+  ];
 }
 ```
 
-Capability modules remain profile-based. Keep importing capability profiles such as Kubernetes, SOPS, Redis, and agent development when you want their behavior or services.
+Capability modules remain profile-based. Keep importing capability profiles such as Kubernetes, Redis, and agent development when you want their behavior or services. SOPS host settings live in host-local `sops.nix` files that import `home/profiles/capabilities/sops.nix`; remove that host-local import when you want SOPS disabled.

@@ -1,9 +1,5 @@
-{
-  config,
-  lib,
-  ...
-}: {
-  config = lib.mkIf (config.profiles.development.enable or true) {
+_: {
+  config = {
     programs.direnv = {
       enable = true;
       enableZshIntegration = true;

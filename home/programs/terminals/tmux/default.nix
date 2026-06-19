@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }: let
@@ -625,85 +624,79 @@
     esac
   '';
 in {
-  config =
-    lib.mkIf
-    (
-      (config.profiles.development.enable or true)
-      && (config.profiles.development.terminals.enable or true)
-    )
-    {
-      home.packages = [
-        truncate_path # Custom path truncation script
-        git_branch # Git branch for tmux status bar
-        tmux_popup # Persistent tmux shell popup
-        tmux_codex_popup # Codex popup launcher
-        tmux_kube_status # Kubernetes context/namespace for tmux status
-        tmux_kube_menu # Kubernetes tmux popup workflow
-        tmux_pf_manager # Port-forward window manager
-        tmux_podman_menu # Podman/Compose tmux popup workflow
-        tmux_layout_picker # Interactive tmux layout picker
+  config = {
+    home.packages = [
+      truncate_path # Custom path truncation script
+      git_branch # Git branch for tmux status bar
+      tmux_popup # Persistent tmux shell popup
+      tmux_codex_popup # Codex popup launcher
+      tmux_kube_status # Kubernetes context/namespace for tmux status
+      tmux_kube_menu # Kubernetes tmux popup workflow
+      tmux_pf_manager # Port-forward window manager
+      tmux_podman_menu # Podman/Compose tmux popup workflow
+      tmux_layout_picker # Interactive tmux layout picker
+    ];
+
+    programs.tmux = {
+      enable = true;
+      shell = "${pkgs.zsh}/bin/zsh";
+      terminal = "tmux-256color";
+      historyLimit = 1000000;
+      keyMode = "vi";
+      customPaneNavigationAndResize = false;
+      escapeTime = 0;
+      baseIndex = 1;
+      mouse = true;
+
+      plugins = with pkgs.tmuxPlugins; [
+        vim-tmux-navigator
+        better-mouse-mode
+        yank
+        sensible
+        resurrect
+        continuum
+        # tmux-thumbs, fzf-tmux-url, and catppuccin are loaded manually below
+        # so their options can be set before their plugin scripts run.
       ];
 
-      programs.tmux = {
-        enable = true;
-        shell = "${pkgs.zsh}/bin/zsh";
-        terminal = "tmux-256color";
-        historyLimit = 1000000;
-        keyMode = "vi";
-        customPaneNavigationAndResize = false;
-        escapeTime = 0;
-        baseIndex = 1;
-        mouse = true;
+      extraConfig = ''
+        ${tmux_config}
 
-        plugins = with pkgs.tmuxPlugins; [
-          vim-tmux-navigator
-          better-mouse-mode
-          yank
-          sensible
-          resurrect
-          continuum
-          # tmux-thumbs, fzf-tmux-url, and catppuccin are loaded manually below
-          # so their options can be set before their plugin scripts run.
-        ];
+        # Workflow popups use store paths so they don't depend on tmux server PATH.
+        bind M-s display-popup -d "#{pane_current_path}" -E -w 80% -h 80% -T "Shell" "${tmux_popup}/bin/tmux-popup"
+        bind -T popup M-s detach-client
+        bind -T popup C-a switch-client -T popup-prefix
+        bind -T popup-prefix '[' copy-mode
+        bind -T popup-prefix Any switch-client -T popup
+        bind M-c display-popup -d "#{pane_current_path}" -E -w 80% -h 80% -T "Codex" "${tmux_codex_popup}/bin/tmux-codex-popup"
+        bind M-k display-popup -d "#{pane_current_path}" -E -w 90% -h 85% "${tmux_kube_menu}/bin/tmux-kube-menu"
+        bind M-f display-popup -d "#{pane_current_path}" -E -w 80% -h 75% "${tmux_pf_manager}/bin/tmux-pf-manager"
+        bind M-p display-popup -d "#{pane_current_path}" -E -w 90% -h 85% "${tmux_podman_menu}/bin/tmux-podman-menu"
+        bind L display-popup -E -w 40% -h 40% -T " Layouts " "${tmux_layout_picker}/bin/tmux-layout-picker"
 
-        extraConfig = ''
-          ${tmux_config}
+        # Load key-option-sensitive plugins AFTER tmux_config sets their options
+        run-shell ${tmux_thumbs_plugin}/tmux-thumbs.tmux
+        run-shell ${fzf_tmux_url_plugin}/fzf-url.tmux
 
-          # Workflow popups use store paths so they don't depend on tmux server PATH.
-          bind M-s display-popup -d "#{pane_current_path}" -E -w 80% -h 80% -T "Shell" "${tmux_popup}/bin/tmux-popup"
-          bind -T popup M-s detach-client
-          bind -T popup C-a switch-client -T popup-prefix
-          bind -T popup-prefix '[' copy-mode
-          bind -T popup-prefix Any switch-client -T popup
-          bind M-c display-popup -d "#{pane_current_path}" -E -w 80% -h 80% -T "Codex" "${tmux_codex_popup}/bin/tmux-codex-popup"
-          bind M-k display-popup -d "#{pane_current_path}" -E -w 90% -h 85% "${tmux_kube_menu}/bin/tmux-kube-menu"
-          bind M-f display-popup -d "#{pane_current_path}" -E -w 80% -h 75% "${tmux_pf_manager}/bin/tmux-pf-manager"
-          bind M-p display-popup -d "#{pane_current_path}" -E -w 90% -h 85% "${tmux_podman_menu}/bin/tmux-podman-menu"
-          bind L display-popup -E -w 40% -h 40% -T " Layouts " "${tmux_layout_picker}/bin/tmux-layout-picker"
+        # Load catppuccin AFTER options are set (home-manager runs plugins before extraConfig)
+        run-shell ${catppuccin_plugin}/catppuccin.tmux
 
-          # Load key-option-sensitive plugins AFTER tmux_config sets their options
-          run-shell ${tmux_thumbs_plugin}/tmux-thumbs.tmux
-          run-shell ${fzf_tmux_url_plugin}/fzf-url.tmux
+        # Custom git_branch module (defined after catppuccin creates theme variables)
+        %hidden MODULE_NAME="git_branch"
+        set -ogq "@catppuccin_''${MODULE_NAME}_icon" "󰊢 "
+        set -ogq "@catppuccin_''${MODULE_NAME}_color" "#04d1f9"
+        set -ogq "@catppuccin_''${MODULE_NAME}_text" " #(git_branch #{pane_current_path})"
+        source "${catppuccin_plugin}/utils/status_module.conf"
 
-          # Load catppuccin AFTER options are set (home-manager runs plugins before extraConfig)
-          run-shell ${catppuccin_plugin}/catppuccin.tmux
-
-          # Custom git_branch module (defined after catppuccin creates theme variables)
-          %hidden MODULE_NAME="git_branch"
-          set -ogq "@catppuccin_''${MODULE_NAME}_icon" "󰊢 "
-          set -ogq "@catppuccin_''${MODULE_NAME}_color" "#04d1f9"
-          set -ogq "@catppuccin_''${MODULE_NAME}_text" " #(git_branch #{pane_current_path})"
-          source "${catppuccin_plugin}/utils/status_module.conf"
-
-          # Status line must be set AFTER all modules (built-in + custom) are defined
-          # Left: prefix-aware session (red on prefix, catppuccin pill otherwise) + dir + zoom
-          set -g  status-left "#{?client_prefix,#{#[bg=#{@thm_red},fg=#{@thm_crust},bold]  #S },#{E:@catppuccin_status_session}}"
-          set -ga status-left "#[bg=default,fg=#{@thm_overlay_0},none]│"
-          set -ga status-left "#[bg=default,fg=#{@thm_blue}]  #{=/-32/...:#{s|$USER|~|:#{b:pane_current_path}}} "
-          set -ga status-left "#[bg=default,fg=#{@thm_overlay_0},none]#{?window_zoomed_flag,│,}"
-          set -ga status-left "#[bg=default,fg=#{@thm_yellow}]#{?window_zoomed_flag,  zoom ,}"
-          set -g status-right "#{E:@catppuccin_status_git_branch}#(${tmux_kube_status}/bin/tmux-kube-status)#{E:@catppuccin_status_date_time}"
-        '';
-      };
+        # Status line must be set AFTER all modules (built-in + custom) are defined
+        # Left: prefix-aware session (red on prefix, catppuccin pill otherwise) + dir + zoom
+        set -g  status-left "#{?client_prefix,#{#[bg=#{@thm_red},fg=#{@thm_crust},bold]  #S },#{E:@catppuccin_status_session}}"
+        set -ga status-left "#[bg=default,fg=#{@thm_overlay_0},none]│"
+        set -ga status-left "#[bg=default,fg=#{@thm_blue}]  #{=/-32/...:#{s|$USER|~|:#{b:pane_current_path}}} "
+        set -ga status-left "#[bg=default,fg=#{@thm_overlay_0},none]#{?window_zoomed_flag,│,}"
+        set -ga status-left "#[bg=default,fg=#{@thm_yellow}]#{?window_zoomed_flag,  zoom ,}"
+        set -g status-right "#{E:@catppuccin_status_git_branch}#(${tmux_kube_status}/bin/tmux-kube-status)#{E:@catppuccin_status_date_time}"
+      '';
     };
+  };
 }

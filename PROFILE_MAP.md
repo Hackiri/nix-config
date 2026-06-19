@@ -8,11 +8,11 @@ This file is the short reference for the current profile taxonomy and import flo
 hosts/*/home.nix
 |-- platforms/darwin.nix or platforms/nixos.nix
 |-- optional: home/packages/development or individual bundle modules
-|-- select one: programRegistry.suites.workstation.darwin or programRegistry.suites.workstation.nixos
+|-- home/programs/default.nix
 |-- optional: capabilities/kubernetes.nix
 |-- optional: capabilities/redis.nix
 |-- optional: capabilities/agent-dev.nix
-`-- optional: capabilities/sops.nix
+`-- optional: ./sops.nix -> capabilities/sops.nix
 ```
 
 ## Layer Flow
@@ -35,7 +35,7 @@ hosts/*/home.nix
   |   |-- languages.nix
   |   |-- security.nix
   |   `-- web.nix
-  `-- one static program suite from home/programs/default.nix
+  `-- home/programs/default.nix
 
 platforms/darwin.nix
   |-- layers/development.nix
@@ -67,11 +67,11 @@ capabilities/sops.nix
 
 - `../../home/profiles/platforms/darwin.nix`
 - `../../home/packages/development`
+- `../../home/programs`
 - `../../home/profiles/capabilities/kubernetes.nix`
 - `../../home/profiles/capabilities/redis.nix`
 - `../../home/profiles/capabilities/agent-dev.nix`
-- `../../home/profiles/capabilities/sops.nix`
-- `programRegistry.suites.workstation.darwin`
+- `./sops.nix`
 
 ## Naming Rules
 
@@ -80,5 +80,5 @@ capabilities/sops.nix
 - `platforms/*` means OS-specific composition
 - `packages/core/*` means always-useful baseline packages
 - `packages/development/*` means dev package bundles selected by hosts
-- `programRegistry.suites/*` means static program suites selected by hosts
+- `home/programs/default.nix` means the central program import list selected by hosts
 - `packages/platform/*` means OS-specific package bundles

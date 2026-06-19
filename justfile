@@ -18,3 +18,6 @@ package-imports:
 
 program-imports:
     bash tests/program-imports.sh
+
+sops-imports:
+    bash tests/sops-imports.sh

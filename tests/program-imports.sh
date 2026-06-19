@@ -8,28 +8,37 @@ fail() {
   exit 1
 }
 
-registry_darwin_count="$(nix eval --impure --expr 'let r = import ./home/programs; in builtins.length r.suites.workstation.darwin')"
-registry_nixos_count="$(nix eval --impure --expr 'let r = import ./home/programs; in builtins.length r.suites.workstation.nixos')"
-
-[ "$registry_darwin_count" = "21" ] || fail "darwin program suite size changed: expected 21, got $registry_darwin_count"
-[ "$registry_nixos_count" = "20" ] || fail "nixos program suite size changed: expected 20, got $registry_nixos_count"
-
 if git grep -nE '(\.\./)+programs' -- ':(glob)home/profiles/**/*.nix' >/tmp/program-imports-profile-paths.txt; then
   cat /tmp/program-imports-profile-paths.txt >&2
   fail "home/profiles still imports home/programs modules"
+fi
+
+if git grep -n 'programRegistry' -- hosts templates README.md PROFILE_MAP.md home/profiles/README.md >/tmp/program-imports-registry.txt; then
+  cat /tmp/program-imports-registry.txt >&2
+  fail "programRegistry is still documented or used outside home/programs/default.nix"
+fi
+
+if git grep -nE 'config\.profiles|profiles\.[A-Za-z0-9_.-]+\.enable|profiles\.development' -- home/programs >/tmp/program-imports-profile-flags.txt; then
+  cat /tmp/program-imports-profile-flags.txt >&2
+  fail "home/programs modules still use profile enable flags"
+fi
+
+if git grep -nE 'profiles\.development\.(editors|shells|utilities|terminals)|profiles\.development\.enable' -- hosts templates home/profiles README.md PROFILE_MAP.md >/tmp/program-imports-stale-development-flags.txt; then
+  cat /tmp/program-imports-stale-development-flags.txt >&2
+  fail "development profile still exposes program enable flags"
 fi
 
 check_import() {
   local file="$1"
   local import_path="$2"
 
-  git grep -q "$import_path" -- "$file" || fail "$file does not import $import_path"
+  grep -Fq "$import_path" "$file" || fail "$file does not import $import_path"
 }
 
 check_no_granular_program_imports() {
   local pathspec="$1"
 
-  if git grep -nE '\.\./\.\./home/programs/.+' -- "$pathspec" >/tmp/program-imports-granular.txt; then
+  if grep -nE '\.\./\.\./home/programs/.+' "$pathspec" >/tmp/program-imports-granular.txt; then
     cat /tmp/program-imports-granular.txt >&2
     fail "$pathspec still imports individual home/programs modules"
   fi
@@ -38,16 +47,14 @@ check_no_granular_program_imports() {
 check_darwin_host_imports() {
   local file="$1"
 
-  check_import "$file" "programRegistry = import ../../home/programs;"
-  check_import "$file" "programRegistry.suites.workstation.darwin"
+  check_import "$file" "../../home/programs"
   check_no_granular_program_imports "$file"
 }
 
 check_nixos_template_imports() {
   local file="$1"
 
-  check_import "$file" "programRegistry = import ../../home/programs;"
-  check_import "$file" "programRegistry.suites.workstation.nixos"
+  check_import "$file" "../../home/programs"
   check_no_granular_program_imports "$file"
 }
 
