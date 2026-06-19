@@ -99,7 +99,7 @@ let
         ++ shell
         ++ development
         ++ editors
-        ++ terminals.core
+        ++ terminals.all
         ++ utilities.common;
 
       darwin =

@@ -158,7 +158,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    profiles.sops.enable = false;
    ```
 
-   You can re-enable SOPS later by following step 5.
+   You can re-enable SOPS later by following step 4.
 
 3. **Install nix-darwin**
 

@@ -1,7 +1,7 @@
 # Development layer - comprehensive development workspace behavior
-# This layer composes the program modules and defaults needed for software development,
+# This layer defines development profile behavior and defaults for software development,
 # including editors, development tools, and terminals.
-# Inherits from layers/foundation.nix for essential cross-platform tools.
+# Inherits from layers/foundation.nix; program modules come from host-selected suites.
 #
 # Feature Flags:
 # All flags default to true unless noted. Configure them in your host home.nix:
@@ -16,7 +16,7 @@
 #   profiles.development.terminals.enable = false;          # disable terminal app + tmux + sesh
 #   profiles.development.terminals.default = "ghostty";     # choose a terminal app
 #
-# Note: btop is always-on (imported by layers/foundation.nix).
+# Note: btop comes from the host-selected program suite.
 # Note: For sops-encrypted git credentials, import capabilities/sops.nix and set
 #       profiles.sops.enable = true in your host config.
 {lib, ...}: {
@@ -62,7 +62,7 @@
     utilities.enable = mkOption {
       type = types.bool;
       default = true;
-      description = "Development utilities: claude statusline script, yazi file manager. (btop is always-on via layers/foundation.nix.)";
+      description = "Development utilities: claude statusline script and yazi file manager. btop comes from the host-selected program suite.";
     };
 
     terminals = {

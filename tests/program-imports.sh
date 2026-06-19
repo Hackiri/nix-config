@@ -11,8 +11,8 @@ fail() {
 registry_darwin_count="$(nix eval --impure --expr 'let r = import ./home/programs; in builtins.length r.suites.workstation.darwin')"
 registry_nixos_count="$(nix eval --impure --expr 'let r = import ./home/programs; in builtins.length r.suites.workstation.nixos')"
 
-[ "$registry_darwin_count" = "18" ] || fail "darwin program suite size changed: expected 18, got $registry_darwin_count"
-[ "$registry_nixos_count" = "17" ] || fail "nixos program suite size changed: expected 17, got $registry_nixos_count"
+[ "$registry_darwin_count" = "21" ] || fail "darwin program suite size changed: expected 21, got $registry_darwin_count"
+[ "$registry_nixos_count" = "20" ] || fail "nixos program suite size changed: expected 20, got $registry_nixos_count"
 
 if git grep -nE '(\.\./)+programs' -- ':(glob)home/profiles/**/*.nix' >/tmp/program-imports-profile-paths.txt; then
   cat /tmp/program-imports-profile-paths.txt >&2
@@ -53,6 +53,7 @@ check_nixos_template_imports() {
 
 check_darwin_host_imports hosts/mbp/home.nix
 check_darwin_host_imports hosts/mbp2/home.nix
+check_darwin_host_imports templates/host/home.nix
 check_nixos_template_imports templates/nixos-desktop/home.nix
 
 printf 'program-imports: ok\n'
