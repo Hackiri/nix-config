@@ -6,17 +6,17 @@ This directory organizes Home Manager modules by role instead of by history.
 
 ```text
 profiles/
-├── layers/
-│   ├── foundation.nix      # always-on cross-platform base
-│   └── development.nix     # main development stack
-├── capabilities/
-│   ├── agent-dev.nix       # optional AI agent development workflow
-│   ├── kubernetes.nix      # optional Kubernetes tooling
-│   ├── redis.nix           # optional local Redis user service
-│   └── sops.nix            # optional encrypted secrets integration
-└── platforms/
-    ├── darwin.nix          # macOS composition
-    └── nixos.nix           # NixOS composition
+|-- layers/
+|   |-- foundation.nix      # always-on cross-platform base
+|   `-- development.nix     # main development stack
+|-- capabilities/
+|   |-- agent-dev.nix       # optional AI agent development workflow
+|   |-- kubernetes.nix      # optional Kubernetes tooling
+|   |-- redis.nix           # optional local Redis user service
+|   `-- sops.nix            # optional encrypted secrets integration
+`-- platforms/
+    |-- darwin.nix          # macOS composition
+    `-- nixos.nix           # NixOS composition
 ```
 
 ## Taxonomy
@@ -30,11 +30,11 @@ profiles/
 
 ```text
 layers/foundation.nix
-  ↓
+  ->
 layers/development.nix
-  ↓
+  ->
 platforms/darwin.nix or platforms/nixos.nix
-  ↓
+  ->
 hosts/*/home.nix imports package bundles directly
 ```
 

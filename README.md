@@ -28,35 +28,35 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 
 ```
 nix-config/
-├── flake.nix                   # Main flake configuration (flake-parts)
-├── flake.lock                  # Flake input locks
-├── hosts/                      # Host-specific configurations
-│   ├── mbp/                    # MacBook Pro (darwin) x86_64-darwin
-│   ├── mbp2/                   # MacBook Pro (darwin) aarch64-darwin
-├── home/                       # Home Manager configurations
-│   ├── profiles/               # Layered behavior/platform/capability modules
-│   ├── programs/               # Program configurations (editors, shells, terminals, etc.)
-│   └── packages/               # Plain package bundles imported from hosts/templates
-├── modules/                    # System modules
-│   ├── system/                 # System configurations (darwin, nixos, shared)
-│   └── services/               # Service configurations (homebrew, fonts)
-├── lib/                        # Shared library functions
-│   ├── builders.nix            # System builders (mkDarwin, mkNixOS, auto-discovery)
-│   ├── devshells.nix           # Language-specific development shells
-│   ├── pre-commit.nix          # Git pre-commit hook configuration
-│   └── theme.nix               # Centralized theme/palette definitions
-├── overlays/                   # Nixpkgs overlays
-├── pkgs/                       # Custom packages
-├── templates/                  # Project and host templates
-│   ├── host/                   # Generic host scaffold
-│   ├── nixos-desktop/          # NixOS desktop host scaffold
-│   ├── node/                   # Node.js project template
-│   ├── python/                 # Python project template
-│   ├── ai-python/              # Python AI app template with evals
-│   ├── rust/                   # Rust project template
-│   └── go/                     # Go project template
-├── secrets/                    # Encrypted secrets (sops-nix)
-└── stylua.toml                 # Stylua configuration
+|-- flake.nix                   # Main flake configuration (flake-parts)
+|-- flake.lock                  # Flake input locks
+|-- hosts/                      # Host-specific configurations
+|   |-- mbp/                    # MacBook Pro (darwin) x86_64-darwin
+|   |-- mbp2/                   # MacBook Pro (darwin) aarch64-darwin
+|-- home/                       # Home Manager configurations
+|   |-- profiles/               # Layered behavior/platform/capability modules
+|   |-- programs/               # Program configurations (editors, shells, terminals, etc.)
+|   `-- packages/               # Plain package bundles imported from hosts/templates
+|-- modules/                    # System modules
+|   |-- system/                 # System configurations (darwin, nixos, shared)
+|   `-- services/               # Service configurations (homebrew, fonts)
+|-- lib/                        # Shared library functions
+|   |-- builders.nix            # System builders (mkDarwin, mkNixOS, auto-discovery)
+|   |-- devshells.nix           # Language-specific development shells
+|   |-- pre-commit.nix          # Git pre-commit hook configuration
+|   `-- theme.nix               # Centralized theme/palette definitions
+|-- overlays/                   # Nixpkgs overlays
+|-- pkgs/                       # Custom packages
+|-- templates/                  # Project and host templates
+|   |-- host/                   # Generic host scaffold
+|   |-- nixos-desktop/          # NixOS desktop host scaffold
+|   |-- node/                   # Node.js project template
+|   |-- python/                 # Python project template
+|   |-- ai-python/              # Python AI app template with evals
+|   |-- rust/                   # Rust project template
+|   `-- go/                     # Go project template
+|-- secrets/                    # Encrypted secrets (sops-nix)
+`-- stylua.toml                 # Stylua configuration
 ```
 
 ## Installation

@@ -13,9 +13,9 @@ if git grep -n 'profiles\.development\.packages' -- home hosts templates README.
   fail "profiles.development.packages is still documented or used"
 fi
 
-if git grep -n '../../packages/development' -- home/profiles/layers/development.nix >/tmp/package-imports-layer-import.txt; then
+if git grep -n 'packages/development' -- home/profiles/layers/development.nix >/tmp/package-imports-layer-import.txt; then
   cat /tmp/package-imports-layer-import.txt >&2
-  fail "development profile still imports the development package aggregate"
+  fail "development profile still imports development package bundles"
 fi
 
 git grep -q '../../home/packages/development' -- hosts/mbp/home.nix || fail "hosts/mbp/home.nix does not import development packages directly"
