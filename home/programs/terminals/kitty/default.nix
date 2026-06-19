@@ -61,9 +61,9 @@ in {
   config =
     lib.mkIf
     (
-      (config.profiles.development.enable or true)
-      && (config.profiles.development.terminals.enable or true)
-      && (config.profiles.development.terminals.default or "kitty") == "kitty"
+      (config.profiles.workspace.enable or true)
+      && (config.profiles.workspace.terminals.enable or true)
+      && (config.profiles.workspace.terminals.default or "kitty") == "kitty"
     )
     {
       home.packages = [

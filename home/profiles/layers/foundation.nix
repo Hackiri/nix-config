@@ -4,6 +4,7 @@
 {
   config,
   lib,
+  programRegistry,
   username,
   ...
 }: let
@@ -11,7 +12,7 @@
 in {
   imports = [
     # Theme: Centralized color palette (used by starship, terminals, etc.)
-    ../../programs/theme
+    programRegistry.theme
 
     # Packages: Core CLI tools (bat, eza, fd, fzf, ripgrep, etc.)
     ../../packages/core/cli.nix
@@ -20,10 +21,10 @@ in {
     ../../packages/core/networking.nix
 
     # Programs: Security hardening (SSH, etc.)
-    ../../programs/security
+    programRegistry.security.ssh
 
     # Programs: Essential system monitoring utilities
-    ../../programs/utilities/btop
+    programRegistry.utilities.btop
   ];
 
   # Common home-manager configuration (replaces home/shared/base.nix)

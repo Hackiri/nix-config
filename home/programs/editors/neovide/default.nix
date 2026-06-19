@@ -4,9 +4,9 @@
   pkgs,
   ...
 }: let
-  cfg = config.profiles.development.editors.neovide;
+  cfg = config.profiles.workspace.editors.neovide;
 in {
-  options.profiles.development.editors.neovide = {
+  options.profiles.workspace.editors.neovide = {
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.neovide;
@@ -111,8 +111,8 @@ in {
   config =
     lib.mkIf
     (
-      (config.profiles.development.enable or true)
-      && (config.profiles.development.editors.enable or true)
+      (config.profiles.workspace.enable or true)
+      && (config.profiles.workspace.editors.enable or true)
       && cfg.enable
     )
     {

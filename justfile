@@ -15,3 +15,6 @@ host name:
 
 package-imports:
     bash tests/package-imports.sh
+
+program-imports:
+    bash tests/program-imports.sh

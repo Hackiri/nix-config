@@ -4,6 +4,7 @@
   defaultUsername,
 }: let
   inherit (inputs.nixpkgs) lib;
+  programRegistry = import ../home/programs;
   overlay = import ../overlays {inherit inputs;};
   readHostMeta = name: let
     hostDir = ../hosts/${name};
@@ -38,7 +39,7 @@
       useUserPackages = true;
       backupFileExtension = "backup";
       extraSpecialArgs = {
-        inherit inputs username;
+        inherit inputs username programRegistry;
         hostName = name;
       };
       users.${username} = import ../hosts/${name}/home.nix;
@@ -82,7 +83,7 @@
           };
         }
       ];
-      specialArgs = {inherit inputs username;};
+      specialArgs = {inherit inputs username programRegistry;};
     };
 
   mkNixOS = {
@@ -114,7 +115,7 @@
           };
         }
       ];
-      specialArgs = {inherit inputs username;};
+      specialArgs = {inherit inputs username programRegistry;};
     };
 
   # Auto-discover hosts from hosts/ directory via meta.nix metadata files
