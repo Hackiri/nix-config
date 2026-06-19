@@ -15,14 +15,11 @@ cp -r templates/host hosts/<name>
 #    Darwin: ../../modules/system/darwin
 #    NixOS:  ../../modules/system/nixos
 
-# 4. Edit home.nix — uncomment the right platform profile
-#    Darwin: ../../home/profiles/platforms/darwin.nix
-#    NixOS:  ../../home/profiles/platforms/nixos.nix
-#    Then import one terminal module:
-#    ../../home/programs/terminals/kitty
-#    ../../home/programs/terminals/alacritty
-#    ../../home/programs/terminals/ghostty
-#    ../../home/programs/terminals/wezterm
+# 4. Edit home.nix — choose the right platform profile, add any optional
+#    capability profiles or package bundles you need, and include exactly one
+#    workstation suite:
+#    Darwin: programRegistry.suites.workstation.darwin
+#    NixOS:  programRegistry.suites.workstation.nixos
 # 5. Build and test
 darwin-rebuild build --flake .#<name>   # Darwin
 nixos-rebuild build --flake .#<name>    # NixOS
