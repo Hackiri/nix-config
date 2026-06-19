@@ -21,3 +21,6 @@ program-imports:
 
 sops-imports:
     bash tests/sops-imports.sh
+
+capability-imports:
+    bash tests/capability-imports.sh

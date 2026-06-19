@@ -6,7 +6,7 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 
 - **Cross-platform**: Works on both macOS and NixOS
 - **Modular architecture**: Organized system, service, and user configurations
-- **Profile-based composition**: Layered user profiles manage behavior, defaults, services, and secrets; hosts import package bundles and the central program module
+- **Import-based composition**: Layered user profiles provide shared defaults; hosts import package bundles, capabilities, and the central program module
 - **Import-managed programs**: Hosts import `home/programs/default.nix`; add or remove programs by editing that one file
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains
@@ -34,12 +34,12 @@ nix-config/
 |   |-- mbp/                    # MacBook Pro (darwin) x86_64-darwin
 |   |-- mbp2/                   # MacBook Pro (darwin) aarch64-darwin
 |-- home/                       # Home Manager configurations
-|   |-- profiles/               # Layered behavior/platform/capability modules
+|   |-- profiles/               # Layered platform and import-only capability modules
 |   |-- programs/               # Program import list and configurations (editors, shells, terminals, etc.)
 |   `-- packages/               # Plain package bundles imported from hosts/templates
 |-- modules/                    # System modules
 |   |-- system/                 # System configurations (darwin, nixos, shared)
-|   `-- services/               # Service configurations (homebrew, fonts)
+|   `-- services/               # Service modules (homebrew, NixOS services)
 |-- lib/                        # Shared library functions
 |   |-- builders.nix            # System builders (mkDarwin, mkNixOS, auto-discovery)
 |   |-- devshells.nix           # Language-specific development shells
@@ -76,7 +76,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
 > **Note:** This installs Determinate Nix, which provides enhanced stability and features. macOS users can alternatively use the [graphical installer](https://install.determinate.systems/determinate-pkg/stable/Universal).
 
-1. **Get the Repository**
+2. **Get the Repository**
 
    **Option A: Fork (Recommended for maintaining your own version)**
 
@@ -97,7 +97,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    git remote remove origin
    ```
 
-2. **Configure Your System**
+3. **Configure Your System**
 
    **1. Set your username in `flake.nix`:**
 
@@ -160,11 +160,11 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    You can re-enable SOPS later by adding the import back.
 
-3. **Install nix-darwin**
+4. **Install nix-darwin**
 
    ```bash
    # Install nix-darwin with your customized configuration
-   nix run nix-darwin -- switch --flake .
+   nix run nix-darwin -- switch --flake .#YOUR_HOSTNAME
    ```
 
    After installation, configure Git manually:
@@ -174,13 +174,13 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    git config --global user.email "your-email@example.com"
    ```
 
-   > **Note:** GPG commit signing is disabled by default. It is automatically enabled when you set up SOPS (step 5), which provides your signing key. To enable signing without SOPS, set `programs.git.signing.signByDefault = true` and configure your GPG key.
+   > **Note:** GPG commit signing is disabled by default. It is automatically enabled when you set up SOPS, which provides your signing key. To enable signing without SOPS, set `programs.git.signing.signByDefault = true` and configure your GPG key.
 
-4. **Set Up SOPS Secrets (Optional)**
+5. **Set Up SOPS Secrets (Optional)**
 
-   The `mbp` host config ships with SOPS enabled through `hosts/mbp/sops.nix`. If you disabled it in step 3, follow these steps when you're ready to enable sops-encrypted Git credentials:
+   Host configs opt into SOPS through `hosts/<host>/sops.nix`. If you disabled it before the first build, follow these steps when you're ready to enable sops-encrypted Git credentials:
 
-   a. **Enable sops in your host config** (`hosts/mbp/home.nix`):
+   a. **Enable sops in your host config** (`hosts/<host>/home.nix`):
 
    ```nix
    imports = [
@@ -215,7 +215,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    cat > secrets/secrets.yaml << EOF
    git-userName: your-username
    git-userEmail: your-email@example.com
-   git-signingKey: YOUR_GPG_KEY_ID
+   git-signingKey-YOUR_HOSTNAME: YOUR_GPG_KEY_ID
    ssh-config-srv696730: |
      Host srv696730
        HostName your-server.example.com
@@ -226,7 +226,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    sops -e -i secrets/secrets.yaml
    ```
 
-   Edit the `secrets` attrset in `home/profiles/capabilities/sops.nix` to match whatever keys you define in `secrets.yaml`. You can also add host-specific secrets via `profiles.sops.extraSecrets` in your host's `sops.nix`. See [Customizing secrets](home/profiles/README.md#customizing-secrets) for details.
+   The SOPS capability expects per-host signing key secrets named `git-signingKey-${hostName}`. Edit the `secrets` attrset in `home/profiles/capabilities/sops.nix` when you add or remove managed secrets.
 
    **Example use cases for sops:**
    - **Git credentials** — Encrypt your name, email, and GPG signing key so they're never stored in plaintext in the repo. Git hooks automatically read from sops-decrypted secrets on checkout and merge.
@@ -234,7 +234,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    - **SSH keys** — Manage SSH private keys as encrypted secrets that are decrypted at activation time by sops-nix.
    - **Shared configs across machines** — Commit encrypted secrets to the repo and decrypt on each machine with its own age key. Each host only needs its age key to access all shared secrets.
 
-   **Convenience aliases** (available when `profiles.sops.enable = true`):
+   **Convenience aliases** (available when the SOPS capability is imported):
 
    ```bash
    sops-edit secrets/secrets.yaml   # Decrypt, edit in $EDITOR, re-encrypt
@@ -287,15 +287,17 @@ The host is auto-discovered from `meta.nix` — no changes to `flake.nix` requir
 
 ```bash
 # macOS system-level changes (nix-darwin + home-manager)
-nixswitch  # Alias: sudo darwin-rebuild switch --flake ~/nix-config#<hostname>
+nixswitch  # Alias: nh darwin switch -H <hostname> ~/nix-config
 # OR manually:
 sudo darwin-rebuild switch --flake .#<hostname>
 
-# Alternative using nix run (if darwin-rebuild not available)
-sudo nix run nix-darwin -- switch --flake .#<hostname>
+# Alternative using nix run during first-time Darwin setup
+nix run nix-darwin -- switch --flake .#<hostname>
 
 # NixOS system-level changes
 sudo nixos-rebuild switch --flake .#<hostname>
+# Or use the NixOS alias:
+nixswitch  # Alias: nh os switch -H <hostname> ~/nix-config
 ```
 
 The `nixswitch` alias automatically uses the current host's name — no need to specify it.
@@ -318,7 +320,7 @@ nixdry       # Dry run (test build without changes)
 # System maintenance
 nixlist      # List all generations
 nixrollback  # Rollback to previous generation
-nixclean     # Clean old generations and garbage collect
+nixclean     # Clean old generations through nh
 
 # Debugging
 nixtrace     # Show trace for debugging
@@ -329,7 +331,7 @@ nixedit      # Open configuration in $EDITOR
 #### **Nix Utilities**
 
 ```bash
-nxsearch     # Search packages (nix search nixpkgs)
+nxsearch     # Search packages through nh
 nxrepl       # Interactive nix REPL
 nxdev        # Enter development shell
 
@@ -395,15 +397,13 @@ vi           # nvim (Neovim)
 The configuration uses a layered profile system for Home Manager:
 
 ```
-base/            Shared foundations (shell, git, core programs)
-  └─ features/   Optional feature sets, gated by options
-       ├─ development.nix   Dev tools, editors, language packages
-       ├─ kubernetes.nix    Kubernetes tooling (tool set selection)
-       ├─ sops.nix          Secrets and signing integration
-       └─ platform/         Platform-specific settings (darwin, nixos)
+home/profiles/
+  ├─ layers/          Broad shared stacks
+  ├─ platforms/       Darwin and NixOS composition
+  └─ capabilities/    Import-only add-ons for tools, services, and secrets
 ```
 
-Profiles are composed via `mkHomeManagerConfig` in `lib/builders.nix`. Capability flags in `home/profiles/capabilities/` use `lib.mkEnableOption` to gate optional add-ons, while layered profiles live under `home/profiles/layers/`.
+Profiles are composed via `mkHomeManagerConfig` in `lib/builders.nix`. Capability modules in `home/profiles/capabilities/` are active when imported; `profiles.kubernetes.toolSet` remains as the selector for Kubernetes tool variants.
 
 ## Development Shells
 
@@ -447,10 +447,10 @@ The environment loads/unloads automatically as you enter/leave the directory.
 
 ## AI Engineering Workflow
 
-This repo includes an optional Home Manager profile for AI-assisted development:
+This repo includes an optional import-only Home Manager capability for AI-assisted development:
 
-- `profiles.agentDev.enable = true` installs local agent workflow commands.
-- `profiles.agentDev.hermes.enable = true` installs Hermes Agent when available for the host platform.
+- Import `home/profiles/capabilities/agent-dev.nix` to install local agent workflow commands.
+- Hermes Agent installs when available for the host platform.
 - `agent-guard` checks agent-generated changes before review.
 - `agent-eval-host mbp2` evaluates a Darwin host output without building it.
 - `nix flake init -t ~/nix-config#ai-python` creates a Python AI app with uv and evals.
@@ -491,7 +491,7 @@ Rename the old config so `nix-darwin` can safely write its own:
 ```bash
 sudo mv /etc/nix/nix.custom.conf /etc/nix/nix.custom.conf.before-nix-darwin
 # Then re-run the switch command
-sudo nix run nix-darwin -- switch --flake .
+nix run nix-darwin -- switch --flake .#<hostname>
 ```
 
 ### Homebrew Taps conflict after enabling `mutableTaps = false`
@@ -534,7 +534,7 @@ Detailed documentation for specific components:
 
 ### Core Configuration
 
-- **[Home Manager Profiles](home/profiles/README.md)** - Layered profile system (base → features → platform)
+- **[Home Manager Profiles](home/profiles/README.md)** - Layers, platforms, and import-only capabilities
 - **[Custom Packages](pkgs/README.md)** - Kubernetes tools collection
 
 ### Programs

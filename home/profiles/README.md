@@ -22,7 +22,7 @@ profiles/
 ## Taxonomy
 
 - `layers/`: broad opinionated stacks that compose behavior, defaults, and package bundles
-- `capabilities/`: optional add-ons that can be imported independently for behavior, services, and secrets
+- `capabilities/`: import-only add-ons for behavior, services, and secrets
 - `platforms/`: OS-specific entry points that compose layers plus platform extras
 - `home/packages/*`: plain package bundles imported directly from hosts/templates
 - `home/programs/*`: program modules managed by imports in `home/programs/default.nix`, not by profile enable flags
@@ -74,36 +74,27 @@ Provides:
 
 ### `capabilities/agent-dev.nix`
 
-Provides optional AI agent workflow tooling controlled by:
+Provides AI agent workflow tooling when imported:
 
-- `profiles.agentDev.enable`
-- `profiles.agentDev.defaultBaseRef`
-- `profiles.agentDev.hermes.enable`
+- `agent-guard`
+- `agent-eval-host`
+- Hermes Agent when available for the host platform
 
 ### `capabilities/kubernetes.nix`
 
-Provides optional Kubernetes tooling controlled by:
+Provides Kubernetes tooling when imported.
 
-- `profiles.kubernetes.enable`
-- `profiles.kubernetes.includeLocalDev`
+The only capability profile option is:
+
 - `profiles.kubernetes.toolSet`
 
 ### `capabilities/redis.nix`
 
-Provides an optional local Redis user service controlled by:
-
-- `profiles.redis.enable`
-- `profiles.redis.port`
-- `profiles.redis.bind`
-- `profiles.redis.databases`
+Provides a local Redis user service when imported.
 
 ### `capabilities/sops.nix`
 
-Provides optional secrets integration controlled by:
-
-- `profiles.sops.enable`
-- `profiles.sops.signingKeySecret`
-- `profiles.sops.extraSecrets`
+Provides encrypted secrets integration when imported. The git signing key secret is selected by host convention: `git-signingKey-${hostName}`.
 
 ### `platforms/darwin.nix`
 
@@ -150,4 +141,4 @@ NixOS host with selected package bundles:
 }
 ```
 
-Capability modules remain profile-based. Keep importing capability profiles such as Kubernetes, Redis, and agent development when you want their behavior or services. SOPS host settings live in host-local `sops.nix` files that import `home/profiles/capabilities/sops.nix`; remove that host-local import when you want SOPS disabled.
+Capability modules are import-only. Import Kubernetes, Redis, SOPS, or agent development when you want their behavior or services. Remove the import when you want that capability disabled. SOPS host wrappers live in host-local `sops.nix` files so a host can opt into encrypted secrets with one import.

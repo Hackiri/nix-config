@@ -26,7 +26,7 @@ check_host() {
 
   if grep -n 'profiles\.sops' "$home_file" >/tmp/sops-imports-profile-config.txt; then
     cat /tmp/sops-imports-profile-config.txt >&2
-    fail "$home_file configures profiles.sops outside the host-local SOPS import"
+    fail "$home_file configures removed profiles.sops options"
   fi
 }
 

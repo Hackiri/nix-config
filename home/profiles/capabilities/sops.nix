@@ -1,12 +1,8 @@
 # SOPS Encrypted Secrets Feature
-# Purpose: Gate all sops-nix configuration behind a feature flag so the repo
-#          works out of the box without an age key.
+# Purpose: Configure sops-nix when this capability is imported.
 #
 # Usage:
 #   imports = [ ../../home/profiles/capabilities/sops.nix ];
-#
-# Configuration:
-#   profiles.sops.enable = true;
 #
 # Prerequisites (when enabled):
 #   1. Generate age key:  age-keygen > ~/.config/sops/age/keys.txt
@@ -14,15 +10,15 @@
 #   3. Encrypt secrets:   sops -e -i secrets/secrets.yaml
 {
   config,
+  hostName,
   lib,
   pkgs,
   ...
 }: let
-  cfg = config.profiles.sops;
-
+  signingKeySecret = "git-signingKey-${hostName}";
   userNamePath = config.sops.secrets.git-userName.path;
   userEmailPath = config.sops.secrets.git-userEmail.path;
-  signingKeyPath = config.sops.secrets.${cfg.signingKeySecret}.path;
+  signingKeyPath = config.sops.secrets.${signingKeySecret}.path;
 
   # Shared script applied by post-checkout and post-merge hooks.
   # Reads decrypted sops secrets and applies them to git config; warns instead
@@ -79,66 +75,30 @@
     exec ${applyGitConfig} post-merge
   '';
 in {
-  options.profiles.sops = with lib; {
-    enable = mkEnableOption "SOPS encrypted secrets management";
-
-    signingKeySecret = mkOption {
-      type = types.str;
-      default = "git-signingKey";
-      description = "Name of the sops secret to use for the git signing key (allows per-host GPG keys)";
-    };
-
-    extraSecrets = mkOption {
-      type = types.attrsOf (
-        types.submodule {
-          options = {
-            path = mkOption {
-              type = types.str;
-              description = "Destination path for the decrypted secret";
-            };
-            mode = mkOption {
-              type = types.str;
-              default = "0400";
-              description = "File permissions for the decrypted secret";
-            };
-          };
-        }
-      );
-      default = {};
-      description = "Additional sops secrets beyond the default git credentials";
-      example = lib.literalExpression ''
-        {
-          ssh-config-myhost = {
-            path = "''${config.home.homeDirectory}/.ssh/conf.d/myhost";
-            mode = "0600";
-          };
-        }
-      '';
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
+  config = {
     # Sops configuration
     sops = {
       defaultSopsFile = ../../../secrets/secrets.yaml;
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
-      secrets =
-        {
-          git-userName = {
-            path = "${config.home.homeDirectory}/.config/git/username";
-            mode = "0400";
-          };
-          git-userEmail = {
-            path = "${config.home.homeDirectory}/.config/git/email";
-            mode = "0400";
-          };
-          "${cfg.signingKeySecret}" = {
-            path = "${config.home.homeDirectory}/.config/git/signingkey";
-            mode = "0400";
-          };
-        }
-        // cfg.extraSecrets;
+      secrets = {
+        git-userName = {
+          path = "${config.home.homeDirectory}/.config/git/username";
+          mode = "0400";
+        };
+        git-userEmail = {
+          path = "${config.home.homeDirectory}/.config/git/email";
+          mode = "0400";
+        };
+        "${signingKeySecret}" = {
+          path = "${config.home.homeDirectory}/.config/git/signingkey";
+          mode = "0400";
+        };
+        ssh-config-srv696730 = {
+          path = "${config.home.homeDirectory}/.ssh/conf.d/srv696730";
+          mode = "0600";
+        };
+      };
     };
 
     programs = {

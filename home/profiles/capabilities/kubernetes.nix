@@ -5,10 +5,7 @@
 #   imports = [ ../../home/profiles/capabilities/kubernetes.nix ];
 #
 # Configuration:
-#   profiles.kubernetes = {
-#     enable = true;
-#     includeLocalDev = true;
-#   };
+#   profiles.kubernetes.toolSet = "complete";
 {
   config,
   lib,
@@ -19,19 +16,6 @@
   kubernetesTools = import ../../../pkgs/kubernetes-tools.nix {inherit pkgs;};
 in {
   options.profiles.kubernetes = with lib; {
-    enable = mkEnableOption "Kubernetes development profile";
-
-    includeLocalDev = mkOption {
-      type = types.bool;
-      default = true;
-      description = ''
-        Include local Kubernetes development tools:
-        - kind: Kubernetes in Docker for local clusters
-        - tilt: Local development workflow automation
-        - kubeconform: Fast Kubernetes manifests validator
-      '';
-    };
-
     toolSet = mkOption {
       type = types.enum [
         "minimal"
@@ -52,17 +36,15 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     home = {
       packages =
         kubernetesTools.sets.${cfg.toolSet}
-        ++ lib.optionals cfg.includeLocalDev (
-          with pkgs; [
-            kind # Kubernetes in Docker - lightweight local clusters
-            tilt # Local development workflow automation
-            kubeconform # Fast Kubernetes manifests validator
-          ]
-        );
+        ++ (with pkgs; [
+          kind # Kubernetes in Docker - lightweight local clusters
+          tilt # Local development workflow automation
+          kubeconform # Fast Kubernetes manifests validator
+        ]);
 
       sessionVariables = {
         KUBE_EDITOR = "nvim";

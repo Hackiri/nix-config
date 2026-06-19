@@ -3,52 +3,29 @@
 #
 # Usage:
 #   imports = [ ../../home/profiles/capabilities/redis.nix ];
-#
-# Configuration:
-#   profiles.redis.enable = true;
 {
   config,
   lib,
   pkgs,
   ...
 }: let
-  cfg = config.profiles.redis;
   homeDir = config.home.homeDirectory;
   inherit (pkgs.stdenv) isDarwin isLinux;
+  port = 6379;
+  bind = "127.0.0.1";
+  databases = 16;
   redisConf = "${homeDir}/.config/redis/redis.conf";
   redisDataDir = "${homeDir}/.local/share/redis";
   redisLog = "${redisDataDir}/redis.log";
   redisPlist = "${homeDir}/Library/LaunchAgents/org.redis.redis-server.plist";
 in {
-  options.profiles.redis = with lib; {
-    enable = mkEnableOption "local Redis user service";
-
-    port = mkOption {
-      type = types.port;
-      default = 6379;
-      description = "TCP port for the local Redis server.";
-    };
-
-    bind = mkOption {
-      type = types.str;
-      default = "127.0.0.1";
-      description = "Address Redis binds to.";
-    };
-
-    databases = mkOption {
-      type = types.ints.positive;
-      default = 16;
-      description = "Number of Redis logical databases.";
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
+  config = {
     home = {
       packages = [pkgs.redis];
 
       file.".config/redis/redis.conf".text = ''
-        port ${toString cfg.port}
-        bind ${cfg.bind}
+        port ${toString port}
+        bind ${bind}
         timeout 0
         tcp-keepalive 300
         daemonize no
@@ -56,7 +33,7 @@ in {
         pidfile ${redisDataDir}/redis.pid
         loglevel notice
         logfile ${redisLog}
-        databases ${toString cfg.databases}
+        databases ${toString databases}
 
         save 900 1
         save 300 10

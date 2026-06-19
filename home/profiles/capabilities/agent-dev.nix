@@ -3,7 +3,6 @@
 #
 # Usage:
 #   imports = [ ../../home/profiles/capabilities/agent-dev.nix ];
-#   profiles.agentDev.enable = true;
 {
   config,
   hostName,
@@ -12,7 +11,6 @@
   pkgs,
   ...
 }: let
-  cfg = config.profiles.agentDev;
   inherit (pkgs.stdenv.hostPlatform) system;
   hermesPackages = inputs.hermes-agent.packages.${system} or {};
   hermesPackageAvailable = hermesPackages ? default;
@@ -25,7 +23,7 @@
   agentGuard = pkgs.writeShellScriptBin "agent-guard" ''
     set -euo pipefail
 
-    default_base=${lib.escapeShellArg cfg.defaultBaseRef}
+    default_base=${lib.escapeShellArg "HEAD"}
     base_ref="''${1:-$default_base}"
     repo_root="$(git rev-parse --show-toplevel)"
     cd "$repo_root"
@@ -80,25 +78,9 @@
     ${pkgs.nix}/bin/nix eval --impure --raw --expr "let flake = builtins.getFlake \"git+file://$repo_root\"; in flake.darwinConfigurations.$host.config.system.build.toplevel.drvPath"
   '';
 in {
-  options.profiles.agentDev = with lib; {
-    enable = mkEnableOption "AI agent development workflow";
-
-    defaultBaseRef = mkOption {
-      type = types.str;
-      default = "HEAD";
-      description = "Default Git ref used by agent-guard when no base ref is provided.";
-    };
-
-    hermes.enable = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Install Hermes Agent from the flake input when available for this host platform.";
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    warnings = lib.optionals (cfg.hermes.enable && !hermesPackageAvailable) [
-      "profiles.agentDev.hermes.enable is true but hermes-agent has no package for ${system}; Hermes Agent will not be installed"
+  config = {
+    warnings = lib.optionals (!hermesPackageAvailable) [
+      "Hermes Agent has no package for ${system}; Hermes Agent will not be installed"
     ];
 
     home.packages =
@@ -106,7 +88,7 @@ in {
         agentGuard
         agentEvalHost
       ]
-      ++ lib.optionals (cfg.hermes.enable && hermesPackageAvailable) [
+      ++ lib.optionals hermesPackageAvailable [
         pkgs.hermes-agent
       ]
       ++ (with pkgs; [

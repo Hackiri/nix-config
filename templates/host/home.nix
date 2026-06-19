@@ -13,7 +13,7 @@
     # Program modules are managed from home/programs/default.nix.
     ../../home/programs
 
-    # Optional capability profiles:
+    # Optional import-only capabilities:
     # ../../home/profiles/capabilities/kubernetes.nix
     # ../../home/profiles/capabilities/sops.nix
 
