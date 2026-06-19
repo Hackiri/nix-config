@@ -6,7 +6,7 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 
 - **Cross-platform**: Works on both macOS and NixOS
 - **Modular architecture**: Organized system, service, and user configurations
-- **Profile-based composition**: Layered user profiles compose behavior, defaults, services, secrets, and package bundles
+- **Profile-based composition**: Layered user profiles manage behavior, defaults, services, and secrets; hosts import package bundles and select static program suites
 - **Host-selected program suites**: Hosts choose static suites from `home/programs/default.nix`; profiles do not import program modules
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains

@@ -69,9 +69,8 @@ Composes:
 
 Provides:
 
-- Editors, shells, terminals, direnv, git, utilities
-- Behavior and package composition for the development workspace
-- No program selection here; hosts choose a suite from `home/programs/default.nix`
+- Behavior, defaults, and feature flags for the development workspace
+- The actual editor, shell, terminal, git, and utility modules come from the host-selected suite in `home/programs/default.nix`
 
 Feature flags:
 
