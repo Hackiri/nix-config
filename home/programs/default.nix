@@ -68,11 +68,13 @@ let
         registry.terminals.sesh
         registry.terminals.tmux
       ];
-      all = core ++ [
-        registry.terminals.alacritty
-        registry.terminals.ghostty
-        registry.terminals.wezterm
-      ];
+      all =
+        core
+        ++ [
+          registry.terminals.alacritty
+          registry.terminals.ghostty
+          registry.terminals.wezterm
+        ];
     };
 
     utilities = rec {
@@ -81,9 +83,11 @@ let
         registry.utilities.claude
         registry.utilities.yazi
       ];
-      darwin = common ++ [
-        registry.utilities.aerospace
-      ];
+      darwin =
+        common
+        ++ [
+          registry.utilities.aerospace
+        ];
     };
 
     workstation = rec {
@@ -98,9 +102,11 @@ let
         ++ terminals.core
         ++ utilities.common;
 
-      darwin = common ++ [
-        registry.utilities.aerospace
-      ];
+      darwin =
+        common
+        ++ [
+          registry.utilities.aerospace
+        ];
 
       nixos = common;
     };

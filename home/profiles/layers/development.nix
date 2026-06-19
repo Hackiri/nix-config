@@ -87,7 +87,7 @@
   };
 
   imports = [
-    # Base: Foundation layer (minimal tools, btop, cli-essentials)
+    # Base: Foundation layer (home defaults and core package bundles)
     ./foundation.nix
   ];
 }
