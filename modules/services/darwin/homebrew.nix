@@ -51,7 +51,8 @@
         require_sha = true;
       };
       onActivation = {
-        cleanup = "zap"; # Remove packages not in config, including cask support files
+        # Leave manually installed Homebrew packages and casks in place.
+        cleanup = "none";
         # Disabled for reproducibility -- brew updates are independent of flake.lock pins.
         # Run `brew update` manually when you want to update formulas/casks.
         autoUpdate = false;
@@ -66,7 +67,6 @@
           HOMEBREW_NO_REQUIRE_TAP_TRUST = "1";
           HOMEBREW_NO_UPDATE_REPORT_NEW = "1";
         };
-        extraFlags = ["--force-cleanup"];
       };
 
       # Formulae that need Homebrew's macOS-specific packaging or third-party taps.
