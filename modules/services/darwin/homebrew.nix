@@ -39,16 +39,11 @@
         // lib.optionalAttrs (pkgs.stdenv.hostPlatform.isAarch64 && pkgs.stdenv.hostPlatform.isDarwin) {
           "slp/homebrew-krun" = inputs.homebrew-krun;
         };
-      # Keep taps writable so explicit `brew update` can initialize and update
-      # Homebrew's tap Git repositories. Declarative activation still seeds the
-      # known taps from the flake inputs.
-      mutableTaps = true;
+      mutableTaps = false;
     };
 
     homebrew = {
       enable = true;
-      # Prevent implicit updates during install/upgrade commands; explicit
-      # `brew update` remains available via nix-homebrew.mutableTaps.
       global.autoUpdate = false;
       taps = builtins.attrNames config.nix-homebrew.taps;
       caskArgs = {
@@ -56,21 +51,22 @@
         require_sha = true;
       };
       onActivation = {
-        # Leave manually installed Homebrew packages and casks in place.
-        cleanup = "none";
-        # Keep darwin-rebuild idempotent. Run `brew update` manually when you
-        # want to update formula/cask metadata.
+        cleanup = "zap"; # Remove packages not in config, including cask support files
+        # Disabled for reproducibility -- brew updates are independent of flake.lock pins.
+        # Update Homebrew metadata by updating the flake inputs.
         autoUpdate = false;
-        # Avoid activation-time package churn; upgrade Homebrew packages
-        # explicitly after updating metadata.
+        # Homebrew 5.1 rejects fetching casks from nix-homebrew's store-backed
+        # taps; avoid activation-time cask upgrades until upstreams align.
         upgrade = false;
         extraEnv = {
           HOMEBREW_NO_ANALYTICS = "1";
           HOMEBREW_NO_ENV_HINTS = "1";
-          # Keep third-party taps usable during noninteractive activation.
+          # Homebrew 5.1 requires explicit trust for non-official taps, which
+          # does not compose well with nix-homebrew's store-backed taps.
           HOMEBREW_NO_REQUIRE_TAP_TRUST = "1";
           HOMEBREW_NO_UPDATE_REPORT_NEW = "1";
         };
+        extraFlags = ["--force-cleanup"];
       };
 
       # Formulae that need Homebrew's macOS-specific packaging or third-party taps.
@@ -96,6 +92,7 @@
           "podman-desktop"
           "opencode-desktop" # Open source IDE
           "codex"
+          "supacode"
 
           # Productivity
           "raycast" # Spotlight replacement
