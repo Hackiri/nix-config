@@ -82,6 +82,26 @@ in {
       # K9s configuration
       export K9S_CONFIG_DIR="$HOME/.config/k9s"
 
+      k9s() {
+        local has_scope=0
+        local arg
+
+        for arg in "$@"; do
+          case "$arg" in
+            -A|--all-namespaces|-n|--namespace|--namespace=*)
+              has_scope=1
+              ;;
+          esac
+        done
+
+        # Disable client-go watch-list for k9s until it works against this cluster.
+        if [ "$has_scope" -eq 1 ]; then
+          KUBE_FEATURE_WatchListClient=false command k9s "$@"
+        else
+          KUBE_FEATURE_WatchListClient=false command k9s -A "$@"
+        fi
+      }
+
       # Krew PATH is set via home.sessionPath in zsh/default.nix
     '';
 
@@ -101,6 +121,29 @@ in {
       if command -v kubecolor &> /dev/null; then
         alias kubectl="kubecolor"
       fi
+
+      # K9s configuration
+      export K9S_CONFIG_DIR="$HOME/.config/k9s"
+
+      k9s() {
+        local has_scope=0
+        local arg
+
+        for arg in "$@"; do
+          case "$arg" in
+            -A|--all-namespaces|-n|--namespace|--namespace=*)
+              has_scope=1
+              ;;
+          esac
+        done
+
+        # Disable client-go watch-list for k9s until it works against this cluster.
+        if [ "$has_scope" -eq 1 ]; then
+          KUBE_FEATURE_WatchListClient=false command k9s "$@"
+        else
+          KUBE_FEATURE_WatchListClient=false command k9s -A "$@"
+        fi
+      }
     '';
   };
 }

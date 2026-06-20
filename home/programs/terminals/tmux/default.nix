@@ -250,7 +250,7 @@
     case "$choice" in
       k9s)
         need k9s
-        k9s
+        KUBE_FEATURE_WatchListClient=false k9s -A
         ;;
       contexts)
         selected="$(kubectl config get-contexts --no-headers -o name | pick 'context> ' --preview 'kubectl config view --context={} --minify 2>/dev/null' --preview-window right:60%)"
