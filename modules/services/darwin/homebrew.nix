@@ -74,7 +74,6 @@
       brews =
         [
           "podman" # Podman
-          "FelixKratz/formulae/borders" # JankyBorders - window border highlighting for AeroSpace
         ]
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isAarch64 && pkgs.stdenv.hostPlatform.isDarwin) [
           "krunkit"
@@ -109,7 +108,6 @@
           # Utilities
           "obsidian" # Note-taking
           "hammerspoon" # Automation
-          "nikitabobko/tap/aerospace" # AeroSpace tiling window manager
           "pika" # Color picker
 
           # Creative
