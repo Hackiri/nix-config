@@ -39,11 +39,16 @@
         // lib.optionalAttrs (pkgs.stdenv.hostPlatform.isAarch64 && pkgs.stdenv.hostPlatform.isDarwin) {
           "slp/homebrew-krun" = inputs.homebrew-krun;
         };
-      mutableTaps = false;
+      # Keep taps writable so explicit `brew update` can initialize and update
+      # Homebrew's tap Git repositories. Declarative activation still seeds the
+      # known taps from the flake inputs.
+      mutableTaps = true;
     };
 
     homebrew = {
       enable = true;
+      # Prevent implicit updates during install/upgrade commands; explicit
+      # `brew update` remains available via nix-homebrew.mutableTaps.
       global.autoUpdate = false;
       taps = builtins.attrNames config.nix-homebrew.taps;
       caskArgs = {
@@ -53,17 +58,16 @@
       onActivation = {
         # Leave manually installed Homebrew packages and casks in place.
         cleanup = "none";
-        # Disabled for reproducibility -- brew updates are independent of flake.lock pins.
-        # Run `brew update` manually when you want to update formulas/casks.
+        # Keep darwin-rebuild idempotent. Run `brew update` manually when you
+        # want to update formula/cask metadata.
         autoUpdate = false;
-        # Homebrew 5.1 rejects fetching casks from nix-homebrew's store-backed
-        # taps; avoid activation-time cask upgrades until upstreams align.
+        # Avoid activation-time package churn; upgrade Homebrew packages
+        # explicitly after updating metadata.
         upgrade = false;
         extraEnv = {
           HOMEBREW_NO_ANALYTICS = "1";
           HOMEBREW_NO_ENV_HINTS = "1";
-          # Homebrew 5.1 requires explicit trust for non-official taps, which
-          # does not compose well with nix-homebrew's store-backed taps.
+          # Keep third-party taps usable during noninteractive activation.
           HOMEBREW_NO_REQUIRE_TAP_TRUST = "1";
           HOMEBREW_NO_UPDATE_REPORT_NEW = "1";
         };

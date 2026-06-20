@@ -509,6 +509,29 @@ sudo rm -rf /usr/local/Homebrew/Library/Taps
 sudo darwin-rebuild switch --flake ~/nix-config#mbp
 ```
 
+### `brew update` fails with `/nix/store/.../taps-env/.../.git: Permission denied`
+
+`brew update` needs writable tap Git repositories. With
+`nix-homebrew.mutableTaps = false`, nix-homebrew exposes taps from the Nix store,
+so Homebrew cannot create or update `.git` metadata inside the tap.
+
+This config keeps `nix-homebrew.mutableTaps = true` so explicit `brew update`
+works. If you are switching from immutable taps, remove the old store-backed
+`Taps` symlink before the first activation:
+
+```bash
+if [ -L /opt/homebrew/Library/Taps ]; then sudo rm /opt/homebrew/Library/Taps; fi
+sudo darwin-rebuild switch --flake ~/nix-config#<hostname>
+```
+
+If you switch back to immutable taps, update Homebrew metadata by updating the
+flake inputs instead:
+
+```bash
+nix flake update homebrew-core homebrew-cask homebrew-aerospace homebrew-felixkratz homebrew-krun
+sudo darwin-rebuild switch --flake ~/nix-config#<hostname>
+```
+
 ### Known Harmless Warnings
 
 **`options.json` store path warning:**
