@@ -9,4 +9,13 @@ _: {
     # Packages: macOS-specific packages
     ../../packages/platform/darwin.nix
   ];
+
+  # nix-darwin installs fonts from modules/system/shared/fonts.nix system-wide.
+  # Home Manager's Darwin target also derives a font bundle from every
+  # home.packages entry and rsyncs it into ~/Library/Fonts/HomeManager. On recent
+  # Determinate Nix this evaluation can intermittently fail with
+  # "polling file descriptor: Invalid argument" at
+  # home.file."Library/Fonts/.home-manager-fonts-version". Disable the redundant
+  # per-user font sync and leave font installation to nix-darwin.
+  home.file."Library/Fonts/.home-manager-fonts-version".enable = false;
 }
