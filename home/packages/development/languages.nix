@@ -4,16 +4,16 @@
     #--------------------------------------------------
     # Python Ecosystem
     #--------------------------------------------------
-    python313 # Python 3.13 programming language
-    python313Packages.pip # Python package manager
-    python313Packages.pynvim # Python client for Neovim
+    python314 # Python 3.14 programming language
+    python314Packages.pip # Python package manager
+    python314Packages.pynvim # Python client for Neovim
     uv # Fast Python package installer and resolver
 
     # Python utilities (pytest/pylint provided by devshell)
-    python313Packages.pygments # Syntax highlighting (pygmentize)
-    python313Packages.markdown # Markdown processing
-    python313Packages.tabulate # Pretty-print tabular data
-    python313Packages.pylatexenc # LaTeX to text converter
+    python314Packages.pygments # Syntax highlighting (pygmentize)
+    python314Packages.markdown # Markdown processing
+    python314Packages.tabulate # Pretty-print tabular data
+    python314Packages.pylatexenc # LaTeX to text converter
 
     # Node, Go, Rust, Ruby, PHP available via devShells:
     # nix develop .#node / .#go / .#rust / .#ruby / .#php
