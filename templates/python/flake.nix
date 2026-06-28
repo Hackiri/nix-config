@@ -20,12 +20,12 @@
       in {
         default = pkgs.mkShell {
           packages = with pkgs; [
-            python313
+            python314
             uv
-            python313Packages.pip
-            python313Packages.ruff
-            python313Packages.mypy
-            python313Packages.pytest
+            python314Packages.pip
+            python314Packages.ruff
+            python314Packages.mypy
+            python314Packages.pytest
           ];
           shellHook = ''
             echo "Python $(python3 --version) dev environment"

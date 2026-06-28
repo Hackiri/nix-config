@@ -13,12 +13,12 @@ _: {
                   bun
                   typescript
                   prettier'
-            python '      python313
+            python '      python314
                   uv
-                  python313Packages.pip
-                  python313Packages.ruff
-                  python313Packages.mypy
-                  python313Packages.pytest'
+                  python314Packages.pip
+                  python314Packages.ruff
+                  python314Packages.mypy
+                  python314Packages.pytest'
             rust '      rustc
                   cargo
                   rustfmt
