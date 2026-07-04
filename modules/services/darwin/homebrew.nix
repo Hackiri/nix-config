@@ -99,7 +99,10 @@ in {
         [
           # Browsers
           "firefox"
-          "librewolf"
+          {
+            name = "librewolf";
+            postinstall = "/usr/bin/xattr -d com.apple.quarantine $HOME/Applications/LibreWolf.app 2>/dev/null || true";
+          }
 
           # Development tools
           "visual-studio-code"
