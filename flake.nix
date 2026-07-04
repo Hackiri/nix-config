@@ -43,7 +43,7 @@
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Homebrew inputs
-    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+    nix-homebrew.url = "github:hackiri/nix-homebrew";
     nix-homebrew.inputs.brew-src.follows = "brew-src";
     brew-src = {
       url = "github:Homebrew/brew";
