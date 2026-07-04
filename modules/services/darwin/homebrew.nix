@@ -6,7 +6,34 @@
   pkgs,
   username,
   ...
-}: {
+}: let
+  isAppleSiliconDarwin = pkgs.stdenv.hostPlatform.isAarch64 && pkgs.stdenv.hostPlatform.isDarwin;
+  managedTaps =
+    {
+      "homebrew/homebrew-core" = inputs.homebrew-core;
+      "homebrew/homebrew-cask" = inputs.homebrew-cask;
+      "nikitabobko/homebrew-tap" = inputs.homebrew-aerospace;
+      "FelixKratz/homebrew-formulae" = inputs.homebrew-felixkratz;
+    }
+    // lib.optionalAttrs isAppleSiliconDarwin {
+      "slp/homebrew-krun" = inputs.homebrew-krun;
+    };
+  trustedTapNames =
+    [
+      "FelixKratz/homebrew-formulae"
+      "nikitabobko/homebrew-tap"
+    ]
+    ++ lib.optionals isAppleSiliconDarwin [
+      "slp/homebrew-krun"
+    ];
+  renderTap = name:
+    if builtins.elem name trustedTapNames
+    then {
+      inherit name;
+      trusted = true;
+    }
+    else name;
+in {
   options.services.homebrew = {
     enable = lib.mkEnableOption "Homebrew package manager";
 
@@ -29,23 +56,15 @@
       enable = true;
       user = username;
       autoMigrate = true;
-      taps =
-        {
-          "homebrew/homebrew-core" = inputs.homebrew-core;
-          "homebrew/homebrew-cask" = inputs.homebrew-cask;
-          "nikitabobko/homebrew-tap" = inputs.homebrew-aerospace;
-          "FelixKratz/homebrew-formulae" = inputs.homebrew-felixkratz;
-        }
-        // lib.optionalAttrs (pkgs.stdenv.hostPlatform.isAarch64 && pkgs.stdenv.hostPlatform.isDarwin) {
-          "slp/homebrew-krun" = inputs.homebrew-krun;
-        };
+      taps = managedTaps;
       mutableTaps = false;
+      trust.taps = trustedTapNames;
     };
 
     homebrew = {
       enable = true;
       global.autoUpdate = false;
-      taps = builtins.attrNames config.nix-homebrew.taps;
+      taps = map renderTap (builtins.attrNames config.nix-homebrew.taps);
       caskArgs = {
         appdir = "~/Applications";
         require_sha = true;
@@ -55,18 +74,13 @@
         # Disabled for reproducibility -- brew updates are independent of flake.lock pins.
         # Update Homebrew metadata by updating the flake inputs.
         autoUpdate = false;
-        # Homebrew 5.1 rejects fetching casks from nix-homebrew's store-backed
-        # taps; avoid activation-time cask upgrades until upstreams align.
+        # Keep activation idempotent; update Homebrew packages by updating the flake inputs.
         upgrade = false;
         extraEnv = {
           HOMEBREW_NO_ANALYTICS = "1";
           HOMEBREW_NO_ENV_HINTS = "1";
-          # Homebrew 5.1 requires explicit trust for non-official taps, which
-          # does not compose well with nix-homebrew's store-backed taps.
-          HOMEBREW_NO_REQUIRE_TAP_TRUST = "1";
           HOMEBREW_NO_UPDATE_REPORT_NEW = "1";
         };
-        extraFlags = ["--force-cleanup"];
       };
 
       # Formulae that need Homebrew's macOS-specific packaging or third-party taps.
@@ -75,7 +89,7 @@
         [
           "podman" # Podman
         ]
-        ++ lib.optionals (pkgs.stdenv.hostPlatform.isAarch64 && pkgs.stdenv.hostPlatform.isDarwin) [
+        ++ lib.optionals isAppleSiliconDarwin [
           "krunkit"
         ]
         ++ config.services.homebrew.extraBrews;
@@ -85,7 +99,7 @@
         [
           # Browsers
           "firefox"
-          "brave-browser"
+          "librewolf"
 
           # Development tools
           "visual-studio-code"
