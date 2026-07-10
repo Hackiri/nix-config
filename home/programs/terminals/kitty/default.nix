@@ -1,16 +1,9 @@
 {
   config,
-  inputs,
   pkgs,
   ...
 }: let
   homeDir = config.home.homeDirectory;
-  unstablePkgs = import inputs.nixpkgs-unstable {
-    inherit (pkgs.stdenv.hostPlatform) system;
-    config.allowUnfree = true;
-    config.allowDeprecatedx86_64Darwin = true;
-  };
-
   kitty_tmux = pkgs.writeScriptBin "kitty-tmux" ''
     #!${pkgs.bash}/bin/bash
     set -euo pipefail
@@ -69,7 +62,7 @@ in {
 
     programs.kitty = {
       enable = true;
-      package = unstablePkgs.kitty;
+      package = pkgs.kitty;
 
       font = {
         name = "SauceCodePro Nerd Font";
