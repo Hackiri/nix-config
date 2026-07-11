@@ -61,17 +61,16 @@ capabilities/sops.nix
   `-- shell aliases
 ```
 
-## Host Examples
+## Host Example
 
-`hosts/mbp/home.nix` and `hosts/mbp2/home.nix` currently compose:
+`hosts/mbp2/home.nix` composes:
 
 - `../../home/profiles/platforms/darwin.nix`
 - `../../home/packages/development`
 - `../../home/programs`
 - `../../home/profiles/capabilities/kubernetes.nix`
-- `../../home/profiles/capabilities/redis.nix`
 - `../../home/profiles/capabilities/agent-dev.nix`
-- `./sops.nix`
+- optional host-local `./sops.nix`
 
 ## Naming Rules
 

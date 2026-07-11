@@ -11,18 +11,16 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains
 
-## ⚠️ x86_64-darwin (Intel Mac) Notice
+## Platform Support
 
-> [!CAUTION]
-> Nixpkgs **26.05 is the last release** to support `x86_64-darwin`. Binary builds and source support will continue until 26.05 goes end-of-life (late 2026), but **26.11 will drop x86_64-darwin entirely** — no binary cache, no source builds.
+`main` is the current-platform line. It declares the Apple Silicon `mbp2` host
+and retains the shared NixOS modules and templates that will gain first-class
+desktop/server fixtures in Phase 2.
 
-> [!IMPORTANT]
-> This configuration uses `nixos-26.05` (stable) exclusively. The `nixpkgs-unstable` channel is **not** used because unstable packages receive less CI coverage on Intel Mac and are more likely to have build failures on `x86_64-darwin`. The `allowDeprecatedx86_64Darwin = true` flag is set in `flake.nix` to suppress the deprecation warning.
-
-> [!TIP]
-> 🖥️ Install **NixOS** on the hardware (supported indefinitely on x86_64)
-> 🍎 Switch to **MacPorts** (plans to maintain Intel support longer than Homebrew)
-> 💻 Migrate to **Apple Silicon** hardware
+Intel macOS is preserved separately on the local `legacy-intel` branch at the
+verified `legacy-intel-26.05-baseline` tag. That branch remains on the frozen
+26.05-compatible stack; publishing the branch and tag is a separate explicit
+operation.
 
 ## Structure
 
@@ -31,7 +29,6 @@ nix-config/
 |-- flake.nix                   # Main flake configuration (flake-parts)
 |-- flake.lock                  # Flake input locks
 |-- hosts/                      # Host-specific configurations
-|   |-- mbp/                    # MacBook Pro (darwin) x86_64-darwin
 |   |-- mbp2/                   # MacBook Pro (darwin) aarch64-darwin
 |-- home/                       # Home Manager configurations
 |   |-- profiles/               # Layered platform and import-only capability modules
@@ -116,10 +113,10 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    Each host directory has a `meta.nix` that defines its platform and device type. Host discovery only includes directories with the full `meta.nix` / `configuration.nix` / `home.nix` trio present:
 
    ```nix
-   # hosts/mbp/meta.nix
+   # hosts/mbp2/meta.nix
    {
      type = "darwin";             # "darwin" or "nixos"
-     system = "x86_64-darwin";    # "aarch64-darwin" for Apple Silicon, "x86_64-linux" for NixOS
+     system = "aarch64-darwin";    # "x86_64-linux" for NixOS
      device = "laptop";           # "laptop" or "desktop"
      # username = "other";        # Optional: override defaultUsername for this host
    }
@@ -130,7 +127,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    The directory name under `hosts/` becomes the configuration name. Rename it to match your hostname (run `scutil --get LocalHostName` on macOS):
 
    ```bash
-   mv hosts/mbp hosts/YOUR_HOSTNAME
+   mv hosts/mbp2 hosts/YOUR_HOSTNAME
    ```
 
    **4. Import the central program module in `home.nix`:**
@@ -249,7 +246,7 @@ To deploy this configuration on another machine:
 1. **Create a host directory** by copying an existing one:
 
    ```bash
-   cp -r hosts/mbp hosts/YOUR_HOSTNAME
+   cp -r hosts/mbp2 hosts/YOUR_HOSTNAME
    ```
 
 2. **Edit `hosts/YOUR_HOSTNAME/meta.nix`** for the new machine:
@@ -520,7 +517,7 @@ Remove the existing taps so nix-darwin can manage them declaratively:
 
 ```bash
 sudo rm -rf /usr/local/Homebrew/Library/Taps
-sudo darwin-rebuild switch --flake ~/nix-config#mbp
+sudo darwin-rebuild switch --flake ~/nix-config#mbp2
 ```
 
 ### Known Harmless Warnings
