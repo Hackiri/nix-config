@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   config = {
     # Use the binary package because source-built Ghostty is not available on
     # Darwin in the currently pinned nixpkgs channel.
