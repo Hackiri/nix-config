@@ -41,6 +41,7 @@
 ### Task 1: Add Agent Dev Capability
 
 **Files:**
+
 - Create: `home/profiles/capabilities/agent-dev.nix`
 
 - [ ] **Step 1: Create the Home Manager module**
@@ -206,6 +207,7 @@ git commit -m "feat(home): add optional agent dev profile"
 ### Task 2: Enable The Profile Per Host
 
 **Files:**
+
 - Modify: `hosts/mbp2/home.nix`
 - Modify: `hosts/mbp/home.nix`
 - Modify: `hosts/mbp2/configuration.nix`
@@ -351,6 +353,7 @@ git commit -m "feat(home): move Hermes Agent into agent dev profile"
 ### Task 3: Document The Profile
 
 **Files:**
+
 - Modify: `home/profiles/README.md`
 - Create: `docs/workflows/ai-agent-workflows.md`
 - Create: `docs/workflows/mcp-curation.md`
@@ -451,6 +454,7 @@ git commit -m "docs(ai): document agent dev profile"
 ### Task 4: Add AI Python Project Template
 
 **Files:**
+
 - Create: `templates/ai-python/flake.nix`
 - Create: `templates/ai-python/.envrc`
 - Create: `templates/ai-python/.gitignore`
@@ -662,6 +666,7 @@ git commit -m "feat(templates): add AI Python eval project"
 ### Task 5: Register The AI Python Template
 
 **Files:**
+
 - Modify: `flake.nix`
 
 - [ ] **Step 1: Add `ai-python` to the `templates` attrset**
@@ -711,6 +716,7 @@ git commit -m "feat(flake): expose AI Python project template"
 ### Task 6: Update README Entry Points
 
 **Files:**
+
 - Modify: `README.md`
 
 - [ ] **Step 1: Add a short AI workflow section near the development environment documentation**
@@ -751,6 +757,7 @@ git commit -m "docs(ai): add AI engineering workflow entry points"
 ### Task 7: Final Verification
 
 **Files:**
+
 - Read: all changed files from this plan
 
 - [ ] **Step 1: Verify profile-enabled commands appear on `mbp2`**
@@ -762,7 +769,7 @@ nix eval --impure --json --expr 'let flake = builtins.getFlake "git+file:///User
 Expected:
 
 ```json
-["agent-guard","agent-eval-host"]
+["agent-guard", "agent-eval-host"]
 ```
 
 - [ ] **Step 2: Build the `mbp2` Home Manager activation package**
