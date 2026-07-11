@@ -14,7 +14,7 @@ profiles.agentDev.enable = true;
 2. Inspect the relevant module or template before editing.
 3. Make the smallest coherent change.
 4. Run `ai-guard` before claiming the change is ready.
-5. Run `nix flake check --no-build` before merging host or template changes.
+5. Run `just check` before merging host, module, workflow, or template changes.
 
 ## Subagent Use
 

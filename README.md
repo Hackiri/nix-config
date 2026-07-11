@@ -335,8 +335,22 @@ nxsearch     # Search packages through nh
 nxrepl       # Interactive nix REPL
 nxdev        # Enter development shell
 
-# Update workflow
-nix flake update  # Update flake inputs
+# Update every input, then validate the result
+nix flake update
+just check
+
+# Update one input, then validate the result
+nix flake update nixpkgs
+just check
+```
+
+### Repository Validation
+
+`just check` is the authoritative local and CI gate. It builds the native,
+locked treefmt/git-hooks checks and evaluates the declared host behavior.
+
+```bash
+just check
 ```
 
 ### Pre-commit Hooks
