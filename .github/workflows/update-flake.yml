@@ -22,7 +22,7 @@ jobs:
         run: nix flake update
 
       - name: Validate updated inputs
-        run: nix develop --command just check
+        run: nix develop --no-update-lock-file --command just check
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
