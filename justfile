@@ -17,3 +17,4 @@ host name:
 check:
     nix flake check --no-update-lock-file --print-build-logs
     bash tests/semantic-config.sh
+    bash tests/pre-commit-config.sh

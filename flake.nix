@@ -133,12 +133,14 @@
                 if git rev-parse --git-dir >/dev/null 2>&1; then
                   repo_root="$(git rev-parse --show-toplevel)"
                   config_link="$repo_root/.pre-commit-config.yaml"
-                  if [ ! -e "$config_link" ]; then
-                    ln -s "${preCommitCheck.config.configFile}" "$config_link"
-                  elif [ -L "$config_link" ] && [ "$(readlink "$config_link" 2>/dev/null)" != "${preCommitCheck.config.configFile}" ]; then
-                    ln -fs "${preCommitCheck.config.configFile}" "$config_link"
-                  elif [ ! -L "$config_link" ]; then
+                  if [ -L "$config_link" ]; then
+                    if [ "$(readlink "$config_link")" != "${preCommitCheck.config.configFile}" ]; then
+                      ln -sfn "${preCommitCheck.config.configFile}" "$config_link"
+                    fi
+                  elif [ -e "$config_link" ]; then
                     echo "git-hooks.nix: leaving existing $config_link in place because it is not a symlink."
+                  else
+                    ln -s "${preCommitCheck.config.configFile}" "$config_link"
                   fi
                 fi
 
