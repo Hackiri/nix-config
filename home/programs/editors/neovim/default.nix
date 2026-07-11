@@ -2,8 +2,8 @@
   config = {
     programs.neovim = {
       enable = true;
-      # Note: neovim-unwrapped comes from nixpkgs-unstable (0.12+) via overlay.
-      # HM wrapping and Lua/Python infra still use stable nixpkgs.
+      # Neovim comes from stable nixpkgs; Home Manager supplies the wrapper and
+      # the configured Lua, Python, and Node.js integration.
       plugins = with pkgs.vimPlugins; [];
       defaultEditor = true;
       viAlias = true;

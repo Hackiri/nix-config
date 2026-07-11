@@ -1,18 +1,11 @@
 {
-  inputs,
   pkgs,
   ...
-}: let
-  unstablePkgs = import inputs.nixpkgs-unstable {
-    inherit (pkgs.stdenv.hostPlatform) system;
-    config.allowUnfree = true;
-    config.allowDeprecatedx86_64Darwin = true;
-  };
-in {
+}: {
   config = {
     # Use the binary package because source-built Ghostty is not available on
-    # Darwin in the currently pinned nixpkgs channels.
-    home.packages = [unstablePkgs.ghostty-bin];
+    # Darwin in the currently pinned nixpkgs channel.
+    home.packages = [pkgs.ghostty-bin];
 
     # Ensure the config directory exists
     home.file = {
