@@ -15,7 +15,6 @@ result="$(
     configurations:
     let
       hostSpecs = [
-        { name = "mbp"; system = "x86_64-darwin"; }
         { name = "mbp2"; system = "aarch64-darwin"; }
       ];
       expectedNames = map (spec: spec.name) hostSpecs;

@@ -34,12 +34,5 @@
       readOnly = true;
       description = "Whether this device is an Apple Silicon Mac (derived from platform).";
     };
-
-    isIntel = lib.mkOption {
-      type = lib.types.bool;
-      default = pkgs.stdenv.hostPlatform.isx86_64 && pkgs.stdenv.hostPlatform.isDarwin;
-      readOnly = true;
-      description = "Whether this device is an Intel Mac (x86_64-darwin). False on x86_64-linux.";
-    };
   };
 }

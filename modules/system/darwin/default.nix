@@ -1,9 +1,5 @@
 # Darwin system configuration
-{
-  config,
-  lib,
-  ...
-}: {
+{lib, ...}: {
   imports = [
     # Shared system modules
     ../shared/device.nix
@@ -32,17 +28,11 @@
   documentation.doc.enable = false;
 
   # System configuration
-  system = {
-    stateVersion = 6;
-  };
+  system.stateVersion = 6;
 
   # Power management
-  power.sleep =
-    {
-      display = 15;
-      computer = 30;
-    }
-    // lib.optionalAttrs config.device.isIntel {
-      harddisk = 10; # No-op on Apple Silicon
-    };
+  power.sleep = {
+    display = 15;
+    computer = 30;
+  };
 }

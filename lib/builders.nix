@@ -64,10 +64,7 @@
               inputs.emacs-overlay.overlays.default
               overlay
             ];
-            config = {
-              allowUnfree = true;
-              allowDeprecatedx86_64Darwin = system == "x86_64-darwin";
-            };
+            config.allowUnfree = true;
           };
         }
         ../hosts/${name}/configuration.nix

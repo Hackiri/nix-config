@@ -1,9 +1,5 @@
 # Darwin networking configuration
-{
-  config,
-  lib,
-  ...
-}: {
+_: {
   networking = {
     # Backup DNS resolvers (Cloudflare + Quad9)
     dns = [
@@ -13,15 +9,10 @@
 
     # Common macOS network service names. Update this list if your hardware
     # has different interface names (check: networksetup -listallnetworkservices).
-    knownNetworkServices =
-      [
-        "Wi-Fi"
-        "iPad USB"
-        "iPhone USB"
-      ]
-      ++ lib.optionals config.device.isIntel [
-        "USB 10/100/1000 LAN 2"
-        "Thunderbolt Bridge"
-      ];
+    knownNetworkServices = [
+      "Wi-Fi"
+      "iPad USB"
+      "iPhone USB"
+    ];
   };
 }
