@@ -13,14 +13,7 @@ lint:
 host name:
     nix flake new -t .#host hosts/{{name}}
 
-package-imports:
-    bash tests/package-imports.sh
-
-program-imports:
-    bash tests/program-imports.sh
-
-sops-imports:
-    bash tests/sops-imports.sh
-
-capability-imports:
-    bash tests/capability-imports.sh
+# Authoritative local and CI validation
+check:
+    nix flake check --no-update-lock-file --print-build-logs
+    bash tests/semantic-config.sh
