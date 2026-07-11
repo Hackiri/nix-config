@@ -339,13 +339,11 @@ nxsearch     # Search packages through nh
 nxrepl       # Interactive nix REPL
 nxdev        # Enter development shell
 
-# Update every input, then validate the result
-nix flake update
-just check
-
-# Update one input, then validate the result
+# Update one reviewed input, then validate the result and Intel system
 nix flake update nixpkgs
 just check
+nix build --no-link --no-update-lock-file \
+  .#darwinConfigurations.mbp.system
 ```
 
 ### Repository Validation
