@@ -6,7 +6,10 @@ result*
 # Nix build logs
 *.log
 
-docs/*
+# Keep local notes ignored while exposing maintained plans and workflows.
+/docs/*
+!/docs/superpowers/
+!/docs/workflows/
 
 # Claude
 .claude
