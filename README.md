@@ -11,18 +11,22 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains
 
-## ⚠️ x86_64-darwin (Intel Mac) Notice
+## Intel Compatibility Policy
 
-> [!CAUTION]
-> Nixpkgs **26.05 is the last release** to support `x86_64-darwin`. Binary builds and source support will continue until 26.05 goes end-of-life (late 2026), but **26.11 will drop x86_64-darwin entirely** — no binary cache, no source builds.
+This `legacy-intel` branch preserves the `mbp` host on the locked Nixpkgs,
+nix-darwin, and Home Manager 26.05-compatible stack. Nixpkgs 26.11 and newer no
+longer support `x86_64-darwin`, so this branch does not take scheduled broad
+input updates.
 
-> [!IMPORTANT]
-> This configuration uses `nixos-26.05` (stable) exclusively. The `nixpkgs-unstable` channel is **not** used because unstable packages receive less CI coverage on Intel Mac and are more likely to have build failures on `x86_64-darwin`. The `allowDeprecatedx86_64Darwin = true` flag is set in `flake.nix` to suppress the deprecation warning.
+- Run `just check` before every change.
+- Build `.#darwinConfigurations.mbp.system` before accepting a change.
+- Use a targeted command such as `nix flake update home-manager` only for a
+  reviewed compatibility, security, or application-source repair.
+- Keep state versions unchanged.
+- Recover the initial verified baseline from tag
+  `legacy-intel-26.05-baseline`.
 
-> [!TIP]
-> 🖥️ Install **NixOS** on the hardware (supported indefinitely on x86_64)
-> 🍎 Switch to **MacPorts** (plans to maintain Intel support longer than Homebrew)
-> 💻 Migrate to **Apple Silicon** hardware
+Publication of this local branch and tag is a separate explicit operation.
 
 ## Structure
 
