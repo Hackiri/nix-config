@@ -4,40 +4,34 @@
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
-  vim.fn.system({
+  local clone_ok, clone = pcall(vim.system, {
     "git",
     "clone",
     "--filter=blob:none",
     "https://github.com/folke/lazy.nvim.git",
     "--branch=stable",
     lazypath,
-  })
+  }, { text = true })
+  if not clone_ok then
+    error("Failed to start lazy.nvim clone:\n" .. tostring(clone))
+  end
+
+  clone = clone:wait()
+  if clone.code ~= 0 then
+    local output = clone.stderr and clone.stderr ~= "" and clone.stderr or clone.stdout
+    error("Failed to clone lazy.nvim:\n" .. (output and output ~= "" and output or "unknown error"))
+  end
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- Python is provided by Nix via extraPython3Packages in default.nix
 -- Neovim will automatically find it in PATH
 
--- Safe require function to handle missing modules
-local function safe_require(module)
-  local ok, result = pcall(require, module)
-  if not ok then
-    vim.notify("Could not load " .. module, vim.log.levels.WARN)
-    return nil
-  end
-  return result
-end
-
 -- Set up lazy.nvim
 require("lazy").setup({
   defaults = {
     lazy = true, -- Enable lazy loading by default for better startup time
     version = false,
-  },
-  dev = {
-    path = vim.fn.stdpath("data") .. "/lazy",
-    patterns = { "." },
-    fallback = true,
   },
   spec = {
     -- Import LazyVim plugins
