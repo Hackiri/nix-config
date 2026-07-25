@@ -22,7 +22,7 @@
 
 return {
   "ibhagwan/fzf-lua",
-  -- Use latest version for Neovim 0.11.3 treesitter compatibility
+  -- Track the latest fzf-lua release.
   version = false,
   cmd = "FzfLua",
   dependencies = {
@@ -264,12 +264,9 @@ return {
         formatter = "path.filename_first", -- Show filename before path for easier scanning
       },
 
-      -- Previewers configuration - fix for Neovim 0.11.3 treesitter compatibility
+      -- Previewers configuration
       previewers = {
         builtin = {
-          -- Disable treesitter highlighting in previewer to avoid API compatibility issues
-          treesitter = { enable = false },
-          -- Use syntax highlighting instead
           syntax = true,
           syntax_limit_b = 1024 * 100, -- 100KB limit
           extensions = {

@@ -33,7 +33,7 @@ return {
     -- Provider pair: {main, fallback} — nvim-ufo only supports two
     provider_selector = function(_, filetype, _)
       local ts_filetypes = { "markdown", "bash", "zsh", "sh" }
-      if vim.tbl_contains(ts_filetypes, filetype) then
+      if vim.list_contains(ts_filetypes, filetype) then
         return { "treesitter", "indent" }
       end
       return { "lsp", "indent" }

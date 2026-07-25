@@ -116,30 +116,10 @@ vim.api.nvim_create_autocmd("ColorScheme", {
   end,
 })
 
--- Configure border characters for floating windows
-local border = {
-  { "┌", "FloatBorder" },
-  { "─", "FloatBorder" },
-  { "┐", "FloatBorder" },
-  { "│", "FloatBorder" },
-  { "┘", "FloatBorder" },
-  { "─", "FloatBorder" },
-  { "└", "FloatBorder" },
-  { "│", "FloatBorder" },
-}
-
--- Set default border for LSP floating windows (Neovim 0.11+)
-local _ofp = vim.lsp.util.open_floating_preview
-vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
-  opts = opts or {}
-  opts.border = opts.border or border
-  return _ofp(contents, syntax, opts, ...)
-end
-
--- Set border for diagnostic floating windows
+-- 'winborder' in options.lua supplies the default border for all floating
+-- windows, including LSP and diagnostic previews.
 vim.diagnostic.config({
   float = {
-    border = border,
     style = "minimal",
   },
 })

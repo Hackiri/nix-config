@@ -103,17 +103,23 @@ map("n", "<leader>dv", function()
   local current_config = vim.diagnostic.config()
   local current_virt_text = current_config.virtual_text
 
-  if type(current_virt_text) == "table" and current_virt_text.only_current_line then
+  if type(current_virt_text) == "table" and current_virt_text.current_line then
     -- Currently showing only current line, switch to all lines
+    local all_lines_config = {}
+    for key, value in pairs(current_virt_text) do
+      if key ~= "current_line" then
+        all_lines_config[key] = value
+      end
+    end
     vim.diagnostic.config({
-      virtual_text = vim.tbl_extend("force", current_virt_text, { only_current_line = false }),
+      virtual_text = all_lines_config,
     })
     vim.notify("Virtual text: All lines", vim.log.levels.INFO)
   else
     -- Currently showing all lines, switch to current line only
     local virt_text_config = type(current_virt_text) == "table" and current_virt_text or {}
     vim.diagnostic.config({
-      virtual_text = vim.tbl_extend("force", virt_text_config, { only_current_line = true }),
+      virtual_text = vim.tbl_extend("force", virt_text_config, { current_line = true }),
     })
     vim.notify("Virtual text: Current line only", vim.log.levels.INFO)
   end

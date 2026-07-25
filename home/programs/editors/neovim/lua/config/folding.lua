@@ -19,26 +19,17 @@ function M.enable_lsp_folding(bufnr)
   vim.opt_local.foldmethod = "expr"
   vim.opt_local.foldexpr = "v:lua.vim.lsp.foldexpr()"
 
-  -- Use LSP foldtext if available (Neovim 0.10+)
-  if vim.lsp.foldtext then
-    vim.opt_local.foldtext = "v:lua.vim.lsp.foldtext()"
-  end
+  vim.opt_local.foldtext = "v:lua.vim.lsp.foldtext()"
 
-  -- Auto-fold imports if supported (Neovim 0.10+)
-  if vim.lsp.foldclose then
-    local clients = vim.lsp.get_clients({ bufnr = bufnr })
-    if clients and #clients > 0 then
-      local client = vim.lsp.get_client_by_id(clients[1].id)
-      if client and client.server_capabilities.foldingRangeProvider then
-        -- Delay fold close to ensure LSP has sent folding ranges
-        vim.defer_fn(function()
-          -- Gracefully handle case where folds don't exist yet
-          pcall(function()
-            vim.lsp.foldclose("imports", bufnr)
-          end)
-        end, 200) -- Wait 200ms for LSP to provide folding ranges
+  -- Auto-fold imports after the server has had time to publish folding ranges.
+  local clients = vim.lsp.get_clients({ bufnr = bufnr, method = "textDocument/foldingRange" })
+  if #clients > 0 then
+    local winid = vim.fn.bufwinid(bufnr)
+    vim.defer_fn(function()
+      if winid ~= -1 and vim.api.nvim_win_is_valid(winid) and vim.api.nvim_win_get_buf(winid) == bufnr then
+        pcall(vim.lsp.foldclose, "imports", winid)
       end
-    end
+    end, 200)
   end
 
   current_method[bufnr] = "lsp"
@@ -58,9 +49,7 @@ function M.setup_folding(bufnr)
   if lsp_fold_buffers[bufnr] then
     vim.opt_local.foldmethod = "expr"
     vim.opt_local.foldexpr = "v:lua.vim.lsp.foldexpr()"
-    if vim.lsp.foldtext then
-      vim.opt_local.foldtext = "v:lua.vim.lsp.foldtext()"
-    end
+    vim.opt_local.foldtext = "v:lua.vim.lsp.foldtext()"
     current_method[bufnr] = "lsp"
     return
   end
@@ -68,13 +57,7 @@ function M.setup_folding(bufnr)
   -- Try to use treesitter if available
   if M.has_treesitter() then
     vim.opt_local.foldmethod = "expr"
-    -- Prefer the new API available on modern Neovim
-    if vim.treesitter and type(vim.treesitter.foldexpr) == "function" then
-      vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-    else
-      -- Fallback to legacy expr if present
-      vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
-    end
+    vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
     current_method[bufnr] = "treesitter"
     return
   end

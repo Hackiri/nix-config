@@ -389,10 +389,12 @@ return {
         callback = function(event)
           local client = vim.lsp.get_client_by_id(event.data.client_id)
 
-          -- Enable LSP-based folding for this buffer
-          pcall(function()
-            require("config.folding").enable_lsp_folding(event.buf)
-          end)
+          -- Prefer LSP folding only when the attached server provides ranges.
+          if client and client:supports_method("textDocument/foldingRange") then
+            pcall(function()
+              require("config.folding").enable_lsp_folding(event.buf)
+            end)
+          end
 
           -- Enable code lenses (displayed as virtual lines in 0.12)
           if client and client:supports_method("textDocument/codeLens") then
@@ -464,7 +466,7 @@ return {
       -- Configure diagnostics
       -- NOTE: Neovim 0.11+ changes:
       --   - Virtual text is now opt-in (disabled by default)
-      --   - New 'only_current_line' option available to reduce clutter
+      --   - New 'current_line' option available to reduce clutter
       --   - Virtual lines option available (set virtual_lines = true)
       -- We explicitly enable virtual_text here and provide a toggle via <leader>dv
       vim.diagnostic.config({
@@ -479,9 +481,7 @@ return {
           end,
           source = "if_many",
           spacing = 2,
-          -- Set only_current_line = true to show diagnostics only for the current line
-          -- Toggle this via <leader>dv keymap
-          only_current_line = false,
+          -- Toggle current-line-only display via the <leader>dv keymap.
         },
         signs = {
           text = {

@@ -97,9 +97,9 @@ vim.opt.timeout = true
 vim.opt.timeoutlen = 300 -- Time to wait for a mapped sequence to complete
 
 -- Diff
--- Neovim 0.12 added "indent-heuristic" and "inline:char" to defaults; appending
--- explicitly so older nvim still gets them, then linematch for smart hunk align.
-vim.opt.diffopt:append({ "indent-heuristic", "inline:char", "linematch:60" })
+-- Keep the 0.12 defaults and use a larger smart-hunk alignment limit.
+vim.opt.diffopt:remove("linematch:40")
+vim.opt.diffopt:append("linematch:60")
 
 -- Neovim 0.12: "view" applies to tagstack jumps too — preserve scroll position.
 vim.opt.jumpoptions = "view,stack"

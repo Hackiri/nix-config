@@ -117,7 +117,7 @@ M.setup = function()
     callback = function(event)
       local exclude = { "gitcommit" }
       local buf = event.buf
-      if vim.tbl_contains(exclude, vim.bo[buf].filetype) then
+      if vim.list_contains(exclude, vim.bo[buf].filetype) then
         return
       end
       local mark = vim.api.nvim_buf_get_mark(buf, '"')
@@ -327,7 +327,7 @@ M.setup = function()
       return
     end
 
-    local searchMovement = vim.tbl_contains({ "n", "N", "*", "#" }, key)
+    local searchMovement = vim.list_contains({ "n", "N", "*", "#" }, key)
 
     if searchCancelled or (not searchMovement and not searchConfirmed) then
       vim.opt.hlsearch = false
