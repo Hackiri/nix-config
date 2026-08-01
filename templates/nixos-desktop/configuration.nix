@@ -24,6 +24,10 @@
     }
   ];
 
+  # Populate /var/lib/hermes/env (or point environmentFile at a sops secret)
+  # before deploying, or the gateway starts without a provider key.
+  features.hermes-agent.enable = true;
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
