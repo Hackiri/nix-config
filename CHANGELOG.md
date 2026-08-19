@@ -49,12 +49,6 @@
   - Added template README and Home Manager entrypoint
   - Updated host/template docs and related references in `PROFILE_MAP.md`, `flake.nix`, and setup guidance
 
-### Module Naming
-
-- **refactor(services):** Rename Darwin Hermes module to clarify it installs a package rather than managing a daemon (`d55bf40`)
-  - `modules/services/darwin/hermes-agent-darwin.nix` → `modules/services/darwin/hermes-agent-package.nix`
-  - Updated Darwin host imports and host template comments
-
 ## 2026-04-02
 
 ### Flake Modularization

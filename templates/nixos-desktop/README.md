@@ -1,7 +1,7 @@
 # NixOS Desktop Host Template
 
 Copy this directory into `hosts/<name>` for a GNOME desktop NixOS machine with
-Home Manager, Hermes, PipeWire, printing, and placeholder hardware config.
+Home Manager, PipeWire, printing, and placeholder hardware config.
 
 ## Usage
 

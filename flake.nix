@@ -27,15 +27,6 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Hermes Agent NixOS service module.
-    # Tier 2 platform upstream: commits to main break the packages regularly, so
-    # this tracks a known-good rev rather than the branch. Bump deliberately and
-    # verify with `nix build .#darwinConfigurations.<host>.pkgs.hermes-agent`.
-    # 0.19.1 (e444d165) fails: hermes-tui's npm lockfile is out of sync with its
-    # npmDepsHash, so @nous-research/ui hits ENOTCACHED in the sandbox.
-    hermes-agent.url = "github:NousResearch/hermes-agent/1161cc0b53fbc89abe81283b13f81d85784bf611";
-    hermes-agent.inputs.nixpkgs.follows = "nixpkgs";
-
     # Git hooks management
     # Tracks default branch; nixpkgs alignment via `follows` and flake.lock SHA ensure reproducibility.
     # git-hooks.nix has no stable release branches — pinning to default branch is the upstream convention.

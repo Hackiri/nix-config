@@ -461,7 +461,6 @@ The environment loads/unloads automatically as you enter/leave the directory.
 This repo includes an optional import-only Home Manager capability for AI-assisted development:
 
 - Import `home/profiles/capabilities/agent-dev.nix` to install local agent workflow commands.
-- Hermes Agent installs when available for the host platform.
 - `agent-guard` checks agent-generated changes before review.
 - `agent-eval-host mbp2` evaluates a Darwin host output without building it.
 - `nix flake init -t ~/nix-config#ai-python` creates a Python AI app with uv and evals.

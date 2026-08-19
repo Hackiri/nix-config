@@ -6,7 +6,6 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/system/nixos
-    ../../modules/services/nixos/hermes-agent.nix
     ../../modules/services/nixos/desktop-gnome.nix
     ../../modules/services/nixos/pipewire.nix
     ../../modules/services/nixos/printing.nix
@@ -23,10 +22,6 @@
       message = "templates/nixos-desktop/hardware-configuration.nix contains placeholder UUIDs; replace them with values from `nixos-generate-config` before deploying";
     }
   ];
-
-  # Populate /var/lib/hermes/env (or point environmentFile at a sops secret)
-  # before deploying, or the gateway starts without a provider key.
-  features.hermes-agent.enable = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

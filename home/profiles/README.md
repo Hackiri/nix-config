@@ -78,7 +78,6 @@ Provides AI agent workflow tooling when imported:
 
 - `agent-guard`
 - `agent-eval-host`
-- Hermes Agent when available for the host platform
 
 ### `capabilities/kubernetes.nix`
 

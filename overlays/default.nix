@@ -6,10 +6,5 @@
     name: name != "default.nix" && builtins.match ".*\\.nix" name != null
   ) (builtins.attrNames dir);
   overlays = map (name: import (./. + "/${name}") {inherit inputs;}) overlayFiles;
-
-  hermesPkgs = prev.extend inputs.hermes-agent.overlays.default;
 in
   (prev.lib.composeManyExtensions overlays) final prev
-  // {
-    inherit (hermesPkgs) hermes-agent;
-  }
