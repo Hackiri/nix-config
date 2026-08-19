@@ -1,20 +1,15 @@
-# Agent development workflow capability
-# Purpose: optional local tools for AI-assisted development.
+# LLM agent development workflow capability
+# Purpose: provider-neutral local tools for AI-assisted development.
 #
 # Usage:
 #   imports = [ ../../home/profiles/capabilities/agent-dev.nix ];
 {
   config,
   hostName,
-  inputs,
   lib,
   pkgs,
   ...
 }: let
-  inherit (pkgs.stdenv.hostPlatform) system;
-  hermesPackages = inputs.hermes-agent.packages.${system} or {};
-  hermesPackageAvailable = hermesPackages ? default;
-
   # Auto-discover Darwin hosts from the hosts/ directory
   hostNames = builtins.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../../../hosts));
   darwinHosts = builtins.filter (name: (import (../../../hosts + "/${name}/meta.nix")).type == "darwin") hostNames;
@@ -79,19 +74,28 @@
   '';
 in {
   config = {
-    warnings = lib.optionals (!hermesPackageAvailable) [
-      "Hermes Agent has no package for ${system}; Hermes Agent will not be installed"
-    ];
-
     home.packages =
       [
         agentGuard
         agentEvalHost
       ]
-      ++ lib.optionals hermesPackageAvailable [
-        pkgs.hermes-agent
-      ]
       ++ (with pkgs; [
+        # Shared runtimes and language intelligence used by LLM agent hooks,
+        # plugins and subprocesses, regardless of the agent provider.
+        nodejs
+        pyright
+        lua-language-server
+        rust-analyzer
+
+        # Repository inspection and validation tools.
+        ripgrep
+        fd
+        git
+        gh
+        shellcheck
+        yq-go
+
+        # Nix and general development workflow tools.
         alejandra
         deadnix
         statix
