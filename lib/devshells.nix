@@ -23,6 +23,7 @@
       python314Packages.ruff
       python314Packages.mypy
       python314Packages.pytest
+      python314Packages.pyyaml
     ];
     shellHook = ''
       echo "Python $(python3 --version) dev environment"
