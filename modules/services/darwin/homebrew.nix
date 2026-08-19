@@ -88,6 +88,7 @@ in {
       brews =
         [
           "podman" # Podman
+          "kdash" # Kubernetes dashboard TUI (removed from nixpkgs 2026-06-11)
         ]
         ++ lib.optionals isAppleSiliconDarwin [
           "krunkit"
