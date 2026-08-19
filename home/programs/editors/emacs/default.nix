@@ -324,11 +324,11 @@ in {
         typescript-language-server
 
         # Python development tools (emacs-specific)
-        python3Packages.black
-        python3Packages.pyflakes
-        python3Packages.isort
+        python314Packages.black
+        python314Packages.pyflakes
+        python314Packages.isort
         pipenv
-        python3Packages.pytest
+        python314Packages.pytest
 
         # Web development tools (emacs-specific)
         stylelint
