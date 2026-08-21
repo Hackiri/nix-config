@@ -6,7 +6,7 @@
 }: let
   # Shared PATH for all activation scripts that need Nix tool access
   activationPath = lib.makeBinPath [
-    pkgs.emacs-git
+    pkgs.emacs
     pkgs.git
     pkgs.ripgrep
     pkgs.fd
@@ -28,7 +28,7 @@ in {
     # Emacs daemon service for macOS
     services.emacs = {
       enable = true;
-      package = pkgs.emacs-git;
+      package = pkgs.emacs;
       client = {
         enable = true;
         arguments = ["-c"];
@@ -38,7 +38,7 @@ in {
 
     programs.emacs = {
       enable = true;
-      package = lib.mkForce pkgs.emacs-git;
+      package = lib.mkForce pkgs.emacs;
       extraPackages = epkgs: [
         # Tree-sitter grammars for all languages
         epkgs.treesit-grammars.with-all-grammars
@@ -106,7 +106,7 @@ in {
             ${doomEnv}
 
             # Check Emacs version
-            EMACS_VERSION=$("${pkgs.emacs-git}/bin/emacs" --version | head -n 1 | cut -d' ' -f3)
+            EMACS_VERSION=$("${pkgs.emacs}/bin/emacs" --version | head -n 1 | cut -d' ' -f3)
             echo "Found Emacs version: $EMACS_VERSION"
             if [[ "$EMACS_VERSION" < "28.0" ]]; then
               echo "Warning: Doom Emacs works best with Emacs 28.0 or newer"
@@ -224,8 +224,8 @@ in {
             GenericName=Text Editor
             Comment=Edit text
             MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
-            Exec=${pkgs.emacs-git}/bin/emacs %F
-            Icon=${pkgs.emacs-git}/share/icons/hicolor/scalable/apps/emacs.svg
+            Exec=${pkgs.emacs}/bin/emacs %F
+            Icon=${pkgs.emacs}/share/icons/hicolor/scalable/apps/emacs.svg
             Type=Application
             Terminal=false
             Categories=Development;TextEditor;
@@ -240,8 +240,8 @@ in {
             GenericName=Text Editor
             Comment=Emacs with Doom configuration
             MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
-            Exec=${pkgs.emacs-git}/bin/emacs %F
-            Icon=${pkgs.emacs-git}/share/icons/hicolor/scalable/apps/emacs.svg
+            Exec=${pkgs.emacs}/bin/emacs %F
+            Icon=${pkgs.emacs}/share/icons/hicolor/scalable/apps/emacs.svg
             Type=Application
             Terminal=false
             Categories=Development;TextEditor;
@@ -265,7 +265,7 @@ in {
             export EMACSDIR="$HOME/.config/emacs"
             export DOOMDIR="$HOME/.config/doom"
             export PATH="$EMACSDIR/bin:$PATH"
-            exec "${pkgs.emacs-git}/bin/emacs"
+            exec "${pkgs.emacs}/bin/emacs"
             EOF
             chmod +x "$doom_launcher"
             echo "Created Doom Emacs launcher script at '$doom_launcher'"
