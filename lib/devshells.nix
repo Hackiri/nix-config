@@ -24,6 +24,7 @@
       python314Packages.mypy
       python314Packages.pytest
       python314Packages.pyyaml
+      python314Packages.python-dotenv
     ];
     shellHook = ''
       echo "Python $(python3 --version) dev environment"

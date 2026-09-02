@@ -18,7 +18,8 @@ _: {
                   python314Packages.pip
                   python314Packages.ruff
                   python314Packages.mypy
-                  python314Packages.pytest'
+                  python314Packages.pytest
+                  python314Packages.python-dotenv'
             rust '      rustc
                   cargo
                   rustfmt

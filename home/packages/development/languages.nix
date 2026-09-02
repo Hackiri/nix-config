@@ -14,6 +14,7 @@
     python314Packages.markdown # Markdown processing
     python314Packages.tabulate # Pretty-print tabular data
     python314Packages.pylatexenc # LaTeX to text converter
+    python314Packages.python-dotenv # Load environment variables from .env files
 
     # Node, Go, Rust, Ruby, PHP available via devShells:
     # nix develop .#node / .#go / .#rust / .#ruby / .#php
