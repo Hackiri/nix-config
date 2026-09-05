@@ -206,7 +206,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    d. **Create and encrypt secrets:**
 
-   The default secrets in `sops.nix` are fully customizable — add, remove, or replace them to fit your needs. The included defaults are just a starting point:
+   The default secrets are fully customizable — add, remove, or replace them to fit your needs. The included defaults are just a starting point:
 
    ```bash
    cat > secrets/secrets.yaml << EOF
@@ -223,7 +223,36 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    sops -e -i secrets/secrets.yaml
    ```
 
-   The SOPS capability expects per-host signing key secrets named `git-signingKey-${hostName}`. Edit the `secrets` attrset in `home/profiles/capabilities/sops.nix` when you add or remove managed secrets.
+   e. **Add, change, or remove a secret:**
+
+   Secrets are split in two places:
+   - `home/profiles/capabilities/sops.nix` — the machinery plus the three git secrets its hooks require (`git-userName`, `git-userEmail`, and the per-host `git-signingKey-${hostName}`). Normally not edited.
+   - `hosts/<host>/sops.nix` — every other secret for that machine. This is the file to edit.
+
+   To add a value:
+
+   ```bash
+   # 1. Add the key to the encrypted store (opens $EDITOR, re-encrypts on save)
+   sops secrets/secrets.yaml
+   ```
+
+   ```nix
+   # 2. Declare it in hosts/<host>/sops.nix with its decrypted destination
+   config.sops.secrets = {
+     github-token = {
+       path = "${config.home.homeDirectory}/.config/secrets/github-token";
+       mode = "0400";   # 0400 read-only, 0600 when a tool must rewrite it
+     };
+   };
+   ```
+
+   ```bash
+   # 3. Rebuild, then validate structure without decrypting values
+   sudo darwin-rebuild switch --flake .#YOUR_HOSTNAME
+   just check
+   ```
+
+   The YAML key name must match the Nix attribute name. Removing a secret means deleting it from both files. `just check` compares the declared attribute names against the encrypted file and fails if they drift.
 
    **Example use cases for sops:**
    - **Git credentials** — Encrypt your name, email, and GPG signing key so they're never stored in plaintext in the repo. Git hooks automatically read from sops-decrypted secrets on checkout and merge.

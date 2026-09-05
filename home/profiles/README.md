@@ -94,7 +94,7 @@ Provides a local Redis user service when imported.
 
 ### `capabilities/sops.nix`
 
-Provides encrypted secrets integration when imported. The git signing key secret is selected by host convention: `git-signingKey-${hostName}`.
+Provides encrypted secrets integration when imported. The git signing key secret is selected by host convention: `git-signingKey-${hostName}`. This module declares only the git secrets its hooks require; host-specific secrets are declared in `hosts/<host>/sops.nix`.
 
 ### `platforms/darwin.nix`
 

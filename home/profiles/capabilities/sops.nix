@@ -4,6 +4,10 @@
 # Usage:
 #   imports = [ ../../home/profiles/capabilities/sops.nix ];
 #
+# This module owns the sops-nix machinery and the git secrets its hooks need.
+# Add or remove any other secret in hosts/<host>/sops.nix, which documents the
+# add-a-value workflow.
+#
 # Prerequisites (when enabled):
 #   1. Generate age key:  age-keygen > ~/.config/sops/age/keys.txt
 #   2. Update .sops.yaml with your age public key
@@ -145,6 +149,8 @@ in {
       defaultSopsFile = ../../../secrets/secrets.yaml;
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
+      # Core git secrets required by the hooks above. Host-specific secrets
+      # (SSH configs, API tokens, keys) are declared in hosts/<host>/sops.nix.
       secrets = {
         git-userName = {
           path = "${config.home.homeDirectory}/.config/git/username";
@@ -157,10 +163,6 @@ in {
         "${signingKeySecret}" = {
           path = "${config.home.homeDirectory}/.config/git/signingkey";
           mode = "0400";
-        };
-        ssh-config-srv696730 = {
-          path = "${config.home.homeDirectory}/.ssh/conf.d/srv696730";
-          mode = "0600";
         };
       };
     };
