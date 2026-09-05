@@ -340,39 +340,24 @@ The `nixswitch` alias automatically uses the current host's name — no need to 
 
 **Note:** This configuration integrates home-manager through nix-darwin/NixOS modules, so there's no separate home-manager-only command. User configurations are applied together with system configurations.
 
-### Doom Emacs Reconciliation
+### Doom Emacs
 
-Doom's source is pinned by Nix, but package reconciliation is deliberately not
-run during activation. After the first activation, after changing
-`~/.config/doom`, or after updating the pinned Doom revision, run:
+Configured in `home/programs/editors/emacs/default.nix`; `doom.d/` is copied to
+`~/.config/doom` and `doom sync` runs at the end of every activation. That sync
+clones packages from upstream, so a rebuild is not offline; a failure warns
+instead of aborting activation. Run `doom sync` by hand after editing
+`~/.config/doom` directly.
 
-```bash
-doom sync
-```
-
-This explicitly runs the pinned Doom executable from `~/.config/emacs`; it does
-not clone or execute mutable upstream code during Home Manager activation.
-
-The pin lives in `home/programs/editors/emacs/default.nix`. Doom v3 keeps its
-modules in the `sources/doom+` git submodule, so the fetch sets
-`fetchSubmodules = true`. Without it the checkout contains no modules and every
-module listed in `doom.d/init.el` is silently missing — `doom sync` succeeds but
-installs only Doom's core packages. When bumping `rev`, keep `fetchSubmodules`
-and update `hash` from:
+**Bumping the pin:** Doom v3 keeps its modules in the `sources/doom+` submodule,
+so the fetch needs `fetchSubmodules = true` — without it no module in
+`doom.d/init.el` exists and sync installs only Doom's core packages. Get the new
+hash with:
 
 ```bash
 nix run 'nixpkgs#nix-prefetch-git' -- \
   --url https://github.com/doomemacs/doomemacs \
   --rev <NEW_REV> --fetch-submodules
 ```
-
-**`doom sync` fails to clone a package:** a `fatal: could not read Username for
-'https://github.com'` error during clone means the recipe points at a repository
-that no longer exists — GitHub answers 404 for a missing repository by asking for
-credentials. Verify with `git ls-remote <url>` and drop or repoint the recipe in
-`doom.d/packages.el`. The `gtea`, `gogs` and `buck` wrappers were removed from
-`ghub` 5.x and their `emacsmirror` mirrors are gone; they are no longer declared
-here.
 
 ### Available Commands
 

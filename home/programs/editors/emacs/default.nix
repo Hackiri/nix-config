@@ -15,6 +15,19 @@
     fetchSubmodules = true;
     hash = "sha256-Clu4VvP7RK5kRsDTVNQCEMj9OcNQqlFyXdAZw5reGbw=";
   };
+
+  # Doom needs ripgrep with PCRE2 support; the profile's plain ripgrep is not enough.
+  ripgrepPcre2 = pkgs.ripgrep.override {withPCRE2 = true;};
+
+  # Doom derives every writable path from DOOMLOCALDIR. Unset, it defaults to
+  # $EMACSDIR/.local, which here is the read-only Nix store copy of Doom, so the
+  # profile init file is never found (void-variable doom-modules) and native
+  # compilation has nowhere to write its eln cache.
+  doomEnv = {
+    EMACSDIR = "${config.home.homeDirectory}/.config/emacs";
+    DOOMDIR = "${config.home.homeDirectory}/.config/doom";
+    DOOMLOCALDIR = "${config.home.homeDirectory}/.local/share/doom";
+  };
 in {
   config = {
     # Emacs daemon service for macOS
@@ -26,6 +39,26 @@ in {
         arguments = ["-c"];
       };
       extraOptions = ["--daemon"];
+    };
+
+    # home.sessionVariables only reaches interactive shells. The Emacs daemon and
+    # Emacs.app are started by launchd, so they need doomEnv explicitly: the agent
+    # gets it directly, and `launchctl setenv` exports it to GUI launches.
+    launchd.agents = lib.mkIf pkgs.stdenv.isDarwin {
+      emacs.config.EnvironmentVariables = doomEnv;
+
+      doom-env = {
+        enable = true;
+        config = {
+          ProgramArguments = [
+            "/bin/sh"
+            "-c"
+            (lib.concatStringsSep " && "
+              (lib.mapAttrsToList (name: value: "launchctl setenv ${name} ${value}") doomEnv))
+          ];
+          RunAtLoad = true;
+        };
+      };
     };
 
     programs.emacs = {
@@ -147,6 +180,27 @@ in {
             export DOOMDIR="$HOME/.config/doom"
             chmod -R u+w "$DOOMDIR" || echo "Warning: Could not set permissions on $DOOMDIR"
           '';
+
+          # Reconcile Doom's packages with the pinned source on every rebuild.
+          # This clones from upstream, so activation performs network I/O and runs
+          # third-party code; a failure is reported but never aborts the rebuild.
+          syncDoom = lib.hm.dag.entryAfter ["setDoomPermissions"] ''
+            if [[ -v DRY_RUN ]]; then
+              echo "Would run doom sync"
+            else
+              export EMACSDIR="${doomEnv.EMACSDIR}"
+              export DOOMDIR="${doomEnv.DOOMDIR}"
+              export DOOMLOCALDIR="${doomEnv.DOOMLOCALDIR}"
+              export EMACSLOADPATH=""
+              export PATH="${lib.makeBinPath [pkgs.emacs pkgs.git ripgrepPcre2 pkgs.fd]}:$PATH"
+
+              if [ ! -x "$EMACSDIR/bin/doom" ]; then
+                echo "Warning: Doom executable not found at $EMACSDIR/bin/doom; skipping doom sync" >&2
+              elif ! "$EMACSDIR/bin/doom" sync; then
+                echo "Warning: doom sync failed; run it manually to see the full error" >&2
+              fi
+            fi
+          '';
         }
         // lib.optionalAttrs pkgs.stdenv.isLinux {
           setupLinuxDesktopFiles = lib.hm.dag.entryAfter ["writeBoundary"] ''
@@ -222,11 +276,7 @@ in {
           '';
         };
 
-      sessionVariables = {
-        EMACSDIR = "${config.home.homeDirectory}/.config/emacs";
-        DOOMDIR = "${config.home.homeDirectory}/.config/doom";
-        DOOMLOCALDIR = "${config.home.homeDirectory}/.local/share/doom";
-      };
+      sessionVariables = doomEnv;
 
       sessionPath = [
         "${config.home.homeDirectory}/.config/emacs/bin"
@@ -234,7 +284,7 @@ in {
 
       packages = with pkgs; [
         # Doom Emacs needs ripgrep with PCRE2 support (profiles provide plain ripgrep)
-        (ripgrep.override {withPCRE2 = true;})
+        ripgrepPcre2
 
         # Emacs icon fonts
         emacs-all-the-icons-fonts
