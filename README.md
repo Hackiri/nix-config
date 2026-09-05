@@ -6,8 +6,8 @@ A modular Nix configuration for macOS (nix-darwin) and NixOS with Home Manager i
 
 - **Cross-platform**: Works on both macOS and NixOS
 - **Modular architecture**: Organized system, service, and user configurations
-- **Import-based composition**: Layered user profiles provide shared defaults; hosts import package bundles, capabilities, and the central program module
-- **Import-managed programs**: Hosts import `home/programs/default.nix`; add or remove programs by editing that one file
+- **Import-based composition**: Layered user profiles provide shared package defaults; hosts import capabilities and the central program module
+- **Import-managed programs**: Hosts import `home/programs/default.nix`; category `default.nix` files select individual programs
 - **Homebrew integration**: macOS application management
 - **Development tools**: Neovim, Emacs, Git, and language toolchains
 
@@ -33,7 +33,7 @@ nix-config/
 |-- home/                       # Home Manager configurations
 |   |-- profiles/               # Layered platform and import-only capability modules
 |   |-- programs/               # Program import list and configurations (editors, shells, terminals, etc.)
-|   `-- packages/               # Plain package bundles imported from hosts/templates
+|   `-- packages/               # Package bundles composed by profile layers
 |-- modules/                    # System modules
 |   |-- system/                 # System configurations (darwin, nixos, shared)
 |   `-- services/               # Service modules (homebrew, NixOS services)
@@ -117,7 +117,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
    {
      type = "darwin";             # "darwin" or "nixos"
      system = "aarch64-darwin";    # "x86_64-linux" for NixOS
-     device = "laptop";           # "laptop" or "desktop"
+     device = "laptop";           # "laptop", "desktop", "server", or "vm"
      # username = "other";        # Optional: override defaultUsername for this host
    }
    ```
@@ -132,15 +132,15 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    **4. Import the central program module in `home.nix`:**
 
-   Program modules live under `home/programs/` and are imported by `home/programs/default.nix`.
-   Hosts import that module once; add or remove programs by editing `home/programs/default.nix`.
+   Program modules live under `home/programs/`. Hosts import `home/programs/default.nix`
+   once; that root selects categories, while each category's `default.nix` selects
+   its individual programs.
 
    ```nix
    {
      imports =
        [
          ../../home/profiles/platforms/darwin.nix
-         ../../home/packages/development
          ../../home/programs
        ];
    }
@@ -189,7 +189,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    ```bash
    mkdir -p ~/.config/sops/age
-   age-keygen > ~/.config/sops/age/keys.txt
+   age-keygen -o ~/.config/sops/age/keys.txt
    ```
 
    c. **Update `.sops.yaml`** with your public key (from the generated file):
@@ -241,12 +241,13 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
 ## Adding a New Host
 
-To deploy this configuration on another machine:
+To deploy this configuration on another machine, start from the cross-platform
+host scaffold rather than copying the existing `mbp2` Darwin host:
 
-1. **Create a host directory** by copying an existing one:
+1. **Create a host directory** from the host template:
 
    ```bash
-   cp -r hosts/mbp2 hosts/YOUR_HOSTNAME
+   cp -r templates/host hosts/YOUR_HOSTNAME
    ```
 
 2. **Edit `hosts/YOUR_HOSTNAME/meta.nix`** for the new machine:
@@ -255,25 +256,30 @@ To deploy this configuration on another machine:
    {
      type = "darwin";             # "darwin" or "nixos"
      system = "aarch64-darwin";   # Architecture of the new machine
-     device = "laptop";           # "laptop" or "desktop"
+     device = "laptop";           # "laptop", "desktop", "server", or "vm"
      username = "youruser";       # Optional: only needed if different from defaultUsername in flake.nix
    }
    ```
 
-3. **Disable SOPS** in `hosts/YOUR_HOSTNAME/home.nix` if you haven't set up age keys:
-
-   ```nix
-   imports = [
-     # ./sops.nix
-   ];
-   ```
+3. **Select the platform configuration:**
+   - In `configuration.nix`, keep the Darwin configuration or replace it with
+     the commented NixOS configuration and add the machine's generated
+     `hardware-configuration.nix`.
+   - In `home.nix`, select the matching Darwin or NixOS platform profile and
+     home-directory path.
+   - Add optional capabilities such as SOPS only after their prerequisites are
+     configured.
 
 4. **Build:**
 
    ```bash
+   # Darwin
    sudo darwin-rebuild switch --flake .#YOUR_HOSTNAME
-   # Or for first-time install:
+   # Or, for the first Darwin installation:
    nix run nix-darwin -- switch --flake .#YOUR_HOSTNAME
+
+   # NixOS
+   sudo nixos-rebuild switch --flake .#YOUR_HOSTNAME
    ```
 
 The host is auto-discovered from `meta.nix` — no changes to `flake.nix` required.
@@ -300,6 +306,19 @@ nixswitch  # Alias: nh os switch -H <hostname> ~/nix-config
 The `nixswitch` alias automatically uses the current host's name — no need to specify it.
 
 **Note:** This configuration integrates home-manager through nix-darwin/NixOS modules, so there's no separate home-manager-only command. User configurations are applied together with system configurations.
+
+### Doom Emacs Reconciliation
+
+Doom's source is pinned by Nix, but package reconciliation is deliberately not
+run during activation. After the first activation, after changing
+`~/.config/doom`, or after updating the pinned Doom revision, run:
+
+```bash
+doom-sync
+```
+
+This explicitly runs the pinned Doom executable from `~/.config/emacs`; it does
+not clone or execute mutable upstream code during Home Manager activation.
 
 ### Available Commands
 
@@ -343,8 +362,10 @@ just check
 
 ### Repository Validation
 
-`just check` is the authoritative local and CI gate. It builds the native,
-locked treefmt/git-hooks checks and evaluates the declared host behavior.
+`just check` is the authoritative local and CI gate. It builds native checks,
+evaluates every declared system without cross-building, validates all standalone
+templates in disposable copies, checks encrypted SOPS structure without
+decrypting values, and exercises host/layout/security regressions.
 
 ```bash
 just check
@@ -395,6 +416,11 @@ Then retry the commit.
 
 The dev shell also refreshes `.pre-commit-config.yaml` as a symlink to the generated config so manual runs and installed wrappers use the same configuration.
 
+SOPS checkout/merge hooks use Git's template directory for newly initialized
+repositories and do not set a global `core.hooksPath`, so repository-local
+pre-commit hooks continue to run. To install or refresh the SOPS hooks in an
+existing repository, run `install-sops-git-hooks` from that repository.
+
 #### **Quick Navigation**
 
 ```bash
@@ -422,7 +448,7 @@ Language-specific development environments are available as flake outputs (defin
 
 ```bash
 nix develop .#node      # Node.js, Yarn, pnpm, Bun, TypeScript, Prettier
-nix develop .#python    # Python 3.13, uv, pip, Ruff, mypy, pytest
+nix develop .#python    # Python 3.14, uv, pip, Ruff, mypy, pytest
 nix develop .#rust      # rustc, Cargo, rustfmt, Clippy, rust-analyzer
 nix develop .#go        # Go, gopls, golangci-lint, Delve
 nix develop .#ruby      # Ruby 3.4
@@ -433,7 +459,7 @@ The default `nix develop` shell provides Nix tooling (formatters, linters, pre-c
 
 ### Automatic activation with direnv
 
-**Auto-detect (recommended):** When you `cd` into a project with recognized markers (`package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, `Gemfile`, `composer.json`), a zsh hook prompts you to create a devShell. It generates `flake.nix` in `~/.cache/direnv-flakes/` and a `.envrc` pointing to it — no files added to the project.
+**Auto-detect (recommended):** When you `cd` into a project with recognized markers (`package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, `Gemfile`, `composer.json`), a zsh hook prompts you to create a devShell. It generates `flake.nix` in `~/.cache/direnv-flakes/` and creates a project-local `.envrc` pointing to it. For Git repositories, the hook adds `.envrc` and `.direnv` to `.git/info/exclude`, so no tracked files are added.
 
 **Manual setup:** You can also create `.envrc` files yourself:
 
@@ -462,7 +488,7 @@ This repo includes an optional import-only Home Manager capability for AI-assist
 
 - Import `home/profiles/capabilities/agent-dev.nix` to install local agent workflow commands.
 - `agent-guard` checks agent-generated changes before review.
-- `agent-eval-host mbp2` evaluates a Darwin host output without building it.
+- `agent-eval-host <host>` evaluates any discovered Darwin or NixOS host output without building it.
 - `nix flake init -t ~/nix-config#ai-python` creates a Python AI app with uv and evals.
 - `docs/workflows/ai-agent-workflows.md` describes the review loop.
 - `docs/workflows/mcp-curation.md` describes MCP discovery and safe tool use.
@@ -480,42 +506,43 @@ nix flake init -t ~/nix-config#rust
 nix flake init -t ~/nix-config#go
 ```
 
-Each template provides a self-contained `flake.nix` with the same tooling as the corresponding development shell, so new projects work independently from this config.
+Each language template provides a self-contained `flake.nix` with the same tooling as the corresponding development shell. The AI Python template adds its own application and evaluation tools. New projects therefore work independently from this config.
 
 ## Troubleshooting
 
-### Activation Failing due to "Unexpected files in /etc" (nix.custom.conf)
+### Existing Determinate Nix installation
 
-If your very first `nix-darwin` installation fails with:
-
-```
-error: Unexpected files in /etc, aborting activation
-The following files have unrecognized content and would be overwritten:
-  /etc/nix/nix.custom.conf
-```
-
-This occurs because the Determinate Systems Nix installer places its own configuration file here, but `nix-darwin` requires total declarative control over `/etc/nix/`.
-
-Rename the old config so `nix-darwin` can safely write its own:
-
-```bash
-sudo mv /etc/nix/nix.custom.conf /etc/nix/nix.custom.conf.before-nix-darwin
-# Then re-run the switch command
-nix run nix-darwin -- switch --flake .#<hostname>
-```
+Darwin hosts use Determinate's nix-darwin module with `nix.enable = false`, so
+Determinate Nix retains ownership of its daemon and `/etc/nix` files while this
+flake declares supported custom settings through `determinateNix.customSettings`.
+Do not rename or replace `/etc/nix/nix.custom.conf` as part of normal activation.
 
 ### Homebrew Taps conflict after enabling `mutableTaps = false`
 
 If you see:
 
 ```
-Error: An existing /usr/local/Homebrew/Library/Taps is in the way
+Error: An existing <Homebrew prefix>/Library/Taps is in the way
 ```
 
-Remove the existing taps so nix-darwin can manage them declaratively:
+First inspect the Homebrew prefix and the directory that would be moved. Then
+move the existing taps aside so nix-darwin can manage them declaratively. This
+works with both Apple Silicon (`/opt/homebrew`) and Intel (`/usr/local`)
+installations and preserves a backup:
 
 ```bash
-sudo rm -rf /usr/local/Homebrew/Library/Taps
+set -euo pipefail
+brew_prefix="$(brew --prefix)"
+case "$brew_prefix" in
+  /opt/homebrew | /usr/local) ;;
+  *) printf 'Unexpected Homebrew prefix: %s\n' "$brew_prefix" >&2; exit 1 ;;
+esac
+taps_dir="$brew_prefix/Library/Taps"
+backup_dir="${taps_dir}.before-nix-homebrew.$(date +%Y%m%d%H%M%S)"
+printf 'Moving %s\n' "$taps_dir"
+test -d "$taps_dir"
+test ! -e "$backup_dir"
+sudo mv "$taps_dir" "$backup_dir"
 sudo darwin-rebuild switch --flake ~/nix-config#mbp2
 ```
 

@@ -14,23 +14,25 @@ cp -r templates/host hosts/<name>
 # 3. Edit configuration.nix — uncomment the right platform import
 #    Darwin: ../../modules/system/darwin
 #    NixOS:  ../../modules/system/nixos
+#    Keep or remove the explicit workstation role imports to select Homebrew
+#    (Darwin) or OpenSSH/Podman (NixOS).
 
 # 4. Edit home.nix — choose the right platform profile, add any optional
-#    capability profiles or package bundles you need, and keep ../../home/programs
+#    capabilities you need, and keep ../../home/programs
 #    imported for centrally managed program modules.
 # 5. Build and test
 darwin-rebuild build --flake .#<name>   # Darwin
 nixos-rebuild build --flake .#<name>    # NixOS
 ```
 
-Program modules are selected by editing `home/programs/default.nix`.
+`home/programs/default.nix` selects program categories. Select individual
+programs in the corresponding category's `default.nix`.
 
 ```nix
 {
   imports =
     [
       ../../home/profiles/platforms/darwin.nix
-      ../../home/packages/development
       ../../home/programs
     ];
 }

@@ -7,7 +7,6 @@ This file is the short reference for the current profile taxonomy and import flo
 ```text
 hosts/*/home.nix
 |-- platforms/darwin.nix or platforms/nixos.nix
-|-- optional: home/packages/development or individual bundle modules
 |-- home/programs/default.nix
 |-- optional: capabilities/kubernetes.nix
 |-- optional: capabilities/redis.nix
@@ -25,16 +24,9 @@ layers/foundation.nix
 
 layers/development.nix
   |-- layers/foundation.nix
-  `-- development behavior, defaults, and package composition
+  `-- packages/development/default.nix
 
 hosts/*/home.nix
-  |-- packages/development/default.nix or individual bundles
-  |   |-- build.nix
-  |   |-- quality.nix
-  |   |-- databases.nix
-  |   |-- languages.nix
-  |   |-- security.nix
-  |   `-- web.nix
   `-- home/programs/default.nix
 
 platforms/darwin.nix
@@ -66,7 +58,6 @@ capabilities/sops.nix
 `hosts/mbp2/home.nix` composes:
 
 - `../../home/profiles/platforms/darwin.nix`
-- `../../home/packages/development`
 - `../../home/programs`
 - `../../home/profiles/capabilities/kubernetes.nix`
 - `../../home/profiles/capabilities/agent-dev.nix`
@@ -78,6 +69,6 @@ capabilities/sops.nix
 - `capabilities/*` means optional add-on behavior, services, or secrets
 - `platforms/*` means OS-specific composition
 - `packages/core/*` means always-useful baseline packages
-- `packages/development/*` means dev package bundles selected by hosts
-- `home/programs/default.nix` means the central program import list selected by hosts
+- `packages/development/*` means dev package bundles selected by the development layer
+- `home/programs/default.nix` means the central category list selected by hosts; category defaults select leaf programs
 - `packages/platform/*` means OS-specific package bundles

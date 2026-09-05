@@ -210,7 +210,7 @@ in {
             mkdir -p "$target_dir"
 
             doom_launcher="$target_dir/Doom Emacs.command"
-            cat > "$doom_launcher" << EOF
+            cat > "$doom_launcher" << 'EOF'
             #!/bin/zsh
             export EMACSDIR="$HOME/.config/emacs"
             export DOOMDIR="$HOME/.config/doom"
@@ -222,7 +222,7 @@ in {
             echo "Created Doom Emacs launcher script at '$doom_launcher'"
 
             doom_sync_launcher="$target_dir/Doom Sync.command"
-            cat > "$doom_sync_launcher" << EOF
+            cat > "$doom_sync_launcher" << 'EOF'
             #!/bin/zsh
             export EMACSDIR="$HOME/.config/emacs"
             export DOOMDIR="$HOME/.config/doom"

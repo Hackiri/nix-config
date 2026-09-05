@@ -20,7 +20,6 @@ in {
   # Common home-manager configuration (replaces home/shared/base.nix)
   home = {
     inherit username;
-    stateVersion = "25.05";
   };
 
   # Essential programs that work everywhere

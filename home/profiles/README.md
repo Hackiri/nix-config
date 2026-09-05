@@ -1,6 +1,6 @@
 # Home Manager Profiles
 
-This directory organizes Home Manager modules by role instead of by history. Hosts combine these profiles with package bundles and the central program module from `home/programs/default.nix`.
+This directory organizes Home Manager modules by role instead of by history. Hosts combine a platform profile with the central program module from `home/programs/default.nix` and optional capabilities.
 
 ## Structure
 
@@ -24,8 +24,8 @@ profiles/
 - `layers/`: broad opinionated stacks that compose behavior, defaults, and package bundles
 - `capabilities/`: import-only add-ons for behavior, services, and secrets
 - `platforms/`: OS-specific entry points that compose layers plus platform extras
-- `home/packages/*`: plain package bundles imported directly from hosts/templates
-- `home/programs/*`: program modules managed by imports in `home/programs/default.nix`, not by profile enable flags
+- `home/packages/*`: plain package bundles composed by profile layers
+- `home/programs/*`: the root selects categories; category `default.nix` files select individual program modules
 
 ## Hierarchy
 
@@ -36,7 +36,7 @@ layers/development.nix
   ->
 platforms/darwin.nix or platforms/nixos.nix
   ->
-hosts/*/home.nix imports package bundles and home/programs/default.nix
+hosts/*/home.nix imports home/programs/default.nix and optional capabilities
 ```
 
 Optional capability modules can be imported directly by hosts:
@@ -66,6 +66,7 @@ Provides:
 Composes:
 
 - `./foundation.nix`
+- `../../packages/development`
 
 Provides:
 
@@ -111,15 +112,14 @@ Composes:
 
 ## Host Usage
 
-Hosts import `home/programs/default.nix` and compose it with profile and package imports.
+Hosts import one platform profile and `home/programs/default.nix`, then add optional capabilities.
 
-macOS host with full development package bundles plus optional SOPS and Kubernetes:
+macOS host with the development layer plus optional SOPS and Kubernetes:
 
 ```nix
 {
   imports = [
     ../../home/profiles/platforms/darwin.nix
-    ../../home/packages/development
     ../../home/programs
     ../../home/profiles/capabilities/kubernetes.nix
     ./sops.nix
@@ -127,14 +127,12 @@ macOS host with full development package bundles plus optional SOPS and Kubernet
 }
 ```
 
-NixOS host with selected package bundles:
+NixOS host with the shared development layer:
 
 ```nix
 {
   imports = [
     ../../home/profiles/platforms/nixos.nix
-    ../../home/packages/development/build.nix
-    ../../home/packages/development/languages.nix
     ../../home/programs
   ];
 }

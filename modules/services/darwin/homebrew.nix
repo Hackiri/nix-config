@@ -89,10 +89,36 @@ in {
       # Generic CLI tools are managed through Nix/Home Manager.
       brews =
         [
+          # Explicitly include the installed dependency closure because
+          # `brew bundle cleanup` check mode treats undeclared dependencies as drift.
+          "ca-certificates"
+          "dav1d"
+          "libyaml"
+          "dtc"
+          "mpg123"
+          "lame"
+          "libvmaf"
+          "libvpx"
+          "openssl@3"
+          "opus"
+          "sdl3"
+          "sdl2-compat"
+          "svt-av1"
+          "x264"
+          "x265"
+          "ffmpeg"
+          "gitleaks"
+          "libepoxy"
+          "molten-vk"
+          "xz"
           "podman" # Podman
           "kdash" # Kubernetes dashboard TUI (removed from nixpkgs 2026-06-11)
         ]
         ++ lib.optionals isAppleSiliconDarwin [
+          "slp/krun/gvproxy"
+          "slp/krun/libkrunfw"
+          "slp/krun/virglrenderer"
+          "slp/krun/libkrun"
           "krunkit"
         ]
         ++ config.services.homebrew.extraBrews;
