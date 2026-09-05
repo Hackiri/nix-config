@@ -16,12 +16,12 @@
     # Optional import-only capabilities:
     # ../../home/profiles/capabilities/kubernetes.nix
     # ../../home/profiles/capabilities/sops.nix
-
-    # Package bundles:
-    ../../home/packages/development
   ];
 
   # Darwin default. For NixOS, use "/home/${username}".
-  home.homeDirectory = "/Users/${username}";
-  home.packages = with pkgs; [];
+  home = {
+    homeDirectory = "/Users/${username}";
+    stateVersion = "26.05";
+    packages = with pkgs; [];
+  };
 }
