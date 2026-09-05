@@ -10,25 +10,10 @@
     owner = "doomemacs";
     repo = "doomemacs";
     rev = "bd38d60b0179dea62cae63ea2cccf376ef65f11f";
-    hash = "sha256-d2kOnyEoCa2BzM3UplRA8+prHXrHZSSpvhvJHSPiBmM=";
-  };
-
-  doomSync = pkgs.writeShellApplication {
-    name = "doom-sync";
-    runtimeInputs = [pkgs.emacs pkgs.git pkgs.ripgrep pkgs.fd];
-    text = ''
-      export EMACSDIR="''${EMACSDIR:-$HOME/.config/emacs}"
-      export DOOMDIR="''${DOOMDIR:-$HOME/.config/doom}"
-      export DOOMLOCALDIR="''${DOOMLOCALDIR:-$HOME/.local/share/doom}"
-      export EMACSLOADPATH=""
-
-      if [[ ! -x "$EMACSDIR/bin/doom" ]]; then
-        printf 'doom-sync: Doom executable not found at %s/bin/doom\n' "$EMACSDIR" >&2
-        exit 1
-      fi
-
-      exec "$EMACSDIR/bin/doom" sync "$@"
-    '';
+    # Doom v3 keeps its modules in the sources/doom+ submodule; without this the
+    # checkout has no modules and every module in doom.d/init.el is missing.
+    fetchSubmodules = true;
+    hash = "sha256-Clu4VvP7RK5kRsDTVNQCEMj9OcNQqlFyXdAZw5reGbw=";
   };
 in {
   config = {
@@ -227,8 +212,8 @@ in {
             export EMACSDIR="$HOME/.config/emacs"
             export DOOMDIR="$HOME/.config/doom"
             export DOOMLOCALDIR="$HOME/.local/share/doom"
-            export PATH="$EMACSDIR/bin:$PATH"
-            "${doomSync}/bin/doom-sync"
+            export PATH="$EMACSDIR/bin:${pkgs.emacs}/bin:${pkgs.git}/bin:${pkgs.ripgrep}/bin:${pkgs.fd}/bin:$PATH"
+            doom sync
             echo "Press any key to close this window"
             read -k 1
             EOF
@@ -248,9 +233,6 @@ in {
       ];
 
       packages = with pkgs; [
-        # Explicitly run after activation when Doom packages need reconciliation.
-        doomSync
-
         # Doom Emacs needs ripgrep with PCRE2 support (profiles provide plain ripgrep)
         (ripgrep.override {withPCRE2 = true;})
 

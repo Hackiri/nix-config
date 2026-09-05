@@ -161,7 +161,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    ```bash
    # Install nix-darwin with your customized configuration
-   nix run nix-darwin -- switch --flake .#YOUR_HOSTNAME
+   nix run nix-darwin -- switch --flake '.#YOUR_HOSTNAME'
    ```
 
    After installation, configure Git manually:
@@ -248,7 +248,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 
    ```bash
    # 3. Rebuild, then validate structure without decrypting values
-   sudo darwin-rebuild switch --flake .#YOUR_HOSTNAME
+   sudo darwin-rebuild switch --flake '.#YOUR_HOSTNAME'
    just check
    ```
 
@@ -303,12 +303,12 @@ host scaffold rather than copying the existing `mbp2` Darwin host:
 
    ```bash
    # Darwin
-   sudo darwin-rebuild switch --flake .#YOUR_HOSTNAME
+   sudo darwin-rebuild switch --flake '.#YOUR_HOSTNAME'
    # Or, for the first Darwin installation:
-   nix run nix-darwin -- switch --flake .#YOUR_HOSTNAME
+   nix run nix-darwin -- switch --flake '.#YOUR_HOSTNAME'
 
    # NixOS
-   sudo nixos-rebuild switch --flake .#YOUR_HOSTNAME
+   sudo nixos-rebuild switch --flake '.#YOUR_HOSTNAME'
    ```
 
 The host is auto-discovered from `meta.nix` — no changes to `flake.nix` required.
@@ -321,16 +321,20 @@ The host is auto-discovered from `meta.nix` — no changes to `flake.nix` requir
 # macOS system-level changes (nix-darwin + home-manager)
 nixswitch  # Alias: nh darwin switch -H <hostname> ~/nix-config
 # OR manually:
-sudo darwin-rebuild switch --flake .#<hostname>
+sudo darwin-rebuild switch --flake '.#<hostname>'
 
 # Alternative using nix run during first-time Darwin setup
-nix run nix-darwin -- switch --flake .#<hostname>
+nix run nix-darwin -- switch --flake '.#<hostname>'
 
 # NixOS system-level changes
-sudo nixos-rebuild switch --flake .#<hostname>
+sudo nixos-rebuild switch --flake '.#<hostname>'
 # Or use the NixOS alias:
 nixswitch  # Alias: nh os switch -H <hostname> ~/nix-config
 ```
+
+**Quoting:** zsh with `extendedglob` treats `#` as a glob operator, so an
+unquoted flake reference fails with `zsh: no matches found: .#mbp2`. Quote the
+reference (`'.#mbp2'`) or use the `nixswitch` alias, which needs no argument.
 
 The `nixswitch` alias automatically uses the current host's name — no need to specify it.
 
@@ -343,11 +347,32 @@ run during activation. After the first activation, after changing
 `~/.config/doom`, or after updating the pinned Doom revision, run:
 
 ```bash
-doom-sync
+doom sync
 ```
 
 This explicitly runs the pinned Doom executable from `~/.config/emacs`; it does
 not clone or execute mutable upstream code during Home Manager activation.
+
+The pin lives in `home/programs/editors/emacs/default.nix`. Doom v3 keeps its
+modules in the `sources/doom+` git submodule, so the fetch sets
+`fetchSubmodules = true`. Without it the checkout contains no modules and every
+module listed in `doom.d/init.el` is silently missing — `doom sync` succeeds but
+installs only Doom's core packages. When bumping `rev`, keep `fetchSubmodules`
+and update `hash` from:
+
+```bash
+nix run 'nixpkgs#nix-prefetch-git' -- \
+  --url https://github.com/doomemacs/doomemacs \
+  --rev <NEW_REV> --fetch-submodules
+```
+
+**`doom sync` fails to clone a package:** a `fatal: could not read Username for
+'https://github.com'` error during clone means the recipe points at a repository
+that no longer exists — GitHub answers 404 for a missing repository by asking for
+credentials. Verify with `git ls-remote <url>` and drop or repoint the recipe in
+`doom.d/packages.el`. The `gtea`, `gogs` and `buck` wrappers were removed from
+`ghub` 5.x and their `emacsmirror` mirrors are gone; they are no longer declared
+here.
 
 ### Available Commands
 
@@ -572,7 +597,7 @@ printf 'Moving %s\n' "$taps_dir"
 test -d "$taps_dir"
 test ! -e "$backup_dir"
 sudo mv "$taps_dir" "$backup_dir"
-sudo darwin-rebuild switch --flake ~/nix-config#mbp2
+sudo darwin-rebuild switch --flake "$HOME/nix-config#mbp2"
 ```
 
 ### Known Harmless Warnings
