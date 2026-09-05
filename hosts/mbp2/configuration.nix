@@ -6,10 +6,12 @@
   imports = [
     # Darwin modules
     ../../modules/system/darwin
+    ../../modules/system/darwin/roles/workstation.nix
   ];
 
   # Host-specific system configuration
   system.primaryUser = username;
+  system.stateVersion = 6;
 
   # Host-specific user configuration
   users.users.${username}.home = "/Users/${username}";

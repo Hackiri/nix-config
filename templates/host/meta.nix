@@ -2,7 +2,7 @@
   # Set to "darwin" or "nixos".
   type = "darwin";
 
-  # Examples: "aarch64-darwin", "x86_64-darwin", "x86_64-linux".
+  # Supported: "aarch64-darwin", "x86_64-darwin", "aarch64-linux", or "x86_64-linux".
   system = "aarch64-darwin";
 
   # Set to "laptop" or "desktop".

@@ -7,6 +7,7 @@
 }: {
   imports = [
     # Shared system modules
+    ../shared/configuration-revision.nix
     ../shared/device.nix
     ../shared/fonts.nix
     ../shared/nix-index.nix
@@ -16,10 +17,6 @@
     # NixOS-specific modules
     ./nix-settings.nix
     ./security.nix
-
-    # Service modules
-    ../../services/nixos/openssh.nix
-    ../../services/nixos/podman.nix
   ];
 
   # Enable features

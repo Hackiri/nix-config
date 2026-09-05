@@ -70,7 +70,9 @@ in {
         require_sha = true;
       };
       onActivation = {
-        cleanup = "zap"; # Remove packages not in config, including cask support files
+        # Report unmanaged packages and abort activation rather than deleting
+        # applications or their support files.
+        cleanup = "check";
         # Disabled for reproducibility -- brew updates are independent of flake.lock pins.
         # Update Homebrew metadata by updating the flake inputs.
         autoUpdate = false;
@@ -100,10 +102,7 @@ in {
         [
           # Browsers
           "firefox"
-          {
-            name = "librewolf";
-            postinstall = "/usr/bin/xattr -d com.apple.quarantine $HOME/Applications/LibreWolf.app 2>/dev/null || true";
-          }
+          "librewolf"
 
           # Development tools
           "visual-studio-code"
@@ -134,7 +133,8 @@ in {
         ]
         ++ config.services.homebrew.extraCasks;
 
-      # Mac App Store apps
+      # MAS installs are mutable and non-reproducible: Apple controls the
+      # delivered version and availability independently of flake.lock.
       masApps = {
         "Amphetamine" = 937984704;
         "Keynote" = 409183694;

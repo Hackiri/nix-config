@@ -23,6 +23,7 @@ CLAUDE.md
 *.swo
 *~
 .#*
+.ropeproject/
 
 # Backup files
 *.backup

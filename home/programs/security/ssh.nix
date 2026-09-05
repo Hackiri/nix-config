@@ -23,15 +23,6 @@ _: {
       ServerAliveInterval = 60;
       ServerAliveCountMax = 3;
 
-      # Prefer modern, secure key exchange algorithms
-      KexAlgorithms = "curve25519-sha256@libssh.org,curve25519-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,diffie-hellman-group-exchange-sha256";
-
-      # Use strong ciphers only
-      Ciphers = "chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr";
-
-      # Use strong MACs
-      MACs = "hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com";
-
       # Prefer public key authentication
       PreferredAuthentications = "publickey,keyboard-interactive,password";
 

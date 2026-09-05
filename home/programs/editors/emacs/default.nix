@@ -4,25 +4,32 @@
   lib,
   ...
 }: let
-  # Shared PATH for all activation scripts that need Nix tool access
-  activationPath = lib.makeBinPath [
-    pkgs.emacs
-    pkgs.git
-    pkgs.ripgrep
-    pkgs.fd
-    pkgs.findutils
-    pkgs.gnugrep
-    pkgs.gnused
-    pkgs.coreutils
-  ];
+  # Reviewed 2026-09-03. Keep Doom outside flake inputs while still making its
+  # source revision and content hash part of the evaluated configuration.
+  doomEmacsSource = pkgs.fetchFromGitHub {
+    owner = "doomemacs";
+    repo = "doomemacs";
+    rev = "bd38d60b0179dea62cae63ea2cccf376ef65f11f";
+    hash = "sha256-d2kOnyEoCa2BzM3UplRA8+prHXrHZSSpvhvJHSPiBmM=";
+  };
 
-  # Common environment preamble for Doom-related activation scripts
-  doomEnv = ''
-    export PATH="${activationPath}:$PATH"
-    export EMACSDIR="$HOME/.config/emacs"
-    export DOOMDIR="$HOME/.config/doom"
-    export DOOMLOCALDIR="$EMACSDIR/.local"
-  '';
+  doomSync = pkgs.writeShellApplication {
+    name = "doom-sync";
+    runtimeInputs = [pkgs.emacs pkgs.git pkgs.ripgrep pkgs.fd];
+    text = ''
+      export EMACSDIR="''${EMACSDIR:-$HOME/.config/emacs}"
+      export DOOMDIR="''${DOOMDIR:-$HOME/.config/doom}"
+      export DOOMLOCALDIR="''${DOOMLOCALDIR:-$HOME/.local/share/doom}"
+      export EMACSLOADPATH=""
+
+      if [[ ! -x "$EMACSDIR/bin/doom" ]]; then
+        printf 'doom-sync: Doom executable not found at %s/bin/doom\n' "$EMACSDIR" >&2
+        exit 1
+      fi
+
+      exec "$EMACSDIR/bin/doom" sync "$@"
+    '';
+  };
 in {
   config = {
     # Emacs daemon service for macOS
@@ -99,45 +106,17 @@ in {
     };
 
     home = {
+      # Keep the framework itself immutable. DOOMLOCALDIR below redirects all
+      # generated state outside this store-backed directory.
+      file.".config/emacs" = {
+        source = doomEmacsSource;
+      };
+
       activation =
         {
-          # Phase 1: Clone Doom Emacs repository if not already installed
-          installDoomEmacs = lib.hm.dag.entryAfter ["writeBoundary"] ''
-            ${doomEnv}
-
-            # Check Emacs version
-            EMACS_VERSION=$("${pkgs.emacs}/bin/emacs" --version | head -n 1 | cut -d' ' -f3)
-            echo "Found Emacs version: $EMACS_VERSION"
-            if [[ "$EMACS_VERSION" < "28.0" ]]; then
-              echo "Warning: Doom Emacs works best with Emacs 28.0 or newer"
-            fi
-
-            # Ensure Doom Emacs is installed in $HOME/.config/emacs (newer XDG standard)
-            if [ ! -d "$EMACSDIR" ] || [ ! -f "$EMACSDIR/bin/doom" ]; then
-              echo "Installing Doom Emacs..."
-              if [ -d "$EMACSDIR" ]; then
-                mv "$EMACSDIR" "$EMACSDIR.bak-$(date +%Y%m%d%H%M%S)"
-              fi
-
-              # Check network connectivity before attempting clone
-              if git ls-remote --exit-code https://github.com/doomemacs/doomemacs HEAD >/dev/null 2>&1; then
-                git clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
-              else
-                echo "Warning: Cannot reach github.com - skipping Doom Emacs install (no network)"
-              fi
-
-              if [ ! -f "$EMACSDIR/bin/doom" ]; then
-                echo "Warning: Doom Emacs installation incomplete - doom binary not found"
-                echo "You can install manually: git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs"
-              fi
-            else
-              echo "Doom Emacs already installed at $EMACSDIR"
-            fi
-          '';
-
-          # Phase 2: Copy Doom config files from nix-config to ~/.config/doom
-          copyDoomConfig = lib.hm.dag.entryAfter ["installDoomEmacs"] ''
-            ${doomEnv}
+          # Copy Doom config files from nix-config to ~/.config/doom.
+          copyDoomConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+            export DOOMDIR="$HOME/.config/doom"
 
             # Ensure Doom config directory and snippet dirs exist
             mkdir -p "$DOOMDIR/snippets"
@@ -178,39 +157,10 @@ in {
             fi
           '';
 
-          # Phase 3: Set file permissions on Doom directories
+          # Keep the copied user configuration writable.
           setDoomPermissions = lib.hm.dag.entryAfter ["copyDoomConfig"] ''
-            ${doomEnv}
-
+            export DOOMDIR="$HOME/.config/doom"
             chmod -R u+w "$DOOMDIR" || echo "Warning: Could not set permissions on $DOOMDIR"
-            chmod +x "$EMACSDIR/bin/doom" || echo "Warning: Could not make doom binary executable"
-          '';
-
-          # Phase 4: Run doom sync to install/update packages
-          syncDoomPackages = lib.hm.dag.entryAfter ["setDoomPermissions"] ''
-            ${doomEnv}
-
-            if [ -f "$EMACSDIR/bin/doom" ]; then
-              echo "Running doom sync to ensure all packages are installed..."
-
-              # Clear EMACSLOADPATH so doom uses its own package management
-              export EMACSLOADPATH=""
-
-              # Run doom sync with timeout to prevent hanging during activation
-              if timeout 300 "$EMACSDIR/bin/doom" sync -e; then
-                echo "Doom sync completed successfully!"
-              else
-                SYNC_EXIT_CODE=$?
-                if [ "$SYNC_EXIT_CODE" -eq 124 ]; then
-                  echo "Warning: Doom sync timed out after 5 minutes"
-                else
-                  echo "Warning: Doom sync failed with exit code $SYNC_EXIT_CODE"
-                fi
-                echo "You can try running '$EMACSDIR/bin/doom sync' manually or '$EMACSDIR/bin/doom doctor' to diagnose."
-              fi
-            else
-              echo "Skipping doom sync - Doom Emacs not installed yet"
-            fi
           '';
         }
         // lib.optionalAttrs pkgs.stdenv.isLinux {
@@ -264,6 +214,7 @@ in {
             #!/bin/zsh
             export EMACSDIR="$HOME/.config/emacs"
             export DOOMDIR="$HOME/.config/doom"
+            export DOOMLOCALDIR="$HOME/.local/share/doom"
             export PATH="$EMACSDIR/bin:$PATH"
             exec "${pkgs.emacs}/bin/emacs"
             EOF
@@ -275,8 +226,9 @@ in {
             #!/bin/zsh
             export EMACSDIR="$HOME/.config/emacs"
             export DOOMDIR="$HOME/.config/doom"
+            export DOOMLOCALDIR="$HOME/.local/share/doom"
             export PATH="$EMACSDIR/bin:$PATH"
-            "$EMACSDIR/bin/doom" sync
+            "${doomSync}/bin/doom-sync"
             echo "Press any key to close this window"
             read -k 1
             EOF
@@ -288,6 +240,7 @@ in {
       sessionVariables = {
         EMACSDIR = "${config.home.homeDirectory}/.config/emacs";
         DOOMDIR = "${config.home.homeDirectory}/.config/doom";
+        DOOMLOCALDIR = "${config.home.homeDirectory}/.local/share/doom";
       };
 
       sessionPath = [
@@ -295,6 +248,9 @@ in {
       ];
 
       packages = with pkgs; [
+        # Explicitly run after activation when Doom packages need reconciliation.
+        doomSync
+
         # Doom Emacs needs ripgrep with PCRE2 support (profiles provide plain ripgrep)
         (ripgrep.override {withPCRE2 = true;})
 

@@ -3,6 +3,7 @@
   imports = [
     # Shared system modules
     ../shared/device.nix
+    ../shared/configuration-revision.nix
     ../shared/fonts.nix
     ../shared/nix-index.nix
     ../shared/nix-settings.nix
@@ -14,21 +15,14 @@
     ./defaults
     ./activation.nix
     ./security.nix
-
-    # Service modules
-    ../../services/darwin/homebrew.nix
   ];
 
   # Enable features
   features.fonts.enable = lib.mkDefault true;
-  services.homebrew.enable = true;
 
   # Disable doc output to avoid builtins.toFile warning with options.json
   # Man pages and info pages remain enabled (their defaults)
   documentation.doc.enable = false;
-
-  # System configuration
-  system.stateVersion = 6;
 
   # Power management
   power.sleep = {

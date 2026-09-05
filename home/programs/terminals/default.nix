@@ -1,10 +1,8 @@
 _: {
   imports = [
-    ./alacritty
-    ./ghostty
     ./kitty
     ./sesh
     ./tmux
-    ./wezterm
+    # Alacritty, Ghostty, and WezTerm remain available but opt-in.
   ];
 }

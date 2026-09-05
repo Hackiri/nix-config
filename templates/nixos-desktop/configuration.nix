@@ -6,6 +6,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/system/nixos
+    ../../modules/system/nixos/roles/workstation.nix
     ../../modules/services/nixos/desktop-gnome.nix
     ../../modules/services/nixos/pipewire.nix
     ../../modules/services/nixos/printing.nix
@@ -45,5 +46,5 @@
     firefox
   ];
 
-  system.stateVersion = "25.05";
+  system.stateVersion = "26.05";
 }

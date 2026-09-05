@@ -1,8 +1,11 @@
-# Language-specific development shells
+# Language-specific development shells and their composition entry point.
 # Usage: nix develop .#node, nix develop .#python, etc.
-{pkgs}: {
-  node = pkgs.mkShell {
-    packages = with pkgs; [
+{
+  pkgs,
+  shellNames ? null,
+}: let
+  packageSets = with pkgs; {
+    node = [
       nodejs
       yarn
       pnpm
@@ -10,13 +13,7 @@
       typescript
       prettier
     ];
-    shellHook = ''
-      echo "Node.js $(node --version) dev environment"
-    '';
-  };
-
-  python = pkgs.mkShell {
-    packages = with pkgs; [
+    python = [
       python314
       uv
       python314Packages.pip
@@ -26,52 +23,58 @@
       python314Packages.pyyaml
       python314Packages.python-dotenv
     ];
-    shellHook = ''
-      echo "Python $(python3 --version) dev environment"
-    '';
-  };
-
-  rust = pkgs.mkShell {
-    packages = with pkgs; [
+    rust = [
       rustc
       cargo
       rustfmt
       rust-analyzer
       clippy
     ];
-    shellHook = ''
-      echo "Rust $(rustc --version) dev environment"
-    '';
-  };
-
-  go = pkgs.mkShell {
-    packages = with pkgs; [
+    go = [
       go
       gopls
       golangci-lint
       delve
     ];
-    shellHook = ''
-      echo "Go $(go version) dev environment"
-    '';
-  };
-
-  ruby = pkgs.mkShell {
-    packages = with pkgs; [
+    ruby = [
       ruby_3_4
     ];
-    shellHook = ''
-      echo "Ruby $(ruby --version) dev environment"
-    '';
-  };
-
-  php = pkgs.mkShell {
-    packages = with pkgs; [
+    php = [
       php84
       php84Packages.composer
     ];
-    shellHook = ''
-      echo "PHP $(php --version | head -1) dev environment"
-    '';
   };
-}
+
+  shellHooks = {
+    node = ''echo "Node.js $(node --version) dev environment"'';
+    python = ''echo "Python $(python3 --version) dev environment"'';
+    rust = ''echo "Rust $(rustc --version) dev environment"'';
+    go = ''echo "Go $(go version) dev environment"'';
+    ruby = ''echo "Ruby $(ruby --version) dev environment"'';
+    php = ''echo "PHP $(php --version | head -1) dev environment"'';
+  };
+
+  unknownShells =
+    if shellNames == null
+    then []
+    else builtins.filter (name: !(builtins.hasAttr name packageSets)) shellNames;
+
+  languageShells =
+    builtins.mapAttrs (
+      name: packages:
+        pkgs.mkShell {
+          inherit packages;
+          shellHook = shellHooks.${name};
+        }
+    )
+    packageSets;
+in
+  if shellNames == null
+  then languageShells
+  else
+    assert pkgs.lib.assertMsg (unknownShells == [])
+    "unknown development shell(s): ${builtins.concatStringsSep ", " unknownShells}";
+      pkgs.mkShell {
+        packages = pkgs.lib.unique (builtins.concatMap (name: packageSets.${name}) shellNames);
+        shellHook = builtins.concatStringsSep "\n" (map (name: shellHooks.${name}) shellNames);
+      }

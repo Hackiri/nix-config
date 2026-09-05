@@ -9,6 +9,8 @@
     nix-darwin.url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
+
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -38,7 +40,7 @@
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Homebrew inputs
-    nix-homebrew.url = "github:hackiri/nix-homebrew";
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     nix-homebrew.inputs.brew-src.follows = "brew-src";
     brew-src = {
       url = "github:Homebrew/brew";
@@ -153,7 +155,8 @@
       };
 
       flake = {
-        # Auto-discovered from hosts/*/meta.nix
+        # Auto-discovered from complete hosts/* definitions and validated once.
+        inherit (builders) hostInventory;
         inherit (builders.discoverHosts) darwinConfigurations nixosConfigurations;
 
         templates = {

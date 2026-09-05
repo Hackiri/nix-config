@@ -1,7 +1,8 @@
-# Darwin-specific Nix configuration
-# Determinate Nix manages its own daemon, settings, GC, and optimisation,
-# so we disable nix-darwin's built-in Nix management. Shared settings are
-# applied via ../shared/nix-settings.nix using nix.custom.conf.
+# Darwin-specific Nix configuration. The Determinate module disables
+# nix-darwin's built-in Nix management and writes custom Nix settings.
 _: {
-  nix.enable = false;
+  determinateNix = {
+    enable = true;
+    customSettings.download-buffer-size = 268435456;
+  };
 }

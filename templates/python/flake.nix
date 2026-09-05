@@ -26,6 +26,7 @@
             python314Packages.ruff
             python314Packages.mypy
             python314Packages.pytest
+            python314Packages.pyyaml
             python314Packages.python-dotenv
           ];
           shellHook = ''

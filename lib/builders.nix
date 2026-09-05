@@ -3,31 +3,11 @@
   inputs,
   defaultUsername,
 }: let
-  inherit (inputs.nixpkgs) lib;
   overlay = import ../overlays {inherit inputs;};
-  readHostMeta = name: let
-    hostDir = ../hosts/${name};
-    metaPath = hostDir + "/meta.nix";
-    configurationPath = hostDir + "/configuration.nix";
-    homePath = hostDir + "/home.nix";
-    meta = import metaPath;
-  in
-    assert lib.assertMsg (builtins.pathExists metaPath)
-    "Host '${name}' is missing hosts/${name}/meta.nix";
-    assert lib.assertMsg (builtins.pathExists configurationPath)
-    "Host '${name}' is missing hosts/${name}/configuration.nix";
-    assert lib.assertMsg (builtins.pathExists homePath)
-    "Host '${name}' is missing hosts/${name}/home.nix";
-    assert lib.assertMsg (builtins.isAttrs meta) "Host '${name}' metadata must evaluate to an attrset";
-    assert lib.assertMsg (meta ? type) "Host '${name}' metadata must define 'type'";
-    assert lib.assertMsg (meta ? system) "Host '${name}' metadata must define 'system'";
-    assert lib.assertMsg (meta ? device) "Host '${name}' metadata must define 'device'";
-    assert lib.assertMsg (builtins.elem meta.type [
-      "darwin"
-      "nixos"
-    ]) "Host '${name}' metadata type must be 'darwin' or 'nixos'"; {
-      inherit name meta;
-    };
+  hostInventory = import ./host-inventory.nix {
+    hostsDir = ../hosts;
+    inherit defaultUsername;
+  };
 
   mkHomeManagerConfig = {
     name,
@@ -38,7 +18,7 @@
       useUserPackages = true;
       backupFileExtension = "backup";
       extraSpecialArgs = {
-        inherit inputs username;
+        inherit inputs username hostInventory;
         hostName = name;
       };
       users.${username} = import ../hosts/${name}/home.nix;
@@ -68,10 +48,10 @@
           };
         }
         ../hosts/${name}/configuration.nix
+        inputs.determinate.darwinModules.default
         inputs.sops-nix.darwinModules.sops
         inputs.home-manager.darwinModules.home-manager
         (mkHomeManagerConfig {inherit name username;})
-        inputs.nix-homebrew.darwinModules.nix-homebrew
         {
           device = {
             type = device;
@@ -79,7 +59,7 @@
           };
         }
       ];
-      specialArgs = {inherit inputs username;};
+      specialArgs = {inherit inputs username hostInventory;};
     };
 
   mkNixOS = {
@@ -111,37 +91,27 @@
           };
         }
       ];
-      specialArgs = {inherit inputs username;};
+      specialArgs = {inherit inputs username hostInventory;};
     };
 
-  # Auto-discover hosts from hosts/ directory via meta.nix metadata files
-  discoverHosts = let
-    hostsDir = ../hosts;
-    hostNames = builtins.attrNames (
-      lib.filterAttrs (_: type: type == "directory") (builtins.readDir hostsDir)
-    );
-    hostMetas = map readHostMeta hostNames;
-    darwinHosts = builtins.filter (h: h.meta.type == "darwin") hostMetas;
-    nixosHosts = builtins.filter (h: h.meta.type == "nixos") hostMetas;
-  in {
-    darwinConfigurations = lib.listToAttrs (
-      map (h: {
-        inherit (h) name;
+  hostMetas = builtins.attrValues hostInventory;
+  darwinHosts = builtins.filter (host: host.type == "darwin") hostMetas;
+  nixosHosts = builtins.filter (host: host.type == "nixos") hostMetas;
+  discoverHosts = {
+    darwinConfigurations = builtins.listToAttrs (
+      map (host: {
+        inherit (host) name;
         value = mkDarwin {
-          inherit (h) name;
-          inherit (h.meta) system device;
-          username = h.meta.username or defaultUsername;
+          inherit (host) name system device username;
         };
       })
       darwinHosts
     );
-    nixosConfigurations = lib.listToAttrs (
-      map (h: {
-        inherit (h) name;
+    nixosConfigurations = builtins.listToAttrs (
+      map (host: {
+        inherit (host) name;
         value = mkNixOS {
-          inherit (h) name;
-          inherit (h.meta) system device;
-          username = h.meta.username or defaultUsername;
+          inherit (host) name system device username;
         };
       })
       nixosHosts
@@ -152,6 +122,7 @@ in {
     mkHomeManagerConfig
     mkDarwin
     mkNixOS
+    hostInventory
     discoverHosts
     ;
 }
