@@ -37,6 +37,9 @@
       [
         kube-bench # CIS Kubernetes benchmark security scanner
       ]
+      ++ lib.optionals (allowUnfree && lib.hasAttr "vault" pkgs) [
+        vault # HashiCorp Vault CLI and server (BUSL-1.1, unfree)
+      ]
       ++ lib.optionals (lib.hasAttr "kube-hunter" pkgs) [
         kube-hunter # Hunt for security weaknesses in Kubernetes clusters
       ]
