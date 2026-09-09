@@ -92,10 +92,14 @@ in {
       _direnv_git_exclude() {
         local exclude_file
         exclude_file="$(git rev-parse --git-path info/exclude 2>/dev/null)" || return 0
-        if [[ -f "$exclude_file" ]]; then
-          grep -qxF '.envrc' "$exclude_file" 2>/dev/null || echo '.envrc' >> "$exclude_file"
-          grep -qxF '.direnv' "$exclude_file" 2>/dev/null || echo '.direnv' >> "$exclude_file"
+        # A repository created from a custom init.templateDir has no
+        # info/exclude, so create it rather than silently skipping the entries.
+        if [[ ! -f "$exclude_file" ]]; then
+          mkdir -p "''${exclude_file:h}" 2>/dev/null || return 0
+          : > "$exclude_file" 2>/dev/null || return 0
         fi
+        grep -qxF '.envrc' "$exclude_file" 2>/dev/null || echo '.envrc' >> "$exclude_file"
+        grep -qxF '.direnv' "$exclude_file" 2>/dev/null || echo '.direnv' >> "$exclude_file"
       }
 
       # Refresh owned files, but never replace a hand-written .envrc.

@@ -203,30 +203,32 @@ in {
       };
     };
 
-    # Git init templates install hooks for future repositories. Existing
-    # repositories can opt in or refresh with: install-sops-git-hooks
-    home.file = {
-      ".config/git/template/hooks/post-checkout" = {
-        source = postCheckoutHook;
-        executable = true;
+    home = {
+      # Git init templates install hooks for future repositories. Existing
+      # repositories can opt in or refresh with: install-sops-git-hooks
+      file = {
+        ".config/git/template/hooks/post-checkout" = {
+          source = postCheckoutHook;
+          executable = true;
+        };
+        ".config/git/template/hooks/post-merge" = {
+          source = postMergeHook;
+          executable = true;
+        };
+        # Create the sops age directory
+        ".config/sops/.keep".text = "";
       };
-      ".config/git/template/hooks/post-merge" = {
-        source = postMergeHook;
-        executable = true;
-      };
-      # Create the sops age directory
-      ".config/sops/.keep".text = "";
+
+      packages = [installSopsGitHooks];
+
+      # Enforce restrictive permissions on age key (Critical: prevents local reads)
+      activation.fixSopsPermissions = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        if [ -f "${config.home.homeDirectory}/.config/sops/age/keys.txt" ]; then
+          chmod 600 "${config.home.homeDirectory}/.config/sops/age/keys.txt"
+          chmod 700 "${config.home.homeDirectory}/.config/sops/age"
+        fi
+      '';
     };
-
-    home.packages = [installSopsGitHooks];
-
-    # Enforce restrictive permissions on age key (Critical: prevents local reads)
-    home.activation.fixSopsPermissions = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      if [ -f "${config.home.homeDirectory}/.config/sops/age/keys.txt" ]; then
-        chmod 600 "${config.home.homeDirectory}/.config/sops/age/keys.txt"
-        chmod 700 "${config.home.homeDirectory}/.config/sops/age"
-      fi
-    '';
 
     # Fix sops-nix launchd service PATH (Darwin only)
     launchd.agents."sops-nix" = lib.mkIf pkgs.stdenv.isDarwin {

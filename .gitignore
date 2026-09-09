@@ -6,10 +6,11 @@ result*
 # Nix build logs
 *.log
 
-# Keep local notes ignored while exposing maintained plans and workflows.
+# Keep local notes ignored while exposing the maintained workflow docs.
+# Re-including a path requires re-including its parent directory first, so
+# /docs/workflows/ is un-ignored explicitly. Plans and specs stay local.
 /docs/*
-/docs/superpowers/
-/docs/workflows/
+!/docs/workflows/
 
 # Claude
 .claude
@@ -46,3 +47,6 @@ keys.txt
 
 # Git worktrees
 .worktrees/
+
+# Root-owned build cache that some tooling drops in the repo root
+.cache/

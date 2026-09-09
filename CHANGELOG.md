@@ -1,5 +1,164 @@
 # Changelog
 
+## 2026-09-07
+
+### Packages
+
+- **feat(kubernetes):** Add the HashiCorp Vault CLI to the Kubernetes security tool set, gated on `allowUnfree` (`7988b9a`)
+
+## 2026-09-05
+
+### Emacs
+
+- **fix(emacs):** Fetch Doom's `sources/doom+` submodule so every module referenced by `doom.d/init.el` exists in the pinned checkout (`618a5bd`, `01216c9`)
+  - Switched the Doom source pin to `fetchFromGitHub` with `fetchSubmodules = true`
+  - Dropped package recipes that no longer resolve
+  - Fixed the launchd environment so the Emacs agent inherits `DOOMDIR` and `DOOMLOCALDIR`
+  - Restored an automatic `doom sync` after activation
+
+### Secrets
+
+- **refactor(sops):** Move per-host secret declarations into `hosts/<host>/sops.nix` and leave the shared machinery in `home/profiles/capabilities/sops.nix` (`adcb742`)
+
+## 2026-09-04
+
+### Flake & Hosts
+
+- **refactor(home-manager):** Update the Home Manager host definitions and the flake wiring around them (`a020b9f`, `2f2af1b`)
+- **feat(ci):** Harden the configuration and the GitHub Actions workflows, and refresh the validation workflow set (`cae8f3d`, `f79a9a8`)
+
+## 2026-09-02
+
+### Development Shells
+
+- **feat(python):** Add `python-dotenv` to the Python development shell (`f2a9284`)
+
+## 2026-08-20
+
+### Overlays
+
+- **chore(overlays):** Drop the obsolete overlays and use `pkgs.emacs` directly (`4785eca`)
+
+## 2026-08-19
+
+### Agent Tooling
+
+- **feat(agent-dev):** Make the agent capability provider-neutral (`2373e31`)
+- **refactor:** Drop the Hermes Agent integration (`06bf6c9`)
+
+### Packages & Linting
+
+- **chore(packages):** Drop `statix` and `clamav` from the shared bundles (`fbe7036`)
+- **fix(overlays):** Pin `statix` to the last tagged release, then fix the findings it reported (`1d1b496`, `195232e`)
+- **fix(emacs):** Pin the Emacs Python tooling to `python314Packages` (`c2d69cf`)
+- **chore(devshell):** Add `pyyaml` to the Python shell (`1ebd8aa`)
+- **chore(homebrew):** Install `kdash` through Homebrew after its removal from nixpkgs (`af9dbc5`)
+
+## 2026-07-25
+
+### Neovim
+
+- **refactor(neovim):** Adopt the Neovim 0.12 APIs (`89ce1f3`)
+- **fix(neovim):** Harden the lazy.nvim bootstrap (`5dfb88f`)
+- **chore(neovim):** Remove the unused init entrypoint (`f23b200`)
+
+## 2026-07-11
+
+### Platform Split
+
+- **refactor:** Move the Intel Darwin configuration to the `legacy-intel` branch and document the current and legacy platform lines (`eff22c8`, `eebdbb0`)
+- **fix:** Keep the Darwin editors on stable nixpkgs (`56b6594`)
+- **fix:** Provide `xcodebuild` to Bitwarden on Darwin (`7eb18d9`)
+
+### CI & Validation
+
+- **ci:** Execute the canonical locked checks and preserve the lock during workflow checks (`49089c8`, `79f2013`)
+- **test:** Replace the import guards with semantic checks (`d3ac190`)
+- **fix:** Reconcile the generated pre-commit config safely (`ec46ab9`)
+
+## 2026-07-04
+
+### Homebrew & Packages
+
+- **chore:** Move the Darwin CLI tools to Nix (`10264e7`)
+- **chore:** Switch to the `nix-homebrew` fork (`00ff62e`)
+- **fix:** Update the Darwin Homebrew trust configuration and add the LibreWolf quarantine post-install step (`4382bb9`, `924cb80`)
+- **fix:** Configure the Yazi realpath resolver (`55ddd21`)
+
+## 2026-06-28
+
+### Toolchain
+
+- **chore:** Move the Python tooling from `python313` to `python314` (`c1e8897`, `2983f1f`)
+- **fix:** Disable the redundant Darwin Home Manager font sync (`99b2659`)
+
+## 2026-06-19
+
+### Program Import Registry
+
+- **refactor:** Add the program import registry and select package bundles through imports (`978332e`, `d83521b`)
+- **refactor:** Make the home capabilities import-only and select the Darwin program suite from the hosts (`427c6b6`, `13cdeea`)
+- **docs:** Clarify profile and program ownership and teach the host templates about program suites (`fdf9b9b`, `3695162`, `7d571d3`)
+
+### Homebrew
+
+- **chore:** Manage Homebrew declaratively, preserve manual installs, and allow manual brew updates (`05d1e7a`, `c0c0663`, `fca7afb`)
+- **feat:** Add the k9s watch-list workaround (`5477b3b`)
+
+## 2026-06-06
+
+### Packages
+
+- **refactor(darwin):** Migrate the Homebrew CLI packages to Nix (`fbe5393`)
+- **fix(homebrew):** Avoid cask fetch failures during activation and make Homebrew updates manual (`5ffc35d`, `d3f9efd`)
+
+## 2026-05-30
+
+### Nix Release
+
+- **chore:** Move the configuration to the 26.05 release channels (`ce61b27`)
+
+## 2026-05-17
+
+### Agent Development
+
+- **feat(home):** Add the optional agent development profile, then the `agent-dev` and `redis` capabilities (`cab4533`, `0aa1f60`)
+- **refactor(agent-dev):** Auto-discover the Darwin hosts for `agent-guard` (`c384ebe`, `ae8c4b3`)
+- **feat(templates):** Add the AI Python evaluation project and expose it as a flake template (`729b9a5`, `a0601dd`)
+- **docs(ai):** Document the agent development profile and the AI engineering workflow entry points (`3a1aab1`, `6e85079`)
+
+### Tmux
+
+- **feat(tmux):** Add the layout picker script and bind it to `Prefix+L` (`86a39a6`, `531db34`, `08fd100`)
+
+## 2026-05-05
+
+### Neovim & Terminals
+
+- **feat(nvim):** Add the clipboard and formatting helpers and expand the Rust snippets (`6f1950b`, `d6ab22a`)
+- **perf(neovim):** Lazy-load the LuaSnip snippets (`3da70ae`)
+- **feat(terminals):** Add the tmux and sesh workflow helpers (`367cafc`)
+
+## 2026-04-30
+
+### CI
+
+- **ci:** Update the GitHub Actions to Node.js 24 and add the OIDC permissions described in the Determinate documentation (`d82c558`, `4385d1e`)
+
+## 2026-04-25
+
+### Unified Workflows
+
+- **feat:** Adopt `treefmt` and `just` for unified formatting and validation workflows (`1a61e50`)
+- **fix:** Point the pre-commit treefmt hook at the Nix-built wrapper and make the pre-commit shell hook safe (`7282253`, `dbceb70`)
+- **refactor:** Tighten the Darwin modules and de-duplicate the sops hooks (`4e15c6e`)
+
+## 2026-04-24
+
+### Homebrew
+
+- **fix(homebrew):** Align `brew-src` with the pinned taps and add the krunkit formula on Apple Silicon only (`3f0b9d5`, `7a64191`)
+
 ## 2026-04-23
 
 ### Home Profiles & Packages

@@ -44,7 +44,9 @@
     moreutils # sponge and other small utilities (used by tmux-resurrect)
 
     #--------------------------------------------------
-    minicom #
-    mise
+    # Hardware and Toolchain Management
+    #--------------------------------------------------
+    minicom # Serial console client for hardware and network gear
+    mise # Per-project runtime version manager
   ];
 }

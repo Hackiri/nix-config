@@ -22,9 +22,11 @@
     "darwin"
     "nixos"
   ];
+  # x86_64-darwin is deliberately absent: this branch targets Apple Silicon,
+  # and flake.nix exposes no x86_64-darwin devShells, checks, or formatter.
+  # The Intel line lives on the legacy-intel branch.
   supportedSystems = [
     "aarch64-darwin"
-    "x86_64-darwin"
     "aarch64-linux"
     "x86_64-linux"
   ];

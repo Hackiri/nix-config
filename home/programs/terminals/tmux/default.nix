@@ -9,47 +9,59 @@
   tmux_thumbs_plugin = "${pkgs.tmuxPlugins.tmux-thumbs}/share/tmux-plugins/tmux-thumbs";
   fzf_tmux_url_plugin = "${pkgs.tmuxPlugins.fzf-tmux-url}/share/tmux-plugins/fzf-tmux-url";
 
-  truncate_path = pkgs.writeScriptBin "truncate_path" ''
-    #!/bin/sh
+  truncate_path = pkgs.writeShellApplication {
+    name = "truncate_path";
+    # Pure bash string handling; no runtime dependencies.
+    runtimeInputs = [];
+    text = ''
+      path="''${1:-}"
+      max_length="''${2:-50}"  # Default to 50 if not specified
+      user_home="${homeDir}"
 
-    path="$1"
-    max_length="''${2:-50}"  # Default to 50 if not specified
-    user_home="${homeDir}"
-
-    # Exit if no path is provided
-    if [ -z "$path" ]; then
-        echo "Usage: $0 <path> [max_length]"
+      # Exit if no path is provided
+      if [ -z "$path" ]; then
+        echo "Usage: truncate_path <path> [max_length]" >&2
         exit 1
-    fi
+      fi
 
-    # Replace $user_home with ~ in the path
-    path="''${path/#$user_home/\~}"
+      # Replace $user_home with ~ in the path
+      path="''${path/#"$user_home"/\~}"
 
-    # Truncate path if it's longer than max_length
-    if [ "''${#path}" -gt "$max_length" ]; then
+      # Truncate path if it is longer than max_length
+      if [ "''${#path}" -gt "$max_length" ]; then
         # Keep the last $max_length characters
-        path="...''${path:$(( ''${#path} - $max_length + 3 ))}"
+        path="...''${path:''${#path} - max_length + 3}"
 
-        # Ensure we don't break directory separators
-        if ! echo "$path" | grep -q "^/\|^\\.\\./" ; then
+        # Ensure we do not break directory separators
+        case "$path" in
+          /* | ../*) ;;
+          *)
             path="''${path#*/}"
             path=".../$path"
-        fi
-    fi
+            ;;
+        esac
+      fi
 
-    echo "$path"
-  '';
+      echo "$path"
+    '';
+  };
 
-  git_branch = pkgs.writeScriptBin "git_branch" ''
-    #!/bin/sh
-    cd "$1" 2>/dev/null || exit 0
-    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 0
-    if [ -n "$(git status --porcelain 2>/dev/null | head -1)" ]; then
-      echo "''${branch}*"
-    else
-      echo "$branch"
-    fi
-  '';
+  git_branch = pkgs.writeShellApplication {
+    name = "git_branch";
+    runtimeInputs = [
+      pkgs.git
+      pkgs.coreutils
+    ];
+    text = ''
+      cd "''${1:-}" 2>/dev/null || exit 0
+      branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 0
+      if [ -n "$(git status --porcelain 2>/dev/null | head -1)" ]; then
+        echo "''${branch}*"
+      else
+        echo "$branch"
+      fi
+    '';
+  };
 
   tmux_popup = pkgs.writeScriptBin "tmux-popup" ''
     #!${pkgs.bash}/bin/bash

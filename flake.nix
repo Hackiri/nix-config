@@ -40,6 +40,9 @@
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Homebrew inputs
+    # nix-homebrew is a personal fork of zhaofengli/nix-homebrew. Keep it in
+    # sync deliberately: upstream changes only arrive through the fork, and
+    # flake.lock is the only thing pinning which fork revision is trusted.
     nix-homebrew.url = "github:hackiri/nix-homebrew";
     nix-homebrew.inputs.brew-src.follows = "brew-src";
     brew-src = {

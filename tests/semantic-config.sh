@@ -1,57 +1,56 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd "$(git rev-parse --show-toplevel)"
+repo_root="$(git rev-parse --show-toplevel)"
+flake_ref="path:${repo_root}"
 
 fail() {
   printf 'semantic-config: %s\n' "$*" >&2
   exit 1
 }
 
-# Nix interpolation must stay literal inside the --apply expression.
+# Nix interpolation must stay literal inside the --expr expression.
 # shellcheck disable=SC2016
 result="$(
-  nix eval --raw --no-update-lock-file .#darwinConfigurations --apply '
-    configurations:
+  FLAKE_REF="$flake_ref" nix eval --impure --raw --expr '
     let
-      hostSpecs = [
-        { name = "mbp2"; system = "aarch64-darwin"; }
-      ];
-      expectedNames = map (spec: spec.name) hostSpecs;
-      actualNames = builtins.attrNames configurations;
-      requiredPackages = [ "kubectl" "kubernetes-helm" "k9s" "kubeconform" ];
-      forbiddenPackages = [ "xclip" "xsel" ];
+      flake = builtins.getFlake (builtins.getEnv "FLAKE_REF");
+      inventory = flake.hostInventory;
+      hosts = builtins.attrValues inventory;
+      darwinHosts = builtins.filter (host: host.type == "darwin") hosts;
+      nixosHosts = builtins.filter (host: host.type == "nixos") hosts;
+      expectedDarwinNames = map (host: host.name) darwinHosts;
+      expectedNixosNames = map (host: host.name) nixosHosts;
+      actualDarwinNames = builtins.attrNames flake.darwinConfigurations;
+      actualNixosNames = builtins.attrNames flake.nixosConfigurations;
+      expectedRevision = flake.rev or flake.dirtyRev or null;
       checkHost = spec:
         let
+          configurations = flake.${spec.configuration};
           host = configurations.${spec.name};
-          home = host.config.home-manager.users.wm;
-          packageNames = map (package: package.pname or package.name) home.home.packages;
-          missingPackages = builtins.filter (name: ! builtins.elem name packageNames) requiredPackages;
-          forbiddenPresent = builtins.filter (name: builtins.elem name packageNames) forbiddenPackages;
-          enabledPrograms = [
-            home.programs.git.enable
-            home.programs.neovim.enable
-            home.programs.tmux.enable
-            home.programs.zsh.enable
-          ];
+          home = host.config.home-manager.users.${spec.username};
           drvPath = builtins.unsafeDiscardStringContext host.config.system.build.toplevel.drvPath;
         in
         if host.pkgs.stdenv.hostPlatform.system != spec.system then
           throw "${spec.name}: expected ${spec.system}, got ${host.pkgs.stdenv.hostPlatform.system}"
-        else if !(builtins.all (enabled: enabled) enabledPrograms) then
-          throw "${spec.name}: required workstation programs are not all enabled"
-        else if missingPackages != [ ] then
-          throw "${spec.name}: missing capability packages: ${builtins.concatStringsSep ", " missingPackages}"
-        else if forbiddenPresent != [ ] then
-          throw "${spec.name}: contains non-Darwin packages: ${builtins.concatStringsSep ", " forbiddenPresent}"
-        else if home.home.sessionVariables.KUBE_EDITOR != "nvim" then
-          throw "${spec.name}: expected KUBE_EDITOR=nvim"
+        else if host.config.device.type != spec.device then
+          throw "${spec.name}: expected device ${spec.device}, got ${host.config.device.type}"
+        else if host.config.device.hostname != spec.name then
+          throw "${spec.name}: device hostname does not match inventory name"
+        else if home.home.username != spec.username then
+          throw "${spec.name}: Home Manager username does not match inventory"
+        else if !(builtins.isString home.home.stateVersion) then
+          throw "${spec.name}: Home Manager stateVersion must be host-specific and string-valued"
+        else if host.config.system.configurationRevision != expectedRevision then
+          throw "${spec.name}: configurationRevision does not match flake revision"
         else
           builtins.seq drvPath true;
     in
-    if actualNames != expectedNames then
-      throw "expected Darwin hosts ${builtins.concatStringsSep ", " expectedNames}; got ${builtins.concatStringsSep ", " actualNames}"
-    else if builtins.all checkHost hostSpecs then
+    if actualDarwinNames != expectedDarwinNames then
+      throw "Darwin configuration names do not match the shared host inventory"
+    else if actualNixosNames != expectedNixosNames then
+      throw "NixOS configuration names do not match the shared host inventory"
+    else if builtins.all checkHost hosts then
       "ok"
     else
       throw "semantic host validation failed"
