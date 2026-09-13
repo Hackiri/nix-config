@@ -1,4 +1,7 @@
-{pkgs}: let
+{
+  pkgs,
+  omnictl,
+}: let
   inherit (pkgs) lib;
   allowUnfree = pkgs.config.allowUnfree or false;
 
@@ -96,8 +99,8 @@
 
     # Kubernetes distribution-specific tools
     distributions = with pkgs;
-      lib.optionals (allowUnfree && lib.hasAttr "omnictl" pkgs) [
-        omnictl # CLI for Omni-managed Talos clusters
+      lib.optionals allowUnfree [
+        omnictl # CLI for Omni-managed Talos clusters; pinned past nixpkgs, see pkgs/omnictl.nix
       ]
       ++ [
         talosctl # CLI for Talos Linux management

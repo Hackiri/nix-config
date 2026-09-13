@@ -13,7 +13,8 @@
   ...
 }: let
   cfg = config.profiles.kubernetes;
-  kubernetesTools = import ../../../pkgs/kubernetes-tools.nix {inherit pkgs;};
+  omnictl = import ../../../pkgs/omnictl.nix {inherit pkgs lib;};
+  kubernetesTools = import ../../../pkgs/kubernetes-tools.nix {inherit pkgs omnictl;};
 in {
   options.profiles.kubernetes = with lib; {
     toolSet = mkOption {
