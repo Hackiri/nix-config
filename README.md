@@ -350,13 +350,22 @@ instead of aborting activation. Run `doom sync` by hand after editing
 
 **Bumping the pin:** Doom v3 keeps its modules in the `sources/doom+` submodule,
 so the fetch needs `fetchSubmodules = true` — without it no module in
-`doom.d/init.el` exists and sync installs only Doom's core packages. Get the new
-hash with:
+`doom.d/init.el` exists and sync installs only Doom's core packages.
+
+First get the commit SHA to pin (from a branch, tag, or the GitHub UI):
+
+```bash
+git ls-remote https://github.com/doomemacs/doomemacs HEAD
+```
+
+Then get the new hash, substituting that SHA for `NEW_REV` below. Do not
+type the angle brackets — in zsh/bash `<` is redirection, so a literal
+`<NEW_REV>` fails with `no such file or directory: NEW_REV`:
 
 ```bash
 nix run 'nixpkgs#nix-prefetch-git' -- \
   --url https://github.com/doomemacs/doomemacs \
-  --rev <NEW_REV> --fetch-submodules
+  --rev NEW_REV --fetch-submodules
 ```
 
 ### Available Commands
