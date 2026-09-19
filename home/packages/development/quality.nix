@@ -19,7 +19,9 @@
     # Code statistics
     tokei # Fast code statistics
 
-    # Note: pre-commit hooks are now managed by git-hooks.nix in flake.nix
-    # The tools above are still available for standalone use
+    # Git hook runner. Kept persistent (not just in devShells) so
+    # .git/hooks/pre-commit keeps working outside `nix develop` and
+    # survives nix-collect-garbage.
+    pre-commit
   ];
 }

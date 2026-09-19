@@ -54,17 +54,25 @@ pkgs.writeShellApplication {
       mv "$hook_path" "$legacy_path"
     fi
 
+    # Copy (not symlink) the config so the hook keeps working after
+    # `nix-collect-garbage` removes the store path this was built from.
+    cp "${configFile}" "$hook_dir/pre-commit-config.json"
+
     sed 's/^            //' >"$hook_path" <<'EOF'
-            #!${pkgs.bash}/bin/bash
+            #!/usr/bin/env bash
             # File generated for nix-config
             # Managed by install-pre-commit-hook for nix-config
             INSTALL_PYTHON=""
-            ARGS=(hook-impl --config=${configFile} --hook-type=pre-commit)
-
             HERE="$(cd "$(dirname "$0")" && pwd)"
+            ARGS=(hook-impl --config="$HERE/pre-commit-config.json" --hook-type=pre-commit)
             ARGS+=(--hook-dir "$HERE" -- "$@")
 
-            ${pkgs.pre-commit}/bin/pre-commit "''${ARGS[@]}"
+            if ! command -v pre-commit >/dev/null 2>&1; then
+              echo "pre-commit not on PATH. Rebuild your home-manager generation (pre-commit is in home.packages) or rerun install-pre-commit-hook inside 'nix develop'." >&2
+              exit 1
+            fi
+
+            pre-commit "''${ARGS[@]}"
             status=$?
 
             if [ "$status" -ne 0 ]; then
