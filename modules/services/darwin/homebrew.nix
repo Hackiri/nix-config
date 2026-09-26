@@ -117,7 +117,7 @@ in {
         ++ lib.optionals isAppleSiliconDarwin [
           "slp/krun/gvproxy"
           "slp/krun/libkrunfw"
-          "slp/krun/virglrenderer"
+          "slp/krun/virglrenderer-krun"
           "slp/krun/libkrun"
           "krunkit"
         ]
