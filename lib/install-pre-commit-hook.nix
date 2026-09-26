@@ -54,9 +54,12 @@ pkgs.writeShellApplication {
       mv "$hook_path" "$legacy_path"
     fi
 
-    # Copy (not symlink) the config so the hook keeps working after
-    # `nix-collect-garbage` removes the store path this was built from.
-    cp "${configFile}" "$hook_dir/pre-commit-config.json"
+    # Link the config and register it as an indirect GC root. The config
+    # embeds hook entry store paths (e.g. the treefmt wrapper), so copying
+    # it alone is not enough: `nix-collect-garbage` would still delete the
+    # tools it points at. Rooting the config keeps its whole closure alive.
+    rm -f "$hook_dir/pre-commit-config.json"
+    nix-store --add-root "$hook_dir/pre-commit-config.json" --realise "${configFile}" >/dev/null
 
     sed 's/^            //' >"$hook_path" <<'EOF'
             #!/usr/bin/env bash
