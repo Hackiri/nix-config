@@ -18,7 +18,7 @@
     #--------------------------------------------------
     # Nix-managed replacements for generic Homebrew formulae
     #--------------------------------------------------
-    bitwarden-cli # Password manager CLI
+    vaultwarden #
     gettext # GNU internationalization utilities
     gh # GitHub CLI
     mas # Mac App Store CLI used by nix-darwin's Homebrew activation
